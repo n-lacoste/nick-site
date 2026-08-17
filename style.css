@@ -207,3 +207,26 @@ th, td {
 .filter-button:hover {
   background: #333;
 }
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+td {
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+th, td {
+  vertical-align: top;
+}
+
+td[style*="500px"],
+td[style*="420px"],
+td[style*="360px"],
+th[style*="500px"],
+th[style*="420px"],
+th[style*="360px"] {
+  text-align: left;
+}
