@@ -142,13 +142,29 @@ async function loadCSV(
     html += "</tbody>";
     table.innerHTML = html;
 
-    table.querySelectorAll("th").forEach(th => {
-      th.addEventListener("click", () => {
-        sortColumn = th.dataset.column;
-        applySort();
-        updateSortDropdown();
-      });
-    });
+   table.querySelectorAll("th").forEach(th => {
+  th.addEventListener("click", () => {
+    const clickedColumn = th.dataset.column;
+
+    if (sortColumn === clickedColumn) {
+      sortDirection = sortDirection === "asc" ? "desc" : "asc";
+    } else {
+      sortColumn = clickedColumn;
+      sortDirection = "asc";
+    }
+
+    const sortButton = sortDirectionId
+      ? document.getElementById(sortDirectionId)
+      : null;
+
+    if (sortButton) {
+      sortButton.textContent = sortDirection === "asc" ? "A–Z" : "Z–A";
+    }
+
+    applySort();
+    updateSortDropdown();
+  });
+});
   }
 
   function applySort() {
