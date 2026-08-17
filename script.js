@@ -35,7 +35,22 @@ async function loadCSV(
   let currentData = [...data];
   let sortColumn = visibleHeaders[0] || null;
   let sortDirection = "asc";
+const columnWidths = {
+  "Name": "220px",
+  "OMDB_Plot": "420px",
+  "Plot": "420px",
+  "Notes (Review)": "500px",
+  "OMDB_Actors": "360px",
+  "OMDB_Director": "220px",
+  "OMDB_Genre": "220px",
+  "Main Character(s)": "300px",
+  "Side Characters": "300px"
+};
 
+function getColumnStyle(header) {
+  if (!columnWidths[header]) return "";
+  return `min-width: ${columnWidths[header]}; max-width: ${columnWidths[header]};`;
+}
   function escapeHTML(value) {
     return String(value ?? "")
       .replaceAll("&", "&amp;")
@@ -56,7 +71,7 @@ async function loadCSV(
     let html = "<thead><tr>";
 
     visibleHeaders.forEach(header => {
-      html += `<th data-column="${escapeHTML(header)}">${escapeHTML(header)}</th>`;
+      html += `<th data-column="${escapeHTML(header)}" style="${getColumnStyle(header)}">${escapeHTML(header)}</th>`;
     });
 
     html += "</tr></thead><tbody>";
@@ -65,7 +80,7 @@ async function loadCSV(
       html += "<tr>";
 
       visibleHeaders.forEach(header => {
-        html += `<td>${escapeHTML(row[header])}</td>`;
+       html += `<td style="${getColumnStyle(header)}">${escapeHTML(row[header])}</td>`;
       });
 
       html += "</tr>";
