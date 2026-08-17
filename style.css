@@ -339,3 +339,46 @@ tr:hover td:nth-child(3) {
     font-size: 32px;
   }
 }
+.page-topline {
+display: flex;
+justify-content: space-between;
+align-items: flex-start;
+gap: 24px;
+}
+
+.page-topline h2 {
+margin-bottom: 8px;
+}
+
+.last-updated {
+margin: 0;
+color: #aaa;
+font-size: 14px;
+white-space: nowrap;
+}
+
+.movie-controls-row {
+display: flex;
+align-items: flex-start;
+gap: 12px;
+margin-top: 20px;
+margin-bottom: 12px;
+flex-wrap: wrap;
+}
+
+.movie-controls-row .search-box {
+margin-top: 0;
+max-width: 300px;
+}
+
+.movie-controls-row .table-controls {
+margin-top: 0;
+}
+
+.movie-controls-row .filter-dropdown {
+margin-top: 0;
+}
+
+.movie-controls-row + .table-wrap {
+margin-top: 12px;
+}
