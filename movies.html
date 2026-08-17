@@ -21,20 +21,40 @@
     <h2>Movies</h2>
     <p>Film rankings, watchlist data, runtimes, directors, actors, and ratings.</p>
 
-    <input 
-      type="text" 
-      id="movies-search" 
-      placeholder="Search movies..."
-      class="search-box"
-    >
-
+      <input 
+        type="text" 
+        id="movies-search" 
+        placeholder="Search movies..."
+        class="search-box"
+        >
+    
+    <div id="movies-columns" class="column-picker"></div>
+    
     <table id="movies-table"></table>
   </main>
 
  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <script src="script.js"></script>
-  <script>
-    loadCSV("data/movies.csv", "movies-table", "movies-search");
+<script src="script.js"></script>
+<script>
+  loadCSV("data/movies.csv", "movies-table", "movies-search", [
+    "Tier",
+    "Rk",
+    "Name",
+    "Year",
+    "Mins.",
+    "h:mm",
+    "My Rating",
+    "Me vs. IMDB",
+    "Watched?",
+    "Updated",
+    "Tags",
+    "Movie Series?",
+    "Score",
+    "OMDB_Genre",
+    "OMDB_Director",
+    "OMDB_Actors",
+    "Criterion?"
+  ], "movies-columns");
 </script>
 </body>
 </html>
