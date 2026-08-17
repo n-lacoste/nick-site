@@ -154,3 +154,35 @@ th, td {
   text-align: center;
   vertical-align: middle;
 }
+.filter-row {
+  margin-top: 24px;
+  margin-bottom: 16px;
+}
+
+.filter-dropdown {
+  display: inline-block;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.filter-dropdown summary {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.filter-options {
+  margin-top: 12px;
+  display: grid;
+  gap: 8px;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.filter-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
