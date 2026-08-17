@@ -27,7 +27,13 @@
         placeholder="Search movies..."
         class="search-box"
         >
-    
+    <div class="table-controls">
+  <label for="movies-sort-column">Sort by:</label>
+
+  <select id="movies-sort-column" class="sort-select"></select>
+
+  <button id="movies-sort-direction" class="sort-button">A–Z</button>
+</div>
     <div id="movies-columns" class="column-picker"></div>
     
     <table id="movies-table"></table>
@@ -54,7 +60,7 @@
     "OMDB_Director",
     "OMDB_Actors",
     "Criterion?"
-  ], "movies-columns");
+  ], "movies-columns", "movies-sort-column", "movies-sort-direction");
 </script>
 </body>
 </html>
