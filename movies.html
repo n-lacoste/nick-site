@@ -54,7 +54,18 @@
       </details>
     </div>
 
-    <div id="movies-columns" class="column-picker"></div>
+    <div class="filter-row">
+  <details class="filter-dropdown">
+    <summary>Display Columns</summary>
+
+    <label class="filter-option select-all-option">
+      <input type="checkbox" id="movies-columns-select-all" checked>
+      Select All
+    </label>
+
+    <div id="movies-columns" class="filter-options"></div>
+  </details>
+</div>
     
     <div class="table-wrap">
       <table id="movies-table"></table>
