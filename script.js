@@ -5,7 +5,8 @@ async function loadCSV(
   displayColumns = null,
   columnPickerId = null,
   sortColumnId = null,
-  sortDirectionId = null
+  sortDirectionId = null,
+  filters = []
 ) {
   const response = await fetch(filePath);
   const text = await response.text();
