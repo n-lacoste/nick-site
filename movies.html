@@ -19,42 +19,45 @@
   </header>
 
   <main>
+   <div class="page-topline">
+  <div>
     <h2>Movies</h2>
     <p>Film rankings, watchlist data, runtimes, directors, actors, and ratings.</p>
+  </div>
 
-    <input 
-      type="text" 
-      id="movies-search" 
-      placeholder="Search movies..."
-      class="search-box"
-    >
+  <p class="last-updated">Last updated: August 17th, 2026</p>
+</div>
+<div class="movie-controls-row">
+  <input 
+    type="text" 
+    id="movies-search" 
+    placeholder="Search movies..."
+    class="search-box"
+  >
 
-    <div class="table-controls">
-      <label for="movies-sort-column">Sort by:</label>
-      <select id="movies-sort-column" class="sort-select"></select>
-      <button id="movies-sort-direction" class="sort-button" type="button">A–Z</button>
+  <div class="table-controls">
+    <label for="movies-sort-column">Sort by:</label>
+    <select id="movies-sort-column" class="sort-select"></select>
+    <button id="movies-sort-direction" class="sort-button" type="button">A–Z</button>
+  </div>
+
+  <details class="filter-dropdown">
+    <summary>Movie Series</summary>
+
+    <div class="filter-actions">
+      <button id="movie-series-mode" class="filter-button" type="button">
+        CONTAINS EITHER
+      </button>
     </div>
 
-    <div class="filter-row">
-      <details class="filter-dropdown">
-        <summary>Movie Series</summary>
+    <label class="filter-option select-all-option">
+      <input type="checkbox" id="movie-series-select-all" checked>
+      Select All
+    </label>
 
-        <div class="filter-actions">
-          <button id="movie-series-mode" class="filter-button" type="button">
-            CONTAINS EITHER
-          </button>
-        </div>
+    <div id="movie-series-filter" class="filter-options"></div>
+  </details>
 
-        <label class="filter-option select-all-option">
-          <input type="checkbox" id="movie-series-select-all" checked>
-          Select All
-        </label>
-
-        <div id="movie-series-filter" class="filter-options"></div>
-      </details>
-    </div>
-
-   <div class="filter-row">
   <details class="filter-dropdown">
     <summary>Display Columns</summary>
 
