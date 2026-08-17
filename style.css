@@ -73,3 +73,24 @@ main {
 .card p {
   color: #ccc;
 }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 24px;
+  background: #1a1a1a;
+}
+
+th, td {
+  padding: 12px;
+  border-bottom: 1px solid #333;
+  text-align: left;
+}
+
+th {
+  background: #222;
+}
+
+tr:hover {
+  background: #242424;
+}
