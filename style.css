@@ -1,25 +1,42 @@
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
   font-family: Arial, sans-serif;
   margin: 0;
   background: #111;
   color: #f5f5f5;
+  display: flex;
+  flex-direction: column;
 }
 
+/* Header / Navigation */
+
 header {
+  flex: 0 0 auto;
   padding: 24px;
   border-bottom: 1px solid #333;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 24px;
 }
 
 h1 {
   margin: 0;
 }
 
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
 nav a {
   color: #f5f5f5;
-  margin-left: 18px;
   text-decoration: none;
 }
 
@@ -27,8 +44,15 @@ nav a:hover {
   text-decoration: underline;
 }
 
+/* Page Layout */
+
 main {
+  flex: 1;
+  min-height: 0;
   padding: 32px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .hero {
@@ -45,6 +69,8 @@ main {
   color: #ccc;
   font-size: 18px;
 }
+
+/* Homepage Cards */
 
 .cards {
   display: grid;
@@ -74,6 +100,8 @@ main {
   color: #ccc;
 }
 
+/* Search */
+
 .search-box {
   width: 100%;
   max-width: 420px;
@@ -86,31 +114,8 @@ main {
   border-radius: 8px;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 24px;
-  background: #1a1a1a;
-}
+/* Sort Controls */
 
-th, td {
-  padding: 12px;
-  border-bottom: 1px solid #333;
-  text-align: left;
-}
-
-th {
-  background: #222;
-  cursor: pointer;
-}
-
-th:hover {
-  background: #333;
-}
-
-tr:hover {
-  background: #242424;
-}
 .table-controls {
   display: flex;
   align-items: center;
@@ -136,24 +141,9 @@ tr:hover {
 .sort-button:hover {
   background: #333;
 }
-.column-picker {
-  margin-top: 24px;
-  margin-bottom: 16px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px 16px;
-}
 
-.column-option {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
+/* Filter Dropdowns */
 
-th, td {
-  text-align: center;
-  vertical-align: middle;
-}
 .filter-row {
   margin-top: 24px;
   margin-bottom: 16px;
@@ -172,20 +162,6 @@ th, td {
   font-weight: bold;
 }
 
-.filter-options {
-  margin-top: 12px;
-  display: grid;
-  gap: 8px;
-  max-height: 240px;
-  overflow-y: auto;
-}
-
-.filter-option {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  white-space: nowrap;
-}
 .filter-actions {
   display: flex;
   gap: 10px;
@@ -207,38 +183,98 @@ th, td {
 .filter-button:hover {
   background: #333;
 }
+
+.filter-options {
+  margin-top: 12px;
+  display: grid;
+  gap: 8px;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.filter-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.select-all-option {
+  margin-top: 8px;
+  font-weight: bold;
+}
+
+/* Column Picker */
+
+.column-picker {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+}
+
+.column-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Table Scroll Container */
+
 .table-wrap {
+  flex: 1;
+  min-height: 0;
   width: 100%;
-  overflow-x: auto;
-}
-
-td {
-  white-space: normal;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-}
-
-th, td {
-  vertical-align: top;
-}
-
-td[style*="500px"],
-td[style*="420px"],
-td[style*="360px"],
-th[style*="500px"],
-th[style*="420px"],
-th[style*="360px"] {
-  text-align: left;
-}
-.table-wrap {
-  width: 100%;
-  max-height: 70vh;
   overflow: auto;
   margin-top: 24px;
   border: 1px solid #333;
   border-radius: 8px;
 }
-/* Freeze first three columns: Tier, Rk, Name */
+
+/* Table */
+
+table {
+  width: max-content;
+  min-width: 100%;
+  border-collapse: collapse;
+  background: #1a1a1a;
+}
+
+th,
+td {
+  padding: 12px;
+  border-bottom: 1px solid #333;
+  text-align: center;
+  vertical-align: middle;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
+th {
+  background: #222;
+  cursor: pointer;
+}
+
+th:hover {
+  background: #333;
+}
+
+tr:hover td {
+  background-color: #242424;
+}
+
+/* Freeze Top Header Row */
+
+thead th {
+  position: sticky;
+  top: 0;
+  background: #222;
+  z-index: 10;
+}
+
+/* Freeze First Three Columns: Tier, Rk, Name */
+
 th:nth-child(1),
 td:nth-child(1) {
   position: sticky;
@@ -246,7 +282,7 @@ td:nth-child(1) {
   min-width: 80px;
   max-width: 80px;
   background: #1a1a1a;
-  z-index: 3;
+  z-index: 6;
 }
 
 th:nth-child(2),
@@ -256,7 +292,7 @@ td:nth-child(2) {
   min-width: 70px;
   max-width: 70px;
   background: #1a1a1a;
-  z-index: 3;
+  z-index: 6;
 }
 
 th:nth-child(3),
@@ -266,21 +302,40 @@ td:nth-child(3) {
   min-width: 240px;
   max-width: 240px;
   background: #1a1a1a;
-  z-index: 3;
+  z-index: 6;
   text-align: left;
 }
 
-/* Keep sticky header above sticky body cells */
-thead th {
-  position: sticky;
-  top: 0;
-  background: #222;
-  z-index: 4;
-}
+/* Frozen Header Cells Stay Above Frozen Body Cells */
 
-/* Top-left frozen header cells need highest layer */
 thead th:nth-child(1),
 thead th:nth-child(2),
 thead th:nth-child(3) {
-  z-index: 5;
+  background: #222;
+  z-index: 20;
+}
+
+/* Keep Frozen Cells Dark on Row Hover */
+
+tr:hover td:nth-child(1),
+tr:hover td:nth-child(2),
+tr:hover td:nth-child(3) {
+  background-color: #242424;
+}
+
+/* Mobile Adjustments */
+
+@media (max-width: 800px) {
+  header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  main {
+    padding: 20px;
+  }
+
+  .hero h2 {
+    font-size: 32px;
+  }
 }
