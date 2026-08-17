@@ -4,6 +4,7 @@
   <title>Movies | Nick Site</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
   <header>
     <h1>Nick Lacoste's Portfolio</h1>
@@ -21,77 +22,75 @@
     <h2>Movies</h2>
     <p>Film rankings, watchlist data, runtimes, directors, actors, and ratings.</p>
 
-      <input 
-        type="text" 
-        id="movies-search" 
-        placeholder="Search movies..."
-        class="search-box"
-        >
+    <input 
+      type="text" 
+      id="movies-search" 
+      placeholder="Search movies..."
+      class="search-box"
+    >
+
     <div class="table-controls">
-  <label for="movies-sort-column">Sort by:</label>
-
-  <select id="movies-sort-column" class="sort-select"></select>
-
-  <button id="movies-sort-direction" class="sort-button">A–Z</button>
-</div>
-    <div class="filter-row">
-  <details class="filter-dropdown">
-    <summary>Movie Series</summary>
-
-    <div class="filter-actions">
-      <button id="movie-series-mode" class="filter-button" type="button">
-        CONTAINS EITHER
-      </button>
+      <label for="movies-sort-column">Sort by:</label>
+      <select id="movies-sort-column" class="sort-select"></select>
+      <button id="movies-sort-direction" class="sort-button" type="button">A–Z</button>
     </div>
 
-    <label class="filter-option select-all-option">
-      <input type="checkbox" id="movie-series-select-all" checked>
-      Select All
-    </label>
+    <div class="filter-row">
+      <details class="filter-dropdown">
+        <summary>Movie Series</summary>
 
-    <div id="movie-series-filter" class="filter-options"></div>
-  </details>
-</div>
+        <div class="filter-actions">
+          <button id="movie-series-mode" class="filter-button" type="button">
+            CONTAINS EITHER
+          </button>
+        </div>
+
+        <label class="filter-option select-all-option">
+          <input type="checkbox" id="movie-series-select-all" checked>
+          Select All
+        </label>
+
+        <div id="movie-series-filter" class="filter-options"></div>
+      </details>
+    </div>
+
     <div id="movies-columns" class="column-picker"></div>
     
     <div class="table-wrap">
-  <div class="table-wrap">
-  <table id="movies-table"></table>
-</div>
-</div>
+      <table id="movies-table"></table>
+    </div>
   </main>
 
- <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-<script src="script.js"></script>
-<script>
-  loadCSV("data/movies.csv", "movies-table", "movies-search", [
-    "Tier",
-    "Rk",
-    "Name",
-    "Year",
-    "Mins.",
-    "h:mm",
-    "My Rating",
-    "Me vs. IMDB",
-    "Watched?",
-    "Updated",
-    "Tags",
-    "Movie Series?",
-    "Score",
-    "OMDB_Genre",
-    "OMDB_Director",
-    "OMDB_Actors",
-    "Criterion?"
-  ], "movies-columns", "movies-sort-column", "movies-sort-direction", [
-    {
-      column: "Movie Series?",
-      targetId: "movie-series-filter",
-      selectAllId: "movie-series-select-toggle",
-      modeButtonId: "movie-series-mode",
-      mode: "or"
-    }
-  ]);
-</script>
-
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="script.js"></script>
+  <script>
+    loadCSV("data/movies.csv", "movies-table", "movies-search", [
+      "Tier",
+      "Rk",
+      "Name",
+      "Year",
+      "Mins.",
+      "h:mm",
+      "My Rating",
+      "Me vs. IMDB",
+      "Watched?",
+      "Updated",
+      "Tags",
+      "Movie Series?",
+      "Score",
+      "OMDB_Genre",
+      "OMDB_Director",
+      "OMDB_Actors",
+      "Criterion?"
+    ], "movies-columns", "movies-sort-column", "movies-sort-direction", [
+      {
+        column: "Movie Series?",
+        targetId: "movie-series-filter",
+        selectAllId: "movie-series-select-all",
+        modeButtonId: "movie-series-mode",
+        mode: "or"
+      }
+    ]);
+  </script>
 </body>
 </html>
