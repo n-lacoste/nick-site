@@ -7,7 +7,9 @@ async function loadCSV(filePath, tableId, searchId = null, displayColumns = null
     skipEmptyLines: true
   });
 
-  const data = parsed.data;
+  const data = parsed.data.filter(row => 
+  String(row["Name"] ?? "").trim() !== ""
+);
   const allHeaders = parsed.meta.fields;
   let visibleHeaders = displayColumns || allHeaders;
 
