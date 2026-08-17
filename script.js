@@ -1,4 +1,12 @@
-async function loadCSV(filePath, tableId, searchId = null, displayColumns = null, columnPickerId = null) {
+async function loadCSV(
+  filePath,
+  tableId,
+  searchId = null,
+  displayColumns = null,
+  columnPickerId = null,
+  sortColumnId = null,
+  sortDirectionId = null
+) {
   const response = await fetch(filePath);
   const text = await response.text();
 
@@ -7,15 +15,16 @@ async function loadCSV(filePath, tableId, searchId = null, displayColumns = null
     skipEmptyLines: true
   });
 
-  const data = parsed.data.filter(row => 
-  String(row["Name"] ?? "").trim() !== ""
-);
+  const data = parsed.data.filter(row =>
+    String(row["Name"] ?? "").trim() !== ""
+  );
+
   const allHeaders = parsed.meta.fields;
   let visibleHeaders = displayColumns || allHeaders;
 
   const table = document.getElementById(tableId);
   let currentData = [...data];
-  let sortColumn = null;
+  let sortColumn = visibleHeaders[0];
   let sortDirection = "asc";
 
   function escapeHTML(value) {
@@ -51,36 +60,32 @@ async function loadCSV(filePath, tableId, searchId = null, displayColumns = null
 
     table.querySelectorAll("th").forEach(th => {
       th.addEventListener("click", () => {
-        sortTable(th.dataset.column);
+        sortColumn = th.dataset.column;
+        applySort();
       });
     });
   }
 
-  function sortTable(column) {
-    if (sortColumn === column) {
-      sortDirection = sortDirection === "asc" ? "desc" : "asc";
-    } else {
-      sortColumn = column;
-      sortDirection = "asc";
-    }
+  function applySort() {
+    if (!sortColumn) return;
 
     currentData.sort((a, b) => {
-      const valueA = a[column] ?? "";
-      const valueB = b[column] ?? "";
-
-      const numA = Number(valueA);
-      const numB = Number(valueB);
+      const valueA = String(a[sortColumn] ?? "").trim();
+      const valueB = String(b[sortColumn] ?? "").trim();
 
       if (valueA === "") return 1;
       if (valueB === "") return -1;
+
+      const numA = Number(valueA);
+      const numB = Number(valueB);
 
       if (!isNaN(numA) && !isNaN(numB)) {
         return sortDirection === "asc" ? numA - numB : numB - numA;
       }
 
       return sortDirection === "asc"
-        ? String(valueA).localeCompare(String(valueB))
-        : String(valueB).localeCompare(String(valueA));
+        ? valueA.localeCompare(valueB)
+        : valueB.localeCompare(valueA);
     });
 
     renderTable(currentData);
@@ -100,7 +105,43 @@ async function loadCSV(filePath, tableId, searchId = null, displayColumns = null
         )
       );
 
-      renderTable(currentData);
+      applySort();
+    });
+  }
+
+  function updateSortDropdown() {
+    if (!sortColumnId) return;
+
+    const sortSelect = document.getElementById(sortColumnId);
+
+    sortSelect.innerHTML = visibleHeaders.map(header => {
+      const selected = header === sortColumn ? "selected" : "";
+      return `<option value="${escapeHTML(header)}" ${selected}>${escapeHTML(header)}</option>`;
+    }).join("");
+
+    if (!visibleHeaders.includes(sortColumn)) {
+      sortColumn = visibleHeaders[0];
+      sortSelect.value = sortColumn;
+    }
+  }
+
+  function setupSortControls() {
+    if (!sortColumnId || !sortDirectionId) return;
+
+    const sortSelect = document.getElementById(sortColumnId);
+    const sortButton = document.getElementById(sortDirectionId);
+
+    updateSortDropdown();
+
+    sortSelect.addEventListener("change", () => {
+      sortColumn = sortSelect.value;
+      applySort();
+    });
+
+    sortButton.addEventListener("click", () => {
+      sortDirection = sortDirection === "asc" ? "desc" : "asc";
+      sortButton.textContent = sortDirection === "asc" ? "A–Z" : "Z–A";
+      applySort();
     });
   }
 
@@ -125,6 +166,7 @@ async function loadCSV(filePath, tableId, searchId = null, displayColumns = null
         visibleHeaders = Array.from(picker.querySelectorAll("input:checked"))
           .map(checkbox => checkbox.value);
 
+        updateSortDropdown();
         renderTable(currentData);
       });
     });
@@ -132,5 +174,6 @@ async function loadCSV(filePath, tableId, searchId = null, displayColumns = null
 
   renderTable(currentData);
   setupSearch();
+  setupSortControls();
   setupColumnPicker();
 }
