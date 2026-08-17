@@ -19,8 +19,6 @@ async function loadCSV(
   const allHeaders = parsed.meta.fields || [];
 
   const data = parsed.data.filter(row => {
-    // For movie data, ignore rows where Name is blank.
-    // If a future CSV does not have a Name column, keep all non-empty rows.
     if (allHeaders.includes("Name")) {
       return String(row["Name"] ?? "").trim() !== "";
     }
@@ -132,16 +130,24 @@ async function loadCSV(
       const container = document.getElementById(filter.targetId);
       if (!container) return true;
 
-      const selectedValues = Array.from(
-        container.querySelectorAll("input:checked")
-      ).map(input => input.value);
+      const inputs = Array.from(container.querySelectorAll("input"));
+      const selectedValues = inputs
+        .filter(input => input.checked)
+        .map(input => input.value);
 
-      // If nothing is selected in this filter, show no rows for that filter.
+      // If every option is selected, treat this filter as "no restriction".
+      if (selectedValues.length === inputs.length) return true;
+
+      // If no options are selected, show no rows for this filter.
       if (selectedValues.length === 0) return false;
 
       const rowValues = getFilterValues(row[filter.column]);
 
-      return rowValues.some(value => selectedValues.includes(value));
+      if (filter.mode === "and") {
+        return selectedValues.every(value => rowValues.includes(value));
+      }
+
+      return selectedValues.some(value => rowValues.includes(value));
     });
   }
 
@@ -228,10 +234,39 @@ async function loadCSV(
     });
   }
 
+  function updateFilterSelectButton(filter) {
+    if (!filter.selectAllId) return;
+
+    const container = document.getElementById(filter.targetId);
+    const button = document.getElementById(filter.selectAllId);
+
+    if (!container || !button) return;
+
+    const inputs = Array.from(container.querySelectorAll("input"));
+    const allSelected = inputs.length > 0 && inputs.every(input => input.checked);
+
+    button.textContent = allSelected ? "Deselect all" : "Select all";
+  }
+
+  function updateFilterModeButton(filter) {
+    if (!filter.modeButtonId) return;
+
+    const button = document.getElementById(filter.modeButtonId);
+    if (!button) return;
+
+    button.textContent = filter.mode === "and"
+      ? "MUST CONTAIN ALL"
+      : "CONTAINS EITHER";
+  }
+
   function setupFilters() {
     filters.forEach(filter => {
       const container = document.getElementById(filter.targetId);
       if (!container) return;
+
+      if (!filter.mode) {
+        filter.mode = "or";
+      }
 
       const uniqueValues = Array.from(
         new Set(
@@ -247,8 +282,45 @@ async function loadCSV(
       `).join("");
 
       container.querySelectorAll("input").forEach(input => {
-        input.addEventListener("change", applyAllFiltersAndSort);
+        input.addEventListener("change", () => {
+          updateFilterSelectButton(filter);
+          applyAllFiltersAndSort();
+        });
       });
+
+      if (filter.selectAllId) {
+        const selectButton = document.getElementById(filter.selectAllId);
+
+        if (selectButton) {
+          selectButton.addEventListener("click", () => {
+            const inputs = Array.from(container.querySelectorAll("input"));
+            const allSelected = inputs.every(input => input.checked);
+
+            inputs.forEach(input => {
+              input.checked = !allSelected;
+            });
+
+            updateFilterSelectButton(filter);
+            applyAllFiltersAndSort();
+          });
+        }
+      }
+
+      if (filter.modeButtonId) {
+        const modeButton = document.getElementById(filter.modeButtonId);
+
+        if (modeButton) {
+          modeButton.addEventListener("click", () => {
+            filter.mode = filter.mode === "and" ? "or" : "and";
+
+            updateFilterModeButton(filter);
+            applyAllFiltersAndSort();
+          });
+        }
+      }
+
+      updateFilterSelectButton(filter);
+      updateFilterModeButton(filter);
     });
   }
 
