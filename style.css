@@ -136,3 +136,21 @@ tr:hover {
 .sort-button:hover {
   background: #333;
 }
+.column-picker {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+}
+
+.column-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+th, td {
+  text-align: center;
+  vertical-align: middle;
+}
