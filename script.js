@@ -1,4 +1,4 @@
-async function loadCSV(filePath, tableId, searchId = null) {
+async function loadCSV(filePath, tableId, searchId = null, displayColumns = null, columnPickerId = null) {
   const response = await fetch(filePath);
   const text = await response.text();
 
@@ -8,18 +8,28 @@ async function loadCSV(filePath, tableId, searchId = null) {
   });
 
   const data = parsed.data;
-  const headers = parsed.meta.fields;
-  const table = document.getElementById(tableId);
+  const allHeaders = parsed.meta.fields;
+  let visibleHeaders = displayColumns || allHeaders;
 
+  const table = document.getElementById(tableId);
   let currentData = [...data];
   let sortColumn = null;
   let sortDirection = "asc";
 
+  function escapeHTML(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
   function renderTable(rows) {
     let html = "<thead><tr>";
 
-    headers.forEach(header => {
-      html += `<th onclick="sortTable('${header}')">${header}</th>`;
+    visibleHeaders.forEach(header => {
+      html += `<th data-column="${escapeHTML(header)}">${escapeHTML(header)}</th>`;
     });
 
     html += "</tr></thead><tbody>";
@@ -27,8 +37,8 @@ async function loadCSV(filePath, tableId, searchId = null) {
     rows.forEach(row => {
       html += "<tr>";
 
-      headers.forEach(header => {
-        html += `<td>${row[header] ?? ""}</td>`;
+      visibleHeaders.forEach(header => {
+        html += `<td>${escapeHTML(row[header])}</td>`;
       });
 
       html += "</tr>";
@@ -36,9 +46,15 @@ async function loadCSV(filePath, tableId, searchId = null) {
 
     html += "</tbody>";
     table.innerHTML = html;
+
+    table.querySelectorAll("th").forEach(th => {
+      th.addEventListener("click", () => {
+        sortTable(th.dataset.column);
+      });
+    });
   }
 
-  window.sortTable = function(column) {
+  function sortTable(column) {
     if (sortColumn === column) {
       sortDirection = sortDirection === "asc" ? "desc" : "asc";
     } else {
@@ -53,28 +69,31 @@ async function loadCSV(filePath, tableId, searchId = null) {
       const numA = Number(valueA);
       const numB = Number(valueB);
 
+      if (valueA === "") return 1;
+      if (valueB === "") return -1;
+
       if (!isNaN(numA) && !isNaN(numB)) {
         return sortDirection === "asc" ? numA - numB : numB - numA;
       }
 
       return sortDirection === "asc"
-        ? valueA.localeCompare(valueB)
-        : valueB.localeCompare(valueA);
+        ? String(valueA).localeCompare(String(valueB))
+        : String(valueB).localeCompare(String(valueA));
     });
 
     renderTable(currentData);
-  };
+  }
 
-  renderTable(currentData);
+  function setupSearch() {
+    if (!searchId) return;
 
-  if (searchId) {
     const searchBox = document.getElementById(searchId);
 
     searchBox.addEventListener("input", () => {
       const searchTerm = searchBox.value.toLowerCase();
 
       currentData = data.filter(row =>
-        headers.some(header =>
+        allHeaders.some(header =>
           String(row[header] ?? "").toLowerCase().includes(searchTerm)
         )
       );
@@ -82,4 +101,34 @@ async function loadCSV(filePath, tableId, searchId = null) {
       renderTable(currentData);
     });
   }
+
+  function setupColumnPicker() {
+    if (!columnPickerId) return;
+
+    const picker = document.getElementById(columnPickerId);
+
+    picker.innerHTML = allHeaders.map(header => {
+      const checked = visibleHeaders.includes(header) ? "checked" : "";
+
+      return `
+        <label class="column-option">
+          <input type="checkbox" value="${escapeHTML(header)}" ${checked}>
+          ${escapeHTML(header)}
+        </label>
+      `;
+    }).join("");
+
+    picker.querySelectorAll("input").forEach(input => {
+      input.addEventListener("change", () => {
+        visibleHeaders = Array.from(picker.querySelectorAll("input:checked"))
+          .map(checkbox => checkbox.value);
+
+        renderTable(currentData);
+      });
+    });
+  }
+
+  renderTable(currentData);
+  setupSearch();
+  setupColumnPicker();
 }
