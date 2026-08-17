@@ -288,24 +288,22 @@ async function loadCSV(
         });
       });
 
-      if (filter.selectAllId) {
-        const selectButton = document.getElementById(filter.selectAllId);
+    if (filter.selectAllId) {
+  const selectAllCheckbox = document.getElementById(filter.selectAllId);
 
-        if (selectButton) {
-          selectButton.addEventListener("click", () => {
-            const inputs = Array.from(container.querySelectorAll("input"));
-            const allSelected = inputs.every(input => input.checked);
+  if (selectAllCheckbox) {
+    selectAllCheckbox.addEventListener("change", () => {
+      const inputs = Array.from(container.querySelectorAll("input"));
 
-            inputs.forEach(input => {
-              input.checked = !allSelected;
-            });
+      inputs.forEach(input => {
+        input.checked = selectAllCheckbox.checked;
+      });
 
-            updateFilterSelectButton(filter);
-            applyAllFiltersAndSort();
-          });
-        }
-      }
-
+      selectAllCheckbox.indeterminate = false;
+      applyAllFiltersAndSort();
+    });
+  }
+}
       if (filter.modeButtonId) {
         const modeButton = document.getElementById(filter.modeButtonId);
 
