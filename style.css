@@ -186,3 +186,24 @@ th, td {
   gap: 8px;
   white-space: nowrap;
 }
+.filter-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.filter-button {
+  padding: 8px 10px;
+  font-size: 13px;
+  background: #222;
+  color: #f5f5f5;
+  border: 1px solid #444;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.filter-button:hover {
+  background: #333;
+}
