@@ -1,4 +1,4 @@
-async function loadCSV(filePath, tableId) {
+async function loadCSV(filePath, tableId, searchId = null) {
   const response = await fetch(filePath);
   const text = await response.text();
 
@@ -8,20 +8,40 @@ async function loadCSV(filePath, tableId) {
 
   const table = document.getElementById(tableId);
 
-  let html = "<thead><tr>";
-  headers.forEach(header => {
-    html += `<th>${header}</th>`;
-  });
-  html += "</tr></thead><tbody>";
+  function renderTable(filteredData) {
+    let html = "<thead><tr>";
 
-  data.forEach(row => {
-    html += "<tr>";
-    row.forEach(cell => {
-      html += `<td>${cell}</td>`;
+    headers.forEach(header => {
+      html += `<th>${header}</th>`;
     });
-    html += "</tr>";
-  });
 
-  html += "</tbody>";
-  table.innerHTML = html;
+    html += "</tr></thead><tbody>";
+
+    filteredData.forEach(row => {
+      html += "<tr>";
+      row.forEach(cell => {
+        html += `<td>${cell}</td>`;
+      });
+      html += "</tr>";
+    });
+
+    html += "</tbody>";
+    table.innerHTML = html;
+  }
+
+  renderTable(data);
+
+  if (searchId) {
+    const searchBox = document.getElementById(searchId);
+
+    searchBox.addEventListener("input", () => {
+      const searchTerm = searchBox.value.toLowerCase();
+
+      const filteredData = data.filter(row =>
+        row.join(" ").toLowerCase().includes(searchTerm)
+      );
+
+      renderTable(filteredData);
+    });
+  }
 }
