@@ -17,9 +17,16 @@
     </nav>
   </header>
 
-  <main>
-    <h2>Movies</h2>
-    <p>Movie database tools will live here.</p>
-  </main>
+ <main>
+  <h2>Movies</h2>
+  <p>Film rankings, watchlist data, runtimes, directors, actors, and ratings.</p>
+
+  <table id="movies-table"></table>
+</main>
+
+<script src="script.js"></script>
+<script>
+  loadCSV("data/movies.csv", "movies-table");
+</script>
 </body>
 </html>
