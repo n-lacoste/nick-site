@@ -111,3 +111,28 @@ th:hover {
 tr:hover {
   background: #242424;
 }
+.table-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.sort-select,
+.sort-button {
+  padding: 10px 12px;
+  font-size: 15px;
+  background: #1a1a1a;
+  color: #f5f5f5;
+  border: 1px solid #333;
+  border-radius: 8px;
+}
+
+.sort-button {
+  cursor: pointer;
+}
+
+.sort-button:hover {
+  background: #333;
+}
