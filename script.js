@@ -32,9 +32,9 @@ async function loadCSV(
 
   const table = document.getElementById(tableId);
 
-  let currentData = [...data];
-  let sortColumn = visibleHeaders[0] || null;
-  let sortDirection = "asc";
+ let currentData = [...data];
+ let sortColumn = visibleHeaders.includes("Rk") ? "Rk" : visibleHeaders[0] || null;
+ let sortDirection = "asc";
 const columnWidths = {
   "Name": "220px",
   "OMDB_Plot": "420px",
@@ -46,10 +46,24 @@ const columnWidths = {
   "Main Character(s)": "300px",
   "Side Characters": "300px"
 };
+  const columnFontSizes = {
+  "Notes (Review)": "13px",
+  "Plot": "13px",
+  "OMDB_Plot": "13px"
+};
 
 function getColumnStyle(header) {
-  if (!columnWidths[header]) return "";
-  return `min-width: ${columnWidths[header]}; max-width: ${columnWidths[header]};`;
+  let style = "";
+
+  if (columnWidths[header]) {
+    style += `min-width: ${columnWidths[header]}; max-width: ${columnWidths[header]};`;
+  }
+
+  if (columnFontSizes[header]) {
+    style += ` font-size: ${columnFontSizes[header]};`;
+  }
+
+  return style;
 }
   function escapeHTML(value) {
     return String(value ?? "")
