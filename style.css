@@ -230,3 +230,57 @@ th[style*="420px"],
 th[style*="360px"] {
   text-align: left;
 }
+.table-wrap {
+  width: 100%;
+  max-height: 70vh;
+  overflow: auto;
+  margin-top: 24px;
+  border: 1px solid #333;
+  border-radius: 8px;
+}
+/* Freeze first three columns: Tier, Rk, Name */
+th:nth-child(1),
+td:nth-child(1) {
+  position: sticky;
+  left: 0;
+  min-width: 80px;
+  max-width: 80px;
+  background: #1a1a1a;
+  z-index: 3;
+}
+
+th:nth-child(2),
+td:nth-child(2) {
+  position: sticky;
+  left: 80px;
+  min-width: 70px;
+  max-width: 70px;
+  background: #1a1a1a;
+  z-index: 3;
+}
+
+th:nth-child(3),
+td:nth-child(3) {
+  position: sticky;
+  left: 150px;
+  min-width: 240px;
+  max-width: 240px;
+  background: #1a1a1a;
+  z-index: 3;
+  text-align: left;
+}
+
+/* Keep sticky header above sticky body cells */
+thead th {
+  position: sticky;
+  top: 0;
+  background: #222;
+  z-index: 4;
+}
+
+/* Top-left frozen header cells need highest layer */
+thead th:nth-child(1),
+thead th:nth-child(2),
+thead th:nth-child(3) {
+  z-index: 5;
+}
