@@ -249,7 +249,7 @@ async function loadCSV(
 
     if (!visibleHeaders.includes(sortColumn)) {
       sortColumn = visibleHeaders.includes("Rk") ? "Rk" : visibleHeaders[0] || null;
-      sortSelect.value = sortColumn;
+      sortSelect.value = sortColumn || "";
     }
   }
 
@@ -277,71 +277,71 @@ async function loadCSV(
   }
 
   function updateColumnPickerSelectAll() {
-  if (!columnPickerId) return;
+    if (!columnPickerId) return;
 
-  const picker = document.getElementById(columnPickerId);
-  const selectAllCheckbox = document.getElementById(`${columnPickerId}-select-all`);
+    const picker = document.getElementById(columnPickerId);
+    const selectAllCheckbox = document.getElementById(`${columnPickerId}-select-all`);
 
-  if (!picker || !selectAllCheckbox) return;
+    if (!picker || !selectAllCheckbox) return;
 
-  const inputs = Array.from(picker.querySelectorAll("input"));
-  const checkedCount = inputs.filter(input => input.checked).length;
+    const inputs = Array.from(picker.querySelectorAll("input"));
+    const checkedCount = inputs.filter(input => input.checked).length;
 
-  selectAllCheckbox.checked = inputs.length > 0 && checkedCount === inputs.length;
-  selectAllCheckbox.indeterminate = checkedCount > 0 && checkedCount < inputs.length;
-}
-
-function setupColumnPicker() {
-  if (!columnPickerId) return;
-
-  const picker = document.getElementById(columnPickerId);
-  const selectAllCheckbox = document.getElementById(`${columnPickerId}-select-all`);
-
-  if (!picker) return;
-
-  picker.innerHTML = allHeaders.map(header => {
-    const checked = visibleHeaders.includes(header) ? "checked" : "";
-
-    return `
-      <label class="filter-option">
-        <input type="checkbox" value="${escapeHTML(header)}" ${checked}>
-        ${escapeHTML(header)}
-      </label>
-    `;
-  }).join("");
-
-  picker.querySelectorAll("input").forEach(input => {
-    input.addEventListener("change", () => {
-      visibleHeaders = Array.from(
-        picker.querySelectorAll("input:checked")
-      ).map(checkbox => checkbox.value);
-
-      updateColumnPickerSelectAll();
-      updateSortDropdown();
-      renderTable(currentData);
-    });
-  });
-
-  if (selectAllCheckbox) {
-    selectAllCheckbox.addEventListener("change", () => {
-      const inputs = Array.from(picker.querySelectorAll("input"));
-
-      inputs.forEach(input => {
-        input.checked = selectAllCheckbox.checked;
-      });
-
-      visibleHeaders = Array.from(
-        picker.querySelectorAll("input:checked")
-      ).map(checkbox => checkbox.value);
-
-      selectAllCheckbox.indeterminate = false;
-      updateSortDropdown();
-      renderTable(currentData);
-    });
+    selectAllCheckbox.checked = inputs.length > 0 && checkedCount === inputs.length;
+    selectAllCheckbox.indeterminate = checkedCount > 0 && checkedCount < inputs.length;
   }
 
-  updateColumnPickerSelectAll();
-}
+  function setupColumnPicker() {
+    if (!columnPickerId) return;
+
+    const picker = document.getElementById(columnPickerId);
+    const selectAllCheckbox = document.getElementById(`${columnPickerId}-select-all`);
+
+    if (!picker) return;
+
+    picker.innerHTML = allHeaders.map(header => {
+      const checked = visibleHeaders.includes(header) ? "checked" : "";
+
+      return `
+        <label class="filter-option">
+          <input type="checkbox" value="${escapeHTML(header)}" ${checked}>
+          ${escapeHTML(header)}
+        </label>
+      `;
+    }).join("");
+
+    picker.querySelectorAll("input").forEach(input => {
+      input.addEventListener("change", () => {
+        visibleHeaders = Array.from(
+          picker.querySelectorAll("input:checked")
+        ).map(checkbox => checkbox.value);
+
+        updateColumnPickerSelectAll();
+        updateSortDropdown();
+        renderTable(currentData);
+      });
+    });
+
+    if (selectAllCheckbox) {
+      selectAllCheckbox.addEventListener("change", () => {
+        const inputs = Array.from(picker.querySelectorAll("input"));
+
+        inputs.forEach(input => {
+          input.checked = selectAllCheckbox.checked;
+        });
+
+        visibleHeaders = Array.from(
+          picker.querySelectorAll("input:checked")
+        ).map(checkbox => checkbox.value);
+
+        selectAllCheckbox.indeterminate = false;
+        updateSortDropdown();
+        renderTable(currentData);
+      });
+    }
+
+    updateColumnPickerSelectAll();
+  }
 
   function updateFilterSelectAllCheckbox(filter) {
     if (!filter.selectAllId) return;
