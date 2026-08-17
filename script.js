@@ -32,69 +32,46 @@ async function loadCSV(
 
   const table = document.getElementById(tableId);
 
- let currentData = [...data];
- let sortColumn = visibleHeaders.includes("Rk") ? "Rk" : visibleHeaders[0] || null;
- let sortDirection = "asc";
-const columnWidths = {
-  "Name": "220px",
-  "OMDB_Plot": "420px",
-  "Plot": "420px",
-  "Notes (Review)": "500px",
-  "OMDB_Actors": "360px",
-  "OMDB_Director": "220px",
-  "OMDB_Genre": "220px",
-  "Main Character(s)": "300px",
-  "Side Characters": "300px"
-};
+  let currentData = [...data];
+  let sortColumn = visibleHeaders.includes("Rk") ? "Rk" : visibleHeaders[0] || null;
+  let sortDirection = "asc";
+
+  const columnWidths = {
+    "Tier": "80px",
+    "Rk": "70px",
+    "Name": "240px",
+    "OMDB_Plot": "420px",
+    "Plot": "420px",
+    "Notes (Review)": "500px",
+    "OMDB_Actors": "360px",
+    "OMDB_Director": "220px",
+    "OMDB_Genre": "220px",
+    "Main Character(s)": "300px",
+    "Side Characters": "300px"
+  };
+
   const columnFontSizes = {
-  "Notes (Review)": "13px",
-  "Plot": "13px",
-  "OMDB_Plot": "13px"
-};
+    "Notes (Review)": "13px",
+    "Plot": "13px",
+    "OMDB_Plot": "13px"
+  };
 
-function getColumnStyle(header) {
-  let style = "";
+  const tierColors = {
+    "S":  { bg: "#efd1ff", text: "#5a3286" },
+    "(S)": { bg: "#efd1ff", text: "#5a3286" },
+    "A1": { bg: "#888ef5", text: "#473821" },
+    "A2": { bg: "#5bc0dd", text: "#215a6c" },
+    "A3": { bg: "#bfe1f6", text: "#0a53a8" },
+    "B1": { bg: "#d4edbc", text: "#11734b" },
+    "B2": { bg: "#ffe5a0", text: "#473821" },
+    "B3": { bg: "#f0c885", text: "#000000" },
+    "C1": { bg: "#ffc8aa", text: "#753800" },
+    "C2": { bg: "#e38451", text: "#000000" },
+    "C3": { bg: "#e36351", text: "#000000" },
+    "D":  { bg: "#ff0000", text: "#000000" },
+    "NR": { bg: "#ffcfc9", text: "#b10202" }
+  };
 
-  if (columnWidths[header]) {
-    style += `min-width: ${columnWidths[header]}; max-width: ${columnWidths[header]};`;
-  }
-const tierColors = {
-  "(S)":  { bg: "#efd1ff", text: "#5a3286" },
-  "A1": { bg: "#888ef5", text: "#473821" },
-  "A2": { bg: "#5bc0dd", text: "#215a6c" },
-  "A3": { bg: "#bfe1f6", text: "#0a53a8" },
-  "B1": { bg: "#d4edbc", text: "#11734b" },
-  "B2": { bg: "#ffe5a0", text: "#473821" },
-  "B3": { bg: "#f0c885", text: "#000000" },
-  "C1": { bg: "#ffc8aa", text: "#753800" },
-  "C2": { bg: "#e38451", text: "#000000" },
-  "C3": { bg: "#e36351", text: "#000000" },
-  "D":  { bg: "#ff0000", text: "#000000" },
-  "NR": { bg: "#ffcfc9", text: "#b10202" }
-};
-
-function getConditionalStyle(header, value) {
-  if (header === "Tier") {
-    const tier = String(value ?? "").trim();
-    const colors = tierColors[tier];
-
-    if (colors) {
-      return `
-        background-color: ${colors.bg};
-        color: ${colors.text};
-        font-weight: bold;
-      `;
-    }
-  }
-
-  return "";
-}
-  if (columnFontSizes[header]) {
-    style += ` font-size: ${columnFontSizes[header]};`;
-  }
-
-  return style;
-}
   function escapeHTML(value) {
     return String(value ?? "")
       .replaceAll("&", "&amp;")
@@ -102,6 +79,37 @@ function getConditionalStyle(header, value) {
       .replaceAll(">", "&gt;")
       .replaceAll('"', "&quot;")
       .replaceAll("'", "&#039;");
+  }
+
+  function getColumnStyle(header) {
+    let style = "";
+
+    if (columnWidths[header]) {
+      style += `min-width: ${columnWidths[header]}; max-width: ${columnWidths[header]};`;
+    }
+
+    if (columnFontSizes[header]) {
+      style += ` font-size: ${columnFontSizes[header]};`;
+    }
+
+    return style;
+  }
+
+  function getConditionalStyle(header, value) {
+    if (header === "Tier") {
+      const tier = String(value ?? "").trim();
+      const colors = tierColors[tier];
+
+      if (colors) {
+        return `
+          background-color: ${colors.bg};
+          color: ${colors.text};
+          font-weight: bold;
+        `;
+      }
+    }
+
+    return "";
   }
 
   function getFilterValues(value) {
@@ -124,8 +132,8 @@ function getConditionalStyle(header, value) {
       html += "<tr>";
 
       visibleHeaders.forEach(header => {
-      const cellStyle = `${getColumnStyle(header)} ${getConditionalStyle(header, row[header])}`;
-      html += `<td style="${cellStyle}">${escapeHTML(row[header])}</td>`;
+        const cellStyle = `${getColumnStyle(header)} ${getConditionalStyle(header, row[header])}`;
+        html += `<td style="${cellStyle}">${escapeHTML(row[header])}</td>`;
       });
 
       html += "</tr>";
@@ -176,6 +184,8 @@ function getConditionalStyle(header, value) {
     if (!searchId) return true;
 
     const searchBox = document.getElementById(searchId);
+    if (!searchBox) return true;
+
     const searchTerm = searchBox.value.toLowerCase().trim();
 
     if (searchTerm === "") return true;
@@ -195,10 +205,8 @@ function getConditionalStyle(header, value) {
         .filter(input => input.checked)
         .map(input => input.value);
 
-      // If every option is selected, treat this filter as "no restriction".
+      if (inputs.length === 0) return true;
       if (selectedValues.length === inputs.length) return true;
-
-      // If no options are selected, show no rows for this filter.
       if (selectedValues.length === 0) return false;
 
       const rowValues = getFilterValues(row[filter.column]);
@@ -223,6 +231,8 @@ function getConditionalStyle(header, value) {
     if (!searchId) return;
 
     const searchBox = document.getElementById(searchId);
+    if (!searchBox) return;
+
     searchBox.addEventListener("input", applyAllFiltersAndSort);
   }
 
@@ -238,7 +248,7 @@ function getConditionalStyle(header, value) {
     }).join("");
 
     if (!visibleHeaders.includes(sortColumn)) {
-      sortColumn = visibleHeaders[0] || null;
+      sortColumn = visibleHeaders.includes("Rk") ? "Rk" : visibleHeaders[0] || null;
       sortSelect.value = sortColumn;
     }
   }
@@ -252,6 +262,7 @@ function getConditionalStyle(header, value) {
     if (!sortSelect || !sortButton) return;
 
     updateSortDropdown();
+    sortButton.textContent = sortDirection === "asc" ? "A–Z" : "Z–A";
 
     sortSelect.addEventListener("change", () => {
       sortColumn = sortSelect.value;
@@ -294,18 +305,19 @@ function getConditionalStyle(header, value) {
     });
   }
 
-  function updateFilterSelectButton(filter) {
+  function updateFilterSelectAllCheckbox(filter) {
     if (!filter.selectAllId) return;
 
     const container = document.getElementById(filter.targetId);
-    const button = document.getElementById(filter.selectAllId);
+    const selectAllCheckbox = document.getElementById(filter.selectAllId);
 
-    if (!container || !button) return;
+    if (!container || !selectAllCheckbox) return;
 
     const inputs = Array.from(container.querySelectorAll("input"));
-    const allSelected = inputs.length > 0 && inputs.every(input => input.checked);
+    const checkedCount = inputs.filter(input => input.checked).length;
 
-    button.textContent = allSelected ? "Deselect all" : "Select all";
+    selectAllCheckbox.checked = inputs.length > 0 && checkedCount === inputs.length;
+    selectAllCheckbox.indeterminate = checkedCount > 0 && checkedCount < inputs.length;
   }
 
   function updateFilterModeButton(filter) {
@@ -343,27 +355,28 @@ function getConditionalStyle(header, value) {
 
       container.querySelectorAll("input").forEach(input => {
         input.addEventListener("change", () => {
-          updateFilterSelectButton(filter);
+          updateFilterSelectAllCheckbox(filter);
           applyAllFiltersAndSort();
         });
       });
 
-    if (filter.selectAllId) {
-  const selectAllCheckbox = document.getElementById(filter.selectAllId);
+      if (filter.selectAllId) {
+        const selectAllCheckbox = document.getElementById(filter.selectAllId);
 
-  if (selectAllCheckbox) {
-    selectAllCheckbox.addEventListener("change", () => {
-      const inputs = Array.from(container.querySelectorAll("input"));
+        if (selectAllCheckbox) {
+          selectAllCheckbox.addEventListener("change", () => {
+            const inputs = Array.from(container.querySelectorAll("input"));
 
-      inputs.forEach(input => {
-        input.checked = selectAllCheckbox.checked;
-      });
+            inputs.forEach(input => {
+              input.checked = selectAllCheckbox.checked;
+            });
 
-      selectAllCheckbox.indeterminate = false;
-      applyAllFiltersAndSort();
-    });
-  }
-}
+            selectAllCheckbox.indeterminate = false;
+            applyAllFiltersAndSort();
+          });
+        }
+      }
+
       if (filter.modeButtonId) {
         const modeButton = document.getElementById(filter.modeButtonId);
 
@@ -377,7 +390,7 @@ function getConditionalStyle(header, value) {
         }
       }
 
-      updateFilterSelectButton(filter);
+      updateFilterSelectAllCheckbox(filter);
       updateFilterModeButton(filter);
     });
   }
