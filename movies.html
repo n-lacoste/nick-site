@@ -37,6 +37,17 @@
     <div class="filter-row">
   <details class="filter-dropdown">
     <summary>Movie Series</summary>
+
+    <div class="filter-actions">
+      <button id="movie-series-select-toggle" class="filter-button" type="button">
+        Deselect all
+      </button>
+
+      <button id="movie-series-mode" class="filter-button" type="button">
+        CONTAINS EITHER
+      </button>
+    </div>
+
     <div id="movie-series-filter" class="filter-options"></div>
   </details>
 </div>
@@ -69,7 +80,10 @@
   ], "movies-columns", "movies-sort-column", "movies-sort-direction", [
     {
       column: "Movie Series?",
-      targetId: "movie-series-filter"
+      targetId: "movie-series-filter",
+      selectAllId: "movie-series-select-toggle",
+      modeButtonId: "movie-series-mode",
+      mode: "or"
     }
   ]);
 </script>
