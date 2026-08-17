@@ -58,7 +58,37 @@ function getColumnStyle(header) {
   if (columnWidths[header]) {
     style += `min-width: ${columnWidths[header]}; max-width: ${columnWidths[header]};`;
   }
+const tierColors = {
+  "(S)":  { bg: "#efd1ff", text: "#5a3286" },
+  "A1": { bg: "#888ef5", text: "#473821" },
+  "A2": { bg: "#5bc0dd", text: "#215a6c" },
+  "A3": { bg: "#bfe1f6", text: "#0a53a8" },
+  "B1": { bg: "#d4edbc", text: "#11734b" },
+  "B2": { bg: "#ffe5a0", text: "#473821" },
+  "B3": { bg: "#f0c885", text: "#000000" },
+  "C1": { bg: "#ffc8aa", text: "#753800" },
+  "C2": { bg: "#e38451", text: "#000000" },
+  "C3": { bg: "#e36351", text: "#000000" },
+  "D":  { bg: "#ff0000", text: "#000000" },
+  "NR": { bg: "#ffcfc9", text: "#b10202" }
+};
 
+function getConditionalStyle(header, value) {
+  if (header === "Tier") {
+    const tier = String(value ?? "").trim();
+    const colors = tierColors[tier];
+
+    if (colors) {
+      return `
+        background-color: ${colors.bg};
+        color: ${colors.text};
+        font-weight: bold;
+      `;
+    }
+  }
+
+  return "";
+}
   if (columnFontSizes[header]) {
     style += ` font-size: ${columnFontSizes[header]};`;
   }
@@ -94,7 +124,8 @@ function getColumnStyle(header) {
       html += "<tr>";
 
       visibleHeaders.forEach(header => {
-       html += `<td style="${getColumnStyle(header)}">${escapeHTML(row[header])}</td>`;
+      const cellStyle = `${getColumnStyle(header)} ${getConditionalStyle(header, row[header])}`;
+      html += `<td style="${cellStyle}">${escapeHTML(row[header])}</td>`;
       });
 
       html += "</tr>";
