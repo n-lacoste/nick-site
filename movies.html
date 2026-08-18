@@ -70,6 +70,15 @@
         <div id="movies-columns" class="filter-options"></div>
       </details>
 
+      <div class="rating-filter-control">
+        <label for="movies-rating-status">Rating:</label>
+        <select id="movies-rating-status" class="sort-select">
+          <option value="all" selected>All Options</option>
+          <option value="ranked">Only Ranked</option>
+          <option value="unranked">Only Unranked</option>
+        </select>
+      </div>
+      
       <div class="show-control">
         <label for="movies-show-count">Show:</label>
         <select id="movies-show-count" class="sort-select">
@@ -138,7 +147,7 @@
         modeButtonId: "movie-series-mode",
         mode: "or"
       }
-    ], "movies-show-count");
+    ], "movies-show-count","movies-rating-status");
 
     document.getElementById("movies-download-csv").addEventListener("click", () => {
       exportTableToCSV("movies-table", "movies-export.csv");
