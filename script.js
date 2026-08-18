@@ -195,7 +195,9 @@ function formatHeader(header) {
 
     html += "</tr></thead><tbody>";
 
-    rows.slice(0, rowLimit).forEach(row => {
+    const rowsToShow = rowLimit === "All" ? rows : rows.slice(0, rowLimit);
+
+      rowsToShow.forEach(row => {
       html += "<tr>";
 
       visibleHeaders.forEach(header => {
@@ -315,10 +317,15 @@ function setupRowLimit() {
   const rowLimitSelect = document.getElementById(rowLimitId);
   if (!rowLimitSelect) return;
 
-  rowLimit = Number(rowLimitSelect.value) || 100;
+  rowLimit = rowLimitSelect.value === "all"
+    ? "all"
+    : Number(rowLimitSelect.value) || 100;
 
   rowLimitSelect.addEventListener("change", () => {
-    rowLimit = Number(rowLimitSelect.value) || 100;
+    rowLimit = rowLimitSelect.value === "all"
+      ? "all"
+      : Number(rowLimitSelect.value) || 100;
+
     renderTable(currentData);
   });
 }
