@@ -73,7 +73,34 @@ async function loadCSV(
     "D":  { bg: "#ff0000", text: "#000000" },
     "NR": { bg: "#ffcfc9", text: "#b10202" }
   };
+function getRatingColor(value) {
+  const num = Number(String(value ?? "").replace(/,/g, "").trim());
 
+  if (isNaN(num)) return "";
+
+  const clamped = Math.max(0, Math.min(100, num));
+
+  let red;
+  let green;
+
+  if (clamped < 50) {
+    // 0 to 50: red to yellow
+    red = 255;
+    green = Math.round((clamped / 50) * 255);
+  } else {
+    // 50 to 100: yellow to green
+    red = Math.round(255 - ((clamped - 50) / 50) * 255);
+    green = 255;
+  }
+
+  const blue = 0;
+
+  return `
+    background-color: rgb(${red}, ${green}, ${blue});
+    color: #000000;
+    font-weight: bold;
+  `;
+}
   function escapeHTML(value) {
     return String(value ?? "")
       .replaceAll("&", "&amp;")
@@ -97,22 +124,26 @@ async function loadCSV(
     return style;
   }
 
-  function getConditionalStyle(header, value) {
-    if (header === "Tier") {
-      const tier = String(value ?? "").trim();
-      const colors = tierColors[tier];
+ function getConditionalStyle(header, value) {
+  if (header === "Tier") {
+    const tier = String(value ?? "").trim();
+    const colors = tierColors[tier];
 
-      if (colors) {
-        return `
-          background-color: ${colors.bg};
-          color: ${colors.text};
-          font-weight: bold;
-        `;
-      }
+    if (colors) {
+      return `
+        background-color: ${colors.bg};
+        color: ${colors.text};
+        font-weight: bold;
+      `;
     }
-
-    return "";
   }
+
+  if (header === "My Rating") {
+    return getRatingColor(value);
+  }
+
+  return "";
+}
 
   function getFilterValues(value) {
     return String(value ?? "")
