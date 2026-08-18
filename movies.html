@@ -95,24 +95,36 @@
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script src="script.js"></script>
   <script>
-    loadCSV("data/movies.csv", "movies-table", "movies-search", [
-      "Tier",
-      "Rk",
-      "Name",
-      "Year",
-      "Mins.",
-      "h:mm",
-      "My Rating",
-      "Me vs. IMDB",
-      "Watched?",
-      "Updated",
-      "Tags",
-      "Movie Series?",
-      "OMDB_Genre",
-      "OMDB_Director",
-      "OMDB_Actors",
-      "Criterion?"
-    ], "movies-columns", "movies-sort-column", "movies-sort-direction", [
+    loadCSV("data/movies.csv", "movies-table", "movies-search", 
+[
+  "Tier",
+  "Rk",
+  "Name",
+  "Year",
+  "Mins.",
+  "h:mm",
+  "My Rating",
+  "Me vs. IMDB",
+  "Watched?",
+  "Updated",
+  "Tags",
+  "Movie Series?",
+  "OMDB_Genre",
+  "OMDB_Director",
+  "OMDB_Actors",
+  "Criterion?",
+  "Plot",
+  "Main Character(s)",
+  "Side Characters",
+  "Emotion",
+  "Dialogue (Writing)",
+  "Purpose Met",
+  "Cast",
+  "Music & Sound",
+  "Rewatch Value",
+  "Notes (Review)"
+                    ]
+            , "movies-columns", "movies-sort-column", "movies-sort-direction", [
       {
         column: "Movie Series?",
         targetId: "movie-series-filter",
