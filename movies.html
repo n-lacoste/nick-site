@@ -19,72 +19,74 @@
   </header>
 
   <main>
-   <div class="page-topline">
-  <div>
-    <h2>Movies</h2>
-    <p>Film rankings, watchlist data, runtimes, directors, actors, and ratings.</p>
-  </div>
+    <div class="page-topline">
+      <div>
+        <h2>Movies</h2>
+        <p>Film rankings, watchlist data, runtimes, directors, actors, and ratings.</p>
+      </div>
 
-  <p class="last-updated">Last updated: August 17th, 2026</p>
-</div>
-<div class="movie-controls-row">
-  <input 
-    type="text" 
-    id="movies-search" 
-    placeholder="Search movies..."
-    class="search-box"
-  >
-
-  <div class="table-controls">
-    <label for="movies-sort-column">Sort by:</label>
-    <select id="movies-sort-column" class="sort-select"></select>
-    <button id="movies-sort-direction" class="sort-button" type="button">A–Z</button>
-  </div>
-
-  <details class="filter-dropdown">
-    <summary>Movie Series</summary>
-
-    <div class="filter-actions">
-      <button id="movie-series-mode" class="filter-button" type="button">
-        CONTAINS EITHER
-      </button>
+      <p class="last-updated">Last updated: August 17th, 2026</p>
     </div>
 
-    <label class="filter-option select-all-option">
-      <input type="checkbox" id="movie-series-select-all" checked>
-      Select All
-    </label>
+    <div class="movie-controls-row">
+      <input 
+        type="text" 
+        id="movies-search" 
+        placeholder="Search movies..."
+        class="search-box"
+      >
 
-    <div id="movie-series-filter" class="filter-options"></div>
-  </details>
+      <div class="table-controls">
+        <label for="movies-sort-column">Sort by:</label>
+        <select id="movies-sort-column" class="sort-select"></select>
+        <button id="movies-sort-direction" class="sort-button" type="button">A–Z</button>
+      </div>
 
-  <details class="filter-dropdown">
-    <summary>Display Columns</summary>
+      <details class="filter-dropdown">
+        <summary>Movie Series</summary>
 
-    <label class="filter-option select-all-option">
-      <input type="checkbox" id="movies-columns-select-all">
-      Select All
-    </label>
+        <div class="filter-actions">
+          <button id="movie-series-mode" class="filter-button" type="button">
+            CONTAINS EITHER
+          </button>
+        </div>
 
-    <div id="movies-columns" class="filter-options"></div>
-  </details>
+        <label class="filter-option select-all-option">
+          <input type="checkbox" id="movie-series-select-all" checked>
+          Select All
+        </label>
 
-  <div class="show-control">
-    <label for="movies-show-count">Show:</label>
-    <select id="movies-show-count" class="sort-select">
-      <option value="25">25</option>
-      <option value="50">50</option>
-      <option value="100" selected>100</option>
-      <option value="250">250</option>
-    </select>
-  </div>
-  <button id="movies-download-csv" class="download-button" type="button">
-  <svg class="download-icon" viewBox="0 0 24 24" aria-hidden="true">
-    <path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"></path>
-  </svg>
-  .CSV
-</button>
-</div>
+        <div id="movie-series-filter" class="filter-options"></div>
+      </details>
+
+      <details class="filter-dropdown">
+        <summary>Display Columns</summary>
+
+        <label class="filter-option select-all-option">
+          <input type="checkbox" id="movies-columns-select-all">
+          Select All
+        </label>
+
+        <div id="movies-columns" class="filter-options"></div>
+      </details>
+
+      <div class="show-control">
+        <label for="movies-show-count">Show:</label>
+        <select id="movies-show-count" class="sort-select">
+          <option value="25">25</option>
+          <option value="50">50</option>
+          <option value="100" selected>100</option>
+          <option value="250">250</option>
+        </select>
+      </div>
+
+      <button id="movies-download-csv" class="download-button" type="button">
+        <svg class="download-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"></path>
+        </svg>
+        .CSV
+      </button>
+    </div>
     
     <div class="table-wrap">
       <table id="movies-table"></table>
@@ -119,12 +121,11 @@
         modeButtonId: "movie-series-mode",
         mode: "or"
       }
-      ], "movies-show-count");
-    <script>
-  document.getElementById("movies-download-csv").addEventListener("click", () => {
-    exportTableToCSV("movies-table", "movies-export.csv");
-  });
-</script>
+    ], "movies-show-count");
+
+    document.getElementById("movies-download-csv").addEventListener("click", () => {
+      exportTableToCSV("movies-table", "movies-export.csv");
+    });
   </script>
 </body>
 </html>
