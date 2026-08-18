@@ -7,7 +7,8 @@ async function loadCSV(
   sortColumnId = null,
   sortDirectionId = null,
   filters = [],
-  rowLimitId = null
+  rowLimitId = null,
+  ratingStatusId = null
 ) {
   const response = await fetch(filePath);
   const text = await response.text();
@@ -347,7 +348,39 @@ function getConditionalStyle(header, value) {
       String(row[header] ?? "").toLowerCase().includes(searchTerm)
     );
   }
-
+function isRanked(row) {
+      const rating = String(row["My Rating"] ?? "").trim();
+    
+      return rating !== "" && rating !== "--";
+    }
+    
+    function rowMatchesRatingStatus(row) {
+      if (!ratingStatusId) return true;
+    
+      const ratingSelect = document.getElementById(ratingStatusId);
+      if (!ratingSelect) return true;
+    
+      const status = ratingSelect.value;
+    
+      if (status === "ranked") {
+        return isRanked(row);
+      }
+    
+      if (status === "unranked") {
+        return !isRanked(row);
+      }
+    
+      return true;
+    }
+    
+    function setupRatingStatusFilter() {
+      if (!ratingStatusId) return;
+    
+      const ratingSelect = document.getElementById(ratingStatusId);
+      if (!ratingSelect) return;
+    
+      ratingSelect.addEventListener("change", applyAllFiltersAndSort);
+  }
   function rowMatchesFilters(row) {
     return filters.every(filter => {
       const container = document.getElementById(filter.targetId);
@@ -373,8 +406,10 @@ function getConditionalStyle(header, value) {
   }
 
   function applyAllFiltersAndSort() {
-    currentData = data.filter(row =>
-      rowMatchesSearch(row) && rowMatchesFilters(row)
+   currentData = data.filter(row =>
+      rowMatchesSearch(row) &&
+      rowMatchesFilters(row) &&
+      rowMatchesRatingStatus(row)
     );
 
     applySort();
@@ -647,6 +682,7 @@ setupColumnPicker();
 setupColumnSummaryToggle();
 setupFilters();
 setupRowLimit();
+setupRatingStatusFilter();
 
 applyAllFiltersAndSort();
 }
