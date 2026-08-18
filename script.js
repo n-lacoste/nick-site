@@ -195,7 +195,7 @@ function formatHeader(header) {
 
     html += "</tr></thead><tbody>";
 
-    const rowsToShow = rowLimit === "All" ? rows : rows.slice(0, rowLimit);
+    const rowsToShow = rowLimit === "all" ? rows : rows.slice(0, rowLimit);
 
       rowsToShow.forEach(row => {
       html += "<tr>";
