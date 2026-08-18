@@ -80,23 +80,30 @@ function getRatingColor(value) {
 
   const clamped = Math.max(0, Math.min(100, num));
 
-  let red;
-  let green;
+  const redColor = { r: 204, g: 0, b: 0 };      // #cc0000
+  const yellowColor = { r: 255, g: 217, b: 102 }; // #ffd966
+  const greenColor = { r: 87, g: 187, b: 138 };   // #57bb8a
 
-  if (clamped < 50) {
-    // 0 to 50: red to yellow
-    red = 255;
-    green = Math.round((clamped / 50) * 255);
+  let start;
+  let end;
+  let percent;
+
+  if (clamped <= 50) {
+    start = redColor;
+    end = yellowColor;
+    percent = clamped / 50;
   } else {
-    // 50 to 100: yellow to green
-    red = Math.round(255 - ((clamped - 50) / 50) * 255);
-    green = 255;
+    start = yellowColor;
+    end = greenColor;
+    percent = (clamped - 50) / 50;
   }
 
-  const blue = 0;
+  const r = Math.round(start.r + (end.r - start.r) * percent);
+  const g = Math.round(start.g + (end.g - start.g) * percent);
+  const b = Math.round(start.b + (end.b - start.b) * percent);
 
   return `
-    background-color: rgb(${red}, ${green}, ${blue});
+    background-color: rgb(${r}, ${g}, ${b});
     color: #000000;
     font-weight: bold;
   `;
