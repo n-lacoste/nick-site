@@ -43,19 +43,35 @@ async function loadCSV(
     "Rk": "70px",
     "Name": "240px",
     "OMDB_Plot": "420px",
-    "Plot": "420px",
     "Notes (Review)": "500px",
     "OMDB_Actors": "360px",
     "OMDB_Director": "220px",
     "OMDB_Genre": "220px",
     "Main Character(s)": "300px",
-    "Side Characters": "300px"
+    "Side Characters": "300px",
+    "Plot": "115px",
+    "Main Character(s)": "115px",
+    "Side Characters": "115px",
+    "Emotion": "115px",
+    "Dialogue (Writing)": "115px",
+    "Purpose Met": "115px",
+    "Cast": "115px",
+    "Music & Sound": "115px",
+    "Rewatch Value": "115px",
   };
 
   const columnFontSizes = {
     "Notes (Review)": "13px",
-    "Plot": "13px",
-    "OMDB_Plot": "13px"
+    "OMDB_Plot": "13px",
+    "Plot": "12px",
+    "Main Character(s)": "12px",
+    "Side Characters": "12px",
+    "Emotion": "12px",
+    "Dialogue (Writing)": "12px",
+    "Purpose Met": "12px",
+    "Cast": "12px",
+    "Music & Sound": "12px",
+    "Rewatch Value": "12px",
   };
 
   const tierColors = {
