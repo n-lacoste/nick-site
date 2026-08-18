@@ -368,7 +368,8 @@ flex-wrap: wrap;
 
 .movie-controls-row .search-box {
 margin-top: 0;
-max-width: 300px;
+max-width: 200px;
+margin-left: auto;
 }
 
 .movie-controls-row .table-controls {
