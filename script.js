@@ -419,6 +419,7 @@ function setupRowLimit() {
         ).map(checkbox => checkbox.value);
 
         updateColumnPickerSelectAll();
+        updateColumnSummary();
         updateSortDropdown();
         renderTable(currentData);
       });
@@ -437,6 +438,7 @@ function setupRowLimit() {
         ).map(checkbox => checkbox.value);
 
         selectAllCheckbox.indeterminate = false;
+        updateColumnSummary();
         updateSortDropdown();
         renderTable(currentData);
       });
@@ -444,7 +446,43 @@ function setupRowLimit() {
 
     updateColumnPickerSelectAll();
   }
+function updateColumnSummary() {
+  if (!columnPickerId) return;
 
+  const dropdown = document.getElementById(`${columnPickerId}-dropdown`);
+  const summary = document.getElementById("column-summary");
+  const visibleSpan = document.getElementById("visible-columns-summary");
+  const hiddenSpan = document.getElementById("hidden-columns-summary");
+
+  if (!dropdown || !summary || !visibleSpan || !hiddenSpan) return;
+
+  if (!dropdown.open) {
+    summary.hidden = true;
+    return;
+  }
+
+  const hiddenHeaders = allHeaders.filter(header => !visibleHeaders.includes(header));
+
+  visibleSpan.textContent = visibleHeaders.length
+    ? visibleHeaders.join("; ")
+    : "None";
+
+  hiddenSpan.textContent = hiddenHeaders.length
+    ? hiddenHeaders.join("; ")
+    : "None";
+
+  summary.hidden = false;
+}
+
+function setupColumnSummaryToggle() {
+  if (!columnPickerId) return;
+
+  const dropdown = document.getElementById(`${columnPickerId}-dropdown`);
+  if (!dropdown) return;
+
+  dropdown.addEventListener("toggle", updateColumnSummary);
+  updateColumnSummary();
+}
   function updateFilterSelectAllCheckbox(filter) {
     if (!filter.selectAllId) return;
 
@@ -535,11 +573,12 @@ function setupRowLimit() {
     });
   }
 
-  setupSearch();
-  setupSortControls();
-  setupColumnPicker();
-  setupFilters();
-  setupRowLimit();
+setupSearch();
+setupSortControls();
+setupColumnPicker();
+setupColumnSummaryToggle();
+setupFilters();
+setupRowLimit();
 
-  applyAllFiltersAndSort();
+applyAllFiltersAndSort();
 }
