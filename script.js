@@ -39,17 +39,15 @@ async function loadCSV(
   let sortDirection = "asc";
   let rowLimit = 100;
 
+  const expandableColumns = ["Notes (Review)", "OMDB_Plot"];
+  let expandedCellCounter = 0;
+  const expandedCellStore = {};
+
   const columnWidths = {
     "Tier": "80px",
     "Rk": "70px",
     "Name": "240px",
-    "OMDB_Plot": "420px",
-    "Notes (Review)": "500px",
-    "OMDB_Actors": "360px",
-    "OMDB_Director": "220px",
-    "OMDB_Genre": "220px",
-    "Main Character(s)": "300px",
-    "Side Characters": "300px",
+
     "Plot": "50px",
     "Main Character(s)": "50px",
     "Side Characters": "50px",
@@ -59,11 +57,18 @@ async function loadCSV(
     "Cast": "50px",
     "Music & Sound": "50px",
     "Rewatch Value": "50px",
+
+    "Notes (Review)": "500px",
+    "OMDB_Plot": "420px",
+    "OMDB_Actors": "360px",
+    "OMDB_Director": "220px",
+    "OMDB_Genre": "220px"
   };
 
   const columnFontSizes = {
     "Notes (Review)": "13px",
     "OMDB_Plot": "13px",
+
     "Plot": "12px",
     "Main Character(s)": "12px",
     "Side Characters": "12px",
@@ -72,7 +77,7 @@ async function loadCSV(
     "Purpose Met": "12px",
     "Cast": "12px",
     "Music & Sound": "12px",
-    "Rewatch Value": "12px",
+    "Rewatch Value": "12px"
   };
 
   const tierColors = {
@@ -90,106 +95,43 @@ async function loadCSV(
     "D":  { bg: "#ff0000", text: "#000000" },
     "NR": { bg: "#ffcfc9", text: "#b10202" }
   };
+
   const factorColumns = [
-  "Plot",
-  "Main Character(s)",
-  "Side Characters",
-  "Emotion",
-  "Dialogue (Writing)",
-  "Purpose Met",
-  "Cast",
-  "Music & Sound",
-  "Rewatch Value"
-];
+    "Plot",
+    "Main Character(s)",
+    "Side Characters",
+    "Emotion",
+    "Dialogue (Writing)",
+    "Purpose Met",
+    "Cast",
+    "Music & Sound",
+    "Rewatch Value"
+  ];
 
-const factorColors = {
-  "10":  { bg: "#11734b", text: "#ffffff" },
-  "9.5": { bg: "#029458", text: "#ffffff" },
-  "9":   { bg: "#5ea818", text: "#ffffff" },
-  "8.5": { bg: "#b1d98b", text: "#11734b" },
-  "8":   { bg: "#d4edbc", text: "#11734b" },
-  "7.5": { bg: "#d1dd4a", text: "#473821" },
-  "7":   { bg: "#dff08f", text: "#473821" },
-  "6.5": { bg: "#efff82", text: "#473821" },
-  "6":   { bg: "#f1f151", text: "#000000" },
-  "5.5": { bg: "#fff375", text: "#473821" },
-  "5":   { bg: "#ffe5a0", text: "#473821" },
-  "4.5": { bg: "#e3bd60", text: "#7c4300" },
-  "4":   { bg: "#d79900", text: "#753800" },
-  "3.5": { bg: "#f8a67a", text: "#753800" },
-  "3":   { bg: "#ffc8aa", text: "#753800" },
-  "2.5": { bg: "#ffcfc9", text: "#b10202" },
-  "2":   { bg: "#f86666", text: "#ffcfc9" },
-  "1.5": { bg: "#b10202", text: "#ffcfc9" },
-  "1":   { bg: "#5d0202", text: "#ffcfc9" },
-  "0":   { bg: "#3d3d3d", text: "#e5e5e5" },
-  "--":  { bg: "#e8e8e8", text: "#1a74a6" }
-};
+  const factorColors = {
+    "10":  { bg: "#11734b", text: "#ffffff" },
+    "9.5": { bg: "#029458", text: "#ffffff" },
+    "9":   { bg: "#5ea818", text: "#ffffff" },
+    "8.5": { bg: "#b1d98b", text: "#11734b" },
+    "8":   { bg: "#d4edbc", text: "#11734b" },
+    "7.5": { bg: "#d1dd4a", text: "#473821" },
+    "7":   { bg: "#dff08f", text: "#473821" },
+    "6.5": { bg: "#efff82", text: "#473821" },
+    "6":   { bg: "#f1f151", text: "#000000" },
+    "5.5": { bg: "#fff375", text: "#473821" },
+    "5":   { bg: "#ffe5a0", text: "#473821" },
+    "4.5": { bg: "#e3bd60", text: "#7c4300" },
+    "4":   { bg: "#d79900", text: "#753800" },
+    "3.5": { bg: "#f8a67a", text: "#753800" },
+    "3":   { bg: "#ffc8aa", text: "#753800" },
+    "2.5": { bg: "#ffcfc9", text: "#b10202" },
+    "2":   { bg: "#f86666", text: "#ffcfc9" },
+    "1.5": { bg: "#b10202", text: "#ffcfc9" },
+    "1":   { bg: "#5d0202", text: "#ffcfc9" },
+    "0":   { bg: "#3d3d3d", text: "#e5e5e5" },
+    "--":  { bg: "#e8e8e8", text: "#1a74a6" }
+  };
 
-function normalizeFactorValue(value) {
-  const text = String(value ?? "").trim();
-
-  if (text === "") return "";
-  if (text === "--") return "--";
-
-  const num = Number(text);
-
-  if (!isNaN(num)) {
-    return Number.isInteger(num) ? String(num) : String(num);
-  }
-
-  return text;
-}
-
-function getFactorStyle(header, value) {
-  if (!factorColumns.includes(header)) return "";
-
-  const factorValue = normalizeFactorValue(value);
-  const colors = factorColors[factorValue];
-
-  if (!colors) return "";
-
-  return `
-    background-color: ${colors.bg};
-    color: ${colors.text};
-    font-weight: bold;
-  `;
-}
-function getRatingColor(value) {
-  const num = Number(String(value ?? "").replace(/,/g, "").trim());
-
-  if (isNaN(num)) return "";
-
-  const clamped = Math.max(0, Math.min(100, num));
-
-  const redColor = { r: 204, g: 0, b: 0 };      // #cc0000
-  const yellowColor = { r: 255, g: 217, b: 102 }; // #ffd966
-  const greenColor = { r: 87, g: 187, b: 138 };   // #57bb8a
-
-  let start;
-  let end;
-  let percent;
-
-  if (clamped <= 50) {
-    start = redColor;
-    end = yellowColor;
-    percent = clamped / 50;
-  } else {
-    start = yellowColor;
-    end = greenColor;
-    percent = (clamped - 50) / 50;
-  }
-
-  const r = Math.round(start.r + (end.r - start.r) * percent);
-  const g = Math.round(start.g + (end.g - start.g) * percent);
-  const b = Math.round(start.b + (end.b - start.b) * percent);
-
-  return `
-    background-color: rgb(${r}, ${g}, ${b});
-    color: #000000;
-    font-weight: bold;
-  `;
-}
   function escapeHTML(value) {
     return String(value ?? "")
       .replaceAll("&", "&amp;")
@@ -198,23 +140,44 @@ function getRatingColor(value) {
       .replaceAll('"', "&quot;")
       .replaceAll("'", "&#039;");
   }
-function formatHeader(header) {
-  const headerBreaks = {
-    "Main Character(s)": "Main<br>Character(s)",
-    "Side Characters": "Side<br>Characters",
-    "Dialogue (Writing)": "Dialogue<br>(Writing)",
-    "Purpose Met": "Purpose<br>Met",
-    "Music & Sound": "Music &<br>Sound",
-    "Rewatch Value": "Rewatch<br>Value"
-  };
 
-  return headerBreaks[header] || escapeHTML(header);
-}
+  function formatHeader(header) {
+    const headerBreaks = {
+      "Main Character(s)": "Main<br>Character(s)",
+      "Side Characters": "Side<br>Characters",
+      "Dialogue (Writing)": "Dialogue<br>(Writing)",
+      "Purpose Met": "Purpose<br>Met",
+      "Music & Sound": "Music &<br>Sound",
+      "Rewatch Value": "Rewatch<br>Value"
+    };
+
+    return headerBreaks[header] || escapeHTML(header);
+  }
+
+  function formatCellValue(header, value) {
+    const text = String(value ?? "");
+
+    if (header === "Tags") {
+      return text
+        .split(/[;,|]/)
+        .map(tag => tag.trim())
+        .filter(tag => tag !== "")
+        .map(tag => escapeHTML(tag))
+        .join("<br>");
+    }
+
+    return escapeHTML(text);
+  }
+
   function getColumnStyle(header) {
     let style = "";
 
     if (columnWidths[header]) {
-      style += `min-width: ${columnWidths[header]}; max-width: ${columnWidths[header]};`;
+      style += `
+        width: ${columnWidths[header]};
+        min-width: ${columnWidths[header]};
+        max-width: ${columnWidths[header]};
+      `;
     }
 
     if (columnFontSizes[header]) {
@@ -224,30 +187,97 @@ function formatHeader(header) {
     return style;
   }
 
-function getConditionalStyle(header, value) {
-  if (header === "Tier") {
-    const tier = String(value ?? "").trim();
-    const colors = tierColors[tier];
+  function getRatingColor(value) {
+    const num = Number(String(value ?? "").replace(/,/g, "").trim());
 
-    if (colors) {
-      return `
-        background-color: ${colors.bg};
-        color: ${colors.text};
-        font-weight: bold;
-      `;
+    if (isNaN(num)) return "";
+
+    const clamped = Math.max(0, Math.min(100, num));
+
+    const redColor = { r: 204, g: 0, b: 0 };
+    const yellowColor = { r: 255, g: 217, b: 102 };
+    const greenColor = { r: 87, g: 187, b: 138 };
+
+    let start;
+    let end;
+    let percent;
+
+    if (clamped <= 50) {
+      start = redColor;
+      end = yellowColor;
+      percent = clamped / 50;
+    } else {
+      start = yellowColor;
+      end = greenColor;
+      percent = (clamped - 50) / 50;
     }
+
+    const r = Math.round(start.r + (end.r - start.r) * percent);
+    const g = Math.round(start.g + (end.g - start.g) * percent);
+    const b = Math.round(start.b + (end.b - start.b) * percent);
+
+    return `
+      background-color: rgb(${r}, ${g}, ${b});
+      color: #000000;
+      font-weight: bold;
+    `;
   }
 
-  if (header === "My Rating") {
-    return getRatingColor(value);
+  function normalizeFactorValue(value) {
+    const text = String(value ?? "").trim();
+
+    if (text === "") return "";
+    if (text === "--") return "--";
+
+    const num = Number(text);
+
+    if (!isNaN(num)) {
+      return Number.isInteger(num) ? String(num) : String(num);
+    }
+
+    return text;
   }
 
-  if (factorColumns.includes(header)) {
-    return getFactorStyle(header, value);
+  function getFactorStyle(header, value) {
+    if (!factorColumns.includes(header)) return "";
+
+    const factorValue = normalizeFactorValue(value);
+    const colors = factorColors[factorValue];
+
+    if (!colors) return "";
+
+    return `
+      background-color: ${colors.bg};
+      color: ${colors.text};
+      font-weight: bold;
+    `;
   }
 
-  return "";
-}
+  function getConditionalStyle(header, value) {
+    if (header === "Tier") {
+      const tier = String(value ?? "").trim();
+      const colors = tierColors[tier];
+
+      if (colors) {
+        return `
+          background-color: ${colors.bg};
+          color: ${colors.text};
+          font-weight: bold;
+        `;
+      }
+    }
+
+    if (header === "My Rating") {
+      return getRatingColor(value);
+    }
+
+    if (factorColumns.includes(header)) {
+      return getFactorStyle(header, value);
+    }
+
+    return "";
+  }
+
   function getFilterValues(value) {
     return String(value ?? "")
       .split(/[;,|]/)
@@ -255,23 +285,94 @@ function getConditionalStyle(header, value) {
       .filter(v => v !== "");
   }
 
+  function clearExpandedCellStore() {
+    expandedCellCounter = 0;
+
+    Object.keys(expandedCellStore).forEach(key => {
+      delete expandedCellStore[key];
+    });
+  }
+
+  function renderExpandableCell(header, value) {
+    const text = String(value ?? "").trim();
+
+    if (text === "") return "";
+
+    const cellId = `cell-${expandedCellCounter++}`;
+
+    expandedCellStore[cellId] = {
+      title: header,
+      text: text
+    };
+
+    return `
+      <div class="expandable-cell">
+        <button class="cell-expand-button" type="button" data-cell-id="${cellId}">+</button>
+        <span class="cell-preview">${escapeHTML(text)}</span>
+      </div>
+    `;
+  }
+
+  function setupExpandableCells() {
+    table.querySelectorAll(".cell-expand-button").forEach(button => {
+      button.addEventListener("click", () => {
+        const cellData = expandedCellStore[button.dataset.cellId];
+        if (!cellData) return;
+
+        const modal = document.getElementById("cell-modal");
+        const modalTitle = document.getElementById("cell-modal-title");
+        const modalText = document.getElementById("cell-modal-text");
+
+        if (!modal || !modalTitle || !modalText) return;
+
+        modalTitle.textContent = cellData.title;
+        modalText.textContent = cellData.text;
+        modal.hidden = false;
+      });
+    });
+
+    const closeButton = document.getElementById("cell-modal-close");
+    const modal = document.getElementById("cell-modal");
+
+    if (closeButton && modal && !closeButton.dataset.ready) {
+      closeButton.addEventListener("click", () => {
+        modal.hidden = true;
+      });
+
+      modal.addEventListener("click", event => {
+        if (event.target === modal) {
+          modal.hidden = true;
+        }
+      });
+
+      closeButton.dataset.ready = "true";
+    }
+  }
+
   function renderTable(rows) {
+    clearExpandedCellStore();
+
     let html = "<thead><tr>";
 
     visibleHeaders.forEach(header => {
-    html += `<th data-column="${escapeHTML(header)}" style="${getColumnStyle(header)}">${formatHeader(header)}</th>`;    
+      html += `<th data-column="${escapeHTML(header)}" style="${getColumnStyle(header)}">${formatHeader(header)}</th>`;
     });
 
     html += "</tr></thead><tbody>";
 
     const rowsToShow = rowLimit === "all" ? rows : rows.slice(0, rowLimit);
 
-      rowsToShow.forEach(row => {
+    rowsToShow.forEach(row => {
       html += "<tr>";
 
       visibleHeaders.forEach(header => {
         const cellStyle = `${getColumnStyle(header)} ${getConditionalStyle(header, row[header])}`;
-        html += `<td style="${cellStyle}">${escapeHTML(row[header])}</td>`;
+
+        const cellContent = expandableColumns.includes(header)
+          ? renderExpandableCell(header, row[header])
+          : formatCellValue(header, row[header]);
+
+        html += `<td style="${cellStyle}">${cellContent}</td>`;
       });
 
       html += "</tr>";
@@ -280,29 +381,31 @@ function getConditionalStyle(header, value) {
     html += "</tbody>";
     table.innerHTML = html;
 
-   table.querySelectorAll("th").forEach(th => {
-  th.addEventListener("click", () => {
-    const clickedColumn = th.dataset.column;
+    table.querySelectorAll("th").forEach(th => {
+      th.addEventListener("click", () => {
+        const clickedColumn = th.dataset.column;
 
-    if (sortColumn === clickedColumn) {
-      sortDirection = sortDirection === "asc" ? "desc" : "asc";
-    } else {
-      sortColumn = clickedColumn;
-      sortDirection = "asc";
-    }
+        if (sortColumn === clickedColumn) {
+          sortDirection = sortDirection === "asc" ? "desc" : "asc";
+        } else {
+          sortColumn = clickedColumn;
+          sortDirection = "asc";
+        }
 
-    const sortButton = sortDirectionId
-      ? document.getElementById(sortDirectionId)
-      : null;
+        const sortButton = sortDirectionId
+          ? document.getElementById(sortDirectionId)
+          : null;
 
-    if (sortButton) {
-      sortButton.textContent = sortDirection === "asc" ? "A–Z" : "Z–A";
-    }
+        if (sortButton) {
+          sortButton.textContent = sortDirection === "asc" ? "A–Z" : "Z–A";
+        }
 
-    applySort();
-    updateSortDropdown();
-  });
-});
+        applySort();
+        updateSortDropdown();
+      });
+    });
+
+    setupExpandableCells();
   }
 
   function applySort() {
@@ -348,39 +451,31 @@ function getConditionalStyle(header, value) {
       String(row[header] ?? "").toLowerCase().includes(searchTerm)
     );
   }
-function isRanked(row) {
-      const rating = String(row["My Rating"] ?? "").trim();
-    
-      return rating !== "" && rating !== "--";
-    }
-    
-    function rowMatchesRatingStatus(row) {
-      if (!ratingStatusId) return true;
-    
-      const ratingSelect = document.getElementById(ratingStatusId);
-      if (!ratingSelect) return true;
-    
-      const status = ratingSelect.value;
-    
-      if (status === "ranked") {
-        return isRanked(row);
-      }
-    
-      if (status === "unranked") {
-        return !isRanked(row);
-      }
-    
-      return true;
-    }
-    
-    function setupRatingStatusFilter() {
-      if (!ratingStatusId) return;
-    
-      const ratingSelect = document.getElementById(ratingStatusId);
-      if (!ratingSelect) return;
-    
-      ratingSelect.addEventListener("change", applyAllFiltersAndSort);
+
+  function isRanked(row) {
+    const rating = String(row["My Rating"] ?? "").trim();
+    return rating !== "" && rating !== "--";
   }
+
+  function rowMatchesRatingStatus(row) {
+    if (!ratingStatusId) return true;
+
+    const ratingSelect = document.getElementById(ratingStatusId);
+    if (!ratingSelect) return true;
+
+    const status = ratingSelect.value;
+
+    if (status === "ranked") {
+      return isRanked(row);
+    }
+
+    if (status === "unranked") {
+      return !isRanked(row);
+    }
+
+    return true;
+  }
+
   function rowMatchesFilters(row) {
     return filters.every(filter => {
       const container = document.getElementById(filter.targetId);
@@ -406,7 +501,7 @@ function isRanked(row) {
   }
 
   function applyAllFiltersAndSort() {
-   currentData = data.filter(row =>
+    currentData = data.filter(row =>
       rowMatchesSearch(row) &&
       rowMatchesFilters(row) &&
       rowMatchesRatingStatus(row)
@@ -414,24 +509,7 @@ function isRanked(row) {
 
     applySort();
   }
-function setupRowLimit() {
-  if (!rowLimitId) return;
 
-  const rowLimitSelect = document.getElementById(rowLimitId);
-  if (!rowLimitSelect) return;
-
-  rowLimit = rowLimitSelect.value === "all"
-    ? "all"
-    : Number(rowLimitSelect.value) || 100;
-
-  rowLimitSelect.addEventListener("change", () => {
-    rowLimit = rowLimitSelect.value === "all"
-      ? "all"
-      : Number(rowLimitSelect.value) || 100;
-
-    renderTable(currentData);
-  });
-}
   function setupSearch() {
     if (!searchId) return;
 
@@ -439,6 +517,34 @@ function setupRowLimit() {
     if (!searchBox) return;
 
     searchBox.addEventListener("input", applyAllFiltersAndSort);
+  }
+
+  function setupRowLimit() {
+    if (!rowLimitId) return;
+
+    const rowLimitSelect = document.getElementById(rowLimitId);
+    if (!rowLimitSelect) return;
+
+    rowLimit = rowLimitSelect.value === "all"
+      ? "all"
+      : Number(rowLimitSelect.value) || 100;
+
+    rowLimitSelect.addEventListener("change", () => {
+      rowLimit = rowLimitSelect.value === "all"
+        ? "all"
+        : Number(rowLimitSelect.value) || 100;
+
+      renderTable(currentData);
+    });
+  }
+
+  function setupRatingStatusFilter() {
+    if (!ratingStatusId) return;
+
+    const ratingSelect = document.getElementById(ratingStatusId);
+    if (!ratingSelect) return;
+
+    ratingSelect.addEventListener("change", applyAllFiltersAndSort);
   }
 
   function updateSortDropdown() {
@@ -549,43 +655,45 @@ function setupRowLimit() {
 
     updateColumnPickerSelectAll();
   }
-function updateColumnSummary() {
-  if (!columnPickerId) return;
 
-  const dropdown = document.getElementById(`${columnPickerId}-dropdown`);
-  const summary = document.getElementById("column-summary");
-  const visibleSpan = document.getElementById("visible-columns-summary");
-  const hiddenSpan = document.getElementById("hidden-columns-summary");
+  function updateColumnSummary() {
+    if (!columnPickerId) return;
 
-  if (!dropdown || !summary || !visibleSpan || !hiddenSpan) return;
+    const dropdown = document.getElementById(`${columnPickerId}-dropdown`);
+    const summary = document.getElementById("column-summary");
+    const visibleSpan = document.getElementById("visible-columns-summary");
+    const hiddenSpan = document.getElementById("hidden-columns-summary");
 
-  if (!dropdown.open) {
-    summary.hidden = true;
-    return;
+    if (!dropdown || !summary || !visibleSpan || !hiddenSpan) return;
+
+    if (!dropdown.open) {
+      summary.hidden = true;
+      return;
+    }
+
+    const hiddenHeaders = allHeaders.filter(header => !visibleHeaders.includes(header));
+
+    visibleSpan.textContent = visibleHeaders.length
+      ? visibleHeaders.join("; ")
+      : "None";
+
+    hiddenSpan.textContent = hiddenHeaders.length
+      ? hiddenHeaders.join("; ")
+      : "None";
+
+    summary.hidden = false;
   }
 
-  const hiddenHeaders = allHeaders.filter(header => !visibleHeaders.includes(header));
+  function setupColumnSummaryToggle() {
+    if (!columnPickerId) return;
 
-  visibleSpan.textContent = visibleHeaders.length
-    ? visibleHeaders.join("; ")
-    : "None";
+    const dropdown = document.getElementById(`${columnPickerId}-dropdown`);
+    if (!dropdown) return;
 
-  hiddenSpan.textContent = hiddenHeaders.length
-    ? hiddenHeaders.join("; ")
-    : "None";
+    dropdown.addEventListener("toggle", updateColumnSummary);
+    updateColumnSummary();
+  }
 
-  summary.hidden = false;
-}
-
-function setupColumnSummaryToggle() {
-  if (!columnPickerId) return;
-
-  const dropdown = document.getElementById(`${columnPickerId}-dropdown`);
-  if (!dropdown) return;
-
-  dropdown.addEventListener("toggle", updateColumnSummary);
-  updateColumnSummary();
-}
   function updateFilterSelectAllCheckbox(filter) {
     if (!filter.selectAllId) return;
 
@@ -676,13 +784,41 @@ function setupColumnSummaryToggle() {
     });
   }
 
-setupSearch();
-setupSortControls();
-setupColumnPicker();
-setupColumnSummaryToggle();
-setupFilters();
-setupRowLimit();
-setupRatingStatusFilter();
+  setupSearch();
+  setupSortControls();
+  setupColumnPicker();
+  setupColumnSummaryToggle();
+  setupFilters();
+  setupRowLimit();
+  setupRatingStatusFilter();
 
-applyAllFiltersAndSort();
+  applyAllFiltersAndSort();
+}
+
+function exportTableToCSV(tableId, filename) {
+  const table = document.getElementById(tableId);
+  if (!table) return;
+
+  const rows = Array.from(table.querySelectorAll("tr"));
+
+  const csv = rows.map(row => {
+    const cells = Array.from(row.querySelectorAll("th, td"));
+
+    return cells.map(cell => {
+      const value = cell.innerText.replace(/\r?\n/g, "\n").trim();
+      return `"${value.replace(/"/g, '""')}"`;
+    }).join(",");
+  }).join("\n");
+
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  URL.revokeObjectURL(url);
 }
