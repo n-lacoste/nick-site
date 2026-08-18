@@ -120,6 +120,11 @@
         mode: "or"
       }
       ], "movies-show-count");
+    <script>
+  document.getElementById("movies-download-csv").addEventListener("click", () => {
+    exportTableToCSV("movies-table", "movies-export.csv");
+  });
+</script>
   </script>
 </body>
 </html>
