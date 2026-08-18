@@ -59,7 +59,7 @@
         <div id="movie-series-filter" class="filter-options"></div>
       </details>
 
-      <details class="filter-dropdown">
+      <details id="movies-columns-dropdown" class="filter-dropdown">
         <summary>Display Columns</summary>
 
         <label class="filter-option select-all-option">
@@ -86,6 +86,11 @@
           <path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"></path>
         </svg>
       </button>
+    </div>
+    
+    <div id="column-summary" class="column-summary" hidden>
+        <p><strong>Summary of displayed columns:</strong> <span id="visible-columns-summary"></span></p>
+        <p><strong>Not visible:</strong> <span id="hidden-columns-summary"></span></p>
     </div>
     
     <div class="table-wrap">
