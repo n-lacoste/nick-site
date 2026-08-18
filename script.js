@@ -6,7 +6,8 @@ async function loadCSV(
   columnPickerId = null,
   sortColumnId = null,
   sortDirectionId = null,
-  filters = []
+  filters = [],
+  rowLimitId = null
 ) {
   const response = await fetch(filePath);
   const text = await response.text();
@@ -35,6 +36,7 @@ async function loadCSV(
   let currentData = [...data];
   let sortColumn = visibleHeaders.includes("Rk") ? "Rk" : visibleHeaders[0] || null;
   let sortDirection = "asc";
+  let rowLimit = 100;
 
   const columnWidths = {
     "Tier": "80px",
@@ -128,7 +130,7 @@ async function loadCSV(
 
     html += "</tr></thead><tbody>";
 
-    rows.forEach(row => {
+    rows.slice(0, rowLimit).forEach(row => {
       html += "<tr>";
 
       visibleHeaders.forEach(header => {
@@ -242,7 +244,19 @@ async function loadCSV(
 
     applySort();
   }
+function setupRowLimit() {
+  if (!rowLimitId) return;
 
+  const rowLimitSelect = document.getElementById(rowLimitId);
+  if (!rowLimitSelect) return;
+
+  rowLimit = Number(rowLimitSelect.value) || 100;
+
+  rowLimitSelect.addEventListener("change", () => {
+    rowLimit = Number(rowLimitSelect.value) || 100;
+    renderTable(currentData);
+  });
+}
   function setupSearch() {
     if (!searchId) return;
 
@@ -453,6 +467,7 @@ async function loadCSV(
   setupSortControls();
   setupColumnPicker();
   setupFilters();
+  setupRowLimit();
 
   applyAllFiltersAndSort();
 }
