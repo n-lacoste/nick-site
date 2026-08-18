@@ -89,6 +89,71 @@ async function loadCSV(
     "D":  { bg: "#ff0000", text: "#000000" },
     "NR": { bg: "#ffcfc9", text: "#b10202" }
   };
+  const factorColumns = [
+  "Plot",
+  "Main Character(s)",
+  "Side Characters",
+  "Emotion",
+  "Dialogue (Writing)",
+  "Purpose Met",
+  "Cast",
+  "Music & Sound",
+  "Rewatch Value"
+];
+
+const factorColors = {
+  "10":  { bg: "#11734b", text: "#ffffff" },
+  "9.5": { bg: "#029458", text: "#ffffff" },
+  "9":   { bg: "#5ea818", text: "#ffffff" },
+  "8.5": { bg: "#b1d98b", text: "#11734b" },
+  "8":   { bg: "#d4edbc", text: "#11734b" },
+  "7.5": { bg: "#d1dd4a", text: "#473821" },
+  "7":   { bg: "#dff08f", text: "#473821" },
+  "6.5": { bg: "#efff82", text: "#473821" },
+  "6":   { bg: "#f1f151", text: "#000000" },
+  "5.5": { bg: "#fff375", text: "#473821" },
+  "5":   { bg: "#ffe5a0", text: "#473821" },
+  "4.5": { bg: "#e3bd60", text: "#7c4300" },
+  "4":   { bg: "#d79900", text: "#753800" },
+  "3.5": { bg: "#f8a67a", text: "#753800" },
+  "3":   { bg: "#ffc8aa", text: "#753800" },
+  "2.5": { bg: "#ffcfc9", text: "#b10202" },
+  "2":   { bg: "#f86666", text: "#ffcfc9" },
+  "1.5": { bg: "#b10202", text: "#ffcfc9" },
+  "1":   { bg: "#5d0202", text: "#ffcfc9" },
+  "0":   { bg: "#3d3d3d", text: "#e5e5e5" },
+  "--":  { bg: "#e8e8e8", text: "#1a74a6" }
+};
+
+function normalizeFactorValue(value) {
+  const text = String(value ?? "").trim();
+
+  if (text === "") return "";
+  if (text === "--") return "--";
+
+  const num = Number(text);
+
+  if (!isNaN(num)) {
+    return Number.isInteger(num) ? String(num) : String(num);
+  }
+
+  return text;
+}
+
+function getFactorStyle(header, value) {
+  if (!factorColumns.includes(header)) return "";
+
+  const factorValue = normalizeFactorValue(value);
+  const colors = factorColors[factorValue];
+
+  if (!colors) return "";
+
+  return `
+    background-color: ${colors.bg};
+    color: ${colors.text};
+    font-weight: bold;
+  `;
+}
 function getRatingColor(value) {
   const num = Number(String(value ?? "").replace(/,/g, "").trim());
 
@@ -158,7 +223,7 @@ function formatHeader(header) {
     return style;
   }
 
- function getConditionalStyle(header, value) {
+function getConditionalStyle(header, value) {
   if (header === "Tier") {
     const tier = String(value ?? "").trim();
     const colors = tierColors[tier];
@@ -176,9 +241,12 @@ function formatHeader(header) {
     return getRatingColor(value);
   }
 
+  if (factorColumns.includes(header)) {
+    return getFactorStyle(header, value);
+  }
+
   return "";
 }
-
   function getFilterValues(value) {
     return String(value ?? "")
       .split(/[;,|]/)
