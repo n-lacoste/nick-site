@@ -49,15 +49,15 @@ async function loadCSV(
     "OMDB_Genre": "220px",
     "Main Character(s)": "300px",
     "Side Characters": "300px",
-    "Plot": "115px",
-    "Main Character(s)": "115px",
-    "Side Characters": "115px",
-    "Emotion": "115px",
-    "Dialogue (Writing)": "115px",
-    "Purpose Met": "115px",
-    "Cast": "115px",
-    "Music & Sound": "115px",
-    "Rewatch Value": "115px",
+    "Plot": "50px",
+    "Main Character(s)": "50px",
+    "Side Characters": "50px",
+    "Emotion": "50px",
+    "Dialogue (Writing)": "50px",
+    "Purpose Met": "50px",
+    "Cast": "50px",
+    "Music & Sound": "50px",
+    "Rewatch Value": "50px",
   };
 
   const columnFontSizes = {
@@ -132,7 +132,18 @@ function getRatingColor(value) {
       .replaceAll('"', "&quot;")
       .replaceAll("'", "&#039;");
   }
+function formatHeader(header) {
+  const headerBreaks = {
+    "Main Character(s)": "Main<br>Character(s)",
+    "Side Characters": "Side<br>Characters",
+    "Dialogue (Writing)": "Dialogue<br>(Writing)",
+    "Purpose Met": "Purpose<br>Met",
+    "Music & Sound": "Music &<br>Sound",
+    "Rewatch Value": "Rewatch<br>Value"
+  };
 
+  return headerBreaks[header] || escapeHTML(header);
+}
   function getColumnStyle(header) {
     let style = "";
 
@@ -179,7 +190,7 @@ function getRatingColor(value) {
     let html = "<thead><tr>";
 
     visibleHeaders.forEach(header => {
-      html += `<th data-column="${escapeHTML(header)}" style="${getColumnStyle(header)}">${escapeHTML(header)}</th>`;
+    html += `<th data-column="${escapeHTML(header)}" style="${getColumnStyle(header)}">${formatHeader(header)}</th>`;    
     });
 
     html += "</tr></thead><tbody>";
