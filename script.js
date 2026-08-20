@@ -65,16 +65,19 @@ async function loadCSV(
 
     "Notes (Review)": "500px",
     "OMDB_Plot": "420px",
-    "OMDB_Actors": "360px",
-    "OMDB_Director": "220px",
-    "OMDB_Genre": "220px"
+    "OMDB_Actors": "180px",
+    "OMDB_Director": "150px",
+    "OMDB_Genre": "150px"
   };
 
   const cellFontSizes = {
     "Notes (Review)": "13px",
     "OMDB_Plot": "13px",
     "Tags": "13px",
-    "Movie Series?": "13px"
+    "Movie Series?": "13px",
+    "OMDB_Genre": "13px",
+    "OMDB_Director": "13px",
+    "OMDB_Actors": "13px"
   };
 
   const factorHeaderFontSize = "12px";
