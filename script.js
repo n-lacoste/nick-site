@@ -354,6 +354,19 @@ function getCellStyle(header) {
 function getFilterValuesForRow(row, filter) {
   const rawValue = String(row[filter.column] ?? "").trim();
 
+  if (filter.filterType === "watchedStatus") {
+    const normalized = rawValue.toUpperCase();
+
+    const isWatchedValue =
+      normalized !== "" &&
+      normalized !== "--" &&
+      normalized !== "NO" &&
+      normalized !== "FALSE" &&
+      normalized !== "0";
+
+    return [isWatchedValue ? "Watched" : "Unwatched"];
+  }
+
   if (rawValue === "" && filter.blankLabel) {
     return [filter.blankLabel];
   }
