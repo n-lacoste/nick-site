@@ -22,13 +22,14 @@ async function loadCSV(
   const allHeaders = parsed.meta.fields || [];
 
   const data = parsed.data.filter(row => {
-    if (allHeaders.includes("Name")) {
-      return String(row["Name"] ?? "").trim() !== "";
-    }
-
-    return allHeaders.some(header => String(row[header] ?? "").trim() !== "");
+  return allHeaders.some(header => {
+    return String(row[header] ?? "").trim() !== "";
   });
-
+});
+  console.log("CSV headers:", allHeaders);
+  console.log("Raw parsed rows:", parsed.data.length);
+  console.log("Rows after blank-row cleanup:", data.length);
+  console.log("First row:", data[0]);
   let visibleHeaders = displayColumns
     ? displayColumns.filter(column => allHeaders.includes(column))
     : allHeaders;
