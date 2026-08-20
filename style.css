@@ -845,3 +845,42 @@ thead th:nth-child(3) {
   background: #242424;
   text-decoration: none;
 }
+<nav class="site-nav">
+  <a href="../index.html">Home</a>
+
+  <details class="nav-menu">
+    <summary>Music</summary>
+    <div class="nav-dropdown">
+      <a href="../music/">Music Home</a>
+    </div>
+  </details>
+
+  <details class="nav-menu">
+    <summary>Movies</summary>
+    <div class="nav-dropdown">
+      <a href="../movies/">Movies Home</a>
+      <a href="../movies/watch-history.html">Watch History</a>
+    </div>
+  </details>
+
+  <details class="nav-menu">
+    <summary>TV Shows</summary>
+    <div class="nav-dropdown">
+      <a href="../tv/">TV Shows Home</a>
+    </div>
+  </details>
+
+  <details class="nav-menu">
+    <summary>Geo</summary>
+    <div class="nav-dropdown">
+      <a href="../geo/">Geo Home</a>
+    </div>
+  </details>
+
+  <details class="nav-menu">
+    <summary>Professional Work</summary>
+    <div class="nav-dropdown">
+      <a href="../professional/">Professional Home</a>
+    </div>
+  </details>
+</nav>
