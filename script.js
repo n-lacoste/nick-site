@@ -365,15 +365,13 @@ function getFilterValuesForRow(row, filter) {
       return ["Unwatched"];
     }
 
-    return ["Unwatched"];
+    return [];
   }
 
   if (rawValue === "" && filter.blankLabel) {
     return [filter.blankLabel];
   }
 
-  return getFilterValues(rawValue);
-}
   return getFilterValues(rawValue);
 }
   function clearExpandedCellStore() {
