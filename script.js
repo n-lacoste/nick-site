@@ -40,7 +40,7 @@ async function loadCSV(
   let currentData = [...data];
   let sortColumn = visibleHeaders.includes("Rk") ? "Rk" : visibleHeaders[0] || null;
   let sortDirection = "asc";
-  let rowLimit = 100;
+  let rowLimit = 25;
 
   const expandableColumns = ["Notes (Review)", "OMDB_Plot"];
   let expandedCellCounter = 0;
