@@ -538,19 +538,18 @@ function rowMatchesFilters(row) {
     return selectedValues.some(value => rowValues.includes(value));
   });
 }
-      return selectedValues.some(value => rowValues.includes(value));
-    };
-  }
 
-  function applyAllFiltersAndSort() {
-    currentData = data.filter(row =>
+function applyAllFiltersAndSort() {
+  currentData = data.filter(row => {
+    return (
       rowMatchesSearch(row) &&
       rowMatchesFilters(row) &&
       rowMatchesRatingStatus(row)
     );
+  });
 
-    applySort();
-  }
+  applySort();
+}
 
   function setupSearch() {
     if (!searchId) return;
