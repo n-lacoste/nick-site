@@ -78,7 +78,11 @@ main {
   gap: 20px;
 }
 
-.card {
+.card,
+.card:visited,
+.card:hover,
+.card:active,
+.card:focus {
   display: block;
   padding: 22px;
   border: 1px solid #333;
@@ -88,15 +92,27 @@ main {
   text-decoration: none;
 }
 
-.card:hover {
+.card:hover,
+.card:focus {
   border-color: #777;
+  background: #222;
+  text-decoration: none;
+}
+
+.card *,
+.card:hover *,
+.card:focus * {
+  text-decoration: none;
 }
 
 .card h3 {
   margin-top: 0;
+  margin-bottom: 8px;
+  color: #f5f5f5;
 }
 
 .card p {
+  margin-bottom: 0;
   color: #ccc;
 }
 
