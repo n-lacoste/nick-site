@@ -1226,3 +1226,44 @@ function exportTableToCSV(tableId, filename) {
 
   URL.revokeObjectURL(url);
 }
+function setupHeaderMenus() {
+  const menus = Array.from(document.querySelectorAll(".site-nav .nav-menu"));
+
+  if (menus.length === 0) return;
+
+  menus.forEach(menu => {
+    menu.addEventListener("toggle", () => {
+      if (!menu.open) return;
+
+      menus.forEach(otherMenu => {
+        if (otherMenu !== menu) {
+          otherMenu.open = false;
+        }
+      });
+    });
+  });
+
+  document.addEventListener("click", event => {
+    const clickedInsideNav = event.target.closest(".site-nav");
+
+    if (clickedInsideNav) return;
+
+    menus.forEach(menu => {
+      menu.open = false;
+    });
+  });
+
+  document.addEventListener("keydown", event => {
+    if (event.key !== "Escape") return;
+
+    menus.forEach(menu => {
+      menu.open = false;
+    });
+  });
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", setupHeaderMenus);
+} else {
+  setupHeaderMenus();
+}
