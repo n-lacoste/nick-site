@@ -518,3 +518,42 @@ td {
   line-height: 1.5;
   color: #ddd;
 }
+/* Final layout fix: keep table visible after adding many controls */
+
+html,
+body {
+  min-height: 100%;
+  height: auto;
+  overflow: auto;
+}
+
+body {
+  min-height: 100vh;
+}
+
+main {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: visible;
+}
+
+.movie-controls-row {
+  flex: 0 0 auto;
+}
+
+.column-summary {
+  flex: 0 0 auto;
+}
+
+.table-wrap {
+  flex: 1 1 auto;
+  min-height: 420px;
+  max-height: calc(100vh - 310px);
+  overflow: auto;
+  margin-top: 12px;
+}
+
+th,
+td {
+  box-sizing: border-box;
+}
