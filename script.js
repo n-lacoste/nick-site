@@ -51,8 +51,8 @@ async function loadCSV(
     "Rk": "70px",
     "Name": "240px",
     "Me vs. IMDB": "65px",
-    "Tags": "120px",
-    "Movie Series?": "100px",
+    "Tags": "150px",
+    "Movie Series?": "120px",
 
     "Plot": "50px",
     "Main Character(s)": "50px",
@@ -161,6 +161,7 @@ const compactHeaderColumns = [
   function formatHeader(header) {
     const headerBreaks = {
       "Me vs. IMDB": "vs.<br>IMDB",
+      "Movie Series?": "Movie<br>Series",
       "Main Character(s)": "Main<br>Character(s)",
       "Side Characters": "Side<br>Characters",
       "Dialogue (Writing)": "Dialogue<br>(Writing)",
