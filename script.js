@@ -461,7 +461,7 @@ async function loadCSV(
     const rowCount = document.getElementById("movies-row-count");
 
     if (rowCount) {
-      rowCount.textContent = `Showing ${rowsToShow.length} of ${rows.length} matching movies.`;
+      rowCount.textContent = `Showing ${rowsToShow.length} of ${rows.length} matches.`;
     }
 
     rowsToShow.forEach(row => {
