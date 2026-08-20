@@ -603,6 +603,7 @@ function rowMatchesAdvancedInputs(row) {
   const minsModeInput = document.getElementById("mins-mode-filter");
   const minsValueInput = document.getElementById("mins-value-filter");
 
+  // Sample search
   if (sampleInput && sampleInput.value.trim() !== "") {
     const sampleTerm = sampleInput.value.trim().toLowerCase();
 
@@ -615,16 +616,25 @@ function rowMatchesAdvancedInputs(row) {
       row["OMDB_Actors"],
       row["OMDB_Plot"],
       row["Notes (Review)"]
-    ].map(value => String(value ?? "").toLowerCase()).join(" ");
+    ]
+      .map(value => String(value ?? "").toLowerCase())
+      .join(" ");
 
     if (!sampleText.includes(sampleTerm)) {
       return false;
     }
   }
 
-  const year = Number(String(row["Year"] ?? "").trim());
-  const yearStart = yearStartInput ? Number(yearStartInput.value) : NaN;
-  const yearEnd = yearEndInput ? Number(yearEndInput.value) : NaN;
+  // Year range
+  // Blank start/end boxes mean include all years.
+  const yearText = String(row["Year"] ?? "").trim();
+  const year = yearText === "" ? NaN : Number(yearText);
+
+  const yearStartText = yearStartInput ? yearStartInput.value.trim() : "";
+  const yearEndText = yearEndInput ? yearEndInput.value.trim() : "";
+
+  const yearStart = yearStartText === "" ? NaN : Number(yearStartText);
+  const yearEnd = yearEndText === "" ? NaN : Number(yearEndText);
 
   if (!isNaN(yearStart) && !isNaN(year) && year < yearStart) {
     return false;
@@ -634,8 +644,14 @@ function rowMatchesAdvancedInputs(row) {
     return false;
   }
 
-  const mins = Number(String(row["Mins."] ?? "").trim());
-  const minsValue = minsValueInput ? Number(minsValueInput.value) : NaN;
+  // Mins. filter
+  // Blank mins box means include all runtimes.
+  const minsText = String(row["Mins."] ?? "").trim();
+  const mins = minsText === "" ? NaN : Number(minsText);
+
+  const minsValueText = minsValueInput ? minsValueInput.value.trim() : "";
+  const minsValue = minsValueText === "" ? NaN : Number(minsValueText);
+
   const minsMode = minsModeInput ? minsModeInput.value : "greater";
 
   if (!isNaN(minsValue) && !isNaN(mins)) {
