@@ -1,3 +1,4 @@
+console.log("script.js loaded");
 async function loadCSV(
   filePath,
   tableId,
@@ -538,7 +539,7 @@ function rowMatchesFilters(row) {
   });
 }
       return selectedValues.some(value => rowValues.includes(value));
-    });
+    };
   }
 
   function applyAllFiltersAndSort() {
