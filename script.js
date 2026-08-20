@@ -107,6 +107,18 @@ const compactHeaderColumns = [
     "Music & Sound",
     "Rewatch Value"
   ];
+ 
+  const factorColumnWidths = {
+  "Plot": { min: "65px", max: "70px" },
+  "Main Character(s)": { min: "75px", max: "85px" },
+  "Side Characters": { min: "70px", max: "85px" },
+  "Emotion": { min: "65px", max: "75px" },
+  "Dialogue (Writing)": { min: "75px", max: "90px" },
+  "Purpose Met": { min: "65px", max: "80px" },
+  "Cast": { min: "65px", max: "75px" },
+  "Music & Sound": { min: "70px", max: "85px" },
+  "Rewatch Value": { min: "70px", max: "85px" }
+};
 
   const factorColors = {
     "10":  { bg: "#11734b", text: "#ffffff" },
@@ -171,6 +183,21 @@ const compactHeaderColumns = [
 
 function getColumnWidthStyle(header) {
   let style = "";
+
+  if (factorColumns.includes(header)) {
+    const widths = factorColumnWidths[header] || {
+      min: "65px",
+      max: "80px"
+    };
+
+    style += `
+      width: ${widths.min};
+      min-width: ${widths.min};
+      max-width: ${widths.max};
+    `;
+
+    return style;
+  }
 
   if (columnWidths[header]) {
     style += `
