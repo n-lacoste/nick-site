@@ -453,7 +453,11 @@ function getFilterValuesForRow(row, filter) {
     html += "</tr></thead><tbody>";
 
     const rowsToShow = rowLimit === "all" ? rows : rows.slice(0, rowLimit);
-
+    const rowCount = document.getElementById("movies-row-count");
+    
+    if (rowCount) {
+      rowCount.textContent = `Showing ${rowsToShow.length} of ${rows.length} matching movies.`;
+    }
     rowsToShow.forEach(row => {
       html += "<tr>";
 
