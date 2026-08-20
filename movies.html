@@ -63,7 +63,38 @@
 
         <div id="movies-columns" class="filter-options"></div>
       </details>
-
+      <details class="filter-dropdown">
+        <summary>Animated</summary>
+      
+        <label class="filter-option select-all-option">
+          <input type="checkbox" id="animated-select-all" checked>
+          Select All
+        </label>
+      
+        <div id="animated-filter" class="filter-options"></div>
+      </details>
+      
+      <details class="filter-dropdown">
+        <summary>Holiday</summary>
+      
+        <label class="filter-option select-all-option">
+          <input type="checkbox" id="holiday-select-all" checked>
+          Select All
+        </label>
+      
+        <div id="holiday-filter" class="filter-options"></div>
+      </details>
+      
+      <details class="filter-dropdown">
+        <summary>Sports</summary>
+      
+        <label class="filter-option select-all-option">
+          <input type="checkbox" id="sports-select-all" checked>
+          Select All
+        </label>
+      
+        <div id="sports-filter" class="filter-options"></div>
+      </details>
       <div class="rating-filter-control">
         <label for="movies-rating-status">Rating:</label>
         <select id="movies-rating-status" class="sort-select">
@@ -147,16 +178,40 @@
   "Rewatch Value",
   "Notes (Review)"
                     ]
-            , "movies-columns", "movies-sort-column", "movies-sort-direction", [
-      {
-        column: "Movie Series?",
-        targetId: "movie-series-filter",
-        selectAllId: "movie-series-select-all",
-        modeButtonId: "movie-series-mode",
-        mode: "or"
-      }
-    ], "movies-show-count","movies-rating-status");
-
+            , "movies-columns", "movies-sort-column", "movies-sort-direction", 
+[
+  {
+    column: "Movie Series?",
+    targetId: "movie-series-filter",
+    selectAllId: "movie-series-select-all",
+    modeButtonId: "movie-series-mode",
+    mode: "or"
+  },
+  {
+    column: "Animated",
+    targetId: "animated-filter",
+    selectAllId: "animated-select-all",
+    mode: "or",
+    blankLabel: "NO",
+    options: ["YES", "MIXED", "NO"]
+  },
+  {
+    column: "Holiday?",
+    targetId: "holiday-filter",
+    selectAllId: "holiday-select-all",
+    mode: "or",
+    blankLabel: "NO",
+    options: ["XMAS", "HALLOWEEN", "SORTA", "NO"]
+  },
+  {
+    column: "Sports?",
+    targetId: "sports-filter",
+    selectAllId: "sports-select-all",
+    mode: "or",
+    blankLabel: "NO",
+    options: ["YES", "SORTA", "NO"]
+  }
+], "movies-show-count", "movies-rating-status");
     document.getElementById("movies-download-csv").addEventListener("click", () => {
       exportTableToCSV("movies-table", "movies-export.csv");
     });
