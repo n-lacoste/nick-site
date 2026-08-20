@@ -591,13 +591,67 @@ function rowMatchesFilters(row) {
     return selectedValues.some(value => rowValues.includes(value));
   });
 }
+function rowMatchesAdvancedInputs(row) {
+  const sampleInput = document.getElementById("sample-filter");
+  const yearStartInput = document.getElementById("year-start-filter");
+  const yearEndInput = document.getElementById("year-end-filter");
+  const minsModeInput = document.getElementById("mins-mode-filter");
+  const minsValueInput = document.getElementById("mins-value-filter");
 
+  if (sampleInput && sampleInput.value.trim() !== "") {
+    const sampleTerm = sampleInput.value.trim().toLowerCase();
+
+    const sampleText = [
+      row["Name"],
+      row["Tags"],
+      row["Movie Series?"],
+      row["OMDB_Genre"],
+      row["OMDB_Director"],
+      row["OMDB_Actors"],
+      row["OMDB_Plot"],
+      row["Notes (Review)"]
+    ].map(value => String(value ?? "").toLowerCase()).join(" ");
+
+    if (!sampleText.includes(sampleTerm)) {
+      return false;
+    }
+  }
+
+  const year = Number(String(row["Year"] ?? "").trim());
+  const yearStart = yearStartInput ? Number(yearStartInput.value) : NaN;
+  const yearEnd = yearEndInput ? Number(yearEndInput.value) : NaN;
+
+  if (!isNaN(yearStart) && !isNaN(year) && year < yearStart) {
+    return false;
+  }
+
+  if (!isNaN(yearEnd) && !isNaN(year) && year > yearEnd) {
+    return false;
+  }
+
+  const mins = Number(String(row["Mins."] ?? "").trim());
+  const minsValue = minsValueInput ? Number(minsValueInput.value) : NaN;
+  const minsMode = minsModeInput ? minsModeInput.value : "greater";
+
+  if (!isNaN(minsValue) && !isNaN(mins)) {
+    if (minsMode === "greater" && mins <= minsValue) {
+      return false;
+    }
+
+    if (minsMode === "less" && mins >= minsValue) {
+      return false;
+    }
+  }
+
+  return true;
+}
 function applyAllFiltersAndSort() {
   currentData = data.filter(row => {
     return (
       rowMatchesSearch(row) &&
       rowMatchesFilters(row) &&
-      rowMatchesRatingStatus(row)
+      rowMatchesRatingStatus(row) &&
+      rowMatchesAdvancedInputs(row)
     );
   });
 
@@ -640,7 +694,22 @@ function applyAllFiltersAndSort() {
 
     ratingSelect.addEventListener("change", applyAllFiltersAndSort);
   }
+function setupAdvancedInputFilters() {
+  [
+    "sample-filter",
+    "year-start-filter",
+    "year-end-filter",
+    "mins-mode-filter",
+    "mins-value-filter"
+  ].forEach(id => {
+    const input = document.getElementById(id);
 
+    if (input) {
+      input.addEventListener("input", applyAllFiltersAndSort);
+      input.addEventListener("change", applyAllFiltersAndSort);
+    }
+  });
+}
   function updateSortDropdown() {
     if (!sortColumnId) return;
 
@@ -892,6 +961,7 @@ const uniqueValues = filter.options
   setupFilters();
   setupRowLimit();
   setupRatingStatusFilter();
+  setupAdvancedInputFilters();
 
   applyAllFiltersAndSort();
 }
