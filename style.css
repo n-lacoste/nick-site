@@ -740,3 +740,8 @@ main {
 thead th:nth-child(3) {
   text-align: center;
 }
+.movies-row-count {
+  color: #aaa;
+  font-size: 13px;
+  margin: 4px 0 8px;
+}
