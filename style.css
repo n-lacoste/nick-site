@@ -710,3 +710,30 @@ main {
 .range-inputs .filter-text-input {
   width: 90px;
 }
+.filters-panel-summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filters-indicator {
+  font-size: 12px;
+  font-weight: normal;
+  color: #aaa;
+  border: 1px solid #333;
+  border-radius: 999px;
+  padding: 3px 8px;
+  background: #111;
+}
+
+.filters-indicator.filters-active {
+  color: #ffffff;
+  background: #753800;
+  border-color: #f8a67a;
+  font-weight: bold;
+}
+
+.filters-panel-actions {
+  margin-top: 10px;
+  margin-bottom: 12px;
+}
