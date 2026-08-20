@@ -656,6 +656,7 @@ function applyAllFiltersAndSort() {
   });
 
   applySort();
+  updateFilterIndicator();
 }
 
   function setupSearch() {
@@ -818,7 +819,143 @@ function setupAdvancedInputFilters() {
 
     updateColumnPickerSelectAll();
   }
+function getActiveFilterCount() {
+  let count = 0;
 
+  const searchBox = searchId ? document.getElementById(searchId) : null;
+
+  if (searchBox && searchBox.value.trim() !== "") {
+    count++;
+  }
+
+  const ratingSelect = ratingStatusId ? document.getElementById(ratingStatusId) : null;
+
+  if (ratingSelect && ratingSelect.value !== "all") {
+    count++;
+  }
+
+  const sampleInput = document.getElementById("sample-filter");
+  const yearStartInput = document.getElementById("year-start-filter");
+  const yearEndInput = document.getElementById("year-end-filter");
+  const minsValueInput = document.getElementById("mins-value-filter");
+
+  if (sampleInput && sampleInput.value.trim() !== "") {
+    count++;
+  }
+
+  if (
+    (yearStartInput && yearStartInput.value.trim() !== "") ||
+    (yearEndInput && yearEndInput.value.trim() !== "")
+  ) {
+    count++;
+  }
+
+  if (minsValueInput && minsValueInput.value.trim() !== "") {
+    count++;
+  }
+
+  safeFilters.forEach(filter => {
+    const container = document.getElementById(filter.targetId);
+    if (!container) return;
+
+    const inputs = Array.from(container.querySelectorAll("input"));
+    if (inputs.length === 0) return;
+
+    const checkedCount = inputs.filter(input => input.checked).length;
+
+    if (checkedCount !== inputs.length) {
+      count++;
+    }
+  });
+
+  return count;
+}
+
+function updateFilterIndicator() {
+  const indicator = document.getElementById("filters-active-indicator");
+  const filtersPanel = document.getElementById("movies-filters-panel");
+
+  if (!indicator) return;
+
+  const activeCount = getActiveFilterCount();
+
+  if (activeCount > 0) {
+    indicator.textContent = `Filters on (${activeCount})`;
+    indicator.classList.add("filters-active");
+
+    if (filtersPanel) {
+      filtersPanel.classList.add("filters-active-panel");
+    }
+  } else {
+    indicator.textContent = "No filters";
+    indicator.classList.remove("filters-active");
+
+    if (filtersPanel) {
+      filtersPanel.classList.remove("filters-active-panel");
+    }
+  }
+}
+
+function clearAllMovieFilters() {
+  const searchBox = searchId ? document.getElementById(searchId) : null;
+
+  if (searchBox) {
+    searchBox.value = "";
+  }
+
+  const ratingSelect = ratingStatusId ? document.getElementById(ratingStatusId) : null;
+
+  if (ratingSelect) {
+    ratingSelect.value = "all";
+  }
+
+  const sampleInput = document.getElementById("sample-filter");
+  const yearStartInput = document.getElementById("year-start-filter");
+  const yearEndInput = document.getElementById("year-end-filter");
+  const minsModeInput = document.getElementById("mins-mode-filter");
+  const minsValueInput = document.getElementById("mins-value-filter");
+
+  if (sampleInput) sampleInput.value = "";
+  if (yearStartInput) yearStartInput.value = "";
+  if (yearEndInput) yearEndInput.value = "";
+  if (minsModeInput) minsModeInput.value = "greater";
+  if (minsValueInput) minsValueInput.value = "";
+
+  safeFilters.forEach(filter => {
+    const container = document.getElementById(filter.targetId);
+    if (!container) return;
+
+    const inputs = Array.from(container.querySelectorAll("input"));
+
+    inputs.forEach(input => {
+      input.checked = true;
+    });
+
+    if (filter.selectAllId) {
+      const selectAllCheckbox = document.getElementById(filter.selectAllId);
+
+      if (selectAllCheckbox) {
+        selectAllCheckbox.checked = true;
+        selectAllCheckbox.indeterminate = false;
+      }
+    }
+
+    if (filter.modeButtonId) {
+      filter.mode = "or";
+      updateFilterModeButton(filter);
+    }
+  });
+
+  applyAllFiltersAndSort();
+}
+
+function setupClearFiltersButton() {
+  const clearButton = document.getElementById("clear-movies-filters");
+
+  if (!clearButton) return;
+
+  clearButton.addEventListener("click", clearAllMovieFilters);
+}
   function updateColumnSummary() {
     if (!columnPickerId) return;
 
@@ -962,6 +1099,7 @@ const uniqueValues = filter.options
   setupRowLimit();
   setupRatingStatusFilter();
   setupAdvancedInputFilters();
+  setupClearFiltersButton();
 
   applyAllFiltersAndSort();
 }
