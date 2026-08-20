@@ -785,45 +785,74 @@ thead th:nth-child(3) {
   border-color: #57bb8a;
   font-weight: bold;
 }
+
+/* Header Navigation and Header Menus */
+/* Cleaner dropdown header navigation */
+
 .site-nav {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 18px;
+  gap: 34px;
   flex-wrap: wrap;
 }
 
 .site-nav a,
-.nav-menu summary {
+.nav-menu > summary {
   color: #f5f5f5;
   text-decoration: none;
-  font-weight: bold;
+  font-weight: 400;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
+  line-height: 1.2;
 }
 
 .site-nav a:hover,
-.nav-menu summary:hover {
-  text-decoration: underline;
+.nav-menu > summary:hover {
+  color: #ffffff;
+  text-decoration: none;
 }
 
 .nav-menu {
   position: relative;
 }
 
-.nav-menu summary {
-  list-style-position: outside;
+/* Remove the browser's default left-side arrow */
+.nav-menu > summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
 }
 
-.nav-menu summary::marker {
-  color: #f5f5f5;
+.nav-menu > summary::-webkit-details-marker {
+  display: none;
 }
 
+.nav-menu > summary::marker {
+  content: "";
+}
+
+/* Add custom arrow on the right */
+.nav-menu > summary::after {
+  content: "▸";
+  font-size: 12px;
+  margin-left: 6px;
+  transform: translateY(1px);
+}
+
+.nav-menu[open] > summary::after {
+  content: "▾";
+}
+
+/* Dropdown box */
 .nav-dropdown {
   position: absolute;
-  top: 28px;
+  top: 100%;
   left: 0;
-  min-width: 180px;
+  min-width: 200px;
+  margin-top: 8px;
   background: #111;
   border: 1px solid #333;
   border-radius: 8px;
@@ -832,55 +861,20 @@ thead th:nth-child(3) {
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
 }
 
+/* Dropdown links */
 .nav-dropdown a {
   display: block;
   padding: 8px 10px;
   color: #f5f5f5;
   text-decoration: none;
+  font-weight: 400;
+  font-size: 15px;
   border-radius: 6px;
   white-space: nowrap;
 }
 
 .nav-dropdown a:hover {
   background: #242424;
+  color: #ffffff;
   text-decoration: none;
 }
-<nav class="site-nav">
-  <a href="../index.html">Home</a>
-
-  <details class="nav-menu">
-    <summary>Music</summary>
-    <div class="nav-dropdown">
-      <a href="../music/">Music Home</a>
-    </div>
-  </details>
-
-  <details class="nav-menu">
-    <summary>Movies</summary>
-    <div class="nav-dropdown">
-      <a href="../movies/">Movies Home</a>
-      <a href="../movies/watch-history.html">Watch History</a>
-    </div>
-  </details>
-
-  <details class="nav-menu">
-    <summary>TV Shows</summary>
-    <div class="nav-dropdown">
-      <a href="../tv/">TV Shows Home</a>
-    </div>
-  </details>
-
-  <details class="nav-menu">
-    <summary>Geo</summary>
-    <div class="nav-dropdown">
-      <a href="../geo/">Geo Home</a>
-    </div>
-  </details>
-
-  <details class="nav-menu">
-    <summary>Professional Work</summary>
-    <div class="nav-dropdown">
-      <a href="../professional/">Professional Home</a>
-    </div>
-  </details>
-</nav>
