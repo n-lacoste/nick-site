@@ -557,3 +557,17 @@ th,
 td {
   box-sizing: border-box;
 }
+/* Tighten page title area */
+
+main {
+  padding-top: 14px;
+}
+
+.page-topline h2 {
+  margin-top: 0;
+  margin-bottom: 6px;
+}
+
+.page-topline p {
+  margin-top: 0;
+}
