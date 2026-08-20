@@ -70,7 +70,7 @@ const cellFontSizes = {
   "OMDB_Plot": "13px"
 };
 
-const factorheaderFontSize = "12px";
+const factorHeaderFontSize = "12px";
 
 const compactHeaderColumns = [
   "Main Character(s)",
