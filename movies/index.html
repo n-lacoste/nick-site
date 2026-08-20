@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>Movies | Nick Site</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="../style.css">
 </head>
 
 <body>
@@ -12,54 +12,41 @@
     </h1>
 
    <nav class="site-nav">
-  <a href="index.html">Home</a>
+  <a href="../index.html">Home</a>
 
   <details class="nav-menu">
     <summary>Music</summary>
     <div class="nav-dropdown">
-      <a href="music.html">Music Home</a>
-      <a href="songs.html">Songs</a>
-      <a href="albums.html">Albums</a>
-      <a href="artists.html">Artists</a>
-      <a href="playlists.html">Playlists</a>
+      <a href="../music/">Music Home</a>
     </div>
   </details>
 
   <details class="nav-menu">
     <summary>Movies</summary>
     <div class="nav-dropdown">
-      <a href="movies.html">Movies Home</a>
-      <a href="movie-rankings.html">Rankings</a>
-      <a href="movie-series.html">Movie Series</a>
-      <a href="criterion.html">Criterion</a>
+      <a href="../movies/">Movies Home</a>
+      <a href="../movies/watch-history.html">Watch History</a>
     </div>
   </details>
 
   <details class="nav-menu">
     <summary>TV Shows</summary>
     <div class="nav-dropdown">
-      <a href="tv.html">TV Home</a>
-      <a href="tv-episodes.html">Episodes</a>
-      <a href="tv-rankings.html">Rankings</a>
+      <a href="../tv/">TV Shows Home</a>
     </div>
   </details>
 
   <details class="nav-menu">
     <summary>Geo</summary>
     <div class="nav-dropdown">
-      <a href="geo.html">Geo Home</a>
-      <a href="maps.html">Maps</a>
-      <a href="places.html">Places</a>
+      <a href="../geo/">Geo Home</a>
     </div>
   </details>
 
   <details class="nav-menu">
     <summary>Professional Work</summary>
     <div class="nav-dropdown">
-      <a href="professional.html">Professional Home</a>
-      <a href="cv.html">CV</a>
-      <a href="projects.html">Projects</a>
-      <a href="writing.html">Writing</a>
+      <a href="../professional/">Professional Home</a>
     </div>
   </details>
 </nav>
@@ -319,7 +306,7 @@
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <script src="./script.js?v=7"></script>
+  <script src="./script.js?v=9"></script>
 
   <script>
     try {
@@ -331,7 +318,7 @@
         throw new Error("loadCSV is not defined. script.js did not load correctly or has a syntax error.");
       }
 
-      loadCSV("data/movies.csv", "movies-table", "movies-search", [
+      loadCSV("../data/movies.csv", "movies-table", "movies-search", [
         "Tier",
         "Rk",
         "Name",
