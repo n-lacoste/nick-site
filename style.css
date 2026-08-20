@@ -789,6 +789,8 @@ thead th:nth-child(3) {
 /* Header Navigation and Header Menus */
 /* Cleaner dropdown header navigation */
 
+/* Hover-only header dropdown navigation */
+
 .site-nav {
   display: flex;
   align-items: center;
@@ -798,56 +800,50 @@ thead th:nth-child(3) {
 }
 
 .site-nav a,
-.nav-menu > summary {
+.nav-menu-title {
   color: #f5f5f5;
   text-decoration: none;
   font-weight: 400;
-  cursor: pointer;
   font-size: 16px;
   line-height: 1.2;
 }
 
 .site-nav a:hover,
-.nav-menu > summary:hover {
+.nav-menu-title:hover {
   color: #ffffff;
   text-decoration: none;
 }
 
 .nav-menu {
   position: relative;
+  display: inline-flex;
+  align-items: center;
 }
 
-/* Remove the browser's default left-side arrow */
-.nav-menu > summary {
-  list-style: none;
-  display: flex;
+/* Top menu title */
+.nav-menu-title {
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 3px;
   padding: 6px 0;
 }
 
-.nav-menu > summary::-webkit-details-marker {
-  display: none;
-}
-
-.nav-menu > summary::marker {
-  content: "";
-}
-
-/* Add custom arrow on the right */
-.nav-menu > summary::after {
+/* Right-side arrow */
+.nav-menu-title::after {
   content: "▸";
-  font-size: 20px;
-  margin-left: 3px;
+  font-size: 16px;
+  margin-left: 2px;
   transform: translateY(1px);
 }
 
-.nav-menu[open] > summary::after {
+.nav-menu:hover .nav-menu-title::after,
+.nav-menu:focus-within .nav-menu-title::after {
   content: "▾";
 }
 
-/* Dropdown box */
+/* Important: hide dropdowns by default */
 .nav-dropdown {
+  display: none;
   position: absolute;
   top: 100%;
   left: 0;
@@ -861,7 +857,12 @@ thead th:nth-child(3) {
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
 }
 
-/* Dropdown links */
+/* Show only the dropdown for the menu being hovered */
+.nav-menu:hover > .nav-dropdown,
+.nav-menu:focus-within > .nav-dropdown {
+  display: block;
+}
+
 .nav-dropdown a {
   display: block;
   padding: 8px 10px;
