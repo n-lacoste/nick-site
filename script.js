@@ -1,4 +1,3 @@
-console.log("script.js loaded");
 async function loadCSV(
   filePath,
   tableId,
@@ -22,22 +21,21 @@ async function loadCSV(
   const allHeaders = parsed.meta.fields || [];
 
   const data = parsed.data.filter(row => {
-  return allHeaders.some(header => {
-    return String(row[header] ?? "").trim() !== "";
+    return allHeaders.some(header => {
+      return String(row[header] ?? "").trim() !== "";
+    });
   });
-});
-  console.log("CSV headers:", allHeaders);
-  console.log("Raw parsed rows:", parsed.data.length);
-  console.log("Rows after blank-row cleanup:", data.length);
-  console.log("First row:", data[0]);
+
   let visibleHeaders = displayColumns
     ? displayColumns.filter(column => allHeaders.includes(column))
     : allHeaders;
 
   const table = document.getElementById(tableId);
-    const safeFilters = Array.isArray(filters)
-      ? filters.filter(filter => filter && filter.targetId && filter.column)
-      : [];
+
+  const safeFilters = Array.isArray(filters)
+    ? filters.filter(filter => filter && filter.targetId && filter.column)
+    : [];
+
   let currentData = [...data];
   let sortColumn = visibleHeaders.includes("Rk") ? "Rk" : visibleHeaders[0] || null;
   let sortDirection = "asc";
@@ -72,22 +70,23 @@ async function loadCSV(
     "OMDB_Genre": "220px"
   };
 
-const cellFontSizes = {
-  "Notes (Review)": "13px",
-  "OMDB_Plot": "13px",
-  "Tags": "13px",
-  "Movie Series?": "13px"
-};
+  const cellFontSizes = {
+    "Notes (Review)": "13px",
+    "OMDB_Plot": "13px",
+    "Tags": "13px",
+    "Movie Series?": "13px"
+  };
 
-const factorHeaderFontSize = "12px";
+  const factorHeaderFontSize = "12px";
 
-const compactHeaderColumns = [
-  "Main Character(s)",
-  "Side Characters",
-  "Dialogue (Writing)"
-];
+  const compactHeaderColumns = [
+    "Main Character(s)",
+    "Side Characters",
+    "Dialogue (Writing)"
+  ];
+
   const tierColors = {
-    "S":  { bg: "#efd1ff", text: "#5a3286" },
+    "S": { bg: "#efd1ff", text: "#5a3286" },
     "(S)": { bg: "#efd1ff", text: "#5a3286" },
     "A1": { bg: "#888ef5", text: "#473821" },
     "A2": { bg: "#5bc0dd", text: "#215a6c" },
@@ -98,7 +97,7 @@ const compactHeaderColumns = [
     "C1": { bg: "#ffc8aa", text: "#753800" },
     "C2": { bg: "#e38451", text: "#000000" },
     "C3": { bg: "#e36351", text: "#000000" },
-    "D":  { bg: "#ff0000", text: "#000000" },
+    "D": { bg: "#ff0000", text: "#000000" },
     "NR": { bg: "#ffcfc9", text: "#b10202" }
   };
 
@@ -113,41 +112,41 @@ const compactHeaderColumns = [
     "Music & Sound",
     "Rewatch Value"
   ];
- 
+
   const factorColumnWidths = {
-  "Plot": { min: "65px", max: "70px" },
-  "Main Character(s)": { min: "75px", max: "85px" },
-  "Side Characters": { min: "70px", max: "85px" },
-  "Emotion": { min: "65px", max: "75px" },
-  "Dialogue (Writing)": { min: "75px", max: "90px" },
-  "Purpose Met": { min: "65px", max: "80px" },
-  "Cast": { min: "65px", max: "75px" },
-  "Music & Sound": { min: "70px", max: "85px" },
-  "Rewatch Value": { min: "70px", max: "85px" }
-};
+    "Plot": { min: "65px", max: "70px" },
+    "Main Character(s)": { min: "75px", max: "85px" },
+    "Side Characters": { min: "70px", max: "85px" },
+    "Emotion": { min: "65px", max: "75px" },
+    "Dialogue (Writing)": { min: "75px", max: "90px" },
+    "Purpose Met": { min: "65px", max: "80px" },
+    "Cast": { min: "65px", max: "75px" },
+    "Music & Sound": { min: "70px", max: "85px" },
+    "Rewatch Value": { min: "70px", max: "85px" }
+  };
 
   const factorColors = {
-    "10":  { bg: "#11734b", text: "#ffffff" },
+    "10": { bg: "#11734b", text: "#ffffff" },
     "9.5": { bg: "#029458", text: "#ffffff" },
-    "9":   { bg: "#5ea818", text: "#ffffff" },
+    "9": { bg: "#5ea818", text: "#ffffff" },
     "8.5": { bg: "#b1d98b", text: "#11734b" },
-    "8":   { bg: "#d4edbc", text: "#11734b" },
+    "8": { bg: "#d4edbc", text: "#11734b" },
     "7.5": { bg: "#d1dd4a", text: "#473821" },
-    "7":   { bg: "#dff08f", text: "#473821" },
+    "7": { bg: "#dff08f", text: "#473821" },
     "6.5": { bg: "#efff82", text: "#473821" },
-    "6":   { bg: "#f1f151", text: "#000000" },
+    "6": { bg: "#f1f151", text: "#000000" },
     "5.5": { bg: "#fff375", text: "#473821" },
-    "5":   { bg: "#ffe5a0", text: "#473821" },
+    "5": { bg: "#ffe5a0", text: "#473821" },
     "4.5": { bg: "#e3bd60", text: "#7c4300" },
-    "4":   { bg: "#d79900", text: "#753800" },
+    "4": { bg: "#d79900", text: "#753800" },
     "3.5": { bg: "#f8a67a", text: "#753800" },
-    "3":   { bg: "#ffc8aa", text: "#753800" },
+    "3": { bg: "#ffc8aa", text: "#753800" },
     "2.5": { bg: "#ffcfc9", text: "#b10202" },
-    "2":   { bg: "#f86666", text: "#ffcfc9" },
+    "2": { bg: "#f86666", text: "#ffcfc9" },
     "1.5": { bg: "#b10202", text: "#ffcfc9" },
-    "1":   { bg: "#5d0202", text: "#ffcfc9" },
-    "0":   { bg: "#3d3d3d", text: "#e5e5e5" },
-    "--":  { bg: "#e8e8e8", text: "#1a74a6" }
+    "1": { bg: "#5d0202", text: "#ffcfc9" },
+    "0": { bg: "#3d3d3d", text: "#e5e5e5" },
+    "--": { bg: "#e8e8e8", text: "#1a74a6" }
   };
 
   function escapeHTML(value) {
@@ -189,74 +188,74 @@ const compactHeaderColumns = [
     return escapeHTML(text);
   }
 
-function getColumnWidthStyle(header) {
-  let style = "";
+  function getColumnWidthStyle(header) {
+    let style = "";
 
-  if (factorColumns.includes(header)) {
-    const widths = factorColumnWidths[header] || {
-      min: "65px",
-      max: "80px"
-    };
+    if (factorColumns.includes(header)) {
+      const widths = factorColumnWidths[header] || {
+        min: "65px",
+        max: "80px"
+      };
 
-    style += `
-      width: ${widths.min};
-      min-width: ${widths.min};
-      max-width: ${widths.max};
-    `;
+      style += `
+        width: ${widths.min};
+        min-width: ${widths.min};
+        max-width: ${widths.max};
+      `;
+
+      return style;
+    }
+
+    if (columnWidths[header]) {
+      style += `
+        width: ${columnWidths[header]};
+        min-width: ${columnWidths[header]};
+        max-width: ${columnWidths[header]};
+      `;
+    }
 
     return style;
   }
 
-  if (columnWidths[header]) {
-    style += `
-      width: ${columnWidths[header]};
-      min-width: ${columnWidths[header]};
-      max-width: ${columnWidths[header]};
-    `;
+  function getHeaderStyle(header) {
+    let style = getColumnWidthStyle(header);
+
+    if (factorColumns.includes(header)) {
+      style += `
+        font-size: ${factorHeaderFontSize};
+        line-height: 1.1;
+      `;
+    }
+
+    if (compactHeaderColumns.includes(header)) {
+      style += `
+        padding-left: 4px;
+        padding-right: 4px;
+      `;
+    }
+
+    return style;
   }
 
-  return style;
-}
+  function getCellStyle(header) {
+    let style = getColumnWidthStyle(header);
 
-function getHeaderStyle(header) {
-  let style = getColumnWidthStyle(header);
+    if (factorColumns.includes(header)) {
+      style += `
+        font-size: 20px;
+        line-height: 1;
+      `;
+    } else if (header === "My Rating") {
+      style += `
+        font-size: 20px;
+        line-height: 1;
+      `;
+    } else if (cellFontSizes[header]) {
+      style += ` font-size: ${cellFontSizes[header]};`;
+    }
 
-  if (factorColumns.includes(header)) {
-    style += `
-      font-size: ${factorHeaderFontSize};
-      line-height: 1.1;
-    `;
+    return style;
   }
-
-  if (compactHeaderColumns.includes(header)) {
-    style += `
-      padding-left: 4px;
-      padding-right: 4px;
-    `;
-  }
-
-  return style;
-}
-
-function getCellStyle(header) {
-  let style = getColumnWidthStyle(header);
-
-  if (factorColumns.includes(header)) {
-    style += `
-      font-size: 20px;
-      line-height: 1;
-    `;
-  } else if (header === "My Rating") {
-    style += `
-      font-size: 20px;
-      line-height: 1;
-    `;
-  } else if (cellFontSizes[header]) {
-    style += ` font-size: ${cellFontSizes[header]};`;
-  }
-
-  return style;
-}
 
   function getRatingColor(value) {
     const num = Number(String(value ?? "").replace(/,/g, "").trim());
@@ -355,29 +354,31 @@ function getCellStyle(header) {
       .map(v => v.trim())
       .filter(v => v !== "");
   }
-function getFilterValuesForRow(row, filter) {
-  const rawValue = String(row[filter.column] ?? "").trim();
 
-  if (filter.filterType === "watchedStatus") {
-    const normalized = rawValue.toLowerCase();
+  function getFilterValuesForRow(row, filter) {
+    const rawValue = String(row[filter.column] ?? "").trim();
 
-    if (normalized === "watched") {
-      return ["Watched"];
+    if (filter.filterType === "watchedStatus") {
+      const normalized = rawValue.toLowerCase();
+
+      if (normalized === "watched") {
+        return ["Watched"];
+      }
+
+      if (normalized === "unwatched") {
+        return ["Unwatched"];
+      }
+
+      return [];
     }
 
-    if (normalized === "unwatched") {
-      return ["Unwatched"];
+    if (rawValue === "" && filter.blankLabel) {
+      return [filter.blankLabel];
     }
 
-    return [];
+    return getFilterValues(rawValue);
   }
 
-  if (rawValue === "" && filter.blankLabel) {
-    return [filter.blankLabel];
-  }
-
-  return getFilterValues(rawValue);
-}
   function clearExpandedCellStore() {
     expandedCellCounter = 0;
 
@@ -455,15 +456,16 @@ function getFilterValuesForRow(row, filter) {
 
     const rowsToShow = rowLimit === "all" ? rows : rows.slice(0, rowLimit);
     const rowCount = document.getElementById("movies-row-count");
-    
+
     if (rowCount) {
       rowCount.textContent = `Showing ${rowsToShow.length} of ${rows.length} matching movies.`;
     }
+
     rowsToShow.forEach(row => {
       html += "<tr>";
 
       visibleHeaders.forEach(header => {
-       const cellStyle = `${getCellStyle(header)} ${getConditionalStyle(header, row[header])}`;
+        const cellStyle = `${getCellStyle(header)} ${getConditionalStyle(header, row[header])}`;
 
         const cellContent = expandableColumns.includes(header)
           ? renderExpandableCell(header, row[header])
@@ -573,124 +575,123 @@ function getFilterValuesForRow(row, filter) {
     return true;
   }
 
-function rowMatchesFilters(row) {
-  return safeFilters.every(filter => {
-    const container = document.getElementById(filter.targetId);
-    if (!container) return true;
+  function rowMatchesFilters(row) {
+    return safeFilters.every(filter => {
+      const container = document.getElementById(filter.targetId);
+      if (!container) return true;
 
-    const inputs = Array.from(container.querySelectorAll("input"));
-    const selectedValues = inputs
-      .filter(input => input.checked)
-      .map(input => input.value);
+      const inputs = Array.from(container.querySelectorAll("input"));
+      const selectedValues = inputs
+        .filter(input => input.checked)
+        .map(input => input.value);
 
-    if (inputs.length === 0) return true;
-    if (selectedValues.length === inputs.length) return true;
-    if (selectedValues.length === 0) return false;
+      if (inputs.length === 0) return true;
+      if (selectedValues.length === inputs.length) return true;
+      if (selectedValues.length === 0) return false;
 
-    const rowValues = getFilterValuesForRow(row, filter);
+      const rowValues = getFilterValuesForRow(row, filter);
 
-    if (filter.mode === "and") {
-      return selectedValues.every(value => rowValues.includes(value));
-    }
+      if (filter.mode === "and") {
+        return selectedValues.every(value => rowValues.includes(value));
+      }
 
-    return selectedValues.some(value => rowValues.includes(value));
-  });
-}
-function rowMatchesAdvancedInputs(row) {
-  const sampleInput = document.getElementById("sample-filter");
-  const yearStartInput = document.getElementById("year-start-filter");
-  const yearEndInput = document.getElementById("year-end-filter");
-  const minsModeInput = document.getElementById("mins-mode-filter");
-  const minsValueInput = document.getElementById("mins-value-filter");
-
-  // Sample search: blank means include all.
-  const sampleTerm = sampleInput ? sampleInput.value.trim().toLowerCase() : "";
-
-  if (sampleTerm !== "") {
-    const sampleText = [
-      row["Name"],
-      row["Tags"],
-      row["Movie Series?"],
-      row["OMDB_Genre"],
-      row["OMDB_Director"],
-      row["OMDB_Actors"],
-      row["OMDB_Plot"],
-      row["Notes (Review)"]
-    ]
-      .map(value => String(value ?? "").toLowerCase())
-      .join(" ");
-
-    if (!sampleText.includes(sampleTerm)) {
-      return false;
-    }
+      return selectedValues.some(value => rowValues.includes(value));
+    });
   }
 
-  // Year range: both blank means include all.
-  const yearStartText = yearStartInput ? yearStartInput.value.trim() : "";
-  const yearEndText = yearEndInput ? yearEndInput.value.trim() : "";
+  function rowMatchesAdvancedInputs(row) {
+    const sampleInput = document.getElementById("sample-filter");
+    const yearStartInput = document.getElementById("year-start-filter");
+    const yearEndInput = document.getElementById("year-end-filter");
+    const minsModeInput = document.getElementById("mins-mode-filter");
+    const minsValueInput = document.getElementById("mins-value-filter");
 
-  if (yearStartText !== "" || yearEndText !== "") {
-    const yearText = String(row["Year"] ?? "").trim();
-    const year = Number(yearText);
+    const sampleTerm = sampleInput ? sampleInput.value.trim().toLowerCase() : "";
 
-    if (yearText === "" || isNaN(year)) {
-      return false;
-    }
+    if (sampleTerm !== "") {
+      const sampleText = [
+        row["Name"],
+        row["Tags"],
+        row["Movie Series?"],
+        row["OMDB_Genre"],
+        row["OMDB_Director"],
+        row["OMDB_Actors"],
+        row["OMDB_Plot"],
+        row["Notes (Review)"]
+      ]
+        .map(value => String(value ?? "").toLowerCase())
+        .join(" ");
 
-    if (yearStartText !== "") {
-      const yearStart = Number(yearStartText);
-
-      if (!isNaN(yearStart) && year < yearStart) {
+      if (!sampleText.includes(sampleTerm)) {
         return false;
       }
     }
 
-    if (yearEndText !== "") {
-      const yearEnd = Number(yearEndText);
+    const yearStartText = yearStartInput ? yearStartInput.value.trim() : "";
+    const yearEndText = yearEndInput ? yearEndInput.value.trim() : "";
 
-      if (!isNaN(yearEnd) && year > yearEnd) {
+    if (yearStartText !== "" || yearEndText !== "") {
+      const yearText = String(row["Year"] ?? "").trim();
+      const year = Number(yearText);
+
+      if (yearText === "" || isNaN(year)) {
+        return false;
+      }
+
+      if (yearStartText !== "") {
+        const yearStart = Number(yearStartText);
+
+        if (!isNaN(yearStart) && year < yearStart) {
+          return false;
+        }
+      }
+
+      if (yearEndText !== "") {
+        const yearEnd = Number(yearEndText);
+
+        if (!isNaN(yearEnd) && year > yearEnd) {
+          return false;
+        }
+      }
+    }
+
+    const minsValueText = minsValueInput ? minsValueInput.value.trim() : "";
+
+    if (minsValueText !== "") {
+      const minsText = String(row["Mins."] ?? "").trim();
+      const mins = Number(minsText);
+      const minsValue = Number(minsValueText);
+      const minsMode = minsModeInput ? minsModeInput.value : "greater";
+
+      if (minsText === "" || isNaN(mins) || isNaN(minsValue)) {
+        return false;
+      }
+
+      if (minsMode === "greater" && mins <= minsValue) {
+        return false;
+      }
+
+      if (minsMode === "less" && mins >= minsValue) {
         return false;
       }
     }
+
+    return true;
   }
 
-  // Mins. filter: blank means include all.
-  const minsValueText = minsValueInput ? minsValueInput.value.trim() : "";
+  function applyAllFiltersAndSort() {
+    currentData = data.filter(row => {
+      return (
+        rowMatchesSearch(row) &&
+        rowMatchesFilters(row) &&
+        rowMatchesRatingStatus(row) &&
+        rowMatchesAdvancedInputs(row)
+      );
+    });
 
-  if (minsValueText !== "") {
-    const minsText = String(row["Mins."] ?? "").trim();
-    const mins = Number(minsText);
-    const minsValue = Number(minsValueText);
-    const minsMode = minsModeInput ? minsModeInput.value : "greater";
-
-    if (minsText === "" || isNaN(mins) || isNaN(minsValue)) {
-      return false;
-    }
-
-    if (minsMode === "greater" && mins <= minsValue) {
-      return false;
-    }
-
-    if (minsMode === "less" && mins >= minsValue) {
-      return false;
-    }
+    applySort();
+    updateFilterIndicator();
   }
-
-  return true;
-}
-function applyAllFiltersAndSort() {
-  currentData = data.filter(row => {
-    return (
-      rowMatchesSearch(row) &&
-      rowMatchesFilters(row) &&
-      rowMatchesRatingStatus(row) &&
-      rowMatchesAdvancedInputs(row)
-    );
-  });
-
-  applySort();
-  updateFilterIndicator();
-}
 
   function setupSearch() {
     if (!searchId) return;
@@ -709,12 +710,12 @@ function applyAllFiltersAndSort() {
 
     rowLimit = rowLimitSelect.value === "all"
       ? "all"
-      : Number(rowLimitSelect.value) || 100;
+      : Number(rowLimitSelect.value) || 25;
 
     rowLimitSelect.addEventListener("change", () => {
       rowLimit = rowLimitSelect.value === "all"
         ? "all"
-        : Number(rowLimitSelect.value) || 100;
+        : Number(rowLimitSelect.value) || 25;
 
       renderTable(currentData);
     });
@@ -726,24 +727,26 @@ function applyAllFiltersAndSort() {
     const ratingSelect = document.getElementById(ratingStatusId);
     if (!ratingSelect) return;
 
-    ratingSelect.addEventListener("change", applyAllFiltersAndSort);
+    ratingSelect.addEventListener("change", markFiltersPending);
   }
-function setupAdvancedInputFilters() {
-  [
-    "sample-filter",
-    "year-start-filter",
-    "year-end-filter",
-    "mins-mode-filter",
-    "mins-value-filter"
-  ].forEach(id => {
-    const input = document.getElementById(id);
 
-    if (input) {
-      input.addEventListener("input", applyAllFiltersAndSort);
-      input.addEventListener("change", applyAllFiltersAndSort);
-    }
-  });
-}
+  function setupAdvancedInputFilters() {
+    [
+      "sample-filter",
+      "year-start-filter",
+      "year-end-filter",
+      "mins-mode-filter",
+      "mins-value-filter"
+    ].forEach(id => {
+      const input = document.getElementById(id);
+
+      if (input) {
+        input.addEventListener("input", markFiltersPending);
+        input.addEventListener("change", markFiltersPending);
+      }
+    });
+  }
+
   function updateSortDropdown() {
     if (!sortColumnId) return;
 
@@ -852,143 +855,162 @@ function setupAdvancedInputFilters() {
 
     updateColumnPickerSelectAll();
   }
-function getActiveFilterCount() {
-  let count = 0;
 
-  const searchBox = searchId ? document.getElementById(searchId) : null;
+  function getActiveFilterCount() {
+    let count = 0;
 
-  if (searchBox && searchBox.value.trim() !== "") {
-    count++;
-  }
+    const searchBox = searchId ? document.getElementById(searchId) : null;
 
-  const ratingSelect = ratingStatusId ? document.getElementById(ratingStatusId) : null;
-
-  if (ratingSelect && ratingSelect.value !== "all") {
-    count++;
-  }
-
-  const sampleInput = document.getElementById("sample-filter");
-  const yearStartInput = document.getElementById("year-start-filter");
-  const yearEndInput = document.getElementById("year-end-filter");
-  const minsValueInput = document.getElementById("mins-value-filter");
-
-  if (sampleInput && sampleInput.value.trim() !== "") {
-    count++;
-  }
-
-  if (
-    (yearStartInput && yearStartInput.value.trim() !== "") ||
-    (yearEndInput && yearEndInput.value.trim() !== "")
-  ) {
-    count++;
-  }
-
-  if (minsValueInput && minsValueInput.value.trim() !== "") {
-    count++;
-  }
-
-  safeFilters.forEach(filter => {
-    const container = document.getElementById(filter.targetId);
-    if (!container) return;
-
-    const inputs = Array.from(container.querySelectorAll("input"));
-    if (inputs.length === 0) return;
-
-    const checkedCount = inputs.filter(input => input.checked).length;
-
-    if (checkedCount !== inputs.length) {
+    if (searchBox && searchBox.value.trim() !== "") {
       count++;
     }
-  });
 
-  return count;
-}
+    const ratingSelect = ratingStatusId ? document.getElementById(ratingStatusId) : null;
 
-function updateFilterIndicator() {
-  const indicator = document.getElementById("filters-active-indicator");
-  const filtersPanel = document.getElementById("movies-filters-panel");
-
-  if (!indicator) return;
-
-  const activeCount = getActiveFilterCount();
-
-  if (activeCount > 0) {
-    indicator.textContent = `Filters on (${activeCount})`;
-    indicator.classList.add("filters-active");
-
-    if (filtersPanel) {
-      filtersPanel.classList.add("filters-active-panel");
+    if (ratingSelect && ratingSelect.value !== "all") {
+      count++;
     }
-  } else {
-    indicator.textContent = "No filters";
-    indicator.classList.remove("filters-active");
 
-    if (filtersPanel) {
-      filtersPanel.classList.remove("filters-active-panel");
+    const sampleInput = document.getElementById("sample-filter");
+    const yearStartInput = document.getElementById("year-start-filter");
+    const yearEndInput = document.getElementById("year-end-filter");
+    const minsValueInput = document.getElementById("mins-value-filter");
+
+    if (sampleInput && sampleInput.value.trim() !== "") {
+      count++;
     }
-  }
-}
 
-function clearAllMovieFilters() {
-  const searchBox = searchId ? document.getElementById(searchId) : null;
+    if (
+      (yearStartInput && yearStartInput.value.trim() !== "") ||
+      (yearEndInput && yearEndInput.value.trim() !== "")
+    ) {
+      count++;
+    }
 
-  if (searchBox) {
-    searchBox.value = "";
-  }
+    if (minsValueInput && minsValueInput.value.trim() !== "") {
+      count++;
+    }
 
-  const ratingSelect = ratingStatusId ? document.getElementById(ratingStatusId) : null;
+    safeFilters.forEach(filter => {
+      const container = document.getElementById(filter.targetId);
+      if (!container) return;
 
-  if (ratingSelect) {
-    ratingSelect.value = "all";
-  }
+      const inputs = Array.from(container.querySelectorAll("input"));
+      if (inputs.length === 0) return;
 
-  const sampleInput = document.getElementById("sample-filter");
-  const yearStartInput = document.getElementById("year-start-filter");
-  const yearEndInput = document.getElementById("year-end-filter");
-  const minsModeInput = document.getElementById("mins-mode-filter");
-  const minsValueInput = document.getElementById("mins-value-filter");
+      const checkedCount = inputs.filter(input => input.checked).length;
 
-  if (sampleInput) sampleInput.value = "";
-  if (yearStartInput) yearStartInput.value = "";
-  if (yearEndInput) yearEndInput.value = "";
-  if (minsModeInput) minsModeInput.value = "greater";
-  if (minsValueInput) minsValueInput.value = "";
-
-  safeFilters.forEach(filter => {
-    const container = document.getElementById(filter.targetId);
-    if (!container) return;
-
-    const inputs = Array.from(container.querySelectorAll("input"));
-
-    inputs.forEach(input => {
-      input.checked = true;
+      if (checkedCount !== inputs.length) {
+        count++;
+      }
     });
 
-    if (filter.selectAllId) {
-      const selectAllCheckbox = document.getElementById(filter.selectAllId);
+    return count;
+  }
 
-      if (selectAllCheckbox) {
-        selectAllCheckbox.checked = true;
-        selectAllCheckbox.indeterminate = false;
+  function markFiltersPending() {
+    const indicator = document.getElementById("filters-active-indicator");
+
+    if (!indicator) return;
+
+    indicator.textContent = "Filters changed";
+    indicator.classList.add("filters-active");
+  }
+
+  function updateFilterIndicator() {
+    const indicator = document.getElementById("filters-active-indicator");
+    const filtersPanel = document.getElementById("movies-filters-panel");
+
+    if (!indicator) return;
+
+    const activeCount = getActiveFilterCount();
+
+    if (activeCount > 0) {
+      indicator.textContent = `Filters on (${activeCount})`;
+      indicator.classList.add("filters-active");
+
+      if (filtersPanel) {
+        filtersPanel.classList.add("filters-active-panel");
+      }
+    } else {
+      indicator.textContent = "No filters";
+      indicator.classList.remove("filters-active");
+
+      if (filtersPanel) {
+        filtersPanel.classList.remove("filters-active-panel");
       }
     }
+  }
 
-    if (filter.modeButtonId) {
-      filter.mode = "or";
-      updateFilterModeButton(filter);
+  function clearAllMovieFilters() {
+    const searchBox = searchId ? document.getElementById(searchId) : null;
+
+    if (searchBox) {
+      searchBox.value = "";
     }
-  });
 
-  applyAllFiltersAndSort();
-}
+    const ratingSelect = ratingStatusId ? document.getElementById(ratingStatusId) : null;
 
-function setupClearFiltersButton() {
-  const clearButton = document.getElementById("clear-movies-filters");
+    if (ratingSelect) {
+      ratingSelect.value = "all";
+    }
 
-  if (!clearButton) return;
+    const sampleInput = document.getElementById("sample-filter");
+    const yearStartInput = document.getElementById("year-start-filter");
+    const yearEndInput = document.getElementById("year-end-filter");
+    const minsModeInput = document.getElementById("mins-mode-filter");
+    const minsValueInput = document.getElementById("mins-value-filter");
 
-  clearButton.addEventListener("click", clearAllMovieFilters);
-}
+    if (sampleInput) sampleInput.value = "";
+    if (yearStartInput) yearStartInput.value = "";
+    if (yearEndInput) yearEndInput.value = "";
+    if (minsModeInput) minsModeInput.value = "greater";
+    if (minsValueInput) minsValueInput.value = "";
+
+    safeFilters.forEach(filter => {
+      const container = document.getElementById(filter.targetId);
+      if (!container) return;
+
+      const inputs = Array.from(container.querySelectorAll("input"));
+
+      inputs.forEach(input => {
+        input.checked = true;
+      });
+
+      if (filter.selectAllId) {
+        const selectAllCheckbox = document.getElementById(filter.selectAllId);
+
+        if (selectAllCheckbox) {
+          selectAllCheckbox.checked = true;
+          selectAllCheckbox.indeterminate = false;
+        }
+      }
+
+      if (filter.modeButtonId) {
+        filter.mode = "or";
+        updateFilterModeButton(filter);
+      }
+    });
+
+    applyAllFiltersAndSort();
+  }
+
+  function setupClearFiltersButton() {
+    const clearButton = document.getElementById("clear-movies-filters");
+
+    if (!clearButton) return;
+
+    clearButton.addEventListener("click", clearAllMovieFilters);
+  }
+
+  function setupApplyFiltersButton() {
+    const applyButton = document.getElementById("apply-movies-filters");
+
+    if (!applyButton) return;
+
+    applyButton.addEventListener("click", applyAllFiltersAndSort);
+  }
+
   function updateColumnSummary() {
     if (!columnPickerId) return;
 
@@ -1062,18 +1084,18 @@ function setupClearFiltersButton() {
         filter.mode = "or";
       }
 
-     const valuesFromData = Array.from(
-  new Set(
-    data.flatMap(row => getFilterValuesForRow(row, filter))
-  )
-).sort((a, b) => a.localeCompare(b));
+      const valuesFromData = Array.from(
+        new Set(
+          data.flatMap(row => getFilterValuesForRow(row, filter))
+        )
+      ).sort((a, b) => a.localeCompare(b));
 
-const uniqueValues = filter.options
-  ? [
-      ...filter.options,
-      ...valuesFromData.filter(value => !filter.options.includes(value))
-    ]
-  : valuesFromData;
+      const uniqueValues = filter.options
+        ? [
+            ...filter.options,
+            ...valuesFromData.filter(value => !filter.options.includes(value))
+          ]
+        : valuesFromData;
 
       container.innerHTML = uniqueValues.map(value => `
         <label class="filter-option">
@@ -1085,7 +1107,7 @@ const uniqueValues = filter.options
       container.querySelectorAll("input").forEach(input => {
         input.addEventListener("change", () => {
           updateFilterSelectAllCheckbox(filter);
-          applyAllFiltersAndSort();
+          markFiltersPending();
         });
       });
 
@@ -1101,7 +1123,7 @@ const uniqueValues = filter.options
             });
 
             selectAllCheckbox.indeterminate = false;
-            applyAllFiltersAndSort();
+            markFiltersPending();
           });
         }
       }
@@ -1114,7 +1136,7 @@ const uniqueValues = filter.options
             filter.mode = filter.mode === "and" ? "or" : "and";
 
             updateFilterModeButton(filter);
-            applyAllFiltersAndSort();
+            markFiltersPending();
           });
         }
       }
@@ -1132,6 +1154,7 @@ const uniqueValues = filter.options
   setupRowLimit();
   setupRatingStatusFilter();
   setupAdvancedInputFilters();
+  setupApplyFiltersButton();
   setupClearFiltersButton();
 
   applyAllFiltersAndSort();
