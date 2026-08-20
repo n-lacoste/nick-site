@@ -791,6 +791,8 @@ thead th:nth-child(3) {
 
 /* Hover-only header dropdown navigation */
 
+/* Hover-only header dropdown navigation */
+
 .site-nav {
   display: flex;
   align-items: center;
@@ -818,6 +820,10 @@ thead th:nth-child(3) {
   position: relative;
   display: inline-flex;
   align-items: center;
+
+  /* This creates a hover bridge between title and dropdown */
+  padding-bottom: 10px;
+  margin-bottom: -10px;
 }
 
 /* Top menu title */
@@ -841,14 +847,14 @@ thead th:nth-child(3) {
   content: "▾";
 }
 
-/* Important: hide dropdowns by default */
+/* Hide dropdowns by default */
 .nav-dropdown {
   display: none;
   position: absolute;
   top: 100%;
   left: 0;
   min-width: 200px;
-  margin-top: 8px;
+  margin-top: 0;
   background: #111;
   border: 1px solid #333;
   border-radius: 8px;
@@ -857,7 +863,7 @@ thead th:nth-child(3) {
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
 }
 
-/* Show only the dropdown for the menu being hovered */
+/* Show only the dropdown for the hovered menu */
 .nav-menu:hover > .nav-dropdown,
 .nav-menu:focus-within > .nav-dropdown {
   display: block;
