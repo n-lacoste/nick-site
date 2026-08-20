@@ -571,3 +571,10 @@ main {
 .page-topline p {
   margin-top: 0;
 }
+.site-title,
+.site-title:visited,
+.site-title:hover,
+.site-title:active {
+  color: #f5f5f5;
+  text-decoration: none;
+}
