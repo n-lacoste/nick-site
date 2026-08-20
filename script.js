@@ -908,39 +908,75 @@ async function loadCSV(
     return count;
   }
 
-  function markFiltersPending() {
-    const indicator = document.getElementById("filters-active-indicator");
+ function setApplyButtonState(state) {
+  const applyButton = document.getElementById("apply-movies-filters");
 
-    if (!indicator) return;
+  if (!applyButton) return;
 
-    indicator.textContent = "Filters changed";
-    indicator.classList.add("filters-active");
+  applyButton.classList.remove("filters-pending-button");
+  applyButton.classList.remove("filters-applied-button");
+
+  if (state === "pending") {
+    applyButton.classList.add("filters-pending-button");
   }
 
-  function updateFilterIndicator() {
-    const indicator = document.getElementById("filters-active-indicator");
-    const filtersPanel = document.getElementById("movies-filters-panel");
+  if (state === "applied") {
+    applyButton.classList.add("filters-applied-button");
+  }
+}
 
-    if (!indicator) return;
+function markFiltersPending() {
+  const indicator = document.getElementById("filters-active-indicator");
+  const filtersPanel = document.getElementById("movies-filters-panel");
 
-    const activeCount = getActiveFilterCount();
+  setApplyButtonState("pending");
 
-    if (activeCount > 0) {
-      indicator.textContent = `Filters on (${activeCount})`;
-      indicator.classList.add("filters-active");
+  if (!indicator) return;
 
-      if (filtersPanel) {
-        filtersPanel.classList.add("filters-active-panel");
-      }
-    } else {
-      indicator.textContent = "No filters";
-      indicator.classList.remove("filters-active");
+  indicator.textContent = "Click apply to confirm filters";
+  indicator.classList.add("filters-active");
+  indicator.classList.add("filters-pending");
+  indicator.classList.remove("filters-applied");
 
-      if (filtersPanel) {
-        filtersPanel.classList.remove("filters-active-panel");
-      }
+  if (filtersPanel) {
+    filtersPanel.classList.add("filters-active-panel");
+  }
+}
+
+ function updateFilterIndicator() {
+  const indicator = document.getElementById("filters-active-indicator");
+  const filtersPanel = document.getElementById("movies-filters-panel");
+
+  const activeCount = getActiveFilterCount();
+
+  if (activeCount > 0) {
+    setApplyButtonState("applied");
+  } else {
+    setApplyButtonState("none");
+  }
+
+  if (!indicator) return;
+
+  indicator.classList.remove("filters-pending");
+  indicator.classList.remove("filters-applied");
+
+  if (activeCount > 0) {
+    indicator.textContent = `Filters on (${activeCount})`;
+    indicator.classList.add("filters-active");
+    indicator.classList.add("filters-applied");
+
+    if (filtersPanel) {
+      filtersPanel.classList.add("filters-active-panel");
+    }
+  } else {
+    indicator.textContent = "No filters";
+    indicator.classList.remove("filters-active");
+
+    if (filtersPanel) {
+      filtersPanel.classList.remove("filters-active-panel");
     }
   }
+}
 
   function clearAllMovieFilters() {
     const searchBox = searchId ? document.getElementById(searchId) : null;
