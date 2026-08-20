@@ -65,21 +65,18 @@ async function loadCSV(
     "OMDB_Genre": "220px"
   };
 
-  const columnFontSizes = {
-    "Notes (Review)": "13px",
-    "OMDB_Plot": "13px",
+const cellFontSizes = {
+  "Notes (Review)": "13px",
+  "OMDB_Plot": "13px"
+};
 
-    "Plot": "12px",
-    "Main Character(s)": "12px",
-    "Side Characters": "12px",
-    "Emotion": "12px",
-    "Dialogue (Writing)": "12px",
-    "Purpose Met": "12px",
-    "Cast": "12px",
-    "Music & Sound": "12px",
-    "Rewatch Value": "12px"
-  };
+const factorheaderFontSize = "12px";
 
+const compactHeaderColumns = [
+  "Main Character(s)",
+  "Side Characters",
+  "Dialogue (Writing)"
+];
   const tierColors = {
     "S":  { bg: "#efd1ff", text: "#5a3286" },
     "(S)": { bg: "#efd1ff", text: "#5a3286" },
@@ -169,23 +166,54 @@ async function loadCSV(
     return escapeHTML(text);
   }
 
-  function getColumnStyle(header) {
-    let style = "";
+function getColumnWidthStyle(header) {
+  let style = "";
 
-    if (columnWidths[header]) {
-      style += `
-        width: ${columnWidths[header]};
-        min-width: ${columnWidths[header]};
-        max-width: ${columnWidths[header]};
-      `;
-    }
-
-    if (columnFontSizes[header]) {
-      style += ` font-size: ${columnFontSizes[header]};`;
-    }
-
-    return style;
+  if (columnWidths[header]) {
+    style += `
+      width: ${columnWidths[header]};
+      min-width: ${columnWidths[header]};
+      max-width: ${columnWidths[header]};
+    `;
   }
+
+  return style;
+}
+
+function getHeaderStyle(header) {
+  let style = getColumnWidthStyle(header);
+
+  if (factorColumns.includes(header)) {
+    style += `
+      font-size: ${factorHeaderFontSize};
+      line-height: 1.1;
+    `;
+  }
+
+  if (compactHeaderColumns.includes(header)) {
+    style += `
+      padding-left: 4px;
+      padding-right: 4px;
+    `;
+  }
+
+  return style;
+}
+
+function getCellStyle(header) {
+  let style = getColumnWidthStyle(header);
+
+  if (factorColumns.includes(header)) {
+    style += `
+      font-size: 20px;
+      line-height: 1;
+    `;
+  } else if (cellFontSizes[header]) {
+    style += ` font-size: ${cellFontSizes[header]};`;
+  }
+
+  return style;
+}
 
   function getRatingColor(value) {
     const num = Number(String(value ?? "").replace(/,/g, "").trim());
@@ -355,7 +383,7 @@ async function loadCSV(
     let html = "<thead><tr>";
 
     visibleHeaders.forEach(header => {
-      html += `<th data-column="${escapeHTML(header)}" style="${getColumnStyle(header)}">${formatHeader(header)}</th>`;
+      html += `<th data-column="${escapeHTML(header)}" style="${getHeaderStyle(header)}">${formatHeader(header)}</th>`;
     });
 
     html += "</tr></thead><tbody>";
@@ -366,7 +394,7 @@ async function loadCSV(
       html += "<tr>";
 
       visibleHeaders.forEach(header => {
-        const cellStyle = `${getColumnStyle(header)} ${getConditionalStyle(header, row[header])}`;
+       const cellStyle = `${getCellStyle(header)} ${getConditionalStyle(header, row[header])}`;
 
         const cellContent = expandableColumns.includes(header)
           ? renderExpandableCell(header, row[header])
