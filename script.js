@@ -51,7 +51,8 @@ async function loadCSV(
     "Rk": "70px",
     "Name": "240px",
     "Me vs. IMDB": "65px",
-    "Movies Series?": "100px",
+    "Tags": "120px",
+    "Movie Series?": "100px",
 
     "Plot": "50px",
     "Main Character(s)": "50px",
@@ -73,6 +74,7 @@ async function loadCSV(
 const cellFontSizes = {
   "Notes (Review)": "13px",
   "OMDB_Plot": "13px",
+  "Tags": "13px",
   "Movie Series?": "13px"
 };
 
