@@ -50,6 +50,7 @@ async function loadCSV(
     "Tier": "80px",
     "Rk": "70px",
     "Name": "240px",
+    "Movies Series?": "150px",
 
     "Plot": "50px",
     "Main Character(s)": "50px",
@@ -70,7 +71,8 @@ async function loadCSV(
 
 const cellFontSizes = {
   "Notes (Review)": "13px",
-  "OMDB_Plot": "13px"
+  "OMDB_Plot": "13px",
+  "Movie Series?": "13px"
 };
 
 const factorHeaderFontSize = "12px";
@@ -234,6 +236,11 @@ function getCellStyle(header) {
   let style = getColumnWidthStyle(header);
 
   if (factorColumns.includes(header)) {
+    style += `
+      font-size: 20px;
+      line-height: 1;
+    `;
+  } else if (header === "My Rating") {
     style += `
       font-size: 20px;
       line-height: 1;
