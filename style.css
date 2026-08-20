@@ -745,3 +745,30 @@ thead th:nth-child(3) {
   font-size: 13px;
   margin: 4px 0 8px;
 }
+#apply-movies-filters.filters-pending-button {
+  background: #ffd966;
+  color: #000000;
+  border-color: #d6a700;
+  font-weight: bold;
+}
+
+#apply-movies-filters.filters-applied-button {
+  background: #11734b;
+  color: #ffffff;
+  border-color: #57bb8a;
+  font-weight: bold;
+}
+
+.filters-indicator.filters-pending {
+  color: #000000;
+  background: #ffd966;
+  border-color: #d6a700;
+  font-weight: bold;
+}
+
+.filters-indicator.filters-applied {
+  color: #ffffff;
+  background: #11734b;
+  border-color: #57bb8a;
+  font-weight: bold;
+}
