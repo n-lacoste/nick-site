@@ -312,7 +312,15 @@ function getCellStyle(header) {
       .map(v => v.trim())
       .filter(v => v !== "");
   }
+function getFilterValuesForRow(row, filter) {
+  const rawValue = String(row[filter.column] ?? "").trim();
 
+  if (rawValue === "" && filter.blankLabel) {
+    return [filter.blankLabel];
+  }
+
+  return getFilterValues(rawValue);
+}
   function clearExpandedCellStore() {
     expandedCellCounter = 0;
 
@@ -518,7 +526,7 @@ function getCellStyle(header) {
       if (selectedValues.length === inputs.length) return true;
       if (selectedValues.length === 0) return false;
 
-      const rowValues = getFilterValues(row[filter.column]);
+    const rowValues = getFilterValuesForRow(row, filter);
 
       if (filter.mode === "and") {
         return selectedValues.every(value => rowValues.includes(value));
@@ -757,11 +765,18 @@ function getCellStyle(header) {
         filter.mode = "or";
       }
 
-      const uniqueValues = Array.from(
-        new Set(
-          data.flatMap(row => getFilterValues(row[filter.column]))
-        )
-      ).sort((a, b) => a.localeCompare(b));
+     const valuesFromData = Array.from(
+  new Set(
+    data.flatMap(row => getFilterValuesForRow(row, filter))
+  )
+).sort((a, b) => a.localeCompare(b));
+
+const uniqueValues = filter.options
+  ? [
+      ...filter.options,
+      ...valuesFromData.filter(value => !filter.options.includes(value))
+    ]
+  : valuesFromData;
 
       container.innerHTML = uniqueValues.map(value => `
         <label class="filter-option">
