@@ -33,7 +33,9 @@ async function loadCSV(
     : allHeaders;
 
   const table = document.getElementById(tableId);
-
+    const safeFilters = Array.isArray(filters)
+      ? filters.filter(filter => filter && filter.targetId && filter.column)
+      : [];
   let currentData = [...data];
   let sortColumn = visibleHeaders.includes("Rk") ? "Rk" : visibleHeaders[0] || null;
   let sortDirection = "asc";
@@ -512,26 +514,29 @@ function getFilterValuesForRow(row, filter) {
     return true;
   }
 
-  function rowMatchesFilters(row) {
-    return filters.every(filter => {
-      const container = document.getElementById(filter.targetId);
-      if (!container) return true;
+function rowMatchesFilters(row) {
+  return safeFilters.every(filter => {
+    const container = document.getElementById(filter.targetId);
+    if (!container) return true;
 
-      const inputs = Array.from(container.querySelectorAll("input"));
-      const selectedValues = inputs
-        .filter(input => input.checked)
-        .map(input => input.value);
+    const inputs = Array.from(container.querySelectorAll("input"));
+    const selectedValues = inputs
+      .filter(input => input.checked)
+      .map(input => input.value);
 
-      if (inputs.length === 0) return true;
-      if (selectedValues.length === inputs.length) return true;
-      if (selectedValues.length === 0) return false;
+    if (inputs.length === 0) return true;
+    if (selectedValues.length === inputs.length) return true;
+    if (selectedValues.length === 0) return false;
 
     const rowValues = getFilterValuesForRow(row, filter);
 
-      if (filter.mode === "and") {
-        return selectedValues.every(value => rowValues.includes(value));
-      }
+    if (filter.mode === "and") {
+      return selectedValues.every(value => rowValues.includes(value));
+    }
 
+    return selectedValues.some(value => rowValues.includes(value));
+  });
+}
       return selectedValues.some(value => rowValues.includes(value));
     });
   }
@@ -757,7 +762,7 @@ function getFilterValuesForRow(row, filter) {
   }
 
   function setupFilters() {
-    filters.forEach(filter => {
+    safeFilters.forEach(filter => {
       const container = document.getElementById(filter.targetId);
       if (!container) return;
 
