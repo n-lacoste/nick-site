@@ -161,7 +161,7 @@ const compactHeaderColumns = [
   function formatHeader(header) {
     const headerBreaks = {
       "Me vs. IMDB": "vs.<br>IMDB",
-      "Movie Series?": "Movie<br>Series",
+      "Movie Series?": "Movie Series",
       "Main Character(s)": "Main<br>Character(s)",
       "Side Characters": "Side<br>Characters",
       "Dialogue (Writing)": "Dialogue<br>(Writing)",
