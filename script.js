@@ -242,7 +242,7 @@ async function loadCSV(
 
     if (factorColumns.includes(header)) {
       style += `
-        font-size: 20px;
+        font-size: 16px;
         line-height: 1;
       `;
     } else if (header === "My Rating") {
