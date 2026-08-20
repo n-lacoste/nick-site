@@ -837,8 +837,8 @@ thead th:nth-child(3) {
 /* Add custom arrow on the right */
 .nav-menu > summary::after {
   content: "▸";
-  font-size: 12px;
-  margin-left: 6px;
+  font-size: 16px;
+  margin-left: 3px;
   transform: translateY(1px);
 }
 
