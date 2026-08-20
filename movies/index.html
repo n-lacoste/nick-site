@@ -1,1 +1,440 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Movies | Nick Site</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <header>
+    <h1>
+      <a class="site-title" href="index.html">Nick Lacoste's Portfolio</a>
+    </h1>
+
+   <nav class="site-nav">
+  <a href="index.html">Home</a>
+
+  <details class="nav-menu">
+    <summary>Music</summary>
+    <div class="nav-dropdown">
+      <a href="music.html">Music Home</a>
+      <a href="songs.html">Songs</a>
+      <a href="albums.html">Albums</a>
+      <a href="artists.html">Artists</a>
+      <a href="playlists.html">Playlists</a>
+    </div>
+  </details>
+
+  <details class="nav-menu">
+    <summary>Movies</summary>
+    <div class="nav-dropdown">
+      <a href="movies.html">Movies Home</a>
+      <a href="movie-rankings.html">Rankings</a>
+      <a href="movie-series.html">Movie Series</a>
+      <a href="criterion.html">Criterion</a>
+    </div>
+  </details>
+
+  <details class="nav-menu">
+    <summary>TV Shows</summary>
+    <div class="nav-dropdown">
+      <a href="tv.html">TV Home</a>
+      <a href="tv-episodes.html">Episodes</a>
+      <a href="tv-rankings.html">Rankings</a>
+    </div>
+  </details>
+
+  <details class="nav-menu">
+    <summary>Geo</summary>
+    <div class="nav-dropdown">
+      <a href="geo.html">Geo Home</a>
+      <a href="maps.html">Maps</a>
+      <a href="places.html">Places</a>
+    </div>
+  </details>
+
+  <details class="nav-menu">
+    <summary>Professional Work</summary>
+    <div class="nav-dropdown">
+      <a href="professional.html">Professional Home</a>
+      <a href="cv.html">CV</a>
+      <a href="projects.html">Projects</a>
+      <a href="writing.html">Writing</a>
+    </div>
+  </details>
+</nav>
+  </header>
+
+  <main>
+    <div class="page-topline">
+      <div>
+        <h2>Movies</h2>
+        <p>Nick and Sarah's database of movies, with a 9-factor rating system, including some movie information from OMDB.</p>
+      </div>
+
+      <p class="last-updated">Last updated: August 17th, 2026</p>
+    </div>
+
+    <div class="movie-controls-row">
+
+      <details id="movies-columns-dropdown" class="filter-dropdown">
+        <summary>Display Columns</summary>
+
+        <label class="filter-option select-all-option">
+          <input type="checkbox" id="movies-columns-select-all">
+          Select All
+        </label>
+
+        <div id="movies-columns" class="filter-options"></div>
+      </details>
+
+      <div class="table-controls">
+        <label for="movies-sort-column">Sort by:</label>
+        <select id="movies-sort-column" class="sort-select"></select>
+        <button id="movies-sort-direction" class="sort-button" type="button">A–Z</button>
+      </div>
+
+      <div class="show-control">
+        <label for="movies-show-count">Show:</label>
+        <select id="movies-show-count" class="sort-select">
+          <option value="25" selected>25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+          <option value="250">250</option>
+          <option value="all">All</option>
+        </select>
+      </div>
+
+      <button id="movies-download-csv" class="download-button" type="button" aria-label="Download CSV">
+        <svg class="download-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"></path>
+        </svg>
+      </button>
+
+      <input 
+        type="text" 
+        id="movies-search" 
+        placeholder="Search movies..."
+        class="search-box"
+      >
+
+    </div>
+
+    <details id="movies-filters-panel" class="filters-panel">
+     <summary class="filters-panel-summary">
+  <span class="filters-summary-inner">
+    <span>Filters</span>
+    <span id="filters-active-indicator" class="filters-indicator">No filters</span>
+  </span>
+</summary>
+   <div class="filters-panel-actions">
+  <button id="apply-movies-filters" class="filter-button" type="button">
+    Apply filters
+  </button>
+
+  <button id="clear-movies-filters" class="filter-button" type="button">
+    Clear all filters
+  </button>
+</div>
+      <div class="advanced-filters-grid">
+
+        <div class="filter-control">
+          <label for="movies-rating-status">Sample</label>
+          <select id="movies-rating-status" class="sort-select">
+            <option value="all" selected>All Options</option>
+            <option value="ranked">Only Ranked</option>
+            <option value="unranked">Only Unranked</option>
+          </select>
+        </div>
+
+        <div class="filter-control">
+          <label for="year-start-filter">Year Range</label>
+          <div class="range-inputs">
+            <input id="year-start-filter" class="filter-text-input" type="number" placeholder="Start">
+            <input id="year-end-filter" class="filter-text-input" type="number" placeholder="End">
+          </div>
+        </div>
+
+        <div class="filter-control">
+          <label for="mins-mode-filter">Mins.</label>
+          <div class="range-inputs">
+            <select id="mins-mode-filter" class="sort-select">
+              <option value="greater">Greater than</option>
+              <option value="less">Less than</option>
+            </select>
+            <input id="mins-value-filter" class="filter-text-input" type="number" placeholder="Mins.">
+          </div>
+        </div>
+
+        <details class="filter-dropdown">
+          <summary>Watch Status</summary>
+
+          <label class="filter-option select-all-option">
+            <input type="checkbox" id="watched-select-all" checked>
+            Select All
+          </label>
+
+          <div id="watched-filter" class="filter-options"></div>
+        </details>
+
+        <details class="filter-dropdown">
+          <summary>Animated</summary>
+
+          <label class="filter-option select-all-option">
+            <input type="checkbox" id="animated-select-all" checked>
+            Select All
+          </label>
+
+          <div id="animated-filter" class="filter-options"></div>
+        </details>
+
+        <details class="filter-dropdown">
+          <summary>Holiday</summary>
+
+          <label class="filter-option select-all-option">
+            <input type="checkbox" id="holiday-select-all" checked>
+            Select All
+          </label>
+
+          <div id="holiday-filter" class="filter-options"></div>
+        </details>
+
+        <details class="filter-dropdown">
+          <summary>Sports</summary>
+
+          <label class="filter-option select-all-option">
+            <input type="checkbox" id="sports-select-all" checked>
+            Select All
+          </label>
+
+          <div id="sports-filter" class="filter-options"></div>
+        </details>
+
+        <details class="filter-dropdown">
+          <summary>Movie Series</summary>
+
+          <div class="filter-actions">
+            <button id="movie-series-mode" class="filter-button" type="button">
+              CONTAINS EITHER
+            </button>
+          </div>
+
+          <label class="filter-option select-all-option">
+            <input type="checkbox" id="movie-series-select-all" checked>
+            Select All
+          </label>
+
+          <div id="movie-series-filter" class="filter-options"></div>
+        </details>
+
+        <details class="filter-dropdown">
+          <summary>Genre</summary>
+
+          <label class="filter-option select-all-option">
+            <input type="checkbox" id="genre-select-all" checked>
+            Select All
+          </label>
+
+          <div id="genre-filter" class="filter-options"></div>
+        </details>
+
+        <details class="filter-dropdown">
+          <summary>Director</summary>
+
+          <label class="filter-option select-all-option">
+            <input type="checkbox" id="director-select-all" checked>
+            Select All
+          </label>
+
+          <div id="director-filter" class="filter-options"></div>
+        </details>
+
+        <details class="filter-dropdown">
+          <summary>Actor</summary>
+
+          <label class="filter-option select-all-option">
+            <input type="checkbox" id="actor-select-all" checked>
+            Select All
+          </label>
+
+          <div id="actor-filter" class="filter-options"></div>
+        </details>
+
+        <details class="filter-dropdown">
+          <summary>Criterion</summary>
+
+          <label class="filter-option select-all-option">
+            <input type="checkbox" id="criterion-select-all" checked>
+            Select All
+          </label>
+
+          <div id="criterion-filter" class="filter-options"></div>
+        </details>
+
+      </div>
+    </details>
+    
+    <div id="column-summary" class="column-summary" hidden>
+      <p><strong>Summary of displayed columns:</strong> <span id="visible-columns-summary"></span></p>
+      <p><strong>Not visible:</strong> <span id="hidden-columns-summary"></span></p>
+    </div>
+
+    <div id="movies-error" style="display:none; color:#ffb4b4; background:#3a1111; border:1px solid #8a3333; padding:12px; border-radius:8px; margin:12px 0;"></div>
+    
+    <div id="movies-row-count" class="movies-row-count"></div>
+    
+    <div class="table-wrap">
+      <table id="movies-table"></table>
+    </div>
+  </main>
+
+  <div id="cell-modal" class="cell-modal" hidden>
+    <div class="cell-modal-content">
+      <button id="cell-modal-close" class="cell-modal-close" type="button">×</button>
+      <h3 id="cell-modal-title"></h3>
+      <div id="cell-modal-text"></div>
+    </div>
+  </div>
+  
+  <script>
+    function showMoviesError(error) {
+      const errorBox = document.getElementById("movies-error");
+
+      if (!errorBox) {
+        alert("Movies table error: " + error.message);
+        return;
+      }
+
+      errorBox.style.display = "block";
+      errorBox.textContent = "Table failed to load: " + error.message;
+    }
+
+    window.addEventListener("error", event => {
+      showMoviesError(event.error || new Error(event.message));
+    });
+
+    window.addEventListener("unhandledrejection", event => {
+      showMoviesError(event.reason || new Error("Unhandled promise rejection"));
+    });
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="./script.js?v=7"></script>
+
+  <script>
+    try {
+      if (typeof Papa === "undefined") {
+        throw new Error("PapaParse did not load.");
+      }
+
+      if (typeof loadCSV !== "function") {
+        throw new Error("loadCSV is not defined. script.js did not load correctly or has a syntax error.");
+      }
+
+      loadCSV("data/movies.csv", "movies-table", "movies-search", [
+        "Tier",
+        "Rk",
+        "Name",
+        "Year",
+        "Mins.",
+        "h:mm",
+        "My Rating",
+        "Me vs. IMDB",
+        "Watched?",
+        "Updated",
+        "Tags",
+        "Movie Series?",
+        "OMDB_Genre",
+        "OMDB_Director",
+        "OMDB_Actors",
+        "OMDB_Plot",
+        "Criterion?",
+        "Plot",
+        "Main Character(s)",
+        "Side Characters",
+        "Emotion",
+        "Dialogue (Writing)",
+        "Purpose Met",
+        "Cast",
+        "Music & Sound",
+        "Rewatch Value",
+        "Notes (Review)"
+      ], "movies-columns", "movies-sort-column", "movies-sort-direction", [
+        {
+          column: "Watched?",
+          targetId: "watched-filter",
+          selectAllId: "watched-select-all",
+          mode: "or",
+          filterType: "watchedStatus",
+          options: ["Watched", "Unwatched"]
+        },
+        {
+          column: "Animated",
+          targetId: "animated-filter",
+          selectAllId: "animated-select-all",
+          mode: "or",
+          blankLabel: "NO",
+          options: ["YES", "MIXED", "NO"]
+        },
+        {
+          column: "Holiday?",
+          targetId: "holiday-filter",
+          selectAllId: "holiday-select-all",
+          mode: "or",
+          blankLabel: "NO",
+          options: ["XMAS", "HALLOWEEN", "SORTA", "NO"]
+        },
+        {
+          column: "Sports?",
+          targetId: "sports-filter",
+          selectAllId: "sports-select-all",
+          mode: "or",
+          blankLabel: "NO",
+          options: ["YES", "SORTA", "NO"]
+        },
+        {
+          column: "Movie Series?",
+          targetId: "movie-series-filter",
+          selectAllId: "movie-series-select-all",
+          modeButtonId: "movie-series-mode",
+          mode: "or"
+        },
+        {
+          column: "OMDB_Genre",
+          targetId: "genre-filter",
+          selectAllId: "genre-select-all",
+          mode: "or"
+        },
+        {
+          column: "OMDB_Director",
+          targetId: "director-filter",
+          selectAllId: "director-select-all",
+          mode: "or"
+        },
+        {
+          column: "OMDB_Actors",
+          targetId: "actor-filter",
+          selectAllId: "actor-select-all",
+          mode: "or"
+        },
+        {
+          column: "Criterion?",
+          targetId: "criterion-filter",
+          selectAllId: "criterion-select-all",
+          mode: "or",
+          blankLabel: "NO",
+          options: ["YES", "NO"]
+        }
+      ], "movies-show-count", "movies-rating-status")
+        .catch(showMoviesError);
+
+      document.getElementById("movies-download-csv").addEventListener("click", () => {
+        exportTableToCSV("movies-table", "movies-export.csv");
+      });
+    } catch (error) {
+      showMoviesError(error);
+    }
+  </script>
+</body>
+</html>
 
