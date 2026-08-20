@@ -626,35 +626,46 @@ function rowMatchesAdvancedInputs(row) {
   }
 
   // Year range
-  // Blank start/end boxes mean include all years.
-  const yearText = String(row["Year"] ?? "").trim();
-  const year = yearText === "" ? NaN : Number(yearText);
-
+  // If both boxes are blank, include all years.
   const yearStartText = yearStartInput ? yearStartInput.value.trim() : "";
   const yearEndText = yearEndInput ? yearEndInput.value.trim() : "";
 
-  const yearStart = yearStartText === "" ? NaN : Number(yearStartText);
-  const yearEnd = yearEndText === "" ? NaN : Number(yearEndText);
+  const yearFilterIsActive = yearStartText !== "" || yearEndText !== "";
 
-  if (!isNaN(yearStart) && !isNaN(year) && year < yearStart) {
-    return false;
-  }
+  if (yearFilterIsActive) {
+    const yearText = String(row["Year"] ?? "").trim();
+    const year = yearText === "" ? NaN : Number(yearText);
 
-  if (!isNaN(yearEnd) && !isNaN(year) && year > yearEnd) {
-    return false;
+    const yearStart = yearStartText === "" ? NaN : Number(yearStartText);
+    const yearEnd = yearEndText === "" ? NaN : Number(yearEndText);
+
+    if (isNaN(year)) {
+      return false;
+    }
+
+    if (!isNaN(yearStart) && year < yearStart) {
+      return false;
+    }
+
+    if (!isNaN(yearEnd) && year > yearEnd) {
+      return false;
+    }
   }
 
   // Mins. filter
-  // Blank mins box means include all runtimes.
-  const minsText = String(row["Mins."] ?? "").trim();
-  const mins = minsText === "" ? NaN : Number(minsText);
-
+  // If mins box is blank, include all runtimes.
   const minsValueText = minsValueInput ? minsValueInput.value.trim() : "";
-  const minsValue = minsValueText === "" ? NaN : Number(minsValueText);
 
-  const minsMode = minsModeInput ? minsModeInput.value : "greater";
+  if (minsValueText !== "") {
+    const minsText = String(row["Mins."] ?? "").trim();
+    const mins = minsText === "" ? NaN : Number(minsText);
+    const minsValue = Number(minsValueText);
+    const minsMode = minsModeInput ? minsModeInput.value : "greater";
 
-  if (!isNaN(minsValue) && !isNaN(mins)) {
+    if (isNaN(mins)) {
+      return false;
+    }
+
     if (minsMode === "greater" && mins <= minsValue) {
       return false;
     }
