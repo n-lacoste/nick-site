@@ -132,7 +132,7 @@
         <p><strong>Summary of displayed columns:</strong> <span id="visible-columns-summary"></span></p>
         <p><strong>Not visible:</strong> <span id="hidden-columns-summary"></span></p>
     </div>
-    
+ <div id="movies-error" style="display:none; color:#ffb4b4; background:#3a1111; border:1px solid #8a3333; padding:12px; border-radius:8px; margin:12px 0;"></div>   
     <div class="table-wrap">
       <table id="movies-table"></table>
     </div>
@@ -148,73 +148,78 @@
   
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script src="script.js"></script>
-  <script>
-    loadCSV("data/movies.csv", "movies-table", "movies-search", 
-[
-  "Tier",
-  "Rk",
-  "Name",
-  "Year",
-  "Mins.",
-  "h:mm",
-  "My Rating",
-  "Me vs. IMDB",
-  "Watched?",
-  "Updated",
-  "Tags",
-  "Movie Series?",
-  "OMDB_Genre",
-  "OMDB_Director",
-  "OMDB_Actors",
-  "Criterion?",
-  "Plot",
-  "Main Character(s)",
-  "Side Characters",
-  "Emotion",
-  "Dialogue (Writing)",
-  "Purpose Met",
-  "Cast",
-  "Music & Sound",
-  "Rewatch Value",
-  "Notes (Review)"
-                    ]
-            , "movies-columns", "movies-sort-column", "movies-sort-direction", 
-[
-  {
-    column: "Movie Series?",
-    targetId: "movie-series-filter",
-    selectAllId: "movie-series-select-all",
-    modeButtonId: "movie-series-mode",
-    mode: "or"
-  },
-  {
-    column: "Animated",
-    targetId: "animated-filter",
-    selectAllId: "animated-select-all",
-    mode: "or",
-    blankLabel: "NO",
-    options: ["YES", "MIXED", "NO"]
-  },
-  {
-    column: "Holiday?",
-    targetId: "holiday-filter",
-    selectAllId: "holiday-select-all",
-    mode: "or",
-    blankLabel: "NO",
-    options: ["XMAS", "HALLOWEEN", "SORTA", "NO"]
-  },
-  {
-    column: "Sports?",
-    targetId: "sports-filter",
-    selectAllId: "sports-select-all",
-    mode: "or",
-    blankLabel: "NO",
-    options: ["YES", "SORTA", "NO"]
-  }
-], "movies-show-count", "movies-rating-status");
-    document.getElementById("movies-download-csv").addEventListener("click", () => {
-      exportTableToCSV("movies-table", "movies-export.csv");
+ <script>
+  loadCSV("data/movies.csv", "movies-table", "movies-search", [
+    "Tier",
+    "Rk",
+    "Name",
+    "Year",
+    "Mins.",
+    "h:mm",
+    "My Rating",
+    "Me vs. IMDB",
+    "Watched?",
+    "Updated",
+    "Tags",
+    "Movie Series?",
+    "OMDB_Genre",
+    "OMDB_Director",
+    "OMDB_Actors",
+    "OMDB_Plot",
+    "Criterion?",
+    "Plot",
+    "Main Character(s)",
+    "Side Characters",
+    "Emotion",
+    "Dialogue (Writing)",
+    "Purpose Met",
+    "Cast",
+    "Music & Sound",
+    "Rewatch Value",
+    "Notes (Review)"
+  ], "movies-columns", "movies-sort-column", "movies-sort-direction", [
+    {
+      column: "Movie Series?",
+      targetId: "movie-series-filter",
+      selectAllId: "movie-series-select-all",
+      modeButtonId: "movie-series-mode",
+      mode: "or"
+    },
+    {
+      column: "Animated",
+      targetId: "animated-filter",
+      selectAllId: "animated-select-all",
+      mode: "or",
+      blankLabel: "NO",
+      options: ["YES", "MIXED", "NO"]
+    },
+    {
+      column: "Holiday?",
+      targetId: "holiday-filter",
+      selectAllId: "holiday-select-all",
+      mode: "or",
+      blankLabel: "NO",
+      options: ["XMAS", "HALLOWEEN", "SORTA", "NO"]
+    },
+    {
+      column: "Sports?",
+      targetId: "sports-filter",
+      selectAllId: "sports-select-all",
+      mode: "or",
+      blankLabel: "NO",
+      options: ["YES", "SORTA", "NO"]
+    }
+  ], "movies-show-count", "movies-rating-status")
+    .catch(error => {
+      const errorBox = document.getElementById("movies-error");
+      errorBox.style.display = "block";
+      errorBox.textContent = "Table failed to load: " + error.message;
+      console.error(error);
     });
-  </script>
+
+  document.getElementById("movies-download-csv").addEventListener("click", () => {
+    exportTableToCSV("movies-table", "movies-export.csv");
+  });
+</script>
 </body>
 </html>
