@@ -1,15 +1,5 @@
 (function () {
-  function getSiteBase() {
-    const pathParts = window.location.pathname.split("/").filter(Boolean);
-
-    if (window.location.hostname.endsWith("github.io") && pathParts.length > 0) {
-      return `/${pathParts[0]}/`;
-    }
-
-    return "/";
-  }
-
-  const base = getSiteBase();
+  const base = "/nick-site/";
   const headerTarget = document.getElementById("site-header");
 
   if (!headerTarget) return;
