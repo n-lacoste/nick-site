@@ -603,10 +603,10 @@ function rowMatchesAdvancedInputs(row) {
   const minsModeInput = document.getElementById("mins-mode-filter");
   const minsValueInput = document.getElementById("mins-value-filter");
 
-  // Sample search
-  if (sampleInput && sampleInput.value.trim() !== "") {
-    const sampleTerm = sampleInput.value.trim().toLowerCase();
+  // Sample search: blank means include all.
+  const sampleTerm = sampleInput ? sampleInput.value.trim().toLowerCase() : "";
 
+  if (sampleTerm !== "") {
     const sampleText = [
       row["Name"],
       row["Tags"],
@@ -625,44 +625,45 @@ function rowMatchesAdvancedInputs(row) {
     }
   }
 
-  // Year range
-  // If both boxes are blank, include all years.
+  // Year range: both blank means include all.
   const yearStartText = yearStartInput ? yearStartInput.value.trim() : "";
   const yearEndText = yearEndInput ? yearEndInput.value.trim() : "";
 
-  const yearFilterIsActive = yearStartText !== "" || yearEndText !== "";
-
-  if (yearFilterIsActive) {
+  if (yearStartText !== "" || yearEndText !== "") {
     const yearText = String(row["Year"] ?? "").trim();
-    const year = yearText === "" ? NaN : Number(yearText);
+    const year = Number(yearText);
 
-    const yearStart = yearStartText === "" ? NaN : Number(yearStartText);
-    const yearEnd = yearEndText === "" ? NaN : Number(yearEndText);
-
-    if (isNaN(year)) {
+    if (yearText === "" || isNaN(year)) {
       return false;
     }
 
-    if (!isNaN(yearStart) && year < yearStart) {
-      return false;
+    if (yearStartText !== "") {
+      const yearStart = Number(yearStartText);
+
+      if (!isNaN(yearStart) && year < yearStart) {
+        return false;
+      }
     }
 
-    if (!isNaN(yearEnd) && year > yearEnd) {
-      return false;
+    if (yearEndText !== "") {
+      const yearEnd = Number(yearEndText);
+
+      if (!isNaN(yearEnd) && year > yearEnd) {
+        return false;
+      }
     }
   }
 
-  // Mins. filter
-  // If mins box is blank, include all runtimes.
+  // Mins. filter: blank means include all.
   const minsValueText = minsValueInput ? minsValueInput.value.trim() : "";
 
   if (minsValueText !== "") {
     const minsText = String(row["Mins."] ?? "").trim();
-    const mins = minsText === "" ? NaN : Number(minsText);
+    const mins = Number(minsText);
     const minsValue = Number(minsValueText);
     const minsMode = minsModeInput ? minsModeInput.value : "greater";
 
-    if (isNaN(mins)) {
+    if (minsText === "" || isNaN(mins) || isNaN(minsValue)) {
       return false;
     }
 
