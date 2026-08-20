@@ -95,8 +95,18 @@
       
         <div id="sports-filter" class="filter-options"></div>
       </details>
+      <details class="filter-dropdown">
+        <summary>Watch Status</summary>
+      
+        <label class="filter-option select-all-option">
+          <input type="checkbox" id="watched-select-all" checked>
+          Select All
+        </label>
+      
+        <div id="watched-filter" class="filter-options"></div>
+      </details>
       <div class="rating-filter-control">
-        <label for="movies-rating-status">Rating:</label>
+        <label for="movies-rating-status">Sample:</label>
         <select id="movies-rating-status" class="sort-select">
           <option value="all" selected>All Options</option>
           <option value="ranked">Only Ranked</option>
@@ -215,6 +225,14 @@
         selectAllId: "movie-series-select-all",
         modeButtonId: "movie-series-mode",
         mode: "or"
+      },
+       {
+        column: "Watched?",
+        targetId: "watched-filter",
+        selectAllId: "watched-select-all",
+        mode: "or",
+        filterType: "watchedStatus",
+        options: ["Watched", "Unwatched"]
       },
       {
         column: "Animated",
