@@ -355,22 +355,25 @@ function getFilterValuesForRow(row, filter) {
   const rawValue = String(row[filter.column] ?? "").trim();
 
   if (filter.filterType === "watchedStatus") {
-    const normalized = rawValue.toUpperCase();
+    const normalized = rawValue.toLowerCase();
 
-    const isWatchedValue =
-      normalized !== "" &&
-      normalized !== "--" &&
-      normalized !== "NO" &&
-      normalized !== "FALSE" &&
-      normalized !== "0";
+    if (normalized === "watched") {
+      return ["Watched"];
+    }
 
-    return [isWatchedValue ? "Watched" : "Unwatched"];
+    if (normalized === "unwatched") {
+      return ["Unwatched"];
+    }
+
+    return ["Unwatched"];
   }
 
   if (rawValue === "" && filter.blankLabel) {
     return [filter.blankLabel];
   }
 
+  return getFilterValues(rawValue);
+}
   return getFilterValues(rawValue);
 }
   function clearExpandedCellStore() {
