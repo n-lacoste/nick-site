@@ -737,3 +737,6 @@ main {
   margin-top: 10px;
   margin-bottom: 12px;
 }
+thead th:nth-child(3) {
+  text-align: center;
+}
