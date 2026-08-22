@@ -1463,7 +1463,20 @@ function rowHasUpdateDate(row) {
         : dateA - dateB;
     });
 }
-function formatRank(value) {
+function formatReviewWithTitle(row) {
+  const title = String(row["Name"] ?? "").trim();
+  const year = String(row["Year"] ?? "").trim();
+  const review = String(row["Notes (Review)"] ?? "").trim();
+
+  if (review === "") return "";
+
+  const titleYear = year === ""
+    ? title
+    : `${title} (${year})`;
+
+  return `${titleYear}: ${review}`;
+}
+  function formatRank(value) {
   const text = String(value ?? "").trim();
 
   if (text === "") return "";
@@ -1514,7 +1527,7 @@ function formatRank(value) {
           <td style="${getRatingColor(row["My Rating"])}">${escapeHTML(row["My Rating"])}</td>
           <td>${escapeHTML(formatRank(row["Rk"]))}</td>
           <td>${escapeHTML(row["Me vs. IMDB"])}</td>
-          <td>${escapeHTML(row["Notes (Review)"])}</td>
+          <td>${escapeHTML(formatReviewWithTitle(row))}</td>
         </tr>
       `;
     });
