@@ -1648,7 +1648,13 @@ async function loadMovieComparison(filePath) {
       ? title
       : `${title} (${year})`;
   }
+  function isRankedMovie(row) {
+  const rating = String(row["My Rating"] ?? "").trim();
 
+  return rating !== "" && rating !== "--";
+}
+  const rankedRows = rows.filter(isRankedMovie);
+  
   function normalizeSearchText(value) {
     return String(value ?? "").trim().toLowerCase();
   }
@@ -1728,10 +1734,10 @@ async function loadMovieComparison(filePath) {
 
   function findMovieByInput(value) {
     const searchValue = normalizeSearchText(value);
-
+  
     if (searchValue === "") return null;
-
-    return rows.find(row => {
+  
+    return rankedRows.find(row => {
       return normalizeSearchText(makeMovieLabel(row)) === searchValue;
     }) || null;
   }
@@ -1851,10 +1857,10 @@ async function loadMovieComparison(filePath) {
     }
   }
 
-  const movieOptions = rows
-    .map(row => makeMovieLabel(row))
-    .filter(label => label !== "")
-    .sort((a, b) => a.localeCompare(b));
+ const movieOptions = rankedRows
+  .map(row => makeMovieLabel(row))
+  .filter(label => label !== "")
+  .sort((a, b) => a.localeCompare(b));
 
   datalist.innerHTML = movieOptions
     .map(label => `<option value="${escapeHTML(label)}"></option>`)
