@@ -1,1 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Watch History | Nick Site</title>
+  <link rel="stylesheet" href="/nick-site/style.css">
+</head>
 
+<body>
+  <div id="site-header"></div>
+  <script src="/nick-site/nav.js?v=10"></script>
+
+  <main>
+    <div class="page-topline">
+      <div>
+        <h2>Watch History</h2>
+        <p>A timeline view of Nick and Sarah's watched movies, with date added, last update, ranking, rating, and review notes.</p>
+      </div>
+    </div>
+
+    <div class="movie-controls-row">
+      <button id="history-sort-column" class="filter-button" type="button">
+        Sort by: Last Update
+      </button>
+
+      <button id="history-sort-direction" class="filter-button" type="button">
+        Sort: Latest
+      </button>
+
+      <input 
+        type="text" 
+        id="history-search" 
+        placeholder="Search watch history..."
+        class="search-box"
+      >
+    </div>
+
+    <p id="history-row-count" class="last-updated"></p>
+
+    <div class="table-wrap">
+      <table id="watch-history-table"></table>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="/nick-site/script.js?v=10"></script>
+
+  <script>
+    loadMovieWatchHistory("/nick-site/data/movies.csv");
+  </script>
+</body>
+</html>
