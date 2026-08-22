@@ -935,17 +935,21 @@ thead th:nth-child(3) {
 }
 
 /* 3. Title */
-#watch-history-table th:nth-child(3),
+#watch-history-table th:nth-child(3) {
+   font-style: bold;
+}
 #watch-history-table td:nth-child(3) {
   width: 280px;
   min-width: 280px;
-  font-size: 24px;
+  font-size: 20px;
   text-align: center;
   font-style: italic;
 }
 
 /* 4. Year */
-#watch-history-table th:nth-child(4),
+#watch-history-table th:nth-child(4) {
+  font-size: 18px;
+}
 #watch-history-table td:nth-child(4) {
   width: 75px;
   min-width: 75px;
