@@ -1593,6 +1593,7 @@ async function loadMovieComparison(filePath) {
   const rightCard = document.getElementById("movie-compare-right-card");
   const factorComparison = document.getElementById("movie-factor-comparison");
   const status = document.getElementById("movie-compare-status");
+  const categoryWinner = document.getElementById("movie-category-winner");
 
   if (!leftInput || !rightInput || !datalist || !leftCard || !rightCard || !factorComparison) {
     return;
@@ -1829,17 +1830,77 @@ async function loadMovieComparison(filePath) {
       </div>
     `;
   }
+function renderCategoryBattleWinner() {
+  if (!categoryWinner) return;
 
-  function renderFactorComparison() {
-    if (!leftMovie && !rightMovie) {
-      factorComparison.innerHTML = `<p class="movie-compare-placeholder">Select two movies to compare factor scores.</p>`;
-      return;
-    }
-
-    factorComparison.innerHTML = factorColumns
-      .map(factor => renderFactorRow(factor))
-      .join("");
+  if (!leftMovie || !rightMovie) {
+    categoryWinner.className = "movie-category-winner";
+    categoryWinner.textContent = "Select two movies to see the category battle winner.";
+    return;
   }
+
+  let leftWins = 0;
+  let rightWins = 0;
+  let ties = 0;
+
+  factorColumns.forEach(factor => {
+    const leftValue = getNumber(leftMovie[factor]);
+    const rightValue = getNumber(rightMovie[factor]);
+
+    if (leftValue === null || rightValue === null) return;
+
+    if (leftValue > rightValue) {
+      leftWins++;
+    } else if (rightValue > leftValue) {
+      rightWins++;
+    } else {
+      ties++;
+    }
+  });
+
+  const leftTitle = makeMovieLabel(leftMovie);
+  const rightTitle = makeMovieLabel(rightMovie);
+
+  categoryWinner.classList.remove("left-winner");
+  categoryWinner.classList.remove("right-winner");
+  categoryWinner.classList.remove("tie-winner");
+
+  if (leftWins > rightWins) {
+    categoryWinner.classList.add("left-winner");
+    categoryWinner.innerHTML = `
+      <strong>${escapeHTML(leftTitle)}</strong> wins the category battle 
+      <span>${leftWins}-${rightWins}${ties > 0 ? `, with ${ties} tie${ties === 1 ? "" : "s"}` : ""}</span>
+    `;
+    return;
+  }
+
+  if (rightWins > leftWins) {
+    categoryWinner.classList.add("right-winner");
+    categoryWinner.innerHTML = `
+      <strong>${escapeHTML(rightTitle)}</strong> wins the category battle 
+      <span>${rightWins}-${leftWins}${ties > 0 ? `, with ${ties} tie${ties === 1 ? "" : "s"}` : ""}</span>
+    `;
+    return;
+  }
+
+  categoryWinner.classList.add("tie-winner");
+  categoryWinner.innerHTML = `
+    <strong>Category battle is tied</strong>
+    <span>${leftWins}-${rightWins}${ties > 0 ? `, with ${ties} tie${ties === 1 ? "" : "s"}` : ""}</span>
+  `;
+}
+ function renderFactorComparison() {
+  renderCategoryBattleWinner();
+
+  if (!leftMovie && !rightMovie) {
+    factorComparison.innerHTML = `<p class="movie-compare-placeholder">Select two movies to compare factor scores.</p>`;
+    return;
+  }
+
+  factorComparison.innerHTML = factorColumns
+    .map(factor => renderFactorRow(factor))
+    .join("");
+}
 
   function renderComparison() {
     renderMovieCard(leftCard, leftMovie, "left");
