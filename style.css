@@ -901,3 +901,36 @@ thead th:nth-child(3) {
   color: #ffffff;
   text-decoration: none;
 }
+#watch-history-table th:nth-child(1),
+#watch-history-table td:nth-child(1),
+#watch-history-table th:nth-child(2),
+#watch-history-table td:nth-child(2) {
+  width: 125px;
+  min-width: 125px;
+}
+
+#watch-history-table th:nth-child(3),
+#watch-history-table td:nth-child(3) {
+  width: 260px;
+  min-width: 260px;
+}
+
+#watch-history-table th:nth-child(4),
+#watch-history-table td:nth-child(4),
+#watch-history-table th:nth-child(5),
+#watch-history-table td:nth-child(5),
+#watch-history-table th:nth-child(6),
+#watch-history-table td:nth-child(6),
+#watch-history-table th:nth-child(7),
+#watch-history-table td:nth-child(7),
+#watch-history-table th:nth-child(8),
+#watch-history-table td:nth-child(8) {
+  text-align: center;
+}
+
+#watch-history-table th:nth-child(9),
+#watch-history-table td:nth-child(9) {
+  width: 520px;
+  min-width: 520px;
+  font-size: 13px;
+}
