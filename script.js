@@ -1427,7 +1427,7 @@ function rowHasUpdateDate(row) {
 
     if (searchTerm === "") return true;
 
-    const searchableText = [
+   const searchableText = [
       row["Added"],
       row["Updated"],
       row["Name"],
@@ -1435,12 +1435,13 @@ function rowHasUpdateDate(row) {
       row["Tier"],
       row["My Rating"],
       row["Rk"],
+      formatRank(row["Rk"]),
       row["Me vs. IMDB"],
       row["Notes (Review)"]
     ]
       .map(value => String(value ?? "").toLowerCase())
       .join(" ");
-
+    
     return searchableText.includes(searchTerm);
   }
 
@@ -1462,7 +1463,17 @@ function rowHasUpdateDate(row) {
         : dateA - dateB;
     });
 }
+function formatRank(value) {
+  const text = String(value ?? "").trim();
 
+  if (text === "") return "";
+
+  if (text.startsWith("#")) {
+    return text;
+  }
+
+  return `#${text}`;
+}
   function renderTable() {
     const historyRows = getSortedRows();
 
@@ -1501,7 +1512,7 @@ function rowHasUpdateDate(row) {
           <td>${escapeHTML(row["Year"])}</td>
           <td style="${getTierStyle(row["Tier"])}">${escapeHTML(row["Tier"])}</td>
           <td style="${getRatingColor(row["My Rating"])}">${escapeHTML(row["My Rating"])}</td>
-          <td>${escapeHTML(row["Rk"])}</td>
+          <td>${escapeHTML(formatRank(row["Rk"]))}</td>
           <td>${escapeHTML(row["Me vs. IMDB"])}</td>
           <td>${escapeHTML(row["Notes (Review)"])}</td>
         </tr>
