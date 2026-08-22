@@ -31,7 +31,7 @@
         </div>
 
         <div class="nav-menu">
-          <a class="nav-menu-title" href="${base}tv/">TV Shows</a>
+          <a class="nav-menu-title" href="${base}tvshows/">TV Shows</a>
           <div class="nav-dropdown">
             <a href="${base}tvshows/">Home: TV Shows</a>
           </div>
