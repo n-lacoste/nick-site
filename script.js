@@ -1745,7 +1745,7 @@ async function loadMovieComparison(filePath) {
 
   function renderMovieCard(target, movie, sideLabel) {
     if (!movie) {
-      target.innerHTML = `<p class="movie-compare-placeholder">Select a movie on the ${sideLabel}.</p>`;
+      target.innerHTML = `<p class="movie-compare-placeholder">Select a movie in the search box above.</p>`;
       return;
     }
 
@@ -1893,7 +1893,7 @@ function renderCategoryBattleWinner() {
   renderCategoryBattleWinner();
 
   if (!leftMovie && !rightMovie) {
-    factorComparison.innerHTML = `<p class="movie-compare-placeholder">Select two movies to compare factor scores.</p>`;
+    factorComparison.innerHTML = `<p class="movie-compare-placeholder">Select two movies above to compare factor scores.</p>`;
     return;
   }
 
