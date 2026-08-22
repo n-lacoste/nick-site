@@ -1314,3 +1314,53 @@ thead th:nth-child(3) {
     font-size: 16px;
   }
 }
+/* Movie Comparison category battle winner */
+
+.movie-category-winner {
+  margin: 6px 0 16px;
+  padding: 12px 14px;
+  border: 1px solid #333;
+  border-radius: 10px;
+  background: #1a1a1a;
+  color: #ccc;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.movie-category-winner strong {
+  display: block;
+  color: #f5f5f5;
+  font-size: 18px;
+  margin-bottom: 3px;
+}
+
+.movie-category-winner span {
+  color: #ccc;
+}
+
+.movie-category-winner.left-winner {
+  border-color: #5ca8ff;
+  background: rgba(10, 83, 168, 0.22);
+}
+
+.movie-category-winner.left-winner strong {
+  color: #8fc4ff;
+}
+
+.movie-category-winner.right-winner {
+  border-color: #57bb8a;
+  background: rgba(17, 115, 75, 0.22);
+}
+
+.movie-category-winner.right-winner strong {
+  color: #8ce0b5;
+}
+
+.movie-category-winner.tie-winner {
+  border-color: #ffd966;
+  background: rgba(255, 217, 102, 0.16);
+}
+
+.movie-category-winner.tie-winner strong {
+  color: #ffd966;
+}
