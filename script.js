@@ -1913,7 +1913,7 @@ function renderCategoryBattleWinner() {
       } else if (leftMovie || rightMovie) {
         status.textContent = "Select one more movie to complete the comparison.";
       } else {
-        status.textContent = "Search and select two movies to begin.";
+        status.textContent = "";
       }
     }
   }
