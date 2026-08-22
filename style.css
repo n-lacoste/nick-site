@@ -901,38 +901,87 @@ thead th:nth-child(3) {
   color: #ffffff;
   text-decoration: none;
 }
+/* Watch History table sizing */
+
+#watch-history-table th,
+#watch-history-table td {
+  font-size: 14px;
+}
+
+/* 1. Date Added */
 #watch-history-table th:nth-child(1),
-#watch-history-table td:nth-child(1),
+#watch-history-table td:nth-child(1) {
+  width: 120px;
+  min-width: 120px;
+  font-size: 13px;
+}
+
+/* 2. Last Update */
 #watch-history-table th:nth-child(2),
 #watch-history-table td:nth-child(2) {
-  width: 125px;
-  min-width: 125px;
+  width: 120px;
+  min-width: 120px;
+  font-size: 13px;
 }
 
+/* 3. Title */
 #watch-history-table th:nth-child(3),
 #watch-history-table td:nth-child(3) {
-  width: 260px;
-  min-width: 260px;
+  width: 280px;
+  min-width: 280px;
+  font-size: 15px;
 }
 
+/* 4. Year */
 #watch-history-table th:nth-child(4),
-#watch-history-table td:nth-child(4),
-#watch-history-table th:nth-child(5),
-#watch-history-table td:nth-child(5),
-#watch-history-table th:nth-child(6),
-#watch-history-table td:nth-child(6),
-#watch-history-table th:nth-child(7),
-#watch-history-table td:nth-child(7),
-#watch-history-table th:nth-child(8),
-#watch-history-table td:nth-child(8) {
+#watch-history-table td:nth-child(4) {
+  width: 75px;
+  min-width: 75px;
   text-align: center;
 }
 
+/* 5. Tier */
+#watch-history-table th:nth-child(5),
+#watch-history-table td:nth-child(5) {
+  width: 75px;
+  min-width: 75px;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* 6. Rating */
+#watch-history-table th:nth-child(6),
+#watch-history-table td:nth-child(6) {
+  width: 85px;
+  min-width: 85px;
+  text-align: center;
+  font-size: 16px;
+}
+
+/* 7. Rank */
+#watch-history-table th:nth-child(7),
+#watch-history-table td:nth-child(7) {
+  width: 75px;
+  min-width: 75px;
+  text-align: center;
+}
+
+/* 8. Me vs. IMDB */
+#watch-history-table th:nth-child(8),
+#watch-history-table td:nth-child(8) {
+  width: 90px;
+  min-width: 90px;
+  text-align: center;
+  font-size: 13px;
+}
+
+/* 9. Review */
 #watch-history-table th:nth-child(9),
 #watch-history-table td:nth-child(9) {
   width: 520px;
   min-width: 520px;
   font-size: 13px;
+  line-height: 1.35;
 }
 /* Watch History active sort buttons */
 
