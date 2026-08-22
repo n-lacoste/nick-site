@@ -1835,7 +1835,7 @@ function renderCategoryBattleWinner() {
 
   if (!leftMovie || !rightMovie) {
     categoryWinner.className = "movie-category-winner";
-    categoryWinner.textContent = "Select two movies to see the category battle winner.";
+    categoryWinner.textContent = "Select two movies above to see the factor battle winner.";
     return;
   }
 
