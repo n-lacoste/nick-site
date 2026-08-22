@@ -1868,7 +1868,7 @@ function renderCategoryBattleWinner() {
   if (leftWins > rightWins) {
     categoryWinner.classList.add("left-winner");
     categoryWinner.innerHTML = `
-      <strong>${escapeHTML(leftTitle)}</strong> wins the category battle 
+      <strong>${escapeHTML(leftTitle)}</strong> wins the factor battle 
       <span>${leftWins}-${rightWins}${ties > 0 ? `, with ${ties} tie${ties === 1 ? "" : "s"}` : ""}</span>
     `;
     return;
@@ -1877,7 +1877,7 @@ function renderCategoryBattleWinner() {
   if (rightWins > leftWins) {
     categoryWinner.classList.add("right-winner");
     categoryWinner.innerHTML = `
-      <strong>${escapeHTML(rightTitle)}</strong> wins the category battle 
+      <strong>${escapeHTML(rightTitle)}</strong> wins the factor battle 
       <span>${rightWins}-${leftWins}${ties > 0 ? `, with ${ties} tie${ties === 1 ? "" : "s"}` : ""}</span>
     `;
     return;
@@ -1885,7 +1885,7 @@ function renderCategoryBattleWinner() {
 
   categoryWinner.classList.add("tie-winner");
   categoryWinner.innerHTML = `
-    <strong>Category battle is tied</strong>
+    <strong>Factor battle is tied</strong>
     <span>${leftWins}-${rightWins}${ties > 0 ? `, with ${ties} tie${ties === 1 ? "" : "s"}` : ""}</span>
   `;
 }
