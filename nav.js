@@ -24,9 +24,9 @@
           <a class="nav-menu-title" href="${base}movies/">Movies</a>
           <div class="nav-dropdown">
             <a href="${base}movies/">Movies Home</a>
+            <a href="${base}movies/comparison.html">Movie Comparison</a>
             <a href="${base}movies/rankings.html">Movie Rankings</a>
             <a href="${base}movies/watch-history.html">Watch History</a>
-            <a href="${base}movies/comparison.html">Movie Comparison</a>
           </div>
         </div>
 
