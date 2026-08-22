@@ -17,22 +17,33 @@
       </div>
     </div>
 
-    <div class="movie-controls-row">
-      <button id="history-sort-column" class="filter-button" type="button">
-        Sort by: Last Update
-      </button>
+   <div class="movie-controls-row">
+  <button id="history-sort-column" class="filter-button" type="button">
+    Sort by: Last Update
+  </button>
 
-      <button id="history-sort-direction" class="filter-button" type="button">
-        Sort: Latest
-      </button>
+  <button id="history-sort-direction" class="filter-button" type="button">
+    Sort: Latest
+  </button>
 
-      <input 
-        type="text" 
-        id="history-search" 
-        placeholder="Search watch history..."
-        class="search-box"
-      >
-    </div>
+  <div class="show-control">
+    <label for="history-show-count">Show:</label>
+    <select id="history-show-count" class="sort-select">
+      <option value="25" selected>25</option>
+      <option value="50">50</option>
+      <option value="100">100</option>
+      <option value="250">250</option>
+      <option value="all">All</option>
+    </select>
+  </div>
+
+  <input 
+    type="text" 
+    id="history-search" 
+    placeholder="Search watch history..."
+    class="search-box"
+  >
+</div>
 
     <p id="history-row-count" class="last-updated"></p>
 
