@@ -939,7 +939,7 @@ thead th:nth-child(3) {
 #watch-history-table td:nth-child(3) {
   width: 280px;
   min-width: 280px;
-  font-size: 15px;
+  font-size: 18px;
   text-align: center;
 }
 
@@ -1024,41 +1024,41 @@ thead th:nth-child(3) {
   border-color: #f8a67a;
   font-weight: bold;
 }
-/* Watch History table headers */
+/* Watch History table header watch history */
 
 #watch-history-table th {
-  font-size: 24px;
+  font-size: 18px;
   font-weight: bold;
   text-align: center;
 }
 /* Date Added header */
 #watch-history-table th:nth-child(1) {
-  font-size: 24px;
+  font-size: 18px;
 }
 
 /* Last Update header */
 #watch-history-table th:nth-child(2) {
-  font-size: 24px;
+  font-size: 18px;
 }
 
 /* Title header */
 #watch-history-table th:nth-child(3) {
-  font-size: 32px;
+  font-size: 24px;
 }
 
 /* Tier header */
 #watch-history-table th:nth-child(5) {
-  font-size: 24px;
+  font-size: 18px;
 }
 
 /* Rating header */
 #watch-history-table th:nth-child(6) {
-  font-size: 24px;
+  font-size: 18px;
 }
 
 /* Rank header */
 #watch-history-table th:nth-child(7) {
-  font-size: 24px;
+  font-size: 18px;
 }
 
 /* Me vs. IMDB header */
