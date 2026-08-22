@@ -1317,7 +1317,7 @@ thead th:nth-child(3) {
 /* Movie Comparison category battle winner */
 
 .movie-category-winner {
-  margin: 6px 0 16px;
+  margin: 6px auto 16px;
   padding: 12px 14px;
   border: 1px solid #333;
   border-radius: 10px;
@@ -1325,6 +1325,8 @@ thead th:nth-child(3) {
   color: #ccc;
   font-size: 14px;
   line-height: 1.35;
+  text-align: center;
+  max-width: 620px;
 }
 
 .movie-category-winner strong {
