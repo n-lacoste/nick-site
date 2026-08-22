@@ -1027,46 +1027,46 @@ thead th:nth-child(3) {
 /* Watch History table headers */
 
 #watch-history-table th {
-  font-size: 14px;
+  font-size: 24px;
   font-weight: bold;
   text-align: center;
 }
 /* Date Added header */
 #watch-history-table th:nth-child(1) {
-  font-size: 14px;
+  font-size: 24px;
 }
 
 /* Last Update header */
 #watch-history-table th:nth-child(2) {
-  font-size: 14px;
+  font-size: 24px;
 }
 
 /* Title header */
 #watch-history-table th:nth-child(3) {
-  font-size: 14px;
+  font-size: 32px;
 }
 
 /* Tier header */
 #watch-history-table th:nth-child(5) {
-  font-size: 14px;
+  font-size: 24px;
 }
 
 /* Rating header */
 #watch-history-table th:nth-child(6) {
-  font-size: 14px;
+  font-size: 24px;
 }
 
 /* Rank header */
 #watch-history-table th:nth-child(7) {
-  font-size: 14px;
+  font-size: 24px;
 }
 
 /* Me vs. IMDB header */
 #watch-history-table th:nth-child(8) {
-  font-size: 14px;
+  font-size: 18px;
 }
 
 /* Review header */
 #watch-history-table th:nth-child(9) {
-  font-size: 13px;
+  font-size: 24px;
 }
