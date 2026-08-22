@@ -939,8 +939,9 @@ thead th:nth-child(3) {
 #watch-history-table td:nth-child(3) {
   width: 280px;
   min-width: 280px;
-  font-size: 18px;
+  font-size: 24px;
   text-align: center;
+  font-style: italic;
 }
 
 /* 4. Year */
@@ -949,6 +950,7 @@ thead th:nth-child(3) {
   width: 75px;
   min-width: 75px;
   text-align: center;
+  font-size: 15px;
 }
 
 /* 5. Tier */
@@ -957,7 +959,7 @@ thead th:nth-child(3) {
   width: 75px;
   min-width: 75px;
   text-align: center;
-  font-size: 18px;
+  font-size: 24px;
 }
 
 /* 6. Rating */
@@ -966,7 +968,7 @@ thead th:nth-child(3) {
   width: 85px;
   min-width: 85px;
   text-align: center;
-  font-size: 18px;
+  font-size: 24px;
 }
 
 /* 7. Rank */
