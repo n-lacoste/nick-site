@@ -1267,3 +1267,243 @@ if (document.readyState === "loading") {
 } else {
   setupHeaderMenus();
 }
+async function loadMovieWatchHistory(filePath) {
+  const response = await fetch(filePath);
+  const text = await response.text();
+
+  const parsed = Papa.parse(text.trim(), {
+    header: true,
+    skipEmptyLines: true
+  });
+
+  const rows = parsed.data.filter(row => {
+    return Object.values(row).some(value => String(value ?? "").trim() !== "");
+  });
+
+  const table = document.getElementById("watch-history-table");
+  const searchBox = document.getElementById("history-search");
+  const rowCount = document.getElementById("history-row-count");
+  const sortColumnButton = document.getElementById("history-sort-column");
+  const sortDirectionButton = document.getElementById("history-sort-direction");
+
+  if (!table) return;
+
+  let sortColumn = "Updated";
+  let sortDirection = "Latest";
+
+  const tierColors = {
+    "S": { bg: "#efd1ff", text: "#5a3286" },
+    "(S)": { bg: "#efd1ff", text: "#5a3286" },
+    "A1": { bg: "#888ef5", text: "#473821" },
+    "A2": { bg: "#5bc0dd", text: "#215a6c" },
+    "A3": { bg: "#bfe1f6", text: "#0a53a8" },
+    "B1": { bg: "#d4edbc", text: "#11734b" },
+    "B2": { bg: "#ffe5a0", text: "#473821" },
+    "B3": { bg: "#f0c885", text: "#000000" },
+    "C1": { bg: "#ffc8aa", text: "#753800" },
+    "C2": { bg: "#e38451", text: "#000000" },
+    "C3": { bg: "#e36351", text: "#000000" },
+    "D": { bg: "#ff0000", text: "#000000" },
+    "NR": { bg: "#ffcfc9", text: "#b10202" }
+  };
+
+  function escapeHTML(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function parseDate(value) {
+    const text = String(value ?? "").trim();
+
+    if (text === "") return null;
+
+    const date = new Date(text);
+
+    if (isNaN(date.getTime())) return null;
+
+    return date;
+  }
+
+  function formatDate(value) {
+    const date = parseDate(value);
+
+    if (!date) return "";
+
+    return date.toLocaleDateString("en-CA", {
+      year: "numeric",
+      month: "short",
+      day: "numeric"
+    });
+  }
+
+  function getTierStyle(value) {
+    const tier = String(value ?? "").trim();
+    const colors = tierColors[tier];
+
+    if (!colors) return "";
+
+    return `
+      background-color: ${colors.bg};
+      color: ${colors.text};
+      font-weight: bold;
+    `;
+  }
+
+  function getRatingColor(value) {
+    const num = Number(String(value ?? "").replace(/,/g, "").trim());
+
+    if (isNaN(num)) return "";
+
+    const clamped = Math.max(0, Math.min(100, num));
+
+    const redColor = { r: 204, g: 0, b: 0 };
+    const yellowColor = { r: 255, g: 217, b: 102 };
+    const greenColor = { r: 87, g: 187, b: 138 };
+
+    let start;
+    let end;
+    let percent;
+
+    if (clamped <= 50) {
+      start = redColor;
+      end = yellowColor;
+      percent = clamped / 50;
+    } else {
+      start = yellowColor;
+      end = greenColor;
+      percent = (clamped - 50) / 50;
+    }
+
+    const r = Math.round(start.r + (end.r - start.r) * percent);
+    const g = Math.round(start.g + (end.g - start.g) * percent);
+    const b = Math.round(start.b + (end.b - start.b) * percent);
+
+    return `
+      background-color: rgb(${r}, ${g}, ${b});
+      color: #000000;
+      font-weight: bold;
+    `;
+  }
+
+  function rowIsWatchedMovie(row) {
+    const watched = String(row["Watched?"] ?? "").trim().toLowerCase();
+    return watched === "watched";
+  }
+
+  function rowMatchesSearch(row) {
+    if (!searchBox) return true;
+
+    const searchTerm = searchBox.value.trim().toLowerCase();
+
+    if (searchTerm === "") return true;
+
+    const searchableText = [
+      row["Added"],
+      row["Updated"],
+      row["Name"],
+      row["Year"],
+      row["Tier"],
+      row["My Rating"],
+      row["Rk"],
+      row["Me vs. IMDB"],
+      row["Notes (Review)"]
+    ]
+      .map(value => String(value ?? "").toLowerCase())
+      .join(" ");
+
+    return searchableText.includes(searchTerm);
+  }
+
+  function getSortedRows() {
+    return rows
+      .filter(rowIsWatchedMovie)
+      .filter(rowMatchesSearch)
+      .sort((a, b) => {
+        const dateA = parseDate(a[sortColumn]);
+        const dateB = parseDate(b[sortColumn]);
+
+        if (!dateA && !dateB) return 0;
+        if (!dateA) return 1;
+        if (!dateB) return -1;
+
+        return sortDirection === "Latest"
+          ? dateB - dateA
+          : dateA - dateB;
+      });
+  }
+
+  function renderTable() {
+    const historyRows = getSortedRows();
+
+    if (rowCount) {
+      const sortLabel = sortColumn === "Updated" ? "last update" : "date added";
+      rowCount.textContent = `Showing ${historyRows.length} watched movies, sorted by ${sortLabel}, ${sortDirection.toLowerCase()} first.`;
+    }
+
+    let html = `
+      <thead>
+        <tr>
+          <th>Date Added</th>
+          <th>Last Update</th>
+          <th>Title</th>
+          <th>Year</th>
+          <th>Tier</th>
+          <th>Rating</th>
+          <th>Rank</th>
+          <th>vs. IMDB</th>
+          <th>Review</th>
+        </tr>
+      </thead>
+      <tbody>
+    `;
+
+    historyRows.forEach(row => {
+      html += `
+        <tr>
+          <td>${escapeHTML(formatDate(row["Added"]))}</td>
+          <td>${escapeHTML(formatDate(row["Updated"]))}</td>
+          <td>${escapeHTML(row["Name"])}</td>
+          <td>${escapeHTML(row["Year"])}</td>
+          <td style="${getTierStyle(row["Tier"])}">${escapeHTML(row["Tier"])}</td>
+          <td style="${getRatingColor(row["My Rating"])}">${escapeHTML(row["My Rating"])}</td>
+          <td>${escapeHTML(row["Rk"])}</td>
+          <td>${escapeHTML(row["Me vs. IMDB"])}</td>
+          <td>${escapeHTML(row["Notes (Review)"])}</td>
+        </tr>
+      `;
+    });
+
+    html += "</tbody>";
+    table.innerHTML = html;
+  }
+
+  if (sortColumnButton) {
+    sortColumnButton.addEventListener("click", () => {
+      sortColumn = sortColumn === "Updated" ? "Added" : "Updated";
+
+      sortColumnButton.textContent = sortColumn === "Updated"
+        ? "Sort by: Last Update"
+        : "Sort by: Date Added";
+
+      renderTable();
+    });
+  }
+
+  if (sortDirectionButton) {
+    sortDirectionButton.addEventListener("click", () => {
+      sortDirection = sortDirection === "Latest" ? "Earliest" : "Latest";
+      sortDirectionButton.textContent = `Sort: ${sortDirection}`;
+      renderTable();
+    });
+  }
+
+  if (searchBox) {
+    searchBox.addEventListener("input", renderTable);
+  }
+
+  renderTable();
+}
