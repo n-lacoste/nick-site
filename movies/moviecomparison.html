@@ -1,1 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Movie Comparison | Nick Site</title>
+  <link rel="stylesheet" href="/nick-site/style.css">
+</head>
 
+<body>
+  <div id="site-header"></div>
+  <script src="/nick-site/nav.js?v=10"></script>
+
+  <main>
+    <div class="page-topline">
+      <div>
+        <h2>Movie Comparison</h2>
+        <p>Compare two movies across rating, rank, tier, review notes, and the nine factor categories.</p>
+      </div>
+    </div>
+
+    <div class="movie-compare-search-row">
+      <div class="movie-compare-search-box">
+        <label for="movie-compare-left-search">Left movie</label>
+        <input 
+          id="movie-compare-left-search" 
+          class="search-box movie-compare-input" 
+          list="movie-compare-options"
+          placeholder="Search left movie..."
+        >
+      </div>
+
+      <div class="movie-compare-search-box">
+        <label for="movie-compare-right-search">Right movie</label>
+        <input 
+          id="movie-compare-right-search" 
+          class="search-box movie-compare-input" 
+          list="movie-compare-options"
+          placeholder="Search right movie..."
+        >
+      </div>
+    </div>
+
+    <datalist id="movie-compare-options"></datalist>
+
+    <p id="movie-compare-status" class="last-updated"></p>
+
+    <section class="movie-compare-grid">
+      <article id="movie-compare-left-card" class="movie-compare-card">
+        <p class="movie-compare-placeholder">Select a movie on the left.</p>
+      </article>
+
+      <article id="movie-compare-right-card" class="movie-compare-card">
+        <p class="movie-compare-placeholder">Select a movie on the right.</p>
+      </article>
+    </section>
+
+    <section class="movie-factor-compare-section">
+      <h3>Factor Comparison</h3>
+      <div id="movie-factor-comparison"></div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="/nick-site/script.js?v=10"></script>
+
+  <script>
+    loadMovieComparison("/nick-site/data/movies.csv");
+  </script>
+</body>
+</html>
