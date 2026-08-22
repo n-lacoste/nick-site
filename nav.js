@@ -33,10 +33,17 @@
         <div class="nav-menu">
           <a class="nav-menu-title" href="${base}tv/">TV Shows</a>
           <div class="nav-dropdown">
-            <a href="${base}tv/">Home: TV Shows</a>
+            <a href="${base}tvshows/">Home: TV Shows</a>
           </div>
         </div>
-
+         
+         <div class="nav-menu">
+          <a class="nav-menu-title" href="${base}esports/">Esports</a>
+          <div class="nav-dropdown">
+            <a href="${base}esports/">Home: Esports</a>
+          </div>
+        </div>
+        
         <div class="nav-menu">
           <a class="nav-menu-title" href="${base}geo/">Geo</a>
           <div class="nav-dropdown">
