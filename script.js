@@ -1285,11 +1285,13 @@ async function loadMovieWatchHistory(filePath) {
   const rowCount = document.getElementById("history-row-count");
   const sortColumnButton = document.getElementById("history-sort-column");
   const sortDirectionButton = document.getElementById("history-sort-direction");
+  const showSelect = document.getElementById("history-show-count");
 
   if (!table) return;
 
   let sortColumn = "Updated";
   let sortDirection = "Latest";
+  let rowLimit = 25;
 
   const tierColors = {
     "S": { bg: "#efd1ff", text: "#5a3286" },
@@ -1388,7 +1390,9 @@ async function loadMovieWatchHistory(filePath) {
       font-weight: bold;
     `;
   }
-
+function rowHasUpdateDate(row) {
+  return parseDate(row["Updated"]) !== null;
+}
   function rowIsWatchedMovie(row) {
     const watched = String(row["Watched?"] ?? "").trim().toLowerCase();
     return watched === "watched";
@@ -1418,30 +1422,35 @@ async function loadMovieWatchHistory(filePath) {
     return searchableText.includes(searchTerm);
   }
 
-  function getSortedRows() {
-    return rows
-      .filter(rowIsWatchedMovie)
-      .filter(rowMatchesSearch)
-      .sort((a, b) => {
-        const dateA = parseDate(a[sortColumn]);
-        const dateB = parseDate(b[sortColumn]);
+ function getSortedRows() {
+  return rows
+    .filter(rowIsWatchedMovie)
+    .filter(rowHasUpdateDate)
+    .filter(rowMatchesSearch)
+    .sort((a, b) => {
+      const dateA = parseDate(a[sortColumn]);
+      const dateB = parseDate(b[sortColumn]);
 
-        if (!dateA && !dateB) return 0;
-        if (!dateA) return 1;
-        if (!dateB) return -1;
+      if (!dateA && !dateB) return 0;
+      if (!dateA) return 1;
+      if (!dateB) return -1;
 
-        return sortDirection === "Latest"
-          ? dateB - dateA
-          : dateA - dateB;
-      });
-  }
+      return sortDirection === "Latest"
+        ? dateB - dateA
+        : dateA - dateB;
+    });
+}
 
   function renderTable() {
     const historyRows = getSortedRows();
 
-    if (rowCount) {
+    const rowsToShow = rowLimit === "all"
+      ? historyRows
+      : historyRows.slice(0, rowLimit);
+
+     if (rowCount) {
       const sortLabel = sortColumn === "Updated" ? "last update" : "date added";
-      rowCount.textContent = `Showing ${historyRows.length} watched movies, sorted by ${sortLabel}, ${sortDirection.toLowerCase()} first.`;
+      rowCount.textContent = `Showing ${rowsToShow.length} of ${historyRows.length} movies with update dates, sorted by ${sortLabel}, ${sortDirection.toLowerCase()} first.`;
     }
 
     let html = `
@@ -1461,7 +1470,7 @@ async function loadMovieWatchHistory(filePath) {
       <tbody>
     `;
 
-    historyRows.forEach(row => {
+   rowsToShow.forEach(row => {
       html += `
         <tr>
           <td>${escapeHTML(formatDate(row["Added"]))}</td>
@@ -1480,7 +1489,15 @@ async function loadMovieWatchHistory(filePath) {
     html += "</tbody>";
     table.innerHTML = html;
   }
+if (showSelect) {
+  showSelect.addEventListener("change", () => {
+    rowLimit = showSelect.value === "all"
+      ? "all"
+      : Number(showSelect.value) || 25;
 
+    renderTable();
+  });
+}
   if (sortColumnButton) {
     sortColumnButton.addEventListener("click", () => {
       sortColumn = sortColumn === "Updated" ? "Added" : "Updated";
