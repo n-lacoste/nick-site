@@ -1292,7 +1292,29 @@ async function loadMovieWatchHistory(filePath) {
   let sortColumn = "Updated";
   let sortDirection = "Latest";
   let rowLimit = 25;
-
+  function updateHistoryButtonStates() {
+    if (sortColumnButton) {
+      sortColumnButton.classList.remove("history-updated-button");
+      sortColumnButton.classList.remove("history-added-button");
+  
+      if (sortColumn === "Updated") {
+        sortColumnButton.classList.add("history-updated-button");
+      } else {
+        sortColumnButton.classList.add("history-added-button");
+      }
+    }
+  
+    if (sortDirectionButton) {
+      sortDirectionButton.classList.remove("history-latest-button");
+      sortDirectionButton.classList.remove("history-earliest-button");
+  
+      if (sortDirection === "Latest") {
+        sortDirectionButton.classList.add("history-latest-button");
+      } else {
+        sortDirectionButton.classList.add("history-earliest-button");
+      }
+    }
+  }
   const tierColors = {
     "S": { bg: "#efd1ff", text: "#5a3286" },
     "(S)": { bg: "#efd1ff", text: "#5a3286" },
@@ -1498,29 +1520,32 @@ if (showSelect) {
     renderTable();
   });
 }
-  if (sortColumnButton) {
-    sortColumnButton.addEventListener("click", () => {
-      sortColumn = sortColumn === "Updated" ? "Added" : "Updated";
+ if (sortColumnButton) {
+  sortColumnButton.addEventListener("click", () => {
+    sortColumn = sortColumn === "Updated" ? "Added" : "Updated";
 
-      sortColumnButton.textContent = sortColumn === "Updated"
-        ? "Sort by: Last Update"
-        : "Sort by: Date Added";
+    sortColumnButton.textContent = sortColumn === "Updated"
+      ? "Sort by: Last Update"
+      : "Sort by: Date Added";
 
-      renderTable();
-    });
-  }
+    updateHistoryButtonStates();
+    renderTable();
+  });
+}
 
-  if (sortDirectionButton) {
-    sortDirectionButton.addEventListener("click", () => {
-      sortDirection = sortDirection === "Latest" ? "Earliest" : "Latest";
-      sortDirectionButton.textContent = `Sort: ${sortDirection}`;
-      renderTable();
-    });
-  }
+if (sortDirectionButton) {
+  sortDirectionButton.addEventListener("click", () => {
+    sortDirection = sortDirection === "Latest" ? "Earliest" : "Latest";
+    sortDirectionButton.textContent = `Sort: ${sortDirection}`;
+
+    updateHistoryButtonStates();
+    renderTable();
+  });
+}
 
   if (searchBox) {
     searchBox.addEventListener("input", renderTable);
   }
-
+  updateHistoryButtonStates();
   renderTable();
 }
