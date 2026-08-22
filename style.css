@@ -934,3 +934,32 @@ thead th:nth-child(3) {
   min-width: 520px;
   font-size: 13px;
 }
+/* Watch History active sort buttons */
+
+#history-sort-column.history-updated-button {
+  background: #0a53a8;
+  color: #ffffff;
+  border-color: #5ca8ff;
+  font-weight: bold;
+}
+
+#history-sort-column.history-added-button {
+  background: #5a3286;
+  color: #ffffff;
+  border-color: #b58cff;
+  font-weight: bold;
+}
+
+#history-sort-direction.history-latest-button {
+  background: #11734b;
+  color: #ffffff;
+  border-color: #57bb8a;
+  font-weight: bold;
+}
+
+#history-sort-direction.history-earliest-button {
+  background: #753800;
+  color: #ffffff;
+  border-color: #f8a67a;
+  font-weight: bold;
+}
