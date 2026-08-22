@@ -1560,3 +1560,320 @@ if (sortDirectionButton) {
   updateHistoryButtonStates();
   renderTable();
 }
+async function loadMovieComparison(filePath) {
+  const response = await fetch(filePath);
+  const text = await response.text();
+
+  const parsed = Papa.parse(text.trim(), {
+    header: true,
+    skipEmptyLines: true
+  });
+
+  const rows = parsed.data.filter(row => {
+    return Object.values(row).some(value => String(value ?? "").trim() !== "");
+  });
+
+  const leftInput = document.getElementById("movie-compare-left-search");
+  const rightInput = document.getElementById("movie-compare-right-search");
+  const datalist = document.getElementById("movie-compare-options");
+  const leftCard = document.getElementById("movie-compare-left-card");
+  const rightCard = document.getElementById("movie-compare-right-card");
+  const factorComparison = document.getElementById("movie-factor-comparison");
+  const status = document.getElementById("movie-compare-status");
+
+  if (!leftInput || !rightInput || !datalist || !leftCard || !rightCard || !factorComparison) {
+    return;
+  }
+
+  let leftMovie = null;
+  let rightMovie = null;
+
+  const factorColumns = [
+    "Plot",
+    "Main Character(s)",
+    "Side Characters",
+    "Emotion",
+    "Dialogue (Writing)",
+    "Purpose Met",
+    "Cast",
+    "Music & Sound",
+    "Rewatch Value"
+  ];
+
+  const tierColors = {
+    "S": { bg: "#efd1ff", text: "#5a3286" },
+    "(S)": { bg: "#efd1ff", text: "#5a3286" },
+    "A1": { bg: "#888ef5", text: "#473821" },
+    "A2": { bg: "#5bc0dd", text: "#215a6c" },
+    "A3": { bg: "#bfe1f6", text: "#0a53a8" },
+    "B1": { bg: "#d4edbc", text: "#11734b" },
+    "B2": { bg: "#ffe5a0", text: "#473821" },
+    "B3": { bg: "#f0c885", text: "#000000" },
+    "C1": { bg: "#ffc8aa", text: "#753800" },
+    "C2": { bg: "#e38451", text: "#000000" },
+    "C3": { bg: "#e36351", text: "#000000" },
+    "D": { bg: "#ff0000", text: "#000000" },
+    "NR": { bg: "#ffcfc9", text: "#b10202" }
+  };
+
+  function escapeHTML(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function makeMovieLabel(row) {
+    const title = String(row["Name"] ?? "").trim();
+    const year = String(row["Year"] ?? "").trim();
+
+    if (title === "" && year === "") return "";
+
+    return year === ""
+      ? title
+      : `${title} (${year})`;
+  }
+
+  function normalizeSearchText(value) {
+    return String(value ?? "").trim().toLowerCase();
+  }
+
+  function formatRank(value) {
+    const text = String(value ?? "").trim();
+
+    if (text === "") return "";
+    if (text.startsWith("#")) return text;
+
+    return `#${text}`;
+  }
+
+  function formatValue(value) {
+    const text = String(value ?? "").trim();
+    return text === "" ? "—" : text;
+  }
+
+  function getNumber(value) {
+    const text = String(value ?? "").trim();
+
+    if (text === "" || text === "--") return null;
+
+    const num = Number(text);
+
+    return isNaN(num) ? null : num;
+  }
+
+  function getTierStyle(value) {
+    const tier = String(value ?? "").trim();
+    const colors = tierColors[tier];
+
+    if (!colors) return "";
+
+    return `
+      background-color: ${colors.bg};
+      color: ${colors.text};
+      font-weight: bold;
+    `;
+  }
+
+  function getRatingColor(value) {
+    const num = Number(String(value ?? "").replace(/,/g, "").trim());
+
+    if (isNaN(num)) return "";
+
+    const clamped = Math.max(0, Math.min(100, num));
+
+    const redColor = { r: 204, g: 0, b: 0 };
+    const yellowColor = { r: 255, g: 217, b: 102 };
+    const greenColor = { r: 87, g: 187, b: 138 };
+
+    let start;
+    let end;
+    let percent;
+
+    if (clamped <= 50) {
+      start = redColor;
+      end = yellowColor;
+      percent = clamped / 50;
+    } else {
+      start = yellowColor;
+      end = greenColor;
+      percent = (clamped - 50) / 50;
+    }
+
+    const r = Math.round(start.r + (end.r - start.r) * percent);
+    const g = Math.round(start.g + (end.g - start.g) * percent);
+    const b = Math.round(start.b + (end.b - start.b) * percent);
+
+    return `
+      background-color: rgb(${r}, ${g}, ${b});
+      color: #000000;
+      font-weight: bold;
+    `;
+  }
+
+  function findMovieByInput(value) {
+    const searchValue = normalizeSearchText(value);
+
+    if (searchValue === "") return null;
+
+    return rows.find(row => {
+      return normalizeSearchText(makeMovieLabel(row)) === searchValue;
+    }) || null;
+  }
+
+  function renderMovieCard(target, movie, sideLabel) {
+    if (!movie) {
+      target.innerHTML = `<p class="movie-compare-placeholder">Select a movie on the ${sideLabel}.</p>`;
+      return;
+    }
+
+    target.innerHTML = `
+      <h3>${escapeHTML(movie["Name"])}</h3>
+
+      <div class="movie-compare-meta">
+        <span>${escapeHTML(movie["Year"])}</span>
+        <span style="${getTierStyle(movie["Tier"])}">${escapeHTML(formatValue(movie["Tier"]))}</span>
+        <span style="${getRatingColor(movie["My Rating"])}">${escapeHTML(formatValue(movie["My Rating"]))}</span>
+        <span>${escapeHTML(formatRank(movie["Rk"]))}</span>
+      </div>
+
+      <dl class="movie-compare-details">
+        <div>
+          <dt>vs. IMDB</dt>
+          <dd>${escapeHTML(formatValue(movie["Me vs. IMDB"]))}</dd>
+        </div>
+
+        <div>
+          <dt>Runtime</dt>
+          <dd>${escapeHTML(formatValue(movie["Mins."]))} mins</dd>
+        </div>
+
+        <div>
+          <dt>Genre</dt>
+          <dd>${escapeHTML(formatValue(movie["OMDB_Genre"]))}</dd>
+        </div>
+
+        <div>
+          <dt>Director</dt>
+          <dd>${escapeHTML(formatValue(movie["OMDB_Director"]))}</dd>
+        </div>
+      </dl>
+
+      <div class="movie-compare-review">
+        <h4>Review</h4>
+        <p>${escapeHTML(formatValue(movie["Notes (Review)"]))}</p>
+      </div>
+    `;
+  }
+
+  function renderFactorRow(factor) {
+    const leftRaw = leftMovie ? leftMovie[factor] : "";
+    const rightRaw = rightMovie ? rightMovie[factor] : "";
+
+    const leftValue = getNumber(leftRaw);
+    const rightValue = getNumber(rightRaw);
+
+    const leftPercent = leftValue === null ? 0 : Math.max(0, Math.min(100, leftValue * 10));
+    const rightPercent = rightValue === null ? 0 : Math.max(0, Math.min(100, rightValue * 10));
+
+    let resultClass = "";
+
+    if (leftValue !== null && rightValue !== null) {
+      if (leftValue > rightValue) resultClass = "left-wins";
+      if (rightValue > leftValue) resultClass = "right-wins";
+      if (rightValue === leftValue) resultClass = "tie";
+    }
+
+    return `
+      <div class="movie-factor-row ${resultClass}">
+        <div class="movie-factor-value movie-factor-left-value">${escapeHTML(formatValue(leftRaw))}</div>
+
+        <div class="movie-factor-middle">
+          <div class="movie-factor-label">${escapeHTML(factor)}</div>
+
+          <div class="movie-factor-bar">
+            <div class="movie-factor-half movie-factor-half-left">
+              <div class="movie-factor-fill movie-factor-fill-left" style="width: ${leftPercent}%;"></div>
+            </div>
+
+            <div class="movie-factor-centre-line"></div>
+
+            <div class="movie-factor-half movie-factor-half-right">
+              <div class="movie-factor-fill movie-factor-fill-right" style="width: ${rightPercent}%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="movie-factor-value movie-factor-right-value">${escapeHTML(formatValue(rightRaw))}</div>
+      </div>
+    `;
+  }
+
+  function renderFactorComparison() {
+    if (!leftMovie && !rightMovie) {
+      factorComparison.innerHTML = `<p class="movie-compare-placeholder">Select two movies to compare factor scores.</p>`;
+      return;
+    }
+
+    factorComparison.innerHTML = factorColumns
+      .map(factor => renderFactorRow(factor))
+      .join("");
+  }
+
+  function renderComparison() {
+    renderMovieCard(leftCard, leftMovie, "left");
+    renderMovieCard(rightCard, rightMovie, "right");
+    renderFactorComparison();
+
+    if (status) {
+      if (leftMovie && rightMovie) {
+        status.textContent = `Comparing ${makeMovieLabel(leftMovie)} against ${makeMovieLabel(rightMovie)}.`;
+      } else if (leftMovie || rightMovie) {
+        status.textContent = "Select one more movie to complete the comparison.";
+      } else {
+        status.textContent = "Search and select two movies to begin.";
+      }
+    }
+  }
+
+  const movieOptions = rows
+    .map(row => makeMovieLabel(row))
+    .filter(label => label !== "")
+    .sort((a, b) => a.localeCompare(b));
+
+  datalist.innerHTML = movieOptions
+    .map(label => `<option value="${escapeHTML(label)}"></option>`)
+    .join("");
+
+  leftInput.addEventListener("change", () => {
+    leftMovie = findMovieByInput(leftInput.value);
+    renderComparison();
+  });
+
+  rightInput.addEventListener("change", () => {
+    rightMovie = findMovieByInput(rightInput.value);
+    renderComparison();
+  });
+
+  leftInput.addEventListener("input", () => {
+    const match = findMovieByInput(leftInput.value);
+
+    if (match) {
+      leftMovie = match;
+      renderComparison();
+    }
+  });
+
+  rightInput.addEventListener("input", () => {
+    const match = findMovieByInput(rightInput.value);
+
+    if (match) {
+      rightMovie = match;
+      renderComparison();
+    }
+  });
+
+  renderComparison();
+}
