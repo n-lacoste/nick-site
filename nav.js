@@ -16,14 +16,14 @@
         <div class="nav-menu">
           <a class="nav-menu-title" href="${base}music/">Music</a>
           <div class="nav-dropdown">
-            <a href="${base}music/">Music Home</a>
+            <a href="${base}music/">Home: Music</a>
           </div>
         </div>
 
         <div class="nav-menu">
           <a class="nav-menu-title" href="${base}movies/">Movies</a>
           <div class="nav-dropdown">
-            <a href="${base}movies/">Movies Home</a>
+            <a href="${base}movies/">Home: Movies</a>
             <a href="${base}movies/comparison.html">Movie Comparison</a>
             <a href="${base}movies/rankings.html">Movie Rankings</a>
             <a href="${base}movies/watch-history.html">Watch History</a>
@@ -33,21 +33,21 @@
         <div class="nav-menu">
           <a class="nav-menu-title" href="${base}tv/">TV Shows</a>
           <div class="nav-dropdown">
-            <a href="${base}tv/">TV Shows Home</a>
+            <a href="${base}tv/">Home: TV Shows</a>
           </div>
         </div>
 
         <div class="nav-menu">
           <a class="nav-menu-title" href="${base}geo/">Geo</a>
           <div class="nav-dropdown">
-            <a href="${base}geo/">Geo Home</a>
+            <a href="${base}geo/">Home: Geo</a>
           </div>
         </div>
 
         <div class="nav-menu">
           <a class="nav-menu-title" href="${base}professional/">Professional Work</a>
           <div class="nav-dropdown">
-            <a href="${base}professional/">Professional Home</a>
+            <a href="${base}professional/">Home: Professional Work</a>
           </div>
         </div>
       </nav>
