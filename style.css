@@ -1482,3 +1482,12 @@ thead th:nth-child(3) {
   line-height: 1;
   font-size: 18px;
 }
+/* Border box around the factor comparison chart */
+
+#movie-factor-comparison {
+  border: 1px solid #333;
+  border-radius: 10px;
+  background: #151515;
+  padding: 10px 14px;
+  margin-top: 12px;
+}
