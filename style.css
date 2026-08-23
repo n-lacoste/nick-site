@@ -1395,3 +1395,17 @@ thead th:nth-child(3) {
   flex: 0 0 auto;
   white-space: nowrap;
 }
+.movie-compare-input-line .movie-compare-input {
+  height: 38px;
+}
+
+.movie-random-button {
+  height: 38px;
+  min-width: 44px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  line-height: 1;
+}
