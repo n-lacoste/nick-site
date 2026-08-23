@@ -1,3 +1,5 @@
+ window.MOVIES_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmeTR35_PhZG8dySIXLskh-Z2QqGhczSg1kr9HWDsn4PD0bL6pdSl09USGztrnm-iWf25Y5SkFLTDG/pub?gid=1266267170&single=true&output=csv";
+
 async function loadCSV(
   filePath,
   tableId,
@@ -10,7 +12,6 @@ async function loadCSV(
   rowLimitId = null,
   ratingStatusId = null
 ) {
-  window.MOVIES_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmeTR35_PhZG8dySIXLskh-Z2QqGhczSg1kr9HWDsn4PD0bL6pdSl09USGztrnm-iWf25Y5SkFLTDG/pub?gid=1266267170&single=true&output=csv";
   
   const response = await fetch(filePath);
   const text = await response.text();
