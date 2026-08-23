@@ -1409,3 +1409,76 @@ thead th:nth-child(3) {
   font-size: 18px;
   line-height: 1;
 }
+/* Movie Comparison factor matchup header */
+
+.movie-factor-matchup-header {
+  position: sticky;
+  top: 8px;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  margin: 10px 0 14px;
+  padding: 10px 12px;
+  border: 1px solid #333;
+  border-radius: 10px;
+  background: #151515;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.35);
+}
+
+.movie-factor-matchup-title {
+  min-width: 0;
+  color: #f5f5f5;
+  font-size: 15px;
+  font-weight: bold;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.movie-factor-matchup-left {
+  text-align: right;
+  color: #8fc4ff;
+}
+
+.movie-factor-matchup-right {
+  text-align: left;
+  color: #8ce0b5;
+}
+
+.movie-factor-matchup-vs {
+  color: #aaa;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+.movie-compare-input-line {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.movie-compare-input-line .movie-compare-input,
+.movie-compare-input-line .movie-random-button {
+  height: 40px;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+.movie-compare-input-line .movie-compare-input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.movie-compare-input-line .movie-random-button {
+  flex: 0 0 50px;
+  width: 50px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  font-size: 18px;
+}
