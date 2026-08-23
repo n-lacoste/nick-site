@@ -1591,12 +1591,15 @@ async function loadMovieComparison(filePath) {
 
   const leftInput = document.getElementById("movie-compare-left-search");
   const rightInput = document.getElementById("movie-compare-right-search");
+  const leftRandomButton = document.getElementById("movie-compare-left-random");
+  const rightRandomButton = document.getElementById("movie-compare-right-random");
   const datalist = document.getElementById("movie-compare-options");
   const leftCard = document.getElementById("movie-compare-left-card");
   const rightCard = document.getElementById("movie-compare-right-card");
   const factorComparison = document.getElementById("movie-factor-comparison");
   const status = document.getElementById("movie-compare-status");
   const categoryWinner = document.getElementById("movie-category-winner");
+ 
 
   if (!leftInput || !rightInput || !datalist || !leftCard || !rightCard || !factorComparison) {
     return;
@@ -1632,7 +1635,35 @@ async function loadMovieComparison(filePath) {
     "D": { bg: "#ff0000", text: "#000000" },
     "NR": { bg: "#ffcfc9", text: "#b10202" }
   };
+  function getRandomMovie() {
+    if (!rankedRows || rankedRows.length === 0) return null;
+  
+    const randomIndex = Math.floor(Math.random() * rankedRows.length);
+    return rankedRows[randomIndex];
+  }
+   if (leftRandomButton) {
+    leftRandomButton.addEventListener("click", () => {
+      const randomMovie = getRandomMovie();
+  
+      if (!randomMovie) return;
+  
+      leftMovie = randomMovie;
+      leftInput.value = makeMovieLabel(randomMovie);
+      renderComparison();
+    });
+  }
 
+if (rightRandomButton) {
+  rightRandomButton.addEventListener("click", () => {
+    const randomMovie = getRandomMovie();
+
+    if (!randomMovie) return;
+
+    rightMovie = randomMovie;
+    rightInput.value = makeMovieLabel(randomMovie);
+    renderComparison();
+  });
+}
   function escapeHTML(value) {
     return String(value ?? "")
       .replaceAll("&", "&amp;")
