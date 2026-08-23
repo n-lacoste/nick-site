@@ -81,33 +81,45 @@
 </div>
       <div class="advanced-filters-grid">
 
-        <div class="filter-control">
-          <label for="movies-rating-status">Sample</label>
-          <select id="movies-rating-status" class="sort-select">
-            <option value="all" selected>All Options</option>
-            <option value="ranked">Only Ranked</option>
-            <option value="unranked">Only Unranked</option>
-          </select>
-        </div>
+  <details class="filter-control filter-collapsible">
+    <summary>Sample</summary>
 
-        <div class="filter-control">
-          <label for="year-start-filter">Year Range</label>
-          <div class="range-inputs">
-            <input id="year-start-filter" class="filter-text-input" type="number" placeholder="Start">
-            <input id="year-end-filter" class="filter-text-input" type="number" placeholder="End">
-          </div>
-        </div>
+    <div class="filter-collapsible-content">
+      <select id="movies-rating-status" class="sort-select">
+        <option value="all" selected>All Options</option>
+        <option value="ranked">Only Ranked</option>
+        <option value="unranked">Only Unranked</option>
+      </select>
+    </div>
+  </details>
 
-        <div class="filter-control">
-          <label for="mins-mode-filter">Mins.</label>
-          <div class="range-inputs">
-            <select id="mins-mode-filter" class="sort-select">
-              <option value="greater">Greater than</option>
-              <option value="less">Less than</option>
-            </select>
-            <input id="mins-value-filter" class="filter-text-input" type="number" placeholder="Mins.">
-          </div>
-        </div>
+  <details class="filter-control filter-collapsible">
+    <summary>Year Range</summary>
+
+    <div class="filter-collapsible-content">
+      <div class="range-inputs">
+        <input id="year-start-filter" class="filter-text-input" type="number" placeholder="Start">
+        <input id="year-end-filter" class="filter-text-input" type="number" placeholder="End">
+      </div>
+    </div>
+  </details>
+
+  <details class="filter-control filter-collapsible">
+    <summary>Mins.</summary>
+
+    <div class="filter-collapsible-content">
+      <div class="range-inputs">
+        <select id="mins-mode-filter" class="sort-select">
+          <option value="greater">Greater than</option>
+          <option value="less">Less than</option>
+        </select>
+
+        <input id="mins-value-filter" class="filter-text-input" type="number" placeholder="Mins.">
+      </div>
+    </div>
+  </details>
+
+</div>
 
         <details class="filter-dropdown">
           <summary>Watch Status</summary>
