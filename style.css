@@ -1491,3 +1491,37 @@ thead th:nth-child(3) {
   padding: 10px 14px;
   margin-top: 12px;
 }
+/* Collapsible advanced filters */
+
+.filter-collapsible {
+  border: 1px solid #333;
+  border-radius: 8px;
+  background: #111;
+  padding: 0;
+  overflow: hidden;
+}
+
+.filter-collapsible summary {
+  cursor: pointer;
+  padding: 9px 11px;
+  color: #f5f5f5;
+  font-size: 14px;
+  font-weight: bold;
+  list-style-position: outside;
+}
+
+.filter-collapsible summary:hover {
+  background: #1f1f1f;
+}
+
+.filter-collapsible-content {
+  padding: 10px 11px 12px;
+  border-top: 1px solid #333;
+}
+
+.filter-collapsible-content .sort-select,
+.filter-collapsible-content .filter-text-input {
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+}
