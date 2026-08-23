@@ -1378,3 +1378,20 @@ thead th:nth-child(3) {
 .movie-category-winner.tie-winner strong {
   color: #ffd966;
 }
+/* Movie Comparison random buttons */
+
+.movie-compare-input-line {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.movie-compare-input-line .movie-compare-input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.movie-random-button {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
