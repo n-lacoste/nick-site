@@ -1599,12 +1599,26 @@ async function loadMovieComparison(filePath) {
   const factorComparison = document.getElementById("movie-factor-comparison");
   const status = document.getElementById("movie-compare-status");
   const categoryWinner = document.getElementById("movie-category-winner");
+  const factorLeftTitle = document.getElementById("movie-factor-left-title");
+  const factorRightTitle = document.getElementById("movie-factor-right-title");
  
 
   if (!leftInput || !rightInput || !datalist || !leftCard || !rightCard || !factorComparison) {
     return;
   }
-
+  function renderFactorMatchupHeader() {
+    if (factorLeftTitle) {
+      factorLeftTitle.textContent = leftMovie
+        ? makeMovieLabel(leftMovie)
+        : "Movie A";
+    }
+  
+    if (factorRightTitle) {
+      factorRightTitle.textContent = rightMovie
+        ? makeMovieLabel(rightMovie)
+        : "Movie B";
+    }
+  }
   let leftMovie = null;
   let rightMovie = null;
 
@@ -1925,6 +1939,7 @@ function renderCategoryBattleWinner() {
 }
  function renderFactorComparison() {
   renderCategoryBattleWinner();
+  renderFactorMatchupHeader();
 
   if (!leftMovie && !rightMovie) {
     factorComparison.innerHTML = `<p class="movie-compare-placeholder">Select two movies above to compare factor scores.</p>`;
