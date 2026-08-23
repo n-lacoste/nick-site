@@ -1525,3 +1525,27 @@ thead th:nth-child(3) {
   max-width: none;
   box-sizing: border-box;
 }
+/* Advanced filters using same dropdown style as checkbox filters */
+
+.advanced-filter-options {
+  padding: 10px 11px 12px;
+}
+
+.advanced-filter-options .sort-select,
+.advanced-filter-options .filter-text-input {
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+}
+
+.advanced-filter-options .range-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+@media (max-width: 700px) {
+  .advanced-filter-options .range-inputs {
+    grid-template-columns: 1fr;
+  }
+}
