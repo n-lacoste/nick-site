@@ -274,7 +274,7 @@
         throw new Error("loadCSV is not defined. script.js did not load correctly or has a syntax error.");
       }
 
-      loadCSV("/nick-site/data/movies.csv", "movies-table", "movies-search", [
+      loadCSV(window.MOVIES_CSV_URL, "movies-table", "movies-search", [
         "Tier",
         "Rk",
         "Name",
