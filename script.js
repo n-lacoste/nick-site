@@ -3203,10 +3203,13 @@ gameEndedByGiveUp = false;
       flagImageWrap.hidden = true;
       promptText.hidden = true;
     
-      const totalQuestions = activeFlags.length;
-      const completed = getCompletedCount();
-      const completionPercent = getCompletionPercent();
-      const leaderboardEligible = isLeaderboardEligible();
+     const eligibility = getLeaderboardEligibility();
+
+      const totalQuestions = eligibility.totalQuestions;
+      const completed = eligibility.completed;
+      const completionPercent = eligibility.completionPercent;
+      const minimumRequired = eligibility.minimumRequired;
+      const leaderboardEligible = eligibility.isEligible;
     
       const accuracyPercent = attempts > 0
         ? Math.round((score / attempts) * 100)
@@ -3226,8 +3229,9 @@ gameEndedByGiveUp = false;
         <div><strong>Completed:</strong> ${completed} / ${totalQuestions} (${completionPercent}%)</div>
         <div><strong>Hints used:</strong> ${hintsUsed}</div>
         ${activeTimerLimitSeconds > 0 ? `<div><strong>Time remaining:</strong> ${formatClockTime(getTimeRemainingSeconds())}</div>` : ""}
+        <div><strong>Minimum required for leaderboard:</strong> ${minimumRequired} completed</div>
         <div><strong>Leaderboard eligible:</strong> ${leaderboardEligible ? "Yes" : "No"}</div>
-        ${getScoreSubmissionHTML(leaderboardEligible)}
+        ${getScoreSubmissionHTML()}
       `;
     
       setupScoreSubmissionForm();
@@ -3237,21 +3241,33 @@ function getCompletedCount() {
   return activeFlags.filter(row => row.completed).length;
 }
 
-function getCompletionPercent() {
-  if (!activeFlags.length) return 0;
-
-  return Math.round((getCompletedCount() / activeFlags.length) * 100);
-}
-
-function isLeaderboardEligible() {
+function getLeaderboardEligibility() {
   const completed = getCompletedCount();
   const totalQuestions = activeFlags.length;
 
-  if (!totalQuestions) return false;
+  const minimumRequired = totalQuestions > 0
+    ? Math.ceil(totalQuestions * 0.5)
+    : 0;
 
-  const minimumRequired = Math.ceil(totalQuestions * 0.5);
+  const completionPercent = totalQuestions > 0
+    ? Math.round((completed / totalQuestions) * 100)
+    : 0;
 
-  return completed >= minimumRequired;
+  return {
+    completed,
+    totalQuestions,
+    minimumRequired,
+    completionPercent,
+    isEligible: totalQuestions > 0 && completed >= minimumRequired
+  };
+}
+
+function getCompletionPercent() {
+  return getLeaderboardEligibility().completionPercent;
+}
+
+function isLeaderboardEligible() {
+  return getLeaderboardEligibility().isEligible;
 }
   
 function endCurrentGame() {
@@ -3266,17 +3282,20 @@ function endCurrentGame() {
   showGameComplete(true, false);
 }
   
-function getScoreSubmissionHTML(leaderboardEligible) {
+function getScoreSubmissionHTML() {
   if (!leaderboardUrl || !activeModeId) {
     return "";
   }
 
-  if (!leaderboardEligible) {
+  const eligibility = getLeaderboardEligibility();
+
+  if (!eligibility.isEligible) {
     return `
       <div class="flags-score-submit-panel">
         <div class="flags-score-submit-title">Public Leaderboard</div>
         <div class="flags-score-submit-status">
-          You need to complete at least 50% of the full quiz to submit a public score.
+          You completed ${eligibility.completed} / ${eligibility.totalQuestions}.
+          You need at least ${eligibility.minimumRequired} completed questions to submit a public score.
         </div>
       </div>
     `;
@@ -3350,7 +3369,15 @@ function submitPublicScore(initials, statusEl, buttonEl) {
     statusEl.textContent = "Leaderboard is not connected.";
     return;
   }
+  
+  if (!isLeaderboardEligible()) {
+  const eligibility = getLeaderboardEligibility();
 
+  statusEl.textContent = `Score not submitted. You completed ${eligibility.completed} / ${eligibility.totalQuestions}, but need ${eligibility.minimumRequired}.`;
+
+  return;
+}
+  
   const config = gameModes[activeModeId];
 
   if (!config) {
@@ -3510,34 +3537,6 @@ function formatClockTime(totalSeconds) {
   const seconds = safeSeconds % 60;
 
   return `${minutes}:${String(seconds).padStart(2, "0")}`;
-}
-  
-  function getScoreSubmissionHTML() {
-  if (!leaderboardUrl || !activeModeId) {
-    return "";
-  }
-
-  return `
-    <div class="flags-score-submit-panel">
-      <div class="flags-score-submit-title">Submit Your Score</div>
-
-      <div class="flags-score-submit-row">
-        <input
-          id="flagsScoreInitials"
-          type="text"
-          maxlength="4"
-          placeholder="ABCD"
-          autocomplete="off"
-        >
-
-        <button id="flagsSubmitScoreButton" type="button">
-          Submit Score
-        </button>
-      </div>
-
-      <div id="flagsSubmitScoreStatus" class="flags-score-submit-status"></div>
-    </div>
-  `;
 }
 
 function setupScoreSubmissionForm() {
