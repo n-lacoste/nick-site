@@ -199,8 +199,10 @@ async function loadCSV(
 
     return escapeHTML(text);
   }
-const dateColumns = ["Added", "Updated"];
-function csvEscape(value) {
+
+ const dateColumns = ["Added", "Updated", "Release Date"];
+ 
+ function csvEscape(value) {
   const text = String(value ?? "");
 
   if (
