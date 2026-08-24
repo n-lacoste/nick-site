@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Episode Rankings | Nick Site</title>
+  <link rel="stylesheet" href="/nick-site/style.css">
+</head>
+
+<body>
+  <div id="site-header"></div>
+  <script src="/nick-site/nav.js?v=10"></script>
+
+  <main>
+    <div class="page-topline">
+      <div>
+        <h2>Episode Rankings</h2>
+        <p>Sortable and filterable episode rankings by show, season, rank, release date, and notes.</p>
+      </div>
+    </div>
+
+    <div class="movie-controls-row">
+
+      <details class="column-picker-wrap">
+        <summary class="filter-button">Display Columns</summary>
+        <div id="episode-column-picker" class="column-picker"></div>
+      </details>
+
+      <div class="sort-control">
+        <label for="episode-sort-column">Sort by:</label>
+        <select id="episode-sort-column" class="sort-select"></select>
+      </div>
+
+      <button id="episode-sort-direction" class="filter-button" type="button">A–Z</button>
+
+      <div class="show-control">
+        <label for="episode-show-count">Show:</label>
+        <select id="episode-show-count" class="sort-select">
+          <option value="25" selected>25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+          <option value="250">250</option>
+          <option value="all">All</option>
+        </select>
+      </div>
+
+      <button id="movies-download-csv" class="download-button" type="button" aria-label="Download CSV">
+        <svg class="download-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"></path>
+        </svg>
+      </button>
+
+      <input 
+        type="text" 
+        id="episode-search" 
+        placeholder="Search episodes..."
+        class="search-box"
+      >
+    </div>
+
+    <div id="column-summary" class="column-summary"></div>
+
+    <details id="episode-filters-panel" class="filters-panel">
+      <summary class="filters-panel-summary">
+        <span class="filters-summary-inner">
+          <span>Filters</span>
+          <span id="filters-active-indicator" class="filters-indicator">No filters</span>
+        </span>
+      </summary>
+
+      <div class="filters-panel-actions">
+        <button id="apply-movies-filters" class="filter-button" type="button">
+          Apply filters
+        </button>
+
+        <button id="clear-movies-filters" class="filter-button" type="button">
+          Clear all filters
+        </button>
+      </div>
+
+      <div class="filter-grid">
+
+        <details class="filter-dropdown">
+          <summary>TV Show</summary>
+
+          <label class="filter-option select-all-option">
+            <input type="checkbox" id="episode-show-select-all" checked>
+            Select All
+          </label>
+
+          <div id="episode-show-filter" class="filter-options"></div>
+        </details>
+
+        <details class="filter-dropdown">
+          <summary>Season</summary>
+
+          <label class="filter-option select-all-option">
+            <input type="checkbox" id="episode-season-select-all" checked>
+            Select All
+          </label>
+
+          <div id="episode-season-filter" class="filter-options"></div>
+        </details>
+
+        <details class="filter-dropdown">
+          <summary>Rank</summary>
+
+          <label class="filter-option select-all-option">
+            <input type="checkbox" id="episode-rank-select-all" checked>
+            Select All
+          </label>
+
+          <div id="episode-rank-filter" class="filter-options"></div>
+        </details>
+
+        <details class="filter-dropdown">
+          <summary>Nick Rating</summary>
+
+          <label class="filter-option select-all-option">
+            <input type="checkbox" id="episode-nick-select-all" checked>
+            Select All
+          </label>
+
+          <div id="episode-nick-filter" class="filter-options"></div>
+        </details>
+
+        <details class="filter-dropdown">
+          <summary>Sarah Rating</summary>
+
+          <label class="filter-option select-all-option">
+            <input type="checkbox" id="episode-sarah-select-all" checked>
+            Select All
+          </label>
+
+          <div id="episode-sarah-filter" class="filter-options"></div>
+        </details>
+
+      </div>
+    </details>
+
+    <p id="movies-row-count" class="last-updated"></p>
+
+    <div class="table-wrap">
+      <table id="episode-rankings-table"></table>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="/nick-site/script.js?v=15"></script>
+
+  <script>
+    const episodeDisplayColumns = [
+      "TV Show",
+      "Episode Count",
+      "Season",
+      "Episode Title",
+      "Episode Number",
+      "Season Epi #",
+      "Season Count",
+      "Episode #",
+      "Rank",
+      "Sarah :)",
+      "Nick <3",
+      "Blurb",
+      "Release Date",
+      "Notes"
+    ];
+
+    const episodeFilters = [
+      {
+        column: "TV Show",
+        targetId: "episode-show-filter",
+        selectAllId: "episode-show-select-all",
+        mode: "or"
+      },
+      {
+        column: "Season",
+        targetId: "episode-season-filter",
+        selectAllId: "episode-season-select-all",
+        mode: "or"
+      },
+      {
+        column: "Rank",
+        targetId: "episode-rank-filter",
+        selectAllId: "episode-rank-select-all",
+        mode: "or"
+      },
+      {
+        column: "Nick <3",
+        targetId: "episode-nick-filter",
+        selectAllId: "episode-nick-select-all",
+        mode: "or"
+      },
+      {
+        column: "Sarah :)",
+        targetId: "episode-sarah-filter",
+        selectAllId: "episode-sarah-select-all",
+        mode: "or"
+      }
+    ];
+
+    loadCSV(
+      window.TVEPISODES_CSV_URL,
+      "episode-rankings-table",
+      "episode-search",
+      episodeDisplayColumns,
+      "episode-column-picker",
+      "episode-sort-column",
+      "episode-sort-direction",
+      episodeFilters,
+      "episode-show-count",
+      null
+    );
+  </script>
+</body>
+</html>
