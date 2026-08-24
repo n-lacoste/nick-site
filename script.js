@@ -2727,11 +2727,15 @@ async function loadTVShowCard(tvShowsPath, episodesPath) {
     }
   });
 }
+
 window.loadFlagsGame = function loadFlagsGame(filePath) {
   const startScreen = document.getElementById("flagsStartScreen");
   const playScreen = document.getElementById("flagsPlayScreen");
   const modeButtons = document.querySelectorAll(".flags-mode-button");
   const sortSelect = document.getElementById("flagsSortSelect");
+
+  const playStyleToggle = document.getElementById("flagsPlayStyleToggle");
+  const layoutToggle = document.getElementById("flagsLayoutToggle");
 
   const currentModeLabel = document.getElementById("flagsCurrentModeLabel");
   const changeGameButton = document.getElementById("flagsChangeGameButton");
@@ -2745,6 +2749,7 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
   const progressFillEl = document.getElementById("flagsProgressFill");
   const debugEl = document.getElementById("flagsDebug");
 
+  const gridEl = document.getElementById("flagsGrid");
   const flagImageWrap = document.getElementById("flagsImageWrap");
   const flagImage = document.getElementById("flagsImage");
   const promptText = document.getElementById("flagsPromptText");
@@ -2814,7 +2819,7 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
       filter: row => isYes(row.country) && row.capital !== "",
       answerKind: "capital"
     },
-    
+
     "us-state-capital": {
       label: "Guess U.S. State Capital",
       answerPlaceholder: "Type the state capital...",
@@ -2830,7 +2835,7 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
       filter: row => isCanadianProvinceOrTerritory(row) && row.capital !== "",
       answerKind: "capital"
     },
-    
+
     "north-america-subnational-capital": {
       label: "Guess North American Province/Territory/State Capital",
       answerPlaceholder: "Type the capital...",
@@ -2838,7 +2843,7 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
       filter: row => isNorthAmericanSubnational(row) && row.capital !== "",
       answerKind: "capital"
     },
-    
+
     "north-america-subnational-flag": {
       label: "Guess North American Province/Territory/State Flag",
       answerPlaceholder: "Type the state, province, or territory...",
@@ -2848,21 +2853,30 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
     }
   };
 
+  let csvLoaded = false;
   let allFlags = [];
   let activeFlags = [];
   let activeModeId = "";
   let activeSortId = "random";
+  let activePlayStyle = "information";
+  let activeLayoutStyle = "single";
   let currentIndex = 0;
   let score = 0;
   let attempts = 0;
   let streak = 0;
   let hintsUsed = 0;
-  let hintUsedForCurrent = false;
   let answeredCurrent = false;
+
+  updatePlayStyleToggle();
+  updateLayoutToggle();
 
   if (!filePath) {
     showStartScreen();
-    if (debugEl) debugEl.textContent = "Missing FLAGS_CSV_URL.";
+
+    if (debugEl) {
+      debugEl.textContent = "Missing FLAGS_CSV_URL.";
+    }
+
     return;
   }
 
@@ -2882,6 +2896,8 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
       allFlags = rawRows
         .map(cleanFlagRow)
         .filter(row => row.name);
+
+      csvLoaded = true;
 
       if (debugEl) {
         debugEl.textContent = `CSV rows loaded: ${rawRows.length}`;
@@ -2907,7 +2923,7 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
     const fifa = cleanCell(row["FIFA Member"]);
     const capital = cleanCell(row["Capital"]);
     const capitalAlt = cleanCell(row["Capital Alt. Spelling"]);
-    const population = cleanCell(row["Population"]);
+    const population = cleanCell(row["Population"] || row["Population_2026"]);
     const code = cleanCell(row["Code"]);
     const link = cleanCell(row["Link"]);
 
@@ -2971,11 +2987,15 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
     attempts = 0;
     streak = 0;
     hintsUsed = 0;
-    hintUsedForCurrent = false;
     answeredCurrent = false;
 
     startScreen.hidden = false;
     playScreen.hidden = true;
+
+    if (gridEl) {
+      gridEl.hidden = true;
+      gridEl.innerHTML = "";
+    }
 
     if (flagImage) {
       flagImage.removeAttribute("src");
@@ -2998,7 +3018,18 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
 
     if (!config) return;
 
+    if (!csvLoaded) {
+      if (debugEl) {
+        debugEl.textContent = "Flags CSV is still loading. Try again in a moment.";
+      }
+
+      return;
+    }
+
     activeModeId = modeId;
+    activeSortId = sortSelect ? sortSelect.value : "random";
+    activePlayStyle = playStyleToggle ? playStyleToggle.dataset.playStyle || "information" : "information";
+    activeLayoutStyle = layoutToggle ? layoutToggle.dataset.layoutStyle || "single" : "single";
 
     activeFlags = allFlags
       .filter(row => config.filter(row))
@@ -3007,18 +3038,17 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
           return row.imageUrl !== "";
         }
 
-        if (config.questionType === "capital-to-country") {
-          return row.capital !== "";
-        }
+        return row.capital !== "";
+      })
+      .map(row => ({
+        ...row,
+        completed: false,
+        correct: false,
+        revealed: false,
+        skipped: false,
+        hintUsed: false
+      }));
 
-        if (config.questionType === "country-to-capital") {
-          return row.capital !== "";
-        }
-
-        return true;
-      });
-
-    activeSortId = sortSelect ? sortSelect.value : "random";
     activeFlags = sortGameRows(activeFlags, activeSortId);
 
     currentIndex = 0;
@@ -3026,17 +3056,17 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
     attempts = 0;
     streak = 0;
     hintsUsed = 0;
-    hintUsedForCurrent = false;
     answeredCurrent = false;
 
     startScreen.hidden = true;
     playScreen.hidden = false;
 
-    currentModeLabel.textContent = config.label;
+    currentModeLabel.textContent = `${config.label} • ${getPlayStyleLabel(activePlayStyle)} • ${getLayoutStyleLabel(activeLayoutStyle)}`;
     answerInput.placeholder = config.answerPlaceholder;
+    answerInput.disabled = false;
 
     if (debugEl) {
-      debugEl.textContent = `Game mode: ${config.label} | Order: ${getSortLabel(activeSortId)} | Playable rows: ${activeFlags.length}`;
+      debugEl.textContent = `Game mode: ${config.label} | Order: ${getSortLabel(activeSortId)} | Layout: ${getLayoutStyleLabel(activeLayoutStyle)} | Play: ${getPlayStyleLabel(activePlayStyle)} | Playable rows: ${activeFlags.length}`;
     }
 
     showCurrentQuestion();
@@ -3053,24 +3083,22 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
     }
   }
 
-    
-    function resetCurrentGame() {
-      if (!activeModeId) return;
-    
-      const confirmed = window.confirm(
-        "Are you sure you want to stop? Unfinished game progress will be lost."
-      );
-    
-      if (confirmed) {
-        startGame(activeModeId);
-      }
+  function resetCurrentGame() {
+    if (!activeModeId) return;
+
+    const confirmed = window.confirm(
+      "Are you sure you want to stop? Unfinished game progress will be lost."
+    );
+
+    if (confirmed) {
+      startGame(activeModeId);
     }
+  }
 
   function showCurrentQuestion() {
     const config = gameModes[activeModeId];
 
     answeredCurrent = false;
-    hintUsedForCurrent = false;
     feedbackEl.textContent = "";
     feedbackEl.className = "flags-feedback";
     detailsEl.innerHTML = "";
@@ -3082,26 +3110,70 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
     }
 
     if (!activeFlags.length) {
-      flagImage.removeAttribute("src");
-      promptText.hidden = true;
-      flagImageWrap.hidden = false;
-      feedbackEl.textContent = "No playable rows found for this game mode yet.";
-      updateScore();
+      showNoRowsFound();
       return;
     }
 
-    if (currentIndex >= activeFlags.length) {
-      flagImage.removeAttribute("src");
-      promptText.hidden = true;
-      flagImageWrap.hidden = false;
-
-      feedbackEl.textContent = "Game complete.";
-      detailsEl.innerHTML = `<strong>Final score:</strong> ${score} / ${attempts}`;
-      updateScore();
+    if (allQuestionsCompleted()) {
+      showGameComplete();
       return;
+    }
+
+    if (activeLayoutStyle === "grid") {
+      showGridQuestion();
+    } else {
+      showSingleQuestion();
+    }
+
+    updateScore();
+
+    setTimeout(() => {
+      answerInput.focus();
+    }, 50);
+  }
+
+  function showNoRowsFound() {
+    if (gridEl) {
+      gridEl.hidden = true;
+      gridEl.innerHTML = "";
+    }
+
+    flagImage.removeAttribute("src");
+    flagImageWrap.hidden = true;
+    promptText.hidden = true;
+
+    feedbackEl.textContent = "No playable rows found for this game mode yet.";
+    updateScore();
+  }
+
+  function showGameComplete() {
+    if (activeLayoutStyle !== "grid" && gridEl) {
+      gridEl.hidden = true;
+    }
+
+    flagImage.removeAttribute("src");
+    flagImageWrap.hidden = true;
+    promptText.hidden = true;
+
+    feedbackEl.textContent = "Game complete.";
+    detailsEl.innerHTML = `<strong>Final score:</strong> ${score} / ${attempts}`;
+    updateScore();
+  }
+
+  function showSingleQuestion() {
+    if (gridEl) {
+      gridEl.hidden = true;
+      gridEl.innerHTML = "";
     }
 
     const current = activeFlags[currentIndex];
+
+    if (!current) {
+      showGameComplete();
+      return;
+    }
+
+    const config = gameModes[activeModeId];
 
     if (config.questionType === "flag") {
       promptText.hidden = true;
@@ -3133,12 +3205,127 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
       promptText.hidden = false;
       promptText.textContent = current.name;
     }
+  }
 
+  function showGridQuestion() {
+    flagImage.removeAttribute("src");
+    flagImageWrap.hidden = true;
+    promptText.hidden = true;
+
+    if (!gridEl) return;
+
+    gridEl.hidden = false;
+
+    if (!activeFlags[currentIndex] || activeFlags[currentIndex].completed) {
+      const nextPending = getNextPendingIndex(currentIndex);
+
+      if (nextPending !== -1) {
+        currentIndex = nextPending;
+      }
+    }
+
+    renderGrid();
+  }
+
+  function renderGrid() {
+    const config = gameModes[activeModeId];
+
+    if (!gridEl || !config) return;
+
+    gridEl.innerHTML = activeFlags
+      .map((row, index) => {
+        const classes = ["flags-grid-tile"];
+
+        if (index === currentIndex) {
+          classes.push("flags-grid-current");
+        }
+
+        if (row.correct) {
+          classes.push("flags-grid-correct");
+        }
+
+        if (row.revealed) {
+          classes.push("flags-grid-revealed");
+        }
+
+        if (row.skipped) {
+          classes.push("flags-grid-skipped");
+        }
+
+        return `
+          <button class="${classes.join(" ")}" type="button" data-grid-index="${index}">
+            ${getGridTileContent(row, config)}
+          </button>
+        `;
+      })
+      .join("");
+
+    gridEl.querySelectorAll(".flags-grid-tile").forEach(tile => {
+      tile.addEventListener("click", function () {
+        const selectedIndex = Number(tile.dataset.gridIndex);
+
+        if (!Number.isNaN(selectedIndex)) {
+          selectGridIndex(selectedIndex);
+        }
+      });
+    });
+  }
+
+  function getGridTileContent(row, config) {
+    if (config.questionType === "flag") {
+      return `<img src="${escapeHTML(row.imageUrl)}" alt="${escapeHTML(row.name)} flag">`;
+    }
+
+    return `<div class="flags-grid-prompt">${escapeHTML(getPromptForRow(row, config))}</div>`;
+  }
+
+  function getPromptForRow(row, config) {
+    if (config.questionType === "capital-to-country") {
+      return row.capital;
+    }
+
+    if (config.questionType === "country-to-capital") {
+      return row.name;
+    }
+
+    return row.name;
+  }
+
+  function selectGridIndex(index) {
+    if (index < 0 || index >= activeFlags.length) return;
+
+    currentIndex = index;
+    answerInput.value = "";
+    feedbackEl.textContent = "";
+    feedbackEl.className = "flags-feedback";
+    detailsEl.innerHTML = "";
+
+    const current = activeFlags[currentIndex];
+
+    if (current && current.completed) {
+      answeredCurrent = true;
+
+      if (current.correct) {
+        feedbackEl.textContent = "Already correct.";
+        feedbackEl.className = "flags-feedback flags-feedback-correct";
+      } else if (current.revealed) {
+        feedbackEl.textContent = "Already revealed.";
+        feedbackEl.className = "flags-feedback flags-feedback-reveal";
+      } else if (current.skipped) {
+        feedbackEl.textContent = "Already skipped.";
+      }
+
+      showDetails(current);
+    } else {
+      answeredCurrent = false;
+    }
+
+    renderGrid();
     updateScore();
 
     setTimeout(() => {
       answerInput.focus();
-    }, 50);
+    }, 30);
   }
 
   function submitAnswer() {
@@ -3150,6 +3337,11 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
     const current = activeFlags[currentIndex];
 
     if (!current) return;
+
+    if (current.completed) {
+      feedbackEl.textContent = "This one is already complete. Press Tab or click another one.";
+      return;
+    }
 
     const guess = answerInput.value;
 
@@ -3163,19 +3355,48 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
     attempts += 1;
 
     if (acceptedAnswers.includes(normalizeAnswer(guess))) {
-      score += 1;
-      streak += 1;
-      answeredCurrent = true;
-
-      feedbackEl.textContent = "Correct.";
-      feedbackEl.className = "flags-feedback flags-feedback-correct";
-
-      showDetails(current);
+      handleCorrectAnswer(current);
     } else {
       streak = 0;
 
       feedbackEl.textContent = "Not quite. Try again, or reveal the answer.";
       feedbackEl.className = "flags-feedback flags-feedback-wrong";
+
+      updateScore();
+    }
+  }
+
+  function handleCorrectAnswer(row) {
+    score += 1;
+    streak += 1;
+
+    row.completed = true;
+    row.correct = true;
+    row.revealed = false;
+    row.skipped = false;
+
+    feedbackEl.textContent = "Correct.";
+    feedbackEl.className = "flags-feedback flags-feedback-correct";
+
+    if (activePlayStyle === "speed") {
+      answeredCurrent = false;
+      detailsEl.innerHTML = "";
+      answerInput.value = "";
+
+      if (activeLayoutStyle === "grid") {
+        renderGrid();
+      }
+
+      updateScore();
+      nextQuestion();
+      return;
+    }
+
+    answeredCurrent = true;
+    showDetails(row);
+
+    if (activeLayoutStyle === "grid") {
+      renderGrid();
     }
 
     updateScore();
@@ -3222,35 +3443,52 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
       .trim();
   }
 
- function showHint() {
+  function showHint() {
     const current = activeFlags[currentIndex];
     const config = gameModes[activeModeId];
-  
+
     if (!current || !config) return;
-  
+
+    if (current.completed) {
+      feedbackEl.textContent = "This one is already complete.";
+      return;
+    }
+
     const answer = config.answerKind === "capital" ? current.capital : current.name;
     const firstTwoLetters = answer.slice(0, 2);
     const length = answer.length;
-  
-    if (!hintUsedForCurrent) {
+
+    if (!current.hintUsed) {
+      current.hintUsed = true;
       hintsUsed += 1;
-      hintUsedForCurrent = true;
     }
-  
+
     feedbackEl.textContent = `Hint: starts with "${firstTwoLetters}" and has ${length} characters including spaces.`;
     feedbackEl.className = "flags-feedback";
-  
+
     updateScore();
   }
+
   function revealAnswer() {
     const current = activeFlags[currentIndex];
     const config = gameModes[activeModeId];
 
     if (!current || !config) return;
 
-    attempts += answeredCurrent ? 0 : 1;
+    if (current.completed) {
+      feedbackEl.textContent = "This one is already complete.";
+      showDetails(current);
+      return;
+    }
+
+    attempts += 1;
     streak = 0;
     answeredCurrent = true;
+
+    current.completed = true;
+    current.correct = false;
+    current.revealed = true;
+    current.skipped = false;
 
     const answer = config.answerKind === "capital" ? current.capital : current.name;
 
@@ -3258,21 +3496,73 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
     feedbackEl.className = "flags-feedback flags-feedback-reveal";
 
     showDetails(current);
+
+    if (activeLayoutStyle === "grid") {
+      renderGrid();
+    }
+
     updateScore();
   }
 
   function skipQuestion() {
-    if (!answeredCurrent) {
+    const current = activeFlags[currentIndex];
+
+    if (!current) return;
+
+    if (!current.completed) {
       attempts += 1;
       streak = 0;
+
+      current.completed = true;
+      current.correct = false;
+      current.revealed = false;
+      current.skipped = true;
     }
 
     nextQuestion();
   }
 
   function nextQuestion() {
+    if (activeLayoutStyle === "grid") {
+      const nextPending = getNextPendingIndex(currentIndex + 1);
+
+      if (nextPending === -1) {
+        showGameComplete();
+        return;
+      }
+
+      selectGridIndex(nextPending);
+      return;
+    }
+
     currentIndex += 1;
     showCurrentQuestion();
+  }
+
+  function selectNextGridTile() {
+    if (activeLayoutStyle !== "grid" || !activeFlags.length) return;
+
+    const nextIndex = (currentIndex + 1) % activeFlags.length;
+
+    selectGridIndex(nextIndex);
+  }
+
+  function getNextPendingIndex(startIndex) {
+    if (!activeFlags.length) return -1;
+
+    for (let step = 0; step < activeFlags.length; step++) {
+      const index = (startIndex + step) % activeFlags.length;
+
+      if (!activeFlags[index].completed) {
+        return index;
+      }
+    }
+
+    return -1;
+  }
+
+  function allQuestionsCompleted() {
+    return activeFlags.length > 0 && activeFlags.every(row => row.completed);
   }
 
   function showDetails(row) {
@@ -3289,101 +3579,116 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
   }
 
   function formatPopulation(value) {
-    const number = Number(String(value).replace(/,/g, ""));
+    const number = Number(
+      String(value)
+        .replace(/,/g, "")
+        .trim()
+    );
 
     if (isNaN(number)) return escapeHTML(value);
 
-    return number.toLocaleString();
+    return number.toLocaleString("en-US");
   }
 
   function updateScore() {
-      if (!scoreEl || !streakEl || !remainingEl) return;
-    
-      const accuracyPercent = attempts > 0
-        ? Math.round((score / attempts) * 100)
-        : 0;
-    
-      const completed = answeredCurrent
-        ? Math.min(currentIndex + 1, activeFlags.length)
-        : Math.min(currentIndex, activeFlags.length);
-    
-      const progressPercent = activeFlags.length > 0
-        ? Math.round((completed / activeFlags.length) * 100)
-        : 0;
-    
-      const remaining = Math.max(activeFlags.length - completed, 0);
-    
-      scoreEl.textContent = `Score: ${score} / ${attempts} (${accuracyPercent}%)`;
-      streakEl.textContent = `Streak: ${streak}`;
-    
-      if (hintsEl) {
-        hintsEl.textContent = `Hints: ${hintsUsed}`;
-      }
-    
-      remainingEl.textContent = `Remaining: ${remaining}`;
-    
-      if (progressTextEl) {
-        progressTextEl.textContent = `${progressPercent}%`;
-      }
-    
-      if (progressFillEl) {
-        progressFillEl.style.width = `${progressPercent}%`;
-      }
+    if (!scoreEl || !streakEl || !remainingEl) return;
+
+    const accuracyPercent = attempts > 0
+      ? Math.round((score / attempts) * 100)
+      : 0;
+
+    const completed = activeFlags.filter(row => row.completed).length;
+
+    const progressPercent = activeFlags.length > 0
+      ? Math.round((completed / activeFlags.length) * 100)
+      : 0;
+
+    const remaining = Math.max(activeFlags.length - completed, 0);
+
+    scoreEl.textContent = `Score: ${score} / ${attempts} (${accuracyPercent}%)`;
+    streakEl.textContent = `Streak: ${streak}`;
+
+    if (hintsEl) {
+      hintsEl.textContent = `Hints: ${hintsUsed}`;
     }
 
-function sortGameRows(rows, sortId) {
-  const copied = [...rows];
+    remainingEl.textContent = `Remaining: ${remaining}`;
 
-  if (sortId === "random") {
+    if (progressTextEl) {
+      progressTextEl.textContent = `${progressPercent}%`;
+    }
+
+    if (progressFillEl) {
+      progressFillEl.style.width = `${progressPercent}%`;
+    }
+  }
+
+  function sortGameRows(rows, sortId) {
+    const copied = [...rows];
+
+    if (sortId === "random") {
+      return shuffleArray(copied);
+    }
+
+    if (sortId === "name-az") {
+      return copied.sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    if (sortId === "name-za") {
+      return copied.sort((a, b) => b.name.localeCompare(a.name));
+    }
+
+    if (sortId === "population-high-low") {
+      return copied.sort((a, b) => getPopulationNumber(b.population) - getPopulationNumber(a.population));
+    }
+
+    if (sortId === "population-low-high") {
+      return copied.sort((a, b) => getPopulationNumber(a.population) - getPopulationNumber(b.population));
+    }
+
     return shuffleArray(copied);
   }
 
-  if (sortId === "name-az") {
-    return copied.sort((a, b) => a.name.localeCompare(b.name));
+  function getPopulationNumber(value) {
+    const number = Number(
+      String(value ?? "")
+        .replace(/,/g, "")
+        .trim()
+    );
+
+    return isNaN(number) ? 0 : number;
   }
 
-  if (sortId === "name-za") {
-    return copied.sort((a, b) => b.name.localeCompare(a.name));
+  function getSortLabel(sortId) {
+    const labels = {
+      "random": "Random",
+      "name-az": "Name A-Z",
+      "name-za": "Name Z-A",
+      "population-high-low": "Population High-to-Low",
+      "population-low-high": "Population Low-to-High"
+    };
+
+    return labels[sortId] || "Random";
   }
 
-  if (sortId === "population-high-low") {
-    return copied.sort((a, b) => getPopulationNumber(b.population) - getPopulationNumber(a.population));
+  function getPlayStyleLabel(playStyle) {
+    if (playStyle === "speed") return "Speed Play";
+
+    return "Information Play";
   }
 
-  if (sortId === "population-low-high") {
-    return copied.sort((a, b) => getPopulationNumber(a.population) - getPopulationNumber(b.population));
+  function getLayoutStyleLabel(layoutStyle) {
+    if (layoutStyle === "grid") return "Full Grid";
+
+    return "One at a Time";
   }
 
-  return shuffleArray(copied);
-}
-
-function getPopulationNumber(value) {
-  const number = Number(
-    String(value ?? "")
-      .replace(/,/g, "")
-      .trim()
-  );
-
-  return isNaN(number) ? 0 : number;
-}
-
-function getSortLabel(sortId) {
-  const labels = {
-    "random": "Random",
-    "name-az": "Name A-Z",
-    "name-za": "Name Z-A",
-    "population-high-low": "Population High-to-Low",
-    "population-low-high": "Population Low-to-High"
-  };
-
-  return labels[sortId] || "Random";
-}
-  
   function shuffleArray(array) {
     const copied = [...array];
 
     for (let i = copied.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
+
       [copied[i], copied[j]] = [copied[j], copied[i]];
     }
 
@@ -3418,9 +3723,11 @@ function getSortLabel(sortId) {
       code.startsWith("ca ")
     );
   }
+
   function isNorthAmericanSubnational(row) {
     return isUSState(row) || isCanadianProvinceOrTerritory(row);
   }
+
   function escapeHTML(value) {
     return String(value ?? "")
       .replace(/&/g, "&amp;")
@@ -3430,9 +3737,66 @@ function getSortLabel(sortId) {
       .replace(/'/g, "&#039;");
   }
 
+  function updatePlayStyleToggle() {
+    if (!playStyleToggle) return;
+
+    const currentStyle = playStyleToggle.dataset.playStyle || "information";
+
+    playStyleToggle.classList.remove("speed-play", "information-play");
+
+    if (currentStyle === "speed") {
+      playStyleToggle.textContent = "Speed Play";
+      playStyleToggle.classList.add("speed-play");
+    } else {
+      playStyleToggle.textContent = "Information Play";
+      playStyleToggle.classList.add("information-play");
+    }
+  }
+
+  function updateLayoutToggle() {
+    if (!layoutToggle) return;
+
+    const currentLayout = layoutToggle.dataset.layoutStyle || "single";
+
+    layoutToggle.classList.remove("one-at-a-time", "grid-mode");
+
+    if (currentLayout === "grid") {
+      layoutToggle.textContent = "Full Grid";
+      layoutToggle.classList.add("grid-mode");
+    } else {
+      layoutToggle.textContent = "One at a Time";
+      layoutToggle.classList.add("one-at-a-time");
+    }
+  }
+
+  if (playStyleToggle) {
+    playStyleToggle.addEventListener("click", function () {
+      const currentStyle = playStyleToggle.dataset.playStyle || "information";
+
+      playStyleToggle.dataset.playStyle = currentStyle === "information"
+        ? "speed"
+        : "information";
+
+      updatePlayStyleToggle();
+    });
+  }
+
+  if (layoutToggle) {
+    layoutToggle.addEventListener("click", function () {
+      const currentLayout = layoutToggle.dataset.layoutStyle || "single";
+
+      layoutToggle.dataset.layoutStyle = currentLayout === "single"
+        ? "grid"
+        : "single";
+
+      updateLayoutToggle();
+    });
+  }
+
   modeButtons.forEach(button => {
     button.addEventListener("click", function () {
       const selectedMode = button.dataset.gameMode;
+
       startGame(selectedMode);
     });
   });
@@ -3443,8 +3807,14 @@ function getSortLabel(sortId) {
   submitButton.addEventListener("click", submitAnswer);
 
   answerInput.addEventListener("keydown", function (event) {
+    if (event.key === "Tab" && activeLayoutStyle === "grid") {
+      event.preventDefault();
+      selectNextGridTile();
+      return;
+    }
+
     if (event.key === "Enter") {
-      if (answeredCurrent) {
+      if (answeredCurrent && activePlayStyle === "information") {
         nextQuestion();
       } else {
         submitAnswer();
