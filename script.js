@@ -2728,7 +2728,7 @@ async function loadTVShowCard(tvShowsPath, episodesPath) {
     }
   });
 }
-
+// load flags game //
 window.loadFlagsGame = function loadFlagsGame(filePath) {
   const startGameButton = document.getElementById("flagsStartGameButton");
   const setupSummaryEl = document.getElementById("flagsSetupSummary");
@@ -2778,6 +2778,11 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
 
   const answerArea = document.querySelector(".flags-answer-area");
   const actionRow = document.querySelector(".flags-action-row");
+
+  const timerFloatingEl = document.getElementById("flagsTimerFloating");
+  const pauseButton = document.getElementById("flagsPauseButton");
+  const pauseOverlay = document.getElementById("flagsPauseOverlay");
+  const resumeButton = document.getElementById("flagsResumeButton");
 
   const gameModes = {
     "flag-country": {
@@ -3060,9 +3065,20 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
     activeSuggestions = suggestionsToggle ? suggestionsToggle.dataset.suggestions || "off" : "off";
     activeTimerLimitSeconds = timerSelect ? Number(timerSelect.value || 0) : 0;
 
-gameStartTimestamp = Date.now();
-gameEndTimestamp = 0;
-gameEndedByGiveUp = false;
+    gameStartTimestamp = Date.now();
+    gameEndTimestamp = 0;
+    gameEndedByGiveUp = false;
+    gamePaused = false;
+    pauseStartTimestamp = 0;
+    totalPausedMilliseconds = 0;
+    
+    if (playScreen) {
+      playScreen.classList.remove("flags-game-paused");
+    }
+    
+    if (pauseOverlay) {
+      pauseOverlay.hidden = true;
+    }
 
     activeFlags = allFlags
       .filter(row => config.filter(row))
@@ -3524,6 +3540,10 @@ function loadHighScore() {
   }, 500);
 }
 
+  let gamePaused = false;
+  let pauseStartTimestamp = 0;
+  let totalPausedMilliseconds = 0;
+  
 function stopTimer() {
   if (timerIntervalId) {
     window.clearInterval(timerIntervalId);
@@ -3532,11 +3552,18 @@ function stopTimer() {
 }
 
 function getTimeUsedSeconds() {
-  if (!gameStartTimestamp) return 0;
-
-  const endTime = gameEndTimestamp || Date.now();
-
-  return Math.max(0, Math.floor((endTime - gameStartTimestamp) / 1000));
+      if (!gameStartTimestamp) return 0;
+    
+      const effectiveNow = gamePaused && pauseStartTimestamp
+        ? pauseStartTimestamp
+        : gameEndTimestamp || Date.now();
+    
+      const elapsedMilliseconds = Math.max(
+        0,
+        effectiveNow - gameStartTimestamp - totalPausedMilliseconds
+      );
+    
+      return Math.floor(elapsedMilliseconds / 1000);
 }
 
 function getTimeRemainingSeconds() {
@@ -3546,14 +3573,25 @@ function getTimeRemainingSeconds() {
 }
 
 function updateTimerDisplay() {
-  if (!timerEl) return;
+  const timerIsOn = activeTimerLimitSeconds > 0;
 
-  if (activeTimerLimitSeconds <= 0) {
-    timerEl.textContent = "Timer: Off";
-    return;
+  const timerText = timerIsOn
+    ? `Timer: ${formatClockTime(getTimeRemainingSeconds())}`
+    : "Timer: Off";
+
+  if (timerEl) {
+    timerEl.textContent = timerText;
   }
 
-  timerEl.textContent = `Timer: ${formatClockTime(getTimeRemainingSeconds())}`;
+  if (timerFloatingEl) {
+    timerFloatingEl.textContent = timerText;
+    timerFloatingEl.hidden = !timerIsOn;
+  }
+
+  if (pauseButton) {
+    pauseButton.hidden = !timerIsOn;
+    pauseButton.textContent = gamePaused ? "Paused" : "Pause";
+  }
 }
 
 function formatClockTime(totalSeconds) {
@@ -3563,7 +3601,54 @@ function formatClockTime(totalSeconds) {
 
   return `${minutes}:${String(seconds).padStart(2, "0")}`;
 }
+  
+function pauseGame() {
+  if (activeTimerLimitSeconds <= 0) return;
+  if (gamePaused) return;
+  if (gameEndTimestamp) return;
 
+  gamePaused = true;
+  pauseStartTimestamp = Date.now();
+
+  stopTimer();
+
+  if (playScreen) {
+    playScreen.classList.add("flags-game-paused");
+  }
+
+  if (pauseOverlay) {
+    pauseOverlay.hidden = false;
+  }
+
+  updateTimerDisplay();
+}
+
+function resumeGame() {
+  if (!gamePaused) return;
+
+  const now = Date.now();
+
+  totalPausedMilliseconds += now - pauseStartTimestamp;
+  pauseStartTimestamp = 0;
+  gamePaused = false;
+
+  if (playScreen) {
+    playScreen.classList.remove("flags-game-paused");
+  }
+
+  if (pauseOverlay) {
+    pauseOverlay.hidden = true;
+  }
+
+  startTimer();
+
+  setTimeout(() => {
+    if (answerInput) {
+      answerInput.focus();
+    }
+  }, 50);
+}
+  
 function setupScoreSubmissionForm() {
   const initialsInput = document.getElementById("flagsScoreInitials");
   const submitScoreButton = document.getElementById("flagsSubmitScoreButton");
@@ -3597,6 +3682,14 @@ function setupScoreSubmissionForm() {
   }, 50);
 }
 
+  if (pauseButton) {
+  pauseButton.addEventListener("click", pauseGame);
+}
+
+if (resumeButton) {
+  resumeButton.addEventListener("click", resumeGame);
+}
+  
 function cleanScoreInitials(value) {
   return String(value || "")
     .toUpperCase()
