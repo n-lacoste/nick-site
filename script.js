@@ -2652,10 +2652,9 @@ function loadFlagsGame(filePath) {
     const capitalAlt = getFirstExisting(row, ["Capital Alt. Spelling", "Capital Alt Spelling"]);
     const population = getFirstExisting(row, ["Population_2026", "Population"]);
     const code = getFirstExisting(row, ["Code"]);
-    const thumbnailUrl = getFirstExisting(row, ["Thumbnail URL", "Thumbnail"]);
-    const flagUrl = getFirstExisting(row, ["Flag URL", "Flag Image", "Image URL"]);
+    const link = getFirstExisting(row, ["Link", "Thumbnail URL", "Thumbnail", "Flag URL", "Flag Image", "Image URL"]);
 
-    const imageUrl = normalizeDriveImageUrl(thumbnailUrl || flagUrl);
+    const imageUrl = normalizeDriveImageUrl(link);
 
     return {
       name: cleanCell(name),
