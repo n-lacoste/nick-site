@@ -3072,7 +3072,7 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
     
     playScreen.classList.toggle("flags-grid-layout-active", activeLayoutStyle === "grid");
 
-   currentModeLabel.innerHTML = `
+    currentModeLabel.innerHTML = `
       <span class="flags-current-mode-name">${escapeHTML(config.label)}</span>
       <span class="flags-current-mode-settings">
         ${escapeHTML(getPlayStyleLabel(activePlayStyle))} • ${escapeHTML(getLayoutStyleLabel(activeLayoutStyle))}
