@@ -2997,6 +2997,8 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
     startScreen.hidden = false;
     playScreen.hidden = true;
 
+    playScreen.classList.remove("flags-grid-layout-active");
+
     if (gridEl) {
       gridEl.hidden = true;
       gridEl.innerHTML = "";
@@ -3067,6 +3069,8 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
 
     startScreen.hidden = true;
     playScreen.hidden = false;
+    
+    playScreen.classList.toggle("flags-grid-layout-active", activeLayoutStyle === "grid");
 
     currentModeLabel.textContent = `${config.label} • ${getPlayStyleLabel(activePlayStyle)} • ${getLayoutStyleLabel(activeLayoutStyle)}`;
     answerInput.placeholder = config.answerPlaceholder;
