@@ -2655,3 +2655,73 @@ tr:hover td:nth-child(3) {
   font-size: 24px;
   font-weight: bold;
 }
+
+/* Flags High Score part */
+.flags-top-scores-panel {
+  position: fixed;
+  left: 18px;
+  bottom: 16px;
+  z-index: 4998;
+  width: 320px;
+  max-height: 260px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid #444;
+  border-radius: 12px;
+  background: #111;
+  color: #f5f5f5;
+  text-align: left;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
+}
+
+.flags-top-scores-title {
+  margin-bottom: 8px;
+  color: #ffd966;
+  font-size: 15px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.flags-top-scores-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 12px;
+  line-height: 1.25;
+}
+
+.flags-top-score-row {
+  display: grid;
+  grid-template-columns: 26px 48px 62px 1fr;
+  gap: 6px;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.flags-top-score-rank {
+  color: #aaa;
+}
+
+.flags-top-score-name {
+  font-weight: bold;
+}
+
+.flags-top-score-score {
+  color: #57bb8a;
+  font-weight: bold;
+}
+
+.flags-top-score-time {
+  color: #ccc;
+  text-align: right;
+}
+
+@media (max-width: 1250px) {
+  .flags-top-scores-panel {
+    position: static;
+    width: auto;
+    max-height: none;
+    margin: 14px auto;
+  }
+}
