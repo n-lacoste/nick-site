@@ -2222,3 +2222,43 @@ tr:hover td:nth-child(3) {
   background: #11734b;
   border-color: #57bb8a;
 }
+.flags-grid-layout-active .flags-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.flags-grid-layout-active .flags-answer-area {
+  order: 1;
+  position: sticky;
+  top: 8px;
+  z-index: 50;
+  margin: 0 0 16px;
+  padding: 12px;
+  background: #111;
+  border: 1px solid #333;
+  border-radius: 12px;
+}
+
+.flags-grid-layout-active .flags-grid {
+  order: 2;
+}
+
+.flags-grid-layout-active .flags-action-row {
+  order: 3;
+}
+
+.flags-grid-layout-active .flags-feedback {
+  order: 4;
+}
+
+.flags-grid-layout-active .flags-details {
+  order: 5;
+}
+
+.flags-source-credit {
+  margin-top: 14px;
+  text-align: right;
+  color: #777;
+  font-size: 11px;
+  line-height: 1.3;
+}
