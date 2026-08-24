@@ -1,282 +1,190 @@
- window.MOVIES_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmeTR35_PhZG8dySIXLskh-Z2QqGhczSg1kr9HWDsn4PD0bL6pdSl09USGztrnm-iWf25Y5SkFLTDG/pub?gid=1266267170&single=true&output=csv";
- window.TVSHOWS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmeTR35_PhZG8dySIXLskh-Z2QqGhczSg1kr9HWDsn4PD0bL6pdSl09USGztrnm-iWf25Y5SkFLTDG/pub?gid=1404525297&single=true&output=csv";
- window.EPISODES_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmeTR35_PhZG8dySIXLskh-Z2QqGhczSg1kr9HWDsn4PD0bL6pdSl09USGztrnm-iWf25Y5SkFLTDG/pub?gid=210626138&single=true&output=csv";
- window.ALBUMS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmeTR35_PhZG8dySIXLskh-Z2QqGhczSg1kr9HWDsn4PD0bL6pdSl09USGztrnm-iWf25Y5SkFLTDG/pub?gid=0&single=true&output=csv";
- window.SONGS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmeTR35_PhZG8dySIXLskh-Z2QqGhczSg1kr9HWDsn4PD0bL6pdSl09USGztrnm-iWf25Y5SkFLTDG/pub?gid=1964285622&single=true&output=csv";
+window.MOVIES_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmeTR35_PhZG8dySIXLskh-Z2QqGhczSg1kr9HWDsn4PD0bL6pdSl09USGztrnm-iWf25Y5SkFLTDG/pub?gid=1266267170&single=true&output=csv";
+window.TVSHOWS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmeTR35_PhZG8dySIXLskh-Z2QqGhczSg1kr9HWDsn4PD0bL6pdSl09USGztrnm-iWf25Y5SkFLTDG/pub?gid=1404525297&single=true&output=csv";
+window.EPISODES_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmeTR35_PhZG8dySIXLskh-Z2QqGhczSg1kr9HWDsn4PD0bL6pdSl09USGztrnm-iWf25Y5SkFLTDG/pub?gid=210626138&single=true&output=csv";
+window.ALBUMS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmeTR35_PhZG8dySIXLskh-Z2QqGhczSg1kr9HWDsn4PD0bL6pdSl09USGztrnm-iWf25Y5SkFLTDG/pub?gid=0&single=true&output=csv";
+window.SONGS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmeTR35_PhZG8dySIXLskh-Z2QqGhczSg1kr9HWDsn4PD0bL6pdSl09USGztrnm-iWf25Y5SkFLTDG/pub?gid=1964285622&single=true&output=csv";
 
-async function loadCSV(
-  filePath,
-  tableId,
-  searchId = null,
-  displayColumns = null,
-  columnPickerId = null,
-  sortColumnId = null,
-  sortDirectionId = null,
-  filters = [],
-  rowLimitId = null,
-  ratingStatusId = null
-) {
-  
-  const response = await fetch(filePath);
-  const text = await response.text();
+const factorColors = {
+  "10": { bg: "#11734b", text: "#ffffff" },
+  "9.5": { bg: "#029458", text: "#ffffff" },
+  "9": { bg: "#5ea818", text: "#ffffff" },
+  "8.5": { bg: "#b1d98b", text: "#11734b" },
+  "8": { bg: "#d4edbc", text: "#11734b" },
+  "7.5": { bg: "#d1dd4a", text: "#473821" },
+  "7": { bg: "#dff08f", text: "#473821" },
+  "6.5": { bg: "#efff82", text: "#473821" },
+  "6": { bg: "#f1f151", text: "#000000" },
+  "5.5": { bg: "#fff375", text: "#473821" },
+  "5": { bg: "#ffe5a0", text: "#473821" },
+  "4.5": { bg: "#e3bd60", text: "#7c4300" },
+  "4": { bg: "#d79900", text: "#753800" },
+  "3.5": { bg: "#f8a67a", text: "#753800" },
+  "3": { bg: "#ffc8aa", text: "#753800" },
+  "2.5": { bg: "#ffcfc9", text: "#b10202" },
+  "2": { bg: "#f86666", text: "#ffcfc9" },
+  "1.5": { bg: "#b10202", text: "#ffcfc9" },
+  "1": { bg: "#5d0202", text: "#ffcfc9" },
+  "0": { bg: "#3d3d3d", text: "#e5e5e5" },
+  "--": { bg: "#e8e8e8", text: "#1a74a6" }
+};
 
-  const parsed = Papa.parse(text.trim(), {
-    header: true,
-    skipEmptyLines: true
-  });
+function getFactorColor(value) {
+  const text = String(value ?? "").trim();
 
-  const allHeaders = parsed.meta.fields || [];
-
-  const data = parsed.data.filter(row => {
-    return allHeaders.some(header => {
-      return String(row[header] ?? "").trim() !== "";
-    });
-  });
-
-  updateMoviesLastUpdatedText(data);
-  
- let visibleHeaders = displayColumns
-    ? displayColumns.filter(column => allHeaders.includes(column))
-    : allHeaders;
-
-  const table = document.getElementById(tableId);
-
-  const safeFilters = Array.isArray(filters)
-    ? filters.filter(filter => filter && filter.targetId && filter.column)
-    : [];
-
-  let currentData = [...data];
-  let sortColumn = visibleHeaders.includes("Rk") ? "Rk" : visibleHeaders[0] || null;
-  let sortDirection = "asc";
-  let rowLimit = 25;
-
-  const expandableColumns = ["Notes (Review)", "OMDB_Plot"];
-  let expandedCellCounter = 0;
-  const expandedCellStore = {};
-
-  const columnWidths = {
-    "Tier": "80px",
-    "Rk": "70px",
-    "Name": "240px",
-    "Me vs. IMDB": "65px",
-    "Tags": "150px",
-    "Movie Series?": "120px",
-
-    "Plot": "50px",
-    "Main Character(s)": "50px",
-    "Side Characters": "50px",
-    "Emotion": "50px",
-    "Dialogue (Writing)": "50px",
-    "Purpose Met": "50px",
-    "Cast": "50px",
-    "Music & Sound": "50px",
-    "Rewatch Value": "50px",
-
-    "Notes (Review)": "500px",
-    "OMDB_Plot": "420px",
-    "OMDB_Actors": "180px",
-    "OMDB_Director": "150px",
-    "OMDB_Genre": "150px"
-  };
-
-  const cellFontSizes = {
-    "Notes (Review)": "13px",
-    "OMDB_Plot": "13px",
-    "Tags": "13px",
-    "Movie Series?": "13px",
-    "OMDB_Genre": "13px",
-    "OMDB_Director": "13px",
-    "OMDB_Actors": "13px"
-  };
-
-  const factorHeaderFontSize = "12px";
-
-  const compactHeaderColumns = [
-    "Main Character(s)",
-    "Side Characters",
-    "Dialogue (Writing)"
-  ];
-
-  const tierColors = {
-    "S": { bg: "#efd1ff", text: "#5a3286" },
-    "(S)": { bg: "#efd1ff", text: "#5a3286" },
-    "A1": { bg: "#888ef5", text: "#473821" },
-    "A2": { bg: "#5bc0dd", text: "#215a6c" },
-    "A3": { bg: "#bfe1f6", text: "#0a53a8" },
-    "B1": { bg: "#d4edbc", text: "#11734b" },
-    "B2": { bg: "#ffe5a0", text: "#473821" },
-    "B3": { bg: "#f0c885", text: "#000000" },
-    "C1": { bg: "#ffc8aa", text: "#753800" },
-    "C2": { bg: "#e38451", text: "#000000" },
-    "C3": { bg: "#e36351", text: "#000000" },
-    "D": { bg: "#ff0000", text: "#000000" },
-    "NR": { bg: "#ffcfc9", text: "#b10202" }
-  };
-
-  const factorColumns = [
-    "Plot",
-    "Main Character(s)",
-    "Side Characters",
-    "Emotion",
-    "Dialogue (Writing)",
-    "Purpose Met",
-    "Cast",
-    "Music & Sound",
-    "Rewatch Value"
-  ];
-
-  const factorColumnWidths = {
-    "Plot": { min: "65px", max: "70px" },
-    "Main Character(s)": { min: "75px", max: "85px" },
-    "Side Characters": { min: "70px", max: "85px" },
-    "Emotion": { min: "65px", max: "75px" },
-    "Dialogue (Writing)": { min: "75px", max: "90px" },
-    "Purpose Met": { min: "65px", max: "80px" },
-    "Cast": { min: "65px", max: "75px" },
-    "Music & Sound": { min: "70px", max: "85px" },
-    "Rewatch Value": { min: "70px", max: "85px" }
-  };
-
-  const factorColors = {
-    "10": { bg: "#11734b", text: "#ffffff" },
-    "9.5": { bg: "#029458", text: "#ffffff" },
-    "9": { bg: "#5ea818", text: "#ffffff" },
-    "8.5": { bg: "#b1d98b", text: "#11734b" },
-    "8": { bg: "#d4edbc", text: "#11734b" },
-    "7.5": { bg: "#d1dd4a", text: "#473821" },
-    "7": { bg: "#dff08f", text: "#473821" },
-    "6.5": { bg: "#efff82", text: "#473821" },
-    "6": { bg: "#f1f151", text: "#000000" },
-    "5.5": { bg: "#fff375", text: "#473821" },
-    "5": { bg: "#ffe5a0", text: "#473821" },
-    "4.5": { bg: "#e3bd60", text: "#7c4300" },
-    "4": { bg: "#d79900", text: "#753800" },
-    "3.5": { bg: "#f8a67a", text: "#753800" },
-    "3": { bg: "#ffc8aa", text: "#753800" },
-    "2.5": { bg: "#ffcfc9", text: "#b10202" },
-    "2": { bg: "#f86666", text: "#ffcfc9" },
-    "1.5": { bg: "#b10202", text: "#ffcfc9" },
-    "1": { bg: "#5d0202", text: "#ffcfc9" },
-    "0": { bg: "#3d3d3d", text: "#e5e5e5" },
-    "--": { bg: "#e8e8e8", text: "#1a74a6" }
-  };
-
-  function escapeHTML(value) {
-    return String(value ?? "")
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
+  if (text === "") {
+    return { bg: "", text: "" };
   }
 
-   function formatHeader(header) {
-    const headerBreaks = {
-      "Me vs. IMDB": "vs.<br>IMDB",
-      "Movie Series?": "Movie Series",
-      "Main Character(s)": "Main<br>Character(s)",
-      "Side Characters": "Side<br>Characters",
-      "Dialogue (Writing)": "Dialogue<br>(Writing)",
-      "Purpose Met": "Purpose<br>Met",
-      "Music & Sound": "Music &<br>Sound",
-      "Rewatch Value": "Rewatch<br>Value",
-      "Sarah :)": "Sarah's<br>Rank",
-      "Nick <3": "Nick's<br>Rank"
-    };
-  
-    return headerBreaks[header] || escapeHTML(header);
+  if (factorColors[text]) {
+    return factorColors[text];
   }
-  function formatCellValue(header, value) {
-    const text = String(value ?? "");
 
-    if (header === "Tags") {
-      return text
-        .split(/[;,|]/)
-        .map(tag => tag.trim())
-        .filter(tag => tag !== "")
-        .map(tag => escapeHTML(tag))
-        .join("<br>");
+  const num = Number(text);
+
+  if (!isNaN(num)) {
+    const roundedToHalf = Math.round(num * 2) / 2;
+    const roundedText = String(roundedToHalf);
+
+    if (factorColors[roundedText]) {
+      return factorColors[roundedText];
+    }
+  }
+
+  return { bg: "", text: "" };
+}
+
+const tierColors = {
+  "S": { bg: "#efd1ff", text: "#5a3286" },
+  "(S)": { bg: "#efd1ff", text: "#5a3286" },
+  "A1": { bg: "#888ef5", text: "#473821" },
+  "A2": { bg: "#5bc0dd", text: "#215a6c" },
+  "A3": { bg: "#bfe1f6", text: "#0a53a8" },
+  "B1": { bg: "#d4edbc", text: "#11734b" },
+  "B2": { bg: "#ffe5a0", text: "#473821" },
+  "B3": { bg: "#f0c885", text: "#000000" },
+  "C1": { bg: "#ffc8aa", text: "#753800" },
+  "C2": { bg: "#e38451", text: "#000000" },
+  "C3": { bg: "#e36351", text: "#000000" },
+  "D": { bg: "#ff0000", text: "#000000" },
+  "NR": { bg: "#ffcfc9", text: "#b10202" }
+};
+
+function getTierColor(value) {
+  const tier = String(value ?? "").trim();
+
+  if (tierColors[tier]) {
+    return tierColors[tier];
+  }
+
+  return { bg: "", text: "" };
+}
+
+window.MOVIES_LOCAL_CSV_URL = "/nick-site/data/movies.csv";
+window.TVSHOWS_LOCAL_CSV_URL = "/nick-site/data/tvshows.csv";
+window.EPISODES_LOCAL_CSV_URL = "/nick-site/data/episodes.csv";
+window.ALBUMS_LOCAL_CSV_URL = "/nick-site/data/albums.csv";
+window.SONGS_LOCAL_CSV_URL = "/nick-site/data/songs.csv";
+
+function getCSVFallbackUrl(filePath) {
+  if (filePath === window.MOVIES_CSV_URL) return window.MOVIES_LOCAL_CSV_URL;
+  if (filePath === window.TVSHOWS_CSV_URL) return window.TVSHOWS_LOCAL_CSV_URL;
+  if (filePath === window.EPISODES_CSV_URL) return window.EPISODES_LOCAL_CSV_URL;
+  if (filePath === window.ALBUMS_CSV_URL) return window.ALBUMS_LOCAL_CSV_URL;
+  if (filePath === window.SONGS_CSV_URL) return window.SONGS_LOCAL_CSV_URL;
+
+  return null;
+}
+
+async function fetchCSVTextWithRetry(filePath, attempts = 3) {
+  let lastError = null;
+
+  if (!filePath) {
+    throw new Error("Missing CSV path.");
+  }
+
+  for (let attempt = 1; attempt <= attempts; attempt++) {
+    try {
+      const separator = filePath.includes("?") ? "&" : "?";
+      const cacheBustedUrl = `${filePath}${separator}cachebust=${Date.now()}-${attempt}`;
+
+      const response = await fetch(cacheBustedUrl, {
+        cache: "no-store"
+      });
+
+      if (!response.ok) {
+        throw new Error(`CSV fetch failed with status ${response.status}`);
+      }
+
+      const text = await response.text();
+      const trimmed = text.trim().toLowerCase();
+
+      if (trimmed.startsWith("<!doctype") || trimmed.startsWith("<html")) {
+        throw new Error("CSV URL returned HTML instead of CSV.");
+      }
+
+      return text;
+    } catch (error) {
+      lastError = error;
+      console.warn(`CSV fetch attempt ${attempt} failed:`, error);
+    }
+  }
+
+  throw lastError;
+}
+
+async function getCSVText(filePath) {
+  const primaryPath = filePath;
+  const fallbackPath = getCSVFallbackUrl(primaryPath);
+
+  try {
+    return await fetchCSVTextWithRetry(primaryPath, 3);
+  } catch (primaryError) {
+    console.warn("Primary CSV failed.", primaryError);
+
+    if (fallbackPath && fallbackPath !== primaryPath) {
+      console.warn("Trying local fallback CSV:", fallbackPath);
+      return await fetchCSVTextWithRetry(fallbackPath, 1);
     }
 
-    return escapeHTML(text);
+    throw primaryError;
   }
-
- const dateColumns = ["Added", "Updated", "Release Date"];
- 
- function csvEscape(value) {
-  const text = String(value ?? "");
-
-  if (
-    text.includes(",") ||
-    text.includes('"') ||
-    text.includes("\n") ||
-    text.includes("\r")
-  ) {
-    return `"${text.replaceAll('"', '""')}"`;
-  }
-
-  return text;
 }
 
-function downloadVisibleTableAsCSV() {
-  const rowsToExport = rowLimit === "all"
-    ? currentData
-    : currentData.slice(0, rowLimit);
+function getTierStyleFromValue(value, fallback = "") {
+  const colors = getTierColor(value);
 
-  const csvRows = [];
+  if (colors.bg === "" || colors.text === "") return fallback;
 
-  csvRows.push(
-    visibleHeaders
-      .map(header => csvEscape(header))
-      .join(",")
-  );
-
-  rowsToExport.forEach(row => {
-    csvRows.push(
-      visibleHeaders
-        .map(header => csvEscape(row[header]))
-        .join(",")
-    );
-  });
-
-  const csvText = "\uFEFF" + csvRows.join("\r\n");
-
-  const blob = new Blob([csvText], {
-    type: "text/csv;charset=utf-8;"
-  });
-
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  const today = new Date().toISOString().slice(0, 10);
-
-  link.href = url;
-  link.download = `movie-rankings-visible-${today}.csv`;
-
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-
-  URL.revokeObjectURL(url);
+  return `
+    background-color: ${colors.bg};
+    color: ${colors.text};
+    font-weight: bold;
+  `;
 }
 
-function setupDownloadVisibleCSVButton() {
-  const button = document.getElementById("movies-download-csv");
+function getFactorStyleFromValue(value, fallback = "") {
+  const colors = getFactorColor(value);
 
-  if (!button) return;
+  if (colors.bg === "" || colors.text === "") return fallback;
 
-  button.addEventListener("click", downloadVisibleTableAsCSV);
+  return `
+    background-color: ${colors.bg};
+    color: ${colors.text};
+    font-weight: bold;
+  `;
 }
+
 function parseMovieDate(value) {
   const text = String(value ?? "").trim();
 
   if (text === "") return null;
 
-  const parts = text.split("/");
+  const slashParts = text.split("/");
 
-  if (parts.length === 3) {
-    const month = Number(parts[0]);
-    const day = Number(parts[1]);
-    let year = Number(parts[2]);
+  if (slashParts.length === 3) {
+    const month = Number(slashParts[0]);
+    const day = Number(slashParts[1]);
+    let year = Number(slashParts[2]);
 
     if (year < 100) {
       year += year >= 70 ? 1900 : 2000;
@@ -291,7 +199,8 @@ function parseMovieDate(value) {
 
   return isNaN(fallbackDate) ? null : fallbackDate;
 }
- function getOrdinalSuffix(day) {
+
+function getOrdinalSuffix(day) {
   if (day >= 11 && day <= 13) return "th";
 
   const lastDigit = day % 10;
@@ -345,6 +254,238 @@ function updateMoviesLastUpdatedText(rows) {
 
   lastUpdatedElement.textContent = `Last updated: ${formatLongMovieDate(latestTimestamp)}`;
 }
+
+async function loadCSV(
+  filePath,
+  tableId,
+  searchId = null,
+  displayColumns = null,
+  columnPickerId = null,
+  sortColumnId = null,
+  sortDirectionId = null,
+  filters = [],
+  rowLimitId = null,
+  ratingStatusId = null
+) {
+  const text = await getCSVText(filePath);
+
+  const parsed = Papa.parse(text.trim(), {
+    header: true,
+    skipEmptyLines: true
+  });
+
+  const allHeaders = parsed.meta.fields || [];
+
+  const data = parsed.data.filter(row => {
+    return allHeaders.some(header => {
+      return String(row[header] ?? "").trim() !== "";
+    });
+  });
+
+  updateMoviesLastUpdatedText(data);
+
+  let visibleHeaders = displayColumns
+    ? displayColumns.filter(column => allHeaders.includes(column))
+    : allHeaders;
+
+  const table = document.getElementById(tableId);
+
+  if (!table) return;
+
+  const safeFilters = Array.isArray(filters)
+    ? filters.filter(filter => filter && filter.targetId && filter.column)
+    : [];
+
+  let currentData = [...data];
+  let sortColumn = visibleHeaders.includes("Rk") ? "Rk" : visibleHeaders[0] || null;
+  let sortDirection = "asc";
+  let rowLimit = 25;
+
+  const expandableColumns = ["Notes (Review)", "OMDB_Plot", "Blurb", "Notes"];
+  let expandedCellCounter = 0;
+  const expandedCellStore = {};
+
+  const columnWidths = {
+    "Tier": "80px",
+    "Rk": "70px",
+    "Name": "240px",
+    "Tv Show": "240px",
+    "TV Show": "240px",
+    "Episode Title": "260px",
+    "Me vs. IMDB": "65px",
+    "Tags": "150px",
+    "Movie Series?": "120px",
+
+    "Plot": "50px",
+    "Main Character(s)": "50px",
+    "Side Characters": "50px",
+    "Emotion": "50px",
+    "Dialogue (Writing)": "50px",
+    "Purpose Met": "50px",
+    "Cast": "50px",
+    "Music & Sound": "50px",
+    "Rewatch Value": "50px",
+
+    "Notes (Review)": "500px",
+    "OMDB_Plot": "420px",
+    "OMDB_Actors": "180px",
+    "OMDB_Director": "150px",
+    "OMDB_Genre": "150px",
+    "Blurb": "420px",
+    "Notes": "420px"
+  };
+
+  const cellFontSizes = {
+    "Notes (Review)": "13px",
+    "OMDB_Plot": "13px",
+    "Tags": "13px",
+    "Movie Series?": "13px",
+    "OMDB_Genre": "13px",
+    "OMDB_Director": "13px",
+    "OMDB_Actors": "13px",
+    "Blurb": "13px",
+    "Notes": "13px"
+  };
+
+  const factorHeaderFontSize = "12px";
+
+  const compactHeaderColumns = [
+    "Main Character(s)",
+    "Side Characters",
+    "Dialogue (Writing)"
+  ];
+
+  const factorColumns = [
+    "Plot",
+    "Main Character(s)",
+    "Side Characters",
+    "Emotion",
+    "Dialogue (Writing)",
+    "Purpose Met",
+    "Cast",
+    "Music & Sound",
+    "Rewatch Value"
+  ];
+
+  const factorColumnWidths = {
+    "Plot": { min: "65px", max: "70px" },
+    "Main Character(s)": { min: "75px", max: "85px" },
+    "Side Characters": { min: "70px", max: "85px" },
+    "Emotion": { min: "65px", max: "75px" },
+    "Dialogue (Writing)": { min: "75px", max: "90px" },
+    "Purpose Met": { min: "65px", max: "80px" },
+    "Cast": { min: "65px", max: "75px" },
+    "Music & Sound": { min: "70px", max: "85px" },
+    "Rewatch Value": { min: "70px", max: "85px" }
+  };
+
+  function escapeHTML(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function formatHeader(header) {
+    const headerBreaks = {
+      "Me vs. IMDB": "vs.<br>IMDB",
+      "Movie Series?": "Movie Series",
+      "Main Character(s)": "Main<br>Character(s)",
+      "Side Characters": "Side<br>Characters",
+      "Dialogue (Writing)": "Dialogue<br>(Writing)",
+      "Purpose Met": "Purpose<br>Met",
+      "Music & Sound": "Music &<br>Sound",
+      "Rewatch Value": "Rewatch<br>Value",
+      "Sarah :)": "Sarah's<br>Rank",
+      "Nick <3": "Nick's<br>Rank"
+    };
+
+    return headerBreaks[header] || escapeHTML(header);
+  }
+
+  function formatCellValue(header, value) {
+    const text = String(value ?? "");
+
+    if (header === "Tags") {
+      return text
+        .split(/[;,|]/)
+        .map(tag => tag.trim())
+        .filter(tag => tag !== "")
+        .map(tag => escapeHTML(tag))
+        .join("<br>");
+    }
+
+    return escapeHTML(text);
+  }
+
+  const dateColumns = ["Added", "Updated", "Release Date"];
+
+  function csvEscape(value) {
+    const text = String(value ?? "");
+
+    if (
+      text.includes(",") ||
+      text.includes('"') ||
+      text.includes("\n") ||
+      text.includes("\r")
+    ) {
+      return `"${text.replaceAll('"', '""')}"`;
+    }
+
+    return text;
+  }
+
+  function downloadVisibleTableAsCSV() {
+    const rowsToExport = rowLimit === "all"
+      ? currentData
+      : currentData.slice(0, rowLimit);
+
+    const csvRows = [];
+
+    csvRows.push(
+      visibleHeaders
+        .map(header => csvEscape(header))
+        .join(",")
+    );
+
+    rowsToExport.forEach(row => {
+      csvRows.push(
+        visibleHeaders
+          .map(header => csvEscape(row[header]))
+          .join(",")
+      );
+    });
+
+    const csvText = "\uFEFF" + csvRows.join("\r\n");
+
+    const blob = new Blob([csvText], {
+      type: "text/csv;charset=utf-8;"
+    });
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    const today = new Date().toISOString().slice(0, 10);
+
+    link.href = url;
+    link.download = `${tableId || "table"}-visible-${today}.csv`;
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    URL.revokeObjectURL(url);
+  }
+
+  function setupDownloadVisibleCSVButton() {
+    const button = document.getElementById("movies-download-csv");
+
+    if (!button) return;
+
+    button.addEventListener("click", downloadVisibleTableAsCSV);
+  }
+
   function getColumnWidthStyle(header) {
     let style = "";
 
@@ -414,15 +555,15 @@ function updateMoviesLastUpdatedText(rows) {
     return style;
   }
 
- function getRatingColor(value) {
+  function getRatingColor(value) {
     const text = String(value ?? "").replace(/,/g, "").trim();
-  
+
     if (text === "" || text === "--") return "";
-  
+
     const num = Number(text);
-  
+
     if (isNaN(num)) return "";
-    
+
     const clamped = Math.max(0, Math.min(100, num));
 
     const redColor = { r: 204, g: 0, b: 0 };
@@ -472,30 +613,16 @@ function updateMoviesLastUpdatedText(rows) {
   function getFactorStyle(header, value) {
     if (!factorColumns.includes(header)) return "";
 
-    const factorValue = normalizeFactorValue(value);
-    const colors = factorColors[factorValue];
-
-    if (!colors) return "";
-
-    return `
-      background-color: ${colors.bg};
-      color: ${colors.text};
-      font-weight: bold;
-    `;
+    return getFactorStyleFromValue(normalizeFactorValue(value));
   }
 
   function getConditionalStyle(header, value) {
-    if (header === "Tier") {
-      const tier = String(value ?? "").trim();
-      const colors = tierColors[tier];
+    if (header === "Tier" || header === "TV SHOW TIER") {
+      return getTierStyleFromValue(value);
+    }
 
-      if (colors) {
-        return `
-          background-color: ${colors.bg};
-          color: ${colors.text};
-          font-weight: bold;
-        `;
-      }
+    if (header === "Rank" || header === "Sarah :)" || header === "Nick <3") {
+      return getFactorStyleFromValue(value);
     }
 
     if (header === "My Rating") {
@@ -668,49 +795,49 @@ function updateMoviesLastUpdatedText(rows) {
     setupExpandableCells();
   }
 
- function applySort() {
-  if (!sortColumn) {
-    renderTable(currentData);
-    return;
-  }
+  function applySort() {
+    if (!sortColumn) {
+      renderTable(currentData);
+      return;
+    }
 
-  currentData.sort((a, b) => {
-    const valueA = String(a[sortColumn] ?? "").trim();
-    const valueB = String(b[sortColumn] ?? "").trim();
+    currentData.sort((a, b) => {
+      const valueA = String(a[sortColumn] ?? "").trim();
+      const valueB = String(b[sortColumn] ?? "").trim();
 
-    if (valueA === "" && valueB === "") return 0;
-    if (valueA === "") return 1;
-    if (valueB === "") return -1;
+      if (valueA === "" && valueB === "") return 0;
+      if (valueA === "") return 1;
+      if (valueB === "") return -1;
 
-    if (dateColumns.includes(sortColumn)) {
-      const dateA = parseMovieDate(valueA);
-      const dateB = parseMovieDate(valueB);
+      if (dateColumns.includes(sortColumn)) {
+        const dateA = parseMovieDate(valueA);
+        const dateB = parseMovieDate(valueB);
 
-      if (dateA !== null && dateB !== null) {
-        return sortDirection === "asc"
-          ? dateA - dateB
-          : dateB - dateA;
+        if (dateA !== null && dateB !== null) {
+          return sortDirection === "asc"
+            ? dateA - dateB
+            : dateB - dateA;
+        }
+
+        if (dateA !== null && dateB === null) return -1;
+        if (dateA === null && dateB !== null) return 1;
+        return 0;
       }
 
-      if (dateA !== null && dateB === null) return -1;
-      if (dateA === null && dateB !== null) return 1;
-      return 0;
-    }
+      const numA = Number(valueA.replace(/,/g, ""));
+      const numB = Number(valueB.replace(/,/g, ""));
 
-    const numA = Number(valueA.replace(/,/g, ""));
-    const numB = Number(valueB.replace(/,/g, ""));
+      if (!isNaN(numA) && !isNaN(numB)) {
+        return sortDirection === "asc" ? numA - numB : numB - numA;
+      }
 
-    if (!isNaN(numA) && !isNaN(numB)) {
-      return sortDirection === "asc" ? numA - numB : numB - numA;
-    }
+      return sortDirection === "asc"
+        ? valueA.localeCompare(valueB)
+        : valueB.localeCompare(valueA);
+    });
 
-    return sortDirection === "asc"
-      ? valueA.localeCompare(valueB)
-      : valueB.localeCompare(valueA);
-  });
-
-  renderTable(currentData);
-}
+    renderTable(currentData);
+  }
 
   function rowMatchesSearch(row) {
     if (!searchId) return true;
@@ -1084,75 +1211,75 @@ function updateMoviesLastUpdatedText(rows) {
     return count;
   }
 
- function setApplyButtonState(state) {
-  const applyButton = document.getElementById("apply-movies-filters");
+  function setApplyButtonState(state) {
+    const applyButton = document.getElementById("apply-movies-filters");
 
-  if (!applyButton) return;
+    if (!applyButton) return;
 
-  applyButton.classList.remove("filters-pending-button");
-  applyButton.classList.remove("filters-applied-button");
+    applyButton.classList.remove("filters-pending-button");
+    applyButton.classList.remove("filters-applied-button");
 
-  if (state === "pending") {
-    applyButton.classList.add("filters-pending-button");
+    if (state === "pending") {
+      applyButton.classList.add("filters-pending-button");
+    }
+
+    if (state === "applied") {
+      applyButton.classList.add("filters-applied-button");
+    }
   }
 
-  if (state === "applied") {
-    applyButton.classList.add("filters-applied-button");
-  }
-}
+  function markFiltersPending() {
+    const indicator = document.getElementById("filters-active-indicator");
+    const filtersPanel = document.querySelector(".filters-panel");
 
-function markFiltersPending() {
-  const indicator = document.getElementById("filters-active-indicator");
-  const filtersPanel = document.getElementById("movies-filters-panel");
+    setApplyButtonState("pending");
 
-  setApplyButtonState("pending");
+    if (!indicator) return;
 
-  if (!indicator) return;
-
-  indicator.textContent = "Click apply to confirm filters";
-  indicator.classList.add("filters-active");
-  indicator.classList.add("filters-pending");
-  indicator.classList.remove("filters-applied");
-
-  if (filtersPanel) {
-    filtersPanel.classList.add("filters-active-panel");
-  }
-}
-
- function updateFilterIndicator() {
-  const indicator = document.getElementById("filters-active-indicator");
-  const filtersPanel = document.getElementById("movies-filters-panel");
-
-  const activeCount = getActiveFilterCount();
-
-  if (activeCount > 0) {
-    setApplyButtonState("applied");
-  } else {
-    setApplyButtonState("none");
-  }
-
-  if (!indicator) return;
-
-  indicator.classList.remove("filters-pending");
-  indicator.classList.remove("filters-applied");
-
-  if (activeCount > 0) {
-    indicator.textContent = `Filters on (${activeCount})`;
+    indicator.textContent = "Click apply to confirm filters";
     indicator.classList.add("filters-active");
-    indicator.classList.add("filters-applied");
+    indicator.classList.add("filters-pending");
+    indicator.classList.remove("filters-applied");
 
     if (filtersPanel) {
       filtersPanel.classList.add("filters-active-panel");
     }
-  } else {
-    indicator.textContent = "No filters";
-    indicator.classList.remove("filters-active");
+  }
 
-    if (filtersPanel) {
-      filtersPanel.classList.remove("filters-active-panel");
+  function updateFilterIndicator() {
+    const indicator = document.getElementById("filters-active-indicator");
+    const filtersPanel = document.querySelector(".filters-panel");
+
+    const activeCount = getActiveFilterCount();
+
+    if (activeCount > 0) {
+      setApplyButtonState("applied");
+    } else {
+      setApplyButtonState("none");
+    }
+
+    if (!indicator) return;
+
+    indicator.classList.remove("filters-pending");
+    indicator.classList.remove("filters-applied");
+
+    if (activeCount > 0) {
+      indicator.textContent = `Filters on (${activeCount})`;
+      indicator.classList.add("filters-active");
+      indicator.classList.add("filters-applied");
+
+      if (filtersPanel) {
+        filtersPanel.classList.add("filters-active-panel");
+      }
+    } else {
+      indicator.textContent = "No filters";
+      indicator.classList.remove("filters-active");
+
+      if (filtersPanel) {
+        filtersPanel.classList.remove("filters-active-panel");
+      }
     }
   }
-}
 
   function clearAllMovieFilters() {
     const searchBox = searchId ? document.getElementById(searchId) : null;
@@ -1400,6 +1527,7 @@ function exportTableToCSV(tableId, filename) {
 
   URL.revokeObjectURL(url);
 }
+
 function setupHeaderMenus() {
   const menus = Array.from(document.querySelectorAll(".site-nav .nav-menu"));
 
@@ -1441,9 +1569,9 @@ if (document.readyState === "loading") {
 } else {
   setupHeaderMenus();
 }
+
 async function loadMovieWatchHistory(filePath) {
-  const response = await fetch(filePath);
-  const text = await response.text();
+  const text = await getCSVText(filePath);
 
   const parsed = Papa.parse(text.trim(), {
     header: true,
@@ -1466,22 +1594,23 @@ async function loadMovieWatchHistory(filePath) {
   let sortColumn = "Updated";
   let sortDirection = "Latest";
   let rowLimit = 25;
+
   function updateHistoryButtonStates() {
     if (sortColumnButton) {
       sortColumnButton.classList.remove("history-updated-button");
       sortColumnButton.classList.remove("history-added-button");
-  
+
       if (sortColumn === "Updated") {
         sortColumnButton.classList.add("history-updated-button");
       } else {
         sortColumnButton.classList.add("history-added-button");
       }
     }
-  
+
     if (sortDirectionButton) {
       sortDirectionButton.classList.remove("history-latest-button");
       sortDirectionButton.classList.remove("history-earliest-button");
-  
+
       if (sortDirection === "Latest") {
         sortDirectionButton.classList.add("history-latest-button");
       } else {
@@ -1489,21 +1618,6 @@ async function loadMovieWatchHistory(filePath) {
       }
     }
   }
-  const tierColors = {
-    "S": { bg: "#efd1ff", text: "#5a3286" },
-    "(S)": { bg: "#efd1ff", text: "#5a3286" },
-    "A1": { bg: "#888ef5", text: "#473821" },
-    "A2": { bg: "#5bc0dd", text: "#215a6c" },
-    "A3": { bg: "#bfe1f6", text: "#0a53a8" },
-    "B1": { bg: "#d4edbc", text: "#11734b" },
-    "B2": { bg: "#ffe5a0", text: "#473821" },
-    "B3": { bg: "#f0c885", text: "#000000" },
-    "C1": { bg: "#ffc8aa", text: "#753800" },
-    "C2": { bg: "#e38451", text: "#000000" },
-    "C3": { bg: "#e36351", text: "#000000" },
-    "D": { bg: "#ff0000", text: "#000000" },
-    "NR": { bg: "#ffcfc9", text: "#b10202" }
-  };
 
   function escapeHTML(value) {
     return String(value ?? "")
@@ -1515,15 +1629,11 @@ async function loadMovieWatchHistory(filePath) {
   }
 
   function parseDate(value) {
-    const text = String(value ?? "").trim();
+    const timestamp = parseMovieDate(value);
 
-    if (text === "") return null;
+    if (timestamp === null) return null;
 
-    const date = new Date(text);
-
-    if (isNaN(date.getTime())) return null;
-
-    return date;
+    return new Date(timestamp);
   }
 
   function formatDate(value) {
@@ -1539,20 +1649,15 @@ async function loadMovieWatchHistory(filePath) {
   }
 
   function getTierStyle(value) {
-    const tier = String(value ?? "").trim();
-    const colors = tierColors[tier];
-
-    if (!colors) return "";
-
-    return `
-      background-color: ${colors.bg};
-      color: ${colors.text};
-      font-weight: bold;
-    `;
+    return getTierStyleFromValue(value);
   }
 
   function getRatingColor(value) {
-    const num = Number(String(value ?? "").replace(/,/g, "").trim());
+    const text = String(value ?? "").replace(/,/g, "").trim();
+
+    if (text === "" || text === "--") return "";
+
+    const num = Number(text);
 
     if (isNaN(num)) return "";
 
@@ -1586,9 +1691,11 @@ async function loadMovieWatchHistory(filePath) {
       font-weight: bold;
     `;
   }
-function rowHasUpdateDate(row) {
-  return parseDate(row["Updated"]) !== null;
-}
+
+  function rowHasUpdateDate(row) {
+    return parseDate(row["Updated"]) !== null;
+  }
+
   function rowIsWatchedMovie(row) {
     const watched = String(row["Watched?"] ?? "").trim().toLowerCase();
     return watched === "watched";
@@ -1601,7 +1708,7 @@ function rowHasUpdateDate(row) {
 
     if (searchTerm === "") return true;
 
-   const searchableText = [
+    const searchableText = [
       row["Added"],
       row["Updated"],
       row["Name"],
@@ -1615,52 +1722,55 @@ function rowHasUpdateDate(row) {
     ]
       .map(value => String(value ?? "").toLowerCase())
       .join(" ");
-    
+
     return searchableText.includes(searchTerm);
   }
 
- function getSortedRows() {
-  return rows
-    .filter(rowIsWatchedMovie)
-    .filter(rowHasUpdateDate)
-    .filter(rowMatchesSearch)
-    .sort((a, b) => {
-      const dateA = parseDate(a[sortColumn]);
-      const dateB = parseDate(b[sortColumn]);
+  function getSortedRows() {
+    return rows
+      .filter(rowIsWatchedMovie)
+      .filter(rowHasUpdateDate)
+      .filter(rowMatchesSearch)
+      .sort((a, b) => {
+        const dateA = parseDate(a[sortColumn]);
+        const dateB = parseDate(b[sortColumn]);
 
-      if (!dateA && !dateB) return 0;
-      if (!dateA) return 1;
-      if (!dateB) return -1;
+        if (!dateA && !dateB) return 0;
+        if (!dateA) return 1;
+        if (!dateB) return -1;
 
-      return sortDirection === "Latest"
-        ? dateB - dateA
-        : dateA - dateB;
-    });
-}
-function formatReviewWithTitle(row) {
-  const title = String(row["Name"] ?? "").trim();
-  const year = String(row["Year"] ?? "").trim();
-  const review = String(row["Notes (Review)"] ?? "").trim();
-
-  if (review === "") return "";
-
-  const titleYear = year === ""
-    ? title
-    : `${title} (${year})`;
-
-  return `${titleYear}: ${review}`;
-}
-  function formatRank(value) {
-  const text = String(value ?? "").trim();
-
-  if (text === "") return "";
-
-  if (text.startsWith("#")) {
-    return text;
+        return sortDirection === "Latest"
+          ? dateB - dateA
+          : dateA - dateB;
+      });
   }
 
-  return `#${text}`;
-}
+  function formatReviewWithTitle(row) {
+    const title = String(row["Name"] ?? "").trim();
+    const year = String(row["Year"] ?? "").trim();
+    const review = String(row["Notes (Review)"] ?? "").trim();
+
+    if (review === "") return "";
+
+    const titleYear = year === ""
+      ? title
+      : `${title} (${year})`;
+
+    return `${titleYear}: ${review}`;
+  }
+
+  function formatRank(value) {
+    const text = String(value ?? "").trim();
+
+    if (text === "") return "";
+
+    if (text.startsWith("#")) {
+      return text;
+    }
+
+    return `#${text}`;
+  }
+
   function renderTable() {
     const historyRows = getSortedRows();
 
@@ -1668,7 +1778,7 @@ function formatReviewWithTitle(row) {
       ? historyRows
       : historyRows.slice(0, rowLimit);
 
-     if (rowCount) {
+    if (rowCount) {
       const sortLabel = sortColumn === "Updated" ? "last update" : "date added";
       rowCount.textContent = `Showing ${rowsToShow.length} of ${historyRows.length} movies with update dates, sorted by ${sortLabel}, ${sortDirection.toLowerCase()} first.`;
     }
@@ -1690,7 +1800,7 @@ function formatReviewWithTitle(row) {
       <tbody>
     `;
 
-   rowsToShow.forEach(row => {
+    rowsToShow.forEach(row => {
       html += `
         <tr>
           <td>${escapeHTML(formatDate(row["Added"]))}</td>
@@ -1709,47 +1819,50 @@ function formatReviewWithTitle(row) {
     html += "</tbody>";
     table.innerHTML = html;
   }
-if (showSelect) {
-  showSelect.addEventListener("change", () => {
-    rowLimit = showSelect.value === "all"
-      ? "all"
-      : Number(showSelect.value) || 25;
 
-    renderTable();
-  });
-}
- if (sortColumnButton) {
-  sortColumnButton.addEventListener("click", () => {
-    sortColumn = sortColumn === "Updated" ? "Added" : "Updated";
+  if (showSelect) {
+    showSelect.addEventListener("change", () => {
+      rowLimit = showSelect.value === "all"
+        ? "all"
+        : Number(showSelect.value) || 25;
 
-    sortColumnButton.textContent = sortColumn === "Updated"
-      ? "Sort by: Last Update"
-      : "Sort by: Date Added";
+      renderTable();
+    });
+  }
 
-    updateHistoryButtonStates();
-    renderTable();
-  });
-}
+  if (sortColumnButton) {
+    sortColumnButton.addEventListener("click", () => {
+      sortColumn = sortColumn === "Updated" ? "Added" : "Updated";
 
-if (sortDirectionButton) {
-  sortDirectionButton.addEventListener("click", () => {
-    sortDirection = sortDirection === "Latest" ? "Earliest" : "Latest";
-    sortDirectionButton.textContent = `Sort: ${sortDirection}`;
+      sortColumnButton.textContent = sortColumn === "Updated"
+        ? "Sort by: Last Update"
+        : "Sort by: Date Added";
 
-    updateHistoryButtonStates();
-    renderTable();
-  });
-}
+      updateHistoryButtonStates();
+      renderTable();
+    });
+  }
+
+  if (sortDirectionButton) {
+    sortDirectionButton.addEventListener("click", () => {
+      sortDirection = sortDirection === "Latest" ? "Earliest" : "Latest";
+      sortDirectionButton.textContent = `Sort: ${sortDirection}`;
+
+      updateHistoryButtonStates();
+      renderTable();
+    });
+  }
 
   if (searchBox) {
     searchBox.addEventListener("input", renderTable);
   }
+
   updateHistoryButtonStates();
   renderTable();
 }
+
 async function loadMovieComparison(filePath) {
-  const response = await fetch(filePath);
-  const text = await response.text();
+  const text = await getCSVText(filePath);
 
   const parsed = Papa.parse(text.trim(), {
     header: true,
@@ -1772,24 +1885,11 @@ async function loadMovieComparison(filePath) {
   const categoryWinner = document.getElementById("movie-category-winner");
   const factorLeftTitle = document.getElementById("movie-factor-left-title");
   const factorRightTitle = document.getElementById("movie-factor-right-title");
- 
 
   if (!leftInput || !rightInput || !datalist || !leftCard || !rightCard || !factorComparison) {
     return;
   }
-  function renderFactorMatchupHeader() {
-    if (factorLeftTitle) {
-      factorLeftTitle.textContent = leftMovie
-        ? makeMovieLabel(leftMovie)
-        : "Movie A";
-    }
-  
-    if (factorRightTitle) {
-      factorRightTitle.textContent = rightMovie
-        ? makeMovieLabel(rightMovie)
-        : "Movie B";
-    }
-  }
+
   let leftMovie = null;
   let rightMovie = null;
 
@@ -1805,50 +1905,59 @@ async function loadMovieComparison(filePath) {
     "Rewatch Value"
   ];
 
-  const tierColors = {
-    "S": { bg: "#efd1ff", text: "#5a3286" },
-    "(S)": { bg: "#efd1ff", text: "#5a3286" },
-    "A1": { bg: "#888ef5", text: "#473821" },
-    "A2": { bg: "#5bc0dd", text: "#215a6c" },
-    "A3": { bg: "#bfe1f6", text: "#0a53a8" },
-    "B1": { bg: "#d4edbc", text: "#11734b" },
-    "B2": { bg: "#ffe5a0", text: "#473821" },
-    "B3": { bg: "#f0c885", text: "#000000" },
-    "C1": { bg: "#ffc8aa", text: "#753800" },
-    "C2": { bg: "#e38451", text: "#000000" },
-    "C3": { bg: "#e36351", text: "#000000" },
-    "D": { bg: "#ff0000", text: "#000000" },
-    "NR": { bg: "#ffcfc9", text: "#b10202" }
-  };
+  function renderFactorMatchupHeader() {
+    if (factorLeftTitle) {
+      factorLeftTitle.textContent = leftMovie
+        ? makeMovieLabel(leftMovie)
+        : "Movie A";
+    }
+
+    if (factorRightTitle) {
+      factorRightTitle.textContent = rightMovie
+        ? makeMovieLabel(rightMovie)
+        : "Movie B";
+    }
+  }
+
+  function isRankedMovie(row) {
+    const rating = String(row["My Rating"] ?? "").trim();
+
+    return rating !== "" && rating !== "--";
+  }
+
+  const rankedRows = rows.filter(isRankedMovie);
+
   function getRandomMovie() {
     if (!rankedRows || rankedRows.length === 0) return null;
-  
+
     const randomIndex = Math.floor(Math.random() * rankedRows.length);
     return rankedRows[randomIndex];
   }
-   if (leftRandomButton) {
+
+  if (leftRandomButton) {
     leftRandomButton.addEventListener("click", () => {
       const randomMovie = getRandomMovie();
-  
+
       if (!randomMovie) return;
-  
+
       leftMovie = randomMovie;
       leftInput.value = makeMovieLabel(randomMovie);
       renderComparison();
     });
   }
 
-if (rightRandomButton) {
-  rightRandomButton.addEventListener("click", () => {
-    const randomMovie = getRandomMovie();
+  if (rightRandomButton) {
+    rightRandomButton.addEventListener("click", () => {
+      const randomMovie = getRandomMovie();
 
-    if (!randomMovie) return;
+      if (!randomMovie) return;
 
-    rightMovie = randomMovie;
-    rightInput.value = makeMovieLabel(randomMovie);
-    renderComparison();
-  });
-}
+      rightMovie = randomMovie;
+      rightInput.value = makeMovieLabel(randomMovie);
+      renderComparison();
+    });
+  }
+
   function escapeHTML(value) {
     return String(value ?? "")
       .replaceAll("&", "&amp;")
@@ -1868,13 +1977,7 @@ if (rightRandomButton) {
       ? title
       : `${title} (${year})`;
   }
-  function isRankedMovie(row) {
-  const rating = String(row["My Rating"] ?? "").trim();
 
-  return rating !== "" && rating !== "--";
-}
-  const rankedRows = rows.filter(isRankedMovie);
-  
   function normalizeSearchText(value) {
     return String(value ?? "").trim().toLowerCase();
   }
@@ -1904,20 +2007,15 @@ if (rightRandomButton) {
   }
 
   function getTierStyle(value) {
-    const tier = String(value ?? "").trim();
-    const colors = tierColors[tier];
-
-    if (!colors) return "";
-
-    return `
-      background-color: ${colors.bg};
-      color: ${colors.text};
-      font-weight: bold;
-    `;
+    return getTierStyleFromValue(value);
   }
 
   function getRatingColor(value) {
-    const num = Number(String(value ?? "").replace(/,/g, "").trim());
+    const text = String(value ?? "").replace(/,/g, "").trim();
+
+    if (text === "" || text === "--") return "";
+
+    const num = Number(text);
 
     if (isNaN(num)) return "";
 
@@ -1954,9 +2052,9 @@ if (rightRandomButton) {
 
   function findMovieByInput(value) {
     const searchValue = normalizeSearchText(value);
-  
+
     if (searchValue === "") return null;
-  
+
     return rankedRows.find(row => {
       return normalizeSearchText(makeMovieLabel(row)) === searchValue;
     }) || null;
@@ -2049,78 +2147,80 @@ if (rightRandomButton) {
       </div>
     `;
   }
-function renderCategoryBattleWinner() {
-  if (!categoryWinner) return;
 
-  if (!leftMovie || !rightMovie) {
-    categoryWinner.className = "movie-category-winner";
-    categoryWinner.textContent = "Select two movies above to see the factor battle winner.";
-    return;
-  }
+  function renderCategoryBattleWinner() {
+    if (!categoryWinner) return;
 
-  let leftWins = 0;
-  let rightWins = 0;
-  let ties = 0;
-
-  factorColumns.forEach(factor => {
-    const leftValue = getNumber(leftMovie[factor]);
-    const rightValue = getNumber(rightMovie[factor]);
-
-    if (leftValue === null || rightValue === null) return;
-
-    if (leftValue > rightValue) {
-      leftWins++;
-    } else if (rightValue > leftValue) {
-      rightWins++;
-    } else {
-      ties++;
+    if (!leftMovie || !rightMovie) {
+      categoryWinner.className = "movie-category-winner";
+      categoryWinner.textContent = "Select two movies above to see the factor battle winner.";
+      return;
     }
-  });
 
-  const leftTitle = makeMovieLabel(leftMovie);
-  const rightTitle = makeMovieLabel(rightMovie);
+    let leftWins = 0;
+    let rightWins = 0;
+    let ties = 0;
 
-  categoryWinner.classList.remove("left-winner");
-  categoryWinner.classList.remove("right-winner");
-  categoryWinner.classList.remove("tie-winner");
+    factorColumns.forEach(factor => {
+      const leftValue = getNumber(leftMovie[factor]);
+      const rightValue = getNumber(rightMovie[factor]);
 
-  if (leftWins > rightWins) {
-    categoryWinner.classList.add("left-winner");
+      if (leftValue === null || rightValue === null) return;
+
+      if (leftValue > rightValue) {
+        leftWins++;
+      } else if (rightValue > leftValue) {
+        rightWins++;
+      } else {
+        ties++;
+      }
+    });
+
+    const leftTitle = makeMovieLabel(leftMovie);
+    const rightTitle = makeMovieLabel(rightMovie);
+
+    categoryWinner.classList.remove("left-winner");
+    categoryWinner.classList.remove("right-winner");
+    categoryWinner.classList.remove("tie-winner");
+
+    if (leftWins > rightWins) {
+      categoryWinner.classList.add("left-winner");
+      categoryWinner.innerHTML = `
+        <strong>${escapeHTML(leftTitle)}</strong> wins the factor battle 
+        <span>${leftWins}-${rightWins}${ties > 0 ? `, with ${ties} tie${ties === 1 ? "" : "s"}` : ""}</span>
+      `;
+      return;
+    }
+
+    if (rightWins > leftWins) {
+      categoryWinner.classList.add("right-winner");
+      categoryWinner.innerHTML = `
+        <strong>${escapeHTML(rightTitle)}</strong> wins the factor battle 
+        <span>${rightWins}-${leftWins}${ties > 0 ? `, with ${ties} tie${ties === 1 ? "" : "s"}` : ""}</span>
+      `;
+      return;
+    }
+
+    categoryWinner.classList.add("tie-winner");
     categoryWinner.innerHTML = `
-      <strong>${escapeHTML(leftTitle)}</strong> wins the factor battle 
+      <strong>Factor battle is tied</strong>
       <span>${leftWins}-${rightWins}${ties > 0 ? `, with ${ties} tie${ties === 1 ? "" : "s"}` : ""}</span>
     `;
-    return;
   }
 
-  if (rightWins > leftWins) {
-    categoryWinner.classList.add("right-winner");
-    categoryWinner.innerHTML = `
-      <strong>${escapeHTML(rightTitle)}</strong> wins the factor battle 
-      <span>${rightWins}-${leftWins}${ties > 0 ? `, with ${ties} tie${ties === 1 ? "" : "s"}` : ""}</span>
-    `;
-    return;
+  function renderFactorComparison() {
+    renderCategoryBattleWinner();
+    renderFactorMatchupHeader();
+
+    if (!leftMovie && !rightMovie) {
+      factorComparison.innerHTML = `<p class="movie-compare-placeholder">Select two movies above to compare factor scores.</p>`;
+      return;
+    }
+
+    factorComparison.innerHTML = factorColumns
+      .map(factor => renderFactorRow(factor))
+      .join("");
   }
-
-  categoryWinner.classList.add("tie-winner");
-  categoryWinner.innerHTML = `
-    <strong>Factor battle is tied</strong>
-    <span>${leftWins}-${rightWins}${ties > 0 ? `, with ${ties} tie${ties === 1 ? "" : "s"}` : ""}</span>
-  `;
-}
- function renderFactorComparison() {
-  renderCategoryBattleWinner();
-  renderFactorMatchupHeader();
-
-  if (!leftMovie && !rightMovie) {
-    factorComparison.innerHTML = `<p class="movie-compare-placeholder">Select two movies above to compare factor scores.</p>`;
-    return;
-  }
-
-  factorComparison.innerHTML = factorColumns
-    .map(factor => renderFactorRow(factor))
-    .join("");
-}
 
   function renderComparison() {
     renderMovieCard(leftCard, leftMovie, "left");
@@ -2138,10 +2238,10 @@ function renderCategoryBattleWinner() {
     }
   }
 
- const movieOptions = rankedRows
-  .map(row => makeMovieLabel(row))
-  .filter(label => label !== "")
-  .sort((a, b) => a.localeCompare(b));
+  const movieOptions = rankedRows
+    .map(row => makeMovieLabel(row))
+    .filter(label => label !== "")
+    .sort((a, b) => a.localeCompare(b));
 
   datalist.innerHTML = movieOptions
     .map(label => `<option value="${escapeHTML(label)}"></option>`)
@@ -2177,6 +2277,7 @@ function renderCategoryBattleWinner() {
 
   renderComparison();
 }
+
 async function loadTVShowCard(tvShowsPath, episodesPath) {
   const selectInput = document.getElementById("tv-show-card-select");
   const datalist = document.getElementById("tv-show-card-options");
@@ -2186,21 +2287,7 @@ async function loadTVShowCard(tvShowsPath, episodesPath) {
   if (!selectInput || !datalist || !output) return;
 
   async function fetchCSVTextForTVCard(filePath) {
-    if (!filePath) {
-      throw new Error("Missing CSV path.");
-    }
-
-    if (typeof fetchCSVTextWithRetry === "function") {
-      return await fetchCSVTextWithRetry(filePath, 3);
-    }
-
-    const response = await fetch(filePath, { cache: "no-store" });
-
-    if (!response.ok) {
-      throw new Error(`CSV fetch failed with status ${response.status}`);
-    }
-
-    return await response.text();
+    return await getCSVText(filePath);
   }
 
   function parseCSVRows(text) {
@@ -2251,47 +2338,26 @@ async function loadTVShowCard(tvShowsPath, episodesPath) {
   }
 
   function getRankColor(value) {
-    const rank = getNumber(value);
+    const colors = getFactorColor(value);
 
-    if (rank === null) {
+    if (colors.bg === "" || colors.text === "") {
       return {
         bg: "#1f1f1f",
         text: "#aaa"
       };
     }
 
-    if (rank >= 9.5) return { bg: "#57bb8a", text: "#000000" };
-    if (rank >= 9) return { bg: "#78c68e", text: "#000000" };
-    if (rank >= 8) return { bg: "#a5d675", text: "#000000" };
-    if (rank >= 7) return { bg: "#d4edbc", text: "#000000" };
-    if (rank >= 6) return { bg: "#ffe5a0", text: "#000000" };
-    if (rank >= 5) return { bg: "#f0c885", text: "#000000" };
-    if (rank >= 4) return { bg: "#ffc8aa", text: "#000000" };
-    if (rank >= 3) return { bg: "#e38451", text: "#000000" };
-
-    return { bg: "#e36351", text: "#000000" };
+    return colors;
   }
 
   function getTierStyle(value) {
-    const tier = String(value ?? "").trim();
+    const colors = getTierColor(value);
 
-    const tierColors = {
-      "S": { bg: "#efd1ff", text: "#5a3286" },
-      "(S)": { bg: "#efd1ff", text: "#5a3286" },
-      "A1": { bg: "#888ef5", text: "#473821" },
-      "A2": { bg: "#5bc0dd", text: "#215a6c" },
-      "A3": { bg: "#bfe1f6", text: "#0a53a8" },
-      "B1": { bg: "#d4edbc", text: "#11734b" },
-      "B2": { bg: "#ffe5a0", text: "#473821" },
-      "B3": { bg: "#f0c885", text: "#000000" },
-      "C1": { bg: "#ffc8aa", text: "#753800" },
-      "C2": { bg: "#e38451", text: "#000000" },
-      "C3": { bg: "#e36351", text: "#000000" },
-      "D": { bg: "#ff0000", text: "#000000" },
-      "NR": { bg: "#ffcfc9", text: "#b10202" }
-    };
+    if (colors.bg === "" || colors.text === "") {
+      return { bg: "#1f1f1f", text: "#f5f5f5" };
+    }
 
-    return tierColors[tier] || { bg: "#1f1f1f", text: "#f5f5f5" };
+    return colors;
   }
 
   function makeStatBox(label, value, extraClass = "") {
@@ -2382,7 +2448,7 @@ async function loadTVShowCard(tvShowsPath, episodesPath) {
         <div class="tv-card-rank-chart">
           ${Object.keys(counts).reverse().map(rank => {
             const count = counts[rank];
-            const width = Math.max(4, (count / maxCount) * 100);
+            const width = count === 0 ? 0 : Math.max(4, (count / maxCount) * 100);
             const colors = getRankColor(rank);
 
             return `
