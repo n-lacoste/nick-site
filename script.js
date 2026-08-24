@@ -3244,9 +3244,16 @@ function getCompletionPercent() {
 }
 
 function isLeaderboardEligible() {
-  return getCompletionPercent() >= 50;
-}
+  const completed = getCompletedCount();
+  const totalQuestions = activeFlags.length;
 
+  if (!totalQuestions) return false;
+
+  const minimumRequired = Math.ceil(totalQuestions * 0.5);
+
+  return completed >= minimumRequired;
+}
+  
 function endCurrentGame() {
   if (!activeModeId || !activeFlags.length) return;
 
@@ -3269,7 +3276,7 @@ function getScoreSubmissionHTML(leaderboardEligible) {
       <div class="flags-score-submit-panel">
         <div class="flags-score-submit-title">Public Leaderboard</div>
         <div class="flags-score-submit-status">
-          You need to complete at least 50% of the quiz to submit a public score.
+          You need to complete at least 50% of the full quiz to submit a public score.
         </div>
       </div>
     `;
