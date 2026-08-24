@@ -1925,3 +1925,26 @@ tr:hover td:nth-child(3) {
   border-radius: 999px;
   transition: width 0.2s ease;
 }
+.flags-sort-control {
+  max-width: 360px;
+  margin: 0 auto 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.flags-sort-control label {
+  color: #ccc;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.flags-sort-control select {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid #444;
+  border-radius: 10px;
+  background: #111;
+  color: #f5f5f5;
+  font-size: 15px;
+}
