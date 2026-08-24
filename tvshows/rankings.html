@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>TV Show Rankings | Nick Site</title>
+  <link rel="stylesheet" href="/nick-site/style.css">
+</head>
+
+<body>
+  <div id="site-header"></div>
+  <script src="/nick-site/nav.js?v=10"></script>
+
+  <main>
+    <div class="page-topline">
+      <div>
+        <h2>TV Show Rankings</h2>
+        <p>Sortable and filterable TV show rankings.</p>
+      </div>
+
+      <p id="movies-last-updated" class="last-updated">Last updated: —</p>
+    </div>
+
+    <div class="movie-controls-row">
+
+      <details class="column-picker-wrap">
+        <summary class="filter-button">Display Columns</summary>
+        <div id="tv-column-picker" class="column-picker"></div>
+      </details>
+
+      <div class="sort-control">
+        <label for="tv-sort-column">Sort by:</label>
+        <select id="tv-sort-column" class="sort-select"></select>
+      </div>
+
+      <button id="tv-sort-direction" class="filter-button" type="button">A–Z</button>
+
+      <div class="show-control">
+        <label for="tv-show-count">Show:</label>
+        <select id="tv-show-count" class="sort-select">
+          <option value="25" selected>25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+          <option value="250">250</option>
+          <option value="all">All</option>
+        </select>
+      </div>
+
+      <button id="movies-download-csv" class="download-button" type="button" aria-label="Download CSV">
+        <svg class="download-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"></path>
+        </svg>
+      </button>
+
+      <input 
+        type="text" 
+        id="tv-search" 
+        placeholder="Search TV shows..."
+        class="search-box"
+      >
+    </div>
+
+    <div id="column-summary" class="column-summary"></div>
+
+    <details id="tv-filters-panel" class="filters-panel">
+      <summary class="filters-panel-summary">
+        <span class="filters-summary-inner">
+          <span>Filters</span>
+          <span id="filters-active-indicator" class="filters-indicator">No filters</span>
+        </span>
+      </summary>
+
+      <div class="filters-panel-actions">
+        <button id="apply-movies-filters" class="filter-button" type="button">
+          Apply filters
+        </button>
+
+        <button id="clear-movies-filters" class="filter-button" type="button">
+          Clear all filters
+        </button>
+      </div>
+
+      <div class="filter-grid">
+
+        <details class="filter-dropdown">
+          <summary>Sample</summary>
+
+          <div class="filter-options advanced-filter-options">
+            <select id="tv-rating-status" class="sort-select">
+              <option value="all" selected>All Options</option>
+              <option value="ranked">Only Ranked</option>
+              <option value="unranked">Only Unranked</option>
+            </select>
+          </div>
+        </details>
+
+        <details class="filter-dropdown">
+          <summary>Watched / Unwatched</summary>
+
+          <label class="filter-option select-all-option">
+            <input type="checkbox" id="tv-watched-select-all" checked>
+            Select All
+          </label>
+
+          <div id="tv-watched-filter" class="filter-options"></div>
+        </details>
+
+        <details class="filter-dropdown">
+          <summary>Going to re-watch</summary>
+
+          <label class="filter-option select-all-option">
+            <input type="checkbox" id="tv-rewatch-select-all" checked>
+            Select All
+          </label>
+
+          <div id="tv-rewatch-filter" class="filter-options"></div>
+        </details>
+
+        <details class="filter-dropdown">
+          <summary>Animated</summary>
+
+          <label class="filter-option select-all-option">
+            <input type="checkbox" id="tv-animated-select-all" checked>
+            Select All
+          </label>
+
+          <div id="tv-animated-filter" class="filter-options"></div>
+        </details>
+
+        <details class="filter-dropdown">
+          <summary>Kids Show</summary>
+
+          <label class="filter-option select-all-option">
+            <input type="checkbox" id="tv-kids-select-all" checked>
+            Select All
+          </label>
+
+          <div id="tv-kids-filter" class="filter-options"></div>
+        </details>
+
+        <details class="filter-dropdown">
+          <summary>Episode Tracking</summary>
+
+          <label class="filter-option select-all-option">
+            <input type="checkbox" id="tv-tracking-select-all" checked>
+            Select All
+          </label>
+
+          <div id="tv-tracking-filter" class="filter-options"></div>
+        </details>
+
+        <details class="filter-dropdown">
+          <summary>TV Show Tier</summary>
+
+          <label class="filter-option select-all-option">
+            <input type="checkbox" id="tv-show-tier-select-all" checked>
+            Select All
+          </label>
+
+          <div id="tv-show-tier-filter" class="filter-options"></div>
+        </details>
+
+      </div>
+    </details>
+
+    <p id="movies-row-count" class="last-updated"></p>
+
+    <div class="table-wrap">
+      <table id="tv-rankings-table"></table>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="/nick-site/script.js?v=14"></script>
+
+  <script>
+    const tvDisplayColumns = [
+      "Tier",
+      "Rk",
+      "Tv Show",
+      "TV ID",
+      "Times Seen",
+      "Seasons",
+      "Episodes",
+      "Year Start",
+      "Year DONE",
+      "Years",
+      "IMDB Pub.",
+      "IMDB x10",
+      "My Rating",
+      "Me vs. IMDB",
+      "Added",
+      "Updated",
+      "Watched / Unwatched",
+      "Going to re-watch",
+      "Animated",
+      "Kids Show",
+      "Score",
+      "Plot",
+      "Main Character(s)",
+      "Side Characters",
+      "Emotion",
+      "Dialogue (Writing)",
+      "Purpose Met",
+      "Cast",
+      "Music & Sound",
+      "Rewatch Value",
+      "Notes (Review)",
+      "Tracking Episode-by-Episode Ranks?",
+      "Last Episode in Ranking",
+      "Episode Average",
+      "TV SHOW SCORE",
+      "TV SHOW TIER"
+    ];
+
+    const tvFilters = [
+      {
+        column: "Watched / Unwatched",
+        targetId: "tv-watched-filter",
+        selectAllId: "tv-watched-select-all",
+        mode: "or"
+      },
+      {
+        column: "Going to re-watch",
+        targetId: "tv-rewatch-filter",
+        selectAllId: "tv-rewatch-select-all",
+        mode: "or"
+      },
+      {
+        column: "Animated",
+        targetId: "tv-animated-filter",
+        selectAllId: "tv-animated-select-all",
+        mode: "or"
+      },
+      {
+        column: "Kids Show",
+        targetId: "tv-kids-filter",
+        selectAllId: "tv-kids-select-all",
+        mode: "or"
+      },
+      {
+        column: "Tracking Episode-by-Episode Ranks?",
+        targetId: "tv-tracking-filter",
+        selectAllId: "tv-tracking-select-all",
+        mode: "or"
+      },
+      {
+        column: "TV SHOW TIER",
+        targetId: "tv-show-tier-filter",
+        selectAllId: "tv-show-tier-select-all",
+        mode: "or"
+      }
+    ];
+
+    loadCSV(
+      window.TVSHOWS_CSV_URL,
+      "tv-rankings-table",
+      "tv-search",
+      tvDisplayColumns,
+      "tv-column-picker",
+      "tv-sort-column",
+      "tv-sort-direction",
+      tvFilters,
+      "tv-show-count",
+      "tv-rating-status"
+    );
+  </script>
+</body>
+</html>
