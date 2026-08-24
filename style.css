@@ -2094,11 +2094,27 @@ tr:hover td:nth-child(3) {
 .flags-game-setup > summary {
   cursor: pointer;
   padding: 14px 16px;
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  flex-wrap: wrap;
+  gap: 12px;
+  list-style: none;
+}
+
+.flags-game-setup > summary::-webkit-details-marker {
+  display: none;
+}
+
+.flags-game-setup > summary::before {
+  content: "▸";
+  color: #f5f5f5;
+  font-size: 18px;
+  line-height: 1;
+  transition: transform 0.15s ease;
+}
+
+.flags-game-setup[open] > summary::before {
+  transform: rotate(90deg);
 }
 
 .flags-game-setup-title {
@@ -2111,6 +2127,7 @@ tr:hover td:nth-child(3) {
   color: #aaa;
   font-size: 13px;
   font-weight: normal;
+  text-align: right;
 }
 
 .flags-game-setup[open] > summary {
@@ -2162,15 +2179,16 @@ tr:hover td:nth-child(3) {
 }
 
 .flags-start-game-button {
-  min-width: 220px;
-  padding: 13px 22px;
+  min-width: 280px;
+  padding: 18px 30px;
   border: 1px solid #57bb8a;
-  border-radius: 10px;
+  border-radius: 12px;
   background: #11734b;
   color: #ffffff;
   cursor: pointer;
-  font-size: 17px;
+  font-size: 22px;
   font-weight: bold;
+  letter-spacing: 0.2px;
 }
 
 .flags-start-game-button:hover:not(:disabled) {
