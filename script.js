@@ -3068,7 +3068,11 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
     activePlayStyle = playStyleToggle ? playStyleToggle.dataset.playStyle || "information" : "information";
     activeLayoutStyle = layoutToggle ? layoutToggle.dataset.layoutStyle || "single" : "single";
     activeSuggestions = suggestionsToggle ? suggestionsToggle.dataset.suggestions || "off" : "off";
-    activeTimerLimitSeconds = timerSelect ? Number(timerSelect.value || 0) : 0;
+    const selectedTimerValue = timerSelect ? timerSelect.value || "0" : "0";
+
+      activeTimerLimitSeconds = selectedTimerValue === "stopwatch"
+        ? -1
+        : Number(selectedTimerValue || 0);
 
     gameStartTimestamp = Date.now();
     gameEndTimestamp = 0;
@@ -3414,15 +3418,15 @@ function submitPublicScore(initials, statusEl, buttonEl) {
     statusEl.textContent = "Leaderboard is not connected.";
     return;
   }
-  
+
   if (!isLeaderboardEligible()) {
-  const eligibility = getLeaderboardEligibility();
+    const eligibility = getLeaderboardEligibility();
 
-  statusEl.textContent = `Score not submitted. You completed ${eligibility.completed} / ${eligibility.totalQuestions}, but need ${eligibility.minimumRequired}.`;
+    statusEl.textContent = `Score not submitted. You completed ${eligibility.completed} / ${eligibility.totalQuestions}, but need ${eligibility.minimumRequired}.`;
 
-  return;
-}
-  
+    return;
+  }
+
   const config = gameModes[activeModeId];
 
   if (!config) {
@@ -3449,13 +3453,14 @@ function submitPublicScore(initials, statusEl, buttonEl) {
     gaveUp: gameEndedByGiveUp ? "YES" : "NO",
     timerLimitSeconds: activeTimerLimitSeconds,
     timeUsedSeconds: getTimeUsedSeconds(),
-    timeRemainingSeconds: getTimeRemainingSeconds()
+    timeRemainingSeconds: activeTimerLimitSeconds > 0 ? getTimeRemainingSeconds() : "N/A"
   };
 
   buttonEl.disabled = true;
   statusEl.textContent = "Submitting score...";
+
   console.log("Submitting leaderboard payload:", payload);
-  
+
   fetch(leaderboardUrl, {
     method: "POST",
     mode: "no-cors",
@@ -3473,6 +3478,33 @@ function submitPublicScore(initials, statusEl, buttonEl) {
       statusEl.textContent = "Score submission failed. Try again.";
       buttonEl.disabled = false;
     });
+}
+
+function formatHighScoreTime(record) {
+  const timerLimitSeconds = Number(record.timerLimitSeconds || 0);
+
+  const timeUsedSeconds = Number(
+    record.timeUsedSeconds ||
+    record.timerUsedSeconds ||
+    record["Timer Used Seconds"] ||
+    0
+  );
+
+  const timeRemainingSeconds = Number(
+    record.timeRemainingSeconds ||
+    record["Time Remaining Seconds"] ||
+    0
+  );
+
+  if (timerLimitSeconds < 0) {
+    return `N/A (${formatClockTime(timeUsedSeconds)})`;
+  }
+
+  if (timerLimitSeconds > 0) {
+    return `${formatClockTime(timeRemainingSeconds)} (${formatClockTime(timeUsedSeconds)})`;
+  }
+
+  return "N/A";
 }
 
 function loadHighScore() {
@@ -3504,11 +3536,9 @@ function loadHighScore() {
 
     if (highScore) {
       const total = highScore.totalQuestions || highScore.attempts || 0;
-      const timePart = highScore.timerLimitSeconds > 0
-        ? `, ${formatClockTime(highScore.timeRemainingSeconds)} left`
-        : "";
+      const highScoreTimeText = formatHighScoreTime(highScore);
 
-      highScoreEl.textContent = `High Score: ${highScore.initials} ${highScore.score}/${total}${timePart}`;
+      highScoreEl.textContent = `High Score: ${highScore.initials} ${highScore.score}/${total}, ${highScoreTimeText}`;
     } else {
       highScoreEl.textContent = "High Score: None yet";
     }
@@ -3527,24 +3557,23 @@ function loadHighScore() {
   script.src = url.toString();
   document.body.appendChild(script);
 }
-  
-  function startTimer() {
-  stopTimer();
 
+function startTimer() {
+  stopTimer();
   updateTimerDisplay();
 
-  if (activeTimerLimitSeconds <= 0) return;
+  if (activeTimerLimitSeconds === 0) return;
 
   timerIntervalId = window.setInterval(function () {
     updateTimerDisplay();
 
-    if (getTimeRemainingSeconds() <= 0) {
+    if (activeTimerLimitSeconds > 0 && getTimeRemainingSeconds() <= 0) {
       stopTimer();
       showGameComplete(false, true);
     }
   }, 500);
 }
-  
+
 function stopTimer() {
   if (timerIntervalId) {
     window.clearInterval(timerIntervalId);
@@ -3553,18 +3582,18 @@ function stopTimer() {
 }
 
 function getTimeUsedSeconds() {
-      if (!gameStartTimestamp) return 0;
-    
-      const effectiveNow = gamePaused && pauseStartTimestamp
-        ? pauseStartTimestamp
-        : gameEndTimestamp || Date.now();
-    
-      const elapsedMilliseconds = Math.max(
-        0,
-        effectiveNow - gameStartTimestamp - totalPausedMilliseconds
-      );
-    
-      return Math.floor(elapsedMilliseconds / 1000);
+  if (!gameStartTimestamp) return 0;
+
+  const effectiveNow = gamePaused && pauseStartTimestamp
+    ? pauseStartTimestamp
+    : gameEndTimestamp || Date.now();
+
+  const elapsedMilliseconds = Math.max(
+    0,
+    effectiveNow - gameStartTimestamp - totalPausedMilliseconds
+  );
+
+  return Math.floor(elapsedMilliseconds / 1000);
 }
 
 function getTimeRemainingSeconds() {
@@ -3574,21 +3603,23 @@ function getTimeRemainingSeconds() {
 }
 
 function updateTimerDisplay() {
-  const timerIsOn = activeTimerLimitSeconds > 0;
+  const timerIsOn = activeTimerLimitSeconds !== 0;
+  const isStopwatch = activeTimerLimitSeconds < 0;
 
-  const timerText = timerIsOn
-    ? `Timer: ${formatClockTime(getTimeRemainingSeconds())}`
-    : "Timer: Off";
+  const visibleTime = isStopwatch
+    ? formatClockTime(getTimeUsedSeconds())
+    : formatClockTime(getTimeRemainingSeconds());
 
   if (timerEl) {
-    timerEl.textContent = timerText;
+    timerEl.textContent = isStopwatch
+      ? `Stopwatch: ${visibleTime}`
+      : timerIsOn
+        ? `Timer: ${visibleTime}`
+        : "Timer: Off";
   }
 
- if (timerFloatingEl) {
-    timerFloatingEl.textContent = timerIsOn
-      ? formatClockTime(getTimeRemainingSeconds())
-      : "";
-  
+  if (timerFloatingEl) {
+    timerFloatingEl.textContent = timerIsOn ? visibleTime : "";
     timerFloatingEl.hidden = !timerIsOn;
   }
 
@@ -3600,14 +3631,19 @@ function updateTimerDisplay() {
 
 function formatClockTime(totalSeconds) {
   const safeSeconds = Math.max(0, Number(totalSeconds || 0));
-  const minutes = Math.floor(safeSeconds / 60);
+  const hours = Math.floor(safeSeconds / 3600);
+  const minutes = Math.floor((safeSeconds % 3600) / 60);
   const seconds = safeSeconds % 60;
+
+  if (hours > 0) {
+    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  }
 
   return `${minutes}:${String(seconds).padStart(2, "0")}`;
 }
-  
+
 function pauseGame() {
-  if (activeTimerLimitSeconds <= 0) return;
+  if (activeTimerLimitSeconds === 0) return;
   if (gamePaused) return;
   if (gameEndTimestamp) return;
 
@@ -3652,7 +3688,7 @@ function resumeGame() {
     }
   }, 50);
 }
-  
+
 function setupScoreSubmissionForm() {
   const initialsInput = document.getElementById("flagsScoreInitials");
   const submitScoreButton = document.getElementById("flagsSubmitScoreButton");
@@ -3686,65 +3722,11 @@ function setupScoreSubmissionForm() {
   }, 50);
 }
 
-  if (pauseButton) {
-  pauseButton.addEventListener("click", pauseGame);
-}
-
-if (resumeButton) {
-  resumeButton.addEventListener("click", resumeGame);
-}
-  
 function cleanScoreInitials(value) {
   return String(value || "")
     .toUpperCase()
     .replace(/[^A-Z]/g, "")
     .slice(0, 4);
-}
-
-function loadHighScore() {
-  if (!leaderboardUrl || !highScoreEl || !activeModeId) {
-    if (highScoreEl) {
-      highScoreEl.textContent = "High Score: --";
-    }
-
-    return;
-  }
-
-  highScoreEl.textContent = "High Score: Loading...";
-
-  const callbackName = "flagsHighScoreCallback_" + Date.now();
-
-  const url = new URL(leaderboardUrl);
-  url.searchParams.set("callback", callbackName);
-  url.searchParams.set("modeId", activeModeId);
-  url.searchParams.set("playStyle", getPlayStyleLabel(activePlayStyle));
-  url.searchParams.set("layoutStyle", getLayoutStyleLabel(activeLayoutStyle));
-  url.searchParams.set("_", Date.now());
-
-  const script = document.createElement("script");
-
-  window[callbackName] = function (data) {
-    const highScore = data && data.highScore;
-
-    if (highScore) {
-      highScoreEl.textContent = `High Score: ${highScore.initials} ${highScore.score}/${highScore.attempts}`;
-    } else {
-      highScoreEl.textContent = "High Score: None yet";
-    }
-
-    delete window[callbackName];
-    script.remove();
-  };
-
-  script.onerror = function () {
-    highScoreEl.textContent = "High Score: unavailable";
-
-    delete window[callbackName];
-    script.remove();
-  };
-
-  script.src = url.toString();
-  document.body.appendChild(script);
 }
   
   function showSingleQuestion() {
@@ -4279,11 +4261,13 @@ function loadHighScore() {
     }
 
 function getTimerLabel(timerValue) {
-  const seconds = Number(timerValue || 0);
-
-  if (seconds <= 0) return "Timer Off";
-
-  return formatClockTime(seconds);
+      if (timerValue === "stopwatch") return "Stopwatch";
+    
+      const seconds = Number(timerValue || 0);
+    
+      if (seconds <= 0) return "Timer Off";
+    
+      return formatClockTime(seconds);
 }
   
   function updateSuggestionsToggle() {
@@ -4536,7 +4520,7 @@ modeButtons.forEach(button => {
   timerSelect.addEventListener("change", updateGameSetupSummary);
 }
  
- if (changeGameButton) {
+if (changeGameButton) {
   changeGameButton.addEventListener("click", changeGameMode);
 }
 
@@ -4564,14 +4548,16 @@ if (endGameButton) {
   endGameButton.addEventListener("click", endCurrentGame);
 }
 
-  if (answerInput) {
-  answerInput.addEventListener("keydown", function (event) {
-    if (event.key === "Tab" && activeLayoutStyle === "grid") {
-      event.preventDefault();
-      selectNextGridTile();
-      return;
-    }
+if (pauseButton) {
+  pauseButton.addEventListener("click", pauseGame);
+}
 
+if (resumeButton) {
+  resumeButton.addEventListener("click", resumeGame);
+}
+
+if (answerInput) {
+  answerInput.addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
       if (answeredCurrent && activePlayStyle === "information") {
         nextQuestion();
@@ -4581,5 +4567,6 @@ if (endGameButton) {
     }
   });
 }
-  console.log("Flags game listeners loaded.");
+
+console.log("Flags game listeners loaded.");
 };
