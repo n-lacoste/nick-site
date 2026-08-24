@@ -3409,7 +3409,8 @@ function submitPublicScore(initials, statusEl, buttonEl) {
 
   buttonEl.disabled = true;
   statusEl.textContent = "Submitting score...";
-
+  console.log("Submitting leaderboard payload:", payload);
+  
   fetch(leaderboardUrl, {
     method: "POST",
     mode: "no-cors",
