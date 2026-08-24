@@ -2511,17 +2511,21 @@ tr:hover td:nth-child(3) {
   font-size: 11px;
   line-height: 1.3;
 }
+
 .flags-timer-floating {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 40px;
-  padding: 10px 14px;
+  min-width: 86px;
+  min-height: 44px;
+  padding: 8px 14px;
   border: 1px solid #5ca8ff;
   border-radius: 10px;
   background: #0a2747;
   color: #ffffff;
+  font-size: 26px;
   font-weight: bold;
+  line-height: 1;
   white-space: nowrap;
 }
 
@@ -2530,9 +2534,15 @@ tr:hover td:nth-child(3) {
 }
 
 .flags-pause-button {
+  min-height: 32px;
+  padding: 6px 10px !important;
   border-color: #ffd966 !important;
+  border-radius: 8px;
   background: #4a3a00;
   color: #ffffff;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1;
 }
 
 .flags-pause-button:hover {
