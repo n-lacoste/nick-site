@@ -2731,6 +2731,7 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
   const startScreen = document.getElementById("flagsStartScreen");
   const playScreen = document.getElementById("flagsPlayScreen");
   const modeButtons = document.querySelectorAll(".flags-mode-button");
+  const sortSelect = document.getElementById("flagsSortSelect");
 
   const currentModeLabel = document.getElementById("flagsCurrentModeLabel");
   const changeGameButton = document.getElementById("flagsChangeGameButton");
@@ -2850,6 +2851,7 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
   let allFlags = [];
   let activeFlags = [];
   let activeModeId = "";
+  let activeSortId = "random";
   let currentIndex = 0;
   let score = 0;
   let attempts = 0;
@@ -3016,7 +3018,8 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
         return true;
       });
 
-    activeFlags = shuffleArray(activeFlags);
+    activeSortId = sortSelect ? sortSelect.value : "random";
+    activeFlags = sortGameRows(activeFlags, activeSortId);
 
     currentIndex = 0;
     score = 0;
@@ -3033,7 +3036,7 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
     answerInput.placeholder = config.answerPlaceholder;
 
     if (debugEl) {
-      debugEl.textContent = `Game mode: ${config.label} | Playable rows: ${activeFlags.length}`;
+      debugEl.textContent = `Game mode: ${config.label} | Order: ${getSortLabel(activeSortId)} | Playable rows: ${activeFlags.length}`;
     }
 
     showCurrentQuestion();
@@ -3328,6 +3331,54 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
       }
     }
 
+function sortGameRows(rows, sortId) {
+  const copied = [...rows];
+
+  if (sortId === "random") {
+    return shuffleArray(copied);
+  }
+
+  if (sortId === "name-az") {
+    return copied.sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  if (sortId === "name-za") {
+    return copied.sort((a, b) => b.name.localeCompare(a.name));
+  }
+
+  if (sortId === "population-high-low") {
+    return copied.sort((a, b) => getPopulationNumber(b.population) - getPopulationNumber(a.population));
+  }
+
+  if (sortId === "population-low-high") {
+    return copied.sort((a, b) => getPopulationNumber(a.population) - getPopulationNumber(b.population));
+  }
+
+  return shuffleArray(copied);
+}
+
+function getPopulationNumber(value) {
+  const number = Number(
+    String(value ?? "")
+      .replace(/,/g, "")
+      .trim()
+  );
+
+  return isNaN(number) ? 0 : number;
+}
+
+function getSortLabel(sortId) {
+  const labels = {
+    "random": "Random",
+    "name-az": "Name A-Z",
+    "name-za": "Name Z-A",
+    "population-high-low": "Population High-to-Low",
+    "population-low-high": "Population Low-to-High"
+  };
+
+  return labels[sortId] || "Random";
+}
+  
   function shuffleArray(array) {
     const copied = [...array];
 
