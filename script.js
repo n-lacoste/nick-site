@@ -3,6 +3,7 @@ window.TVSHOWS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmeTR
 window.EPISODES_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmeTR35_PhZG8dySIXLskh-Z2QqGhczSg1kr9HWDsn4PD0bL6pdSl09USGztrnm-iWf25Y5SkFLTDG/pub?gid=210626138&single=true&output=csv";
 window.ALBUMS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmeTR35_PhZG8dySIXLskh-Z2QqGhczSg1kr9HWDsn4PD0bL6pdSl09USGztrnm-iWf25Y5SkFLTDG/pub?gid=0&single=true&output=csv";
 window.SONGS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmeTR35_PhZG8dySIXLskh-Z2QqGhczSg1kr9HWDsn4PD0bL6pdSl09USGztrnm-iWf25Y5SkFLTDG/pub?gid=1964285622&single=true&output=csv";
+window.FLAGS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmeTR35_PhZG8dySIXLskh-Z2QqGhczSg1kr9HWDsn4PD0bL6pdSl09USGztrnm-iWf25Y5SkFLTDG/pub?gid=671321735&single=true&output=csv";
 
 const factorColors = {
   "10": { bg: "#11734b", text: "#ffffff" },
@@ -2592,7 +2593,363 @@ async function loadTVShowCard(tvShowsPath, episodesPath) {
       </section>
     `;
   }
+function loadFlagsGame(filePath) {
+  const modeSelect = document.getElementById("flagsMode");
+  const shuffleButton = document.getElementById("flagsShuffleButton");
+  const resetButton = document.getElementById("flagsResetButton");
 
+  const scoreEl = document.getElementById("flagsScore");
+  const streakEl = document.getElementById("flagsStreak");
+  const remainingEl = document.getElementById("flagsRemaining");
+
+  const flagImage = document.getElementById("flagsImage");
+  const answerInput = document.getElementById("flagsAnswerInput");
+  const submitButton = document.getElementById("flagsSubmitButton");
+  const hintButton = document.getElementById("flagsHintButton");
+  const revealButton = document.getElementById("flagsRevealButton");
+  const skipButton = document.getElementById("flagsSkipButton");
+
+  const feedbackEl = document.getElementById("flagsFeedback");
+  const detailsEl = document.getElementById("flagsDetails");
+
+  let allFlags = [];
+  let activeFlags = [];
+  let currentIndex = 0;
+  let score = 0;
+  let attempts = 0;
+  let streak = 0;
+  let answeredCurrent = false;
+
+  if (!filePath) {
+    feedbackEl.textContent = "Missing FLAGS_CSV_URL.";
+    return;
+  }
+
+  Papa.parse(filePath, {
+    download: true,
+    header: true,
+    skipEmptyLines: true,
+    complete: function (results) {
+      allFlags = results.data
+        .map(cleanFlagRow)
+        .filter(row => row.name && row.imageUrl);
+
+      startGame();
+    },
+    error: function (error) {
+      console.error(error);
+      feedbackEl.textContent = "Could not load flags CSV.";
+    }
+  });
+
+  function cleanFlagRow(row) {
+    const name = getFirstExisting(row, ["Flag Name", "Country", "Name"]);
+    const alt = getFirstExisting(row, ["Alt. Spelling", "Alt Spelling", "Aliases", "Alias"]);
+    const type = getFirstExisting(row, ["Type"]);
+    const country = getFirstExisting(row, ["Country"]);
+    const fifa = getFirstExisting(row, ["FIFA Member", "FIFA"]);
+    const capital = getFirstExisting(row, ["Capital"]);
+    const capitalAlt = getFirstExisting(row, ["Capital Alt. Spelling", "Capital Alt Spelling"]);
+    const population = getFirstExisting(row, ["Population_2026", "Population"]);
+    const code = getFirstExisting(row, ["Code"]);
+    const thumbnailUrl = getFirstExisting(row, ["Thumbnail URL", "Thumbnail"]);
+    const flagUrl = getFirstExisting(row, ["Flag URL", "Flag Image", "Image URL"]);
+
+    const imageUrl = normalizeDriveImageUrl(thumbnailUrl || flagUrl);
+
+    return {
+      name: cleanCell(name),
+      alt: cleanCell(alt),
+      type: cleanCell(type),
+      country: cleanCell(country),
+      fifa: cleanCell(fifa),
+      capital: cleanCell(capital),
+      capitalAlt: cleanCell(capitalAlt),
+      population: cleanCell(population),
+      code: cleanCell(code),
+      imageUrl: imageUrl
+    };
+  }
+
+  function getFirstExisting(row, possibleHeaders) {
+    for (const header of possibleHeaders) {
+      if (row[header] !== undefined && row[header] !== null && String(row[header]).trim() !== "") {
+        return row[header];
+      }
+    }
+
+    return "";
+  }
+
+  function cleanCell(value) {
+    return String(value ?? "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function normalizeDriveImageUrl(url) {
+    const text = cleanCell(url);
+
+    if (!text) return "";
+
+    const markdownMatch = text.match(/\((https:\/\/drive\.google\.com\/[^)]+)\)/);
+    const cleaned = markdownMatch ? markdownMatch[1] : text;
+
+    const fileIdMatch =
+      cleaned.match(/\/d\/([A-Za-z0-9_-]+)/) ||
+      cleaned.match(/[?&]id=([A-Za-z0-9_-]+)/);
+
+    if (fileIdMatch) {
+      return "https://drive.google.com/thumbnail?id=" + fileIdMatch[1] + "&sz=w1000";
+    }
+
+    return cleaned;
+  }
+
+  function startGame() {
+    const mode = modeSelect.value;
+
+    activeFlags = allFlags.filter(row => {
+      if (mode === "countries") {
+        return isYes(row.country);
+      }
+
+      if (mode === "fifa") {
+        return isYes(row.fifa);
+      }
+
+      return true;
+    });
+
+    activeFlags = shuffleArray(activeFlags);
+
+    currentIndex = 0;
+    score = 0;
+    attempts = 0;
+    streak = 0;
+    answeredCurrent = false;
+
+    showCurrentFlag();
+    updateScore();
+  }
+
+  function isYes(value) {
+    return normalizeAnswer(value) === "yes" || normalizeAnswer(value) === "true";
+  }
+
+  function showCurrentFlag() {
+    answeredCurrent = false;
+    feedbackEl.textContent = "";
+    detailsEl.innerHTML = "";
+    answerInput.value = "";
+
+    if (!activeFlags.length) {
+      flagImage.removeAttribute("src");
+      feedbackEl.textContent = "No flags found for this mode.";
+      updateScore();
+      return;
+    }
+
+    if (currentIndex >= activeFlags.length) {
+      flagImage.removeAttribute("src");
+      feedbackEl.textContent = "Game complete.";
+      detailsEl.innerHTML = `
+        <strong>Final score:</strong> ${score} / ${attempts}
+      `;
+      updateScore();
+      return;
+    }
+
+    const current = activeFlags[currentIndex];
+
+    flagImage.src = current.imageUrl;
+    flagImage.alt = current.name + " flag";
+
+    updateScore();
+
+    setTimeout(() => {
+      answerInput.focus();
+    }, 50);
+  }
+
+  function submitAnswer() {
+    if (answeredCurrent) {
+      nextFlag();
+      return;
+    }
+
+    const current = activeFlags[currentIndex];
+
+    if (!current) return;
+
+    const guess = answerInput.value;
+
+    if (!guess.trim()) {
+      feedbackEl.textContent = "Type an answer first.";
+      return;
+    }
+
+    const acceptedAnswers = getAcceptedAnswers(current);
+
+    attempts += 1;
+
+    if (acceptedAnswers.includes(normalizeAnswer(guess))) {
+      score += 1;
+      streak += 1;
+      answeredCurrent = true;
+      feedbackEl.textContent = "Correct.";
+      feedbackEl.className = "flags-feedback flags-feedback-correct";
+      showDetails(current);
+    } else {
+      streak = 0;
+      feedbackEl.textContent = "Not quite. Try again, or reveal the answer.";
+      feedbackEl.className = "flags-feedback flags-feedback-wrong";
+    }
+
+    updateScore();
+  }
+
+  function getAcceptedAnswers(row) {
+    const values = [];
+
+    values.push(row.name);
+
+    if (row.alt) {
+      row.alt.split(",").forEach(item => values.push(item));
+    }
+
+    if (row.code) {
+      values.push(row.code);
+    }
+
+    return values
+      .map(normalizeAnswer)
+      .filter(Boolean);
+  }
+
+  function normalizeAnswer(value) {
+    return String(value ?? "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .replace(/&/g, "and")
+      .replace(/[^a-z0-9]+/g, " ")
+      .replace(/\bthe\b/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function showHint() {
+    const current = activeFlags[currentIndex];
+
+    if (!current) return;
+
+    const firstLetter = current.name.charAt(0);
+    const length = current.name.length;
+
+    feedbackEl.textContent = `Hint: starts with "${firstLetter}" and has ${length} characters including spaces.`;
+    feedbackEl.className = "flags-feedback";
+  }
+
+  function revealAnswer() {
+    const current = activeFlags[currentIndex];
+
+    if (!current) return;
+
+    attempts += answeredCurrent ? 0 : 1;
+    streak = 0;
+    answeredCurrent = true;
+
+    feedbackEl.textContent = `Answer: ${current.name}`;
+    feedbackEl.className = "flags-feedback flags-feedback-reveal";
+
+    showDetails(current);
+    updateScore();
+  }
+
+  function skipFlag() {
+    if (!answeredCurrent) {
+      attempts += 1;
+      streak = 0;
+    }
+
+    nextFlag();
+  }
+
+  function nextFlag() {
+    currentIndex += 1;
+    showCurrentFlag();
+  }
+
+  function showDetails(row) {
+    const population = row.population ? formatPopulation(row.population) : "";
+
+    detailsEl.innerHTML = `
+      <div><strong>Flag:</strong> ${escapeHTML(row.name)}</div>
+      ${row.type ? `<div><strong>Type:</strong> ${escapeHTML(row.type)}</div>` : ""}
+      ${row.capital ? `<div><strong>Capital:</strong> ${escapeHTML(row.capital)}</div>` : ""}
+      ${population ? `<div><strong>Population:</strong> ${population}</div>` : ""}
+      ${row.code ? `<div><strong>Code:</strong> ${escapeHTML(row.code)}</div>` : ""}
+      ${row.fifa ? `<div><strong>FIFA Member:</strong> ${escapeHTML(row.fifa)}</div>` : ""}
+    `;
+  }
+
+  function formatPopulation(value) {
+    const number = Number(String(value).replace(/,/g, ""));
+
+    if (isNaN(number)) return escapeHTML(value);
+
+    return number.toLocaleString();
+  }
+
+  function updateScore() {
+    scoreEl.textContent = `Score: ${score} / ${attempts}`;
+    streakEl.textContent = `Streak: ${streak}`;
+
+    const remaining = Math.max(activeFlags.length - currentIndex, 0);
+    remainingEl.textContent = `Remaining: ${remaining}`;
+  }
+
+  function shuffleArray(array) {
+    const copied = [...array];
+
+    for (let i = copied.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copied[i], copied[j]] = [copied[j], copied[i]];
+    }
+
+    return copied;
+  }
+
+  function escapeHTML(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  submitButton.addEventListener("click", submitAnswer);
+
+  answerInput.addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+      if (answeredCurrent) {
+        nextFlag();
+      } else {
+        submitAnswer();
+      }
+    }
+  });
+
+  hintButton.addEventListener("click", showHint);
+  revealButton.addEventListener("click", revealAnswer);
+  skipButton.addEventListener("click", skipFlag);
+  shuffleButton.addEventListener("click", startGame);
+  resetButton.addEventListener("click", startGame);
+  modeSelect.addEventListener("change", startGame);
+}
+  
   function renderTVShowCard(showRow, episodeRows) {
     const showTitle = getShowTitle(showRow);
     const rating = getText(showRow, "My Rating");
