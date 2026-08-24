@@ -2333,27 +2333,34 @@ tr:hover td:nth-child(3) {
 }
 
 .flags-large-grid-feedback .flags-card {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
-  gap: 18px;
-  align-items: start;
+  display: block;
+  width: min(900px, calc(100vw - 40px));
+  margin: 18px auto 0;
+  padding: 24px 24px 180px;
+  border: 1px solid #333;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  text-align: center;
   overflow: visible;
+}
 
-  /* removes the big outer box */
+.flags-large-grid-feedback .flags-grid {
+  width: 100%;
+  margin: 0;
+  padding: 0;
   border: none;
   background: transparent;
-  padding: 0 0 120px;
-  margin-top: 18px;
+  grid-column: auto;
+  grid-row: auto;
 }
 
 .flags-large-grid-feedback .flags-answer-area {
-  grid-column: 1 / -1;
   position: fixed;
-  left: 50%;
+  left: calc(50% - 170px);
   bottom: 16px;
   transform: translateX(-50%);
   z-index: 5000;
-  width: min(720px, calc(100vw - 32px));
+  width: min(720px, calc(100vw - 390px));
   margin: 0;
   padding: 14px;
   background: #111;
@@ -2363,38 +2370,20 @@ tr:hover td:nth-child(3) {
 }
 
 .flags-large-grid-feedback .flags-answer-area input {
-  min-width: min(420px, 100%);
-}
-
-.flags-large-grid-feedback .flags-card {
-  padding-bottom: 230px;
-}
-
-.flags-large-grid-feedback .flags-grid {
-  grid-column: 1;
-  grid-row: 2;
-  order: 0;
-}
-
-.flags-large-grid-feedback .flags-action-row {
-  grid-column: 1;
-  grid-row: 3;
-  order: 0;
+  flex: 1 1 360px;
+  min-width: 240px;
 }
 
 .flags-large-grid-feedback .flags-side-feedback-panel {
-  grid-column: 2;
-  grid-row: 2;
-  order: 0;
   position: fixed;
-  right: 18px;
-  bottom: 105px;
+  left: calc(50% + 210px);
+  bottom: 16px;
   z-index: 4999;
   width: 300px;
-  max-height: 42vh;
+  max-height: 110px;
   overflow-y: auto;
   margin: 0;
-  padding: 16px;
+  padding: 14px 16px;
   border: 1px solid #444;
   border-radius: 12px;
   background: #111;
@@ -2402,35 +2391,41 @@ tr:hover td:nth-child(3) {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
 }
 
+.flags-large-grid-feedback .flags-action-row {
+  margin-top: 18px;
+}
+
 .flags-large-grid-feedback .flags-feedback {
   margin-top: 0;
-  min-height: 28px;
+  min-height: 24px;
 }
 
 .flags-large-grid-feedback .flags-details {
-  margin-top: 14px;
-  font-size: 14px;
-  line-height: 1.55;
+  margin-top: 10px;
+  font-size: 13px;
+  line-height: 1.45;
 }
 
-@media (max-width: 900px) {
-        .flags-large-grid-feedback .flags-card {
-          display: flex;
-          flex-direction: column;
-        }
-      
-        .flags-large-grid-feedback .flags-answer-area,
-        .flags-large-grid-feedback .flags-grid,
-        .flags-large-grid-feedback .flags-action-row,
-        .flags-large-grid-feedback .flags-side-feedback-panel {
-          grid-column: auto;
-          grid-row: auto;
-        }
-      
-        .flags-large-grid-feedback .flags-side-feedback-panel {
-          position: static;
-          width: auto;
-        }
+@media (max-width: 1050px) {
+  .flags-large-grid-feedback .flags-card {
+    width: min(900px, calc(100vw - 24px));
+    padding-bottom: 280px;
+  }
+
+  .flags-large-grid-feedback .flags-answer-area {
+    left: 50%;
+    bottom: 16px;
+    width: calc(100vw - 24px);
+    transform: translateX(-50%);
+  }
+
+  .flags-large-grid-feedback .flags-side-feedback-panel {
+    left: 50%;
+    bottom: 115px;
+    width: calc(100vw - 24px);
+    max-height: 130px;
+    transform: translateX(-50%);
+  }
 }
 
 #flagsTimer {
@@ -2509,19 +2504,6 @@ tr:hover td:nth-child(3) {
   order: 4;
 }
 
-@media (max-width: 1050px) {
-  .flags-large-grid-feedback .flags-side-feedback-panel {
-    position: static;
-    width: auto;
-    max-height: none;
-    overflow-y: visible;
-    margin-top: 14px;
-  }
-
-  .flags-large-grid-feedback .flags-card {
-    padding-bottom: 140px;
-  }
-}
 .flags-source-credit {
   margin-top: 14px;
   text-align: right;
