@@ -1549,3 +1549,34 @@ thead th:nth-child(3) {
     grid-template-columns: 1fr;
   }
 }
+/* Compact Year Range boxes */
+
+#year-start-filter,
+#year-end-filter {
+  width: 80px !important;
+  max-width: 80px !important;
+  min-width: 80px !important;
+  text-align: center;
+  justify-self: center;
+}
+/* Compact Mins. filter boxes */
+
+.mins-range-inputs {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
+
+#mins-mode-filter {
+  width: 112px !important;
+  max-width: 112px !important;
+  min-width: 112px !important;
+}
+
+#mins-value-filter {
+  width: 80px !important;
+  max-width: 80px !important;
+  min-width: 80px !important;
+  text-align: center;
+}
