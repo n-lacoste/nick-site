@@ -2734,11 +2734,11 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
 
   const currentModeLabel = document.getElementById("flagsCurrentModeLabel");
   const changeGameButton = document.getElementById("flagsChangeGameButton");
-  const shuffleButton = document.getElementById("flagsShuffleButton");
   const resetButton = document.getElementById("flagsResetButton");
 
   const scoreEl = document.getElementById("flagsScore");
   const streakEl = document.getElementById("flagsStreak");
+  const hintsEl = document.getElementById("flagsHints");
   const remainingEl = document.getElementById("flagsRemaining");
   const progressTextEl = document.getElementById("flagsProgressText");
   const progressFillEl = document.getElementById("flagsProgressFill");
@@ -2854,6 +2854,8 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
   let score = 0;
   let attempts = 0;
   let streak = 0;
+  let hintsUsed = 0;
+  let hintUsedForCurrent = false;
   let answeredCurrent = false;
 
   if (!filePath) {
@@ -2966,6 +2968,8 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
     score = 0;
     attempts = 0;
     streak = 0;
+    hintsUsed = 0;
+    hintUsedForCurrent = false;
     answeredCurrent = false;
 
     startScreen.hidden = false;
@@ -3018,6 +3022,8 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
     score = 0;
     attempts = 0;
     streak = 0;
+    hintsUsed = 0;
+    hintUsedForCurrent = false;
     answeredCurrent = false;
 
     startScreen.hidden = true;
@@ -3044,16 +3050,24 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
     }
   }
 
-  function resetCurrentGame() {
-    if (!activeModeId) return;
-
-    startGame(activeModeId);
-  }
+    
+    function resetCurrentGame() {
+      if (!activeModeId) return;
+    
+      const confirmed = window.confirm(
+        "Are you sure you want to stop? Unfinished game progress will be lost."
+      );
+    
+      if (confirmed) {
+        startGame(activeModeId);
+      }
+    }
 
   function showCurrentQuestion() {
     const config = gameModes[activeModeId];
 
     answeredCurrent = false;
+    hintUsedForCurrent = false;
     feedbackEl.textContent = "";
     feedbackEl.className = "flags-feedback";
     detailsEl.innerHTML = "";
@@ -3205,20 +3219,26 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
       .trim();
   }
 
-  function showHint() {
+ function showHint() {
     const current = activeFlags[currentIndex];
     const config = gameModes[activeModeId];
-
+  
     if (!current || !config) return;
-
+  
     const answer = config.answerKind === "capital" ? current.capital : current.name;
-    const firstLetter = answer.charAt(0);
+    const firstTwoLetters = answer.slice(0, 2);
     const length = answer.length;
-
-    feedbackEl.textContent = `Hint: starts with "${firstLetter}" and has ${length} characters including spaces.`;
+  
+    if (!hintUsedForCurrent) {
+      hintsUsed += 1;
+      hintUsedForCurrent = true;
+    }
+  
+    feedbackEl.textContent = `Hint: starts with "${firstTwoLetters}" and has ${length} characters including spaces.`;
     feedbackEl.className = "flags-feedback";
+  
+    updateScore();
   }
-
   function revealAnswer() {
     const current = activeFlags[currentIndex];
     const config = gameModes[activeModeId];
@@ -3292,6 +3312,11 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
     
       scoreEl.textContent = `Score: ${score} / ${attempts} (${accuracyPercent}%)`;
       streakEl.textContent = `Streak: ${streak}`;
+    
+      if (hintsEl) {
+        hintsEl.textContent = `Hints: ${hintsUsed}`;
+      }
+    
       remainingEl.textContent = `Remaining: ${remaining}`;
     
       if (progressTextEl) {
@@ -3362,7 +3387,6 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
   });
 
   changeGameButton.addEventListener("click", changeGameMode);
-  shuffleButton.addEventListener("click", resetCurrentGame);
   resetButton.addEventListener("click", resetCurrentGame);
 
   submitButton.addEventListener("click", submitAnswer);
