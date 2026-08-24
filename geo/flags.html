@@ -15,36 +15,17 @@
 
     <section class="flags-game-shell">
 
-      <div id="flagsStartScreen" class="flags-start-screen">
-  <h3>What game would you like to play?</h3>
+     <div id="flagsStartScreen" class="flags-start-screen">
 
-       <div class="flags-sort-control">
-        <label for="flagsSortSelect">In-Game Option Order</label>
-      
-        <select id="flagsSortSelect">
-          <option value="random">Random</option>
-          <option value="name-az">Name A-Z</option>
-          <option value="name-za">Name Z-A</option>
-          <option value="population-high-low">Population High-to-Low</option>
-          <option value="population-low-high">Population Low-to-High</option>
-        </select>
-      </div>
-        
-  <div class="flags-start-options">
-      <button id="flagsPlayStyleToggle" class="flags-start-toggle information-play" type="button" data-play-style="information">
-        Information Play
-      </button>
-    
-      <button id="flagsLayoutToggle" class="flags-start-toggle one-at-a-time" type="button" data-layout-style="single">
-        One at a Time
-      </button>
-    </div>      
+  <h3>Choose Game Mode</h3>
+
   <div class="flags-start-columns">
 
     <section class="flags-start-column">
       <h4>Guess the Flag</h4>
 
       <div class="flags-game-mode-grid">
+
         <button class="flags-mode-button" type="button" data-game-mode="flag-country">
           Guess Country from Flag
         </button>
@@ -61,9 +42,14 @@
           Guess FIFA Nation from Flag
         </button>
 
+        <button class="flags-mode-button" type="button" data-game-mode="north-america-subnational-flag">
+          Guess North American Province/Territory/State from Flag
+        </button>
+
         <button class="flags-mode-button" type="button" data-game-mode="flag-all">
           Guess All from Flag
         </button>
+
       </div>
     </section>
 
@@ -71,6 +57,7 @@
       <h4>Guess the Capital</h4>
 
       <div class="flags-game-mode-grid">
+
         <button class="flags-mode-button" type="button" data-game-mode="capital-to-country">
           Guess Country from Capital City
         </button>
@@ -78,10 +65,90 @@
         <button class="flags-mode-button" type="button" data-game-mode="country-to-capital">
           Guess Capital City from Country
         </button>
+
+        <button class="flags-mode-button" type="button" data-game-mode="us-state-capital">
+          Guess U.S. State Capital
+        </button>
+
+        <button class="flags-mode-button" type="button" data-game-mode="canada-province-capital">
+          Guess Canadian Province/Territory Capital
+        </button>
+
+        <button class="flags-mode-button" type="button" data-game-mode="north-america-subnational-capital">
+          Guess North American Province/Territory/State Capital
+        </button>
+
       </div>
     </section>
 
   </div>
+
+  <details id="flagsGameSetup" class="flags-game-setup">
+
+    <summary>
+      <span class="flags-game-setup-title">Game Setup</span>
+      <span id="flagsSetupSummary" class="flags-game-setup-summary">
+        Default: Random order, One at a time, Information Play
+      </span>
+    </summary>
+
+    <div class="flags-setup-grid">
+
+      <div class="flags-setup-control">
+        <label for="flagsSortSelect">List Order</label>
+
+        <select id="flagsSortSelect">
+          <option value="random" selected>Random</option>
+          <option value="name-az">Name A-Z</option>
+          <option value="name-za">Name Z-A</option>
+          <option value="population-high-low">Population High-to-Low</option>
+          <option value="population-low-high">Population Low-to-High</option>
+        </select>
+      </div>
+
+      <div class="flags-setup-control">
+        <label>Guess Order</label>
+
+        <button
+          id="flagsLayoutToggle"
+          class="flags-start-toggle one-at-a-time"
+          type="button"
+          data-layout-style="single"
+        >
+          One at a Time
+        </button>
+      </div>
+
+      <div class="flags-setup-control">
+        <label>Play Mode</label>
+
+        <button
+          id="flagsPlayStyleToggle"
+          class="flags-start-toggle information-play"
+          type="button"
+          data-play-style="information"
+        >
+          Information Play
+        </button>
+      </div>
+
+    </div>
+
+  </details>
+
+  <div id="flagsSelectedGameSummary" class="flags-selected-game-summary">
+    Choose a game mode above.
+  </div>
+
+  <button
+    id="flagsStartGameButton"
+    class="flags-start-game-button"
+    type="button"
+    disabled
+  >
+    Start Game
+  </button>
+
 </div>
 
       <div id="flagsPlayScreen" class="flags-play-screen" hidden>
