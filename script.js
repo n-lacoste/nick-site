@@ -29,7 +29,9 @@ async function loadCSV(
     });
   });
 
-  let visibleHeaders = displayColumns
+  updateMoviesLastUpdatedText(data);
+  
+ let visibleHeaders = displayColumns
     ? displayColumns.filter(column => allHeaders.includes(column))
     : allHeaders;
 
@@ -219,6 +221,60 @@ function parseMovieDate(value) {
   const fallbackDate = new Date(text).getTime();
 
   return isNaN(fallbackDate) ? null : fallbackDate;
+}
+ function getOrdinalSuffix(day) {
+  if (day >= 11 && day <= 13) return "th";
+
+  const lastDigit = day % 10;
+
+  if (lastDigit === 1) return "st";
+  if (lastDigit === 2) return "nd";
+  if (lastDigit === 3) return "rd";
+
+  return "th";
+}
+
+function formatLongMovieDate(timestamp) {
+  const date = new Date(timestamp);
+
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ];
+
+  const month = months[date.getMonth()];
+  const day = date.getDate();
+  const year = date.getFullYear();
+
+  return `${month} ${day}${getOrdinalSuffix(day)}, ${year}`;
+}
+
+function updateMoviesLastUpdatedText(rows) {
+  const lastUpdatedElement = document.getElementById("movies-last-updated");
+
+  if (!lastUpdatedElement) return;
+
+  const latestTimestamp = rows
+    .map(row => parseMovieDate(row["Updated"]))
+    .filter(timestamp => timestamp !== null)
+    .sort((a, b) => b - a)[0];
+
+  if (!latestTimestamp) {
+    lastUpdatedElement.textContent = "Last updated: —";
+    return;
+  }
+
+  lastUpdatedElement.textContent = `Last updated: ${formatLongMovieDate(latestTimestamp)}`;
 }
   function getColumnWidthStyle(header) {
     let style = "";
