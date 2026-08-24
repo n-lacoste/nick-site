@@ -2728,7 +2728,12 @@ async function loadTVShowCard(tvShowsPath, episodesPath) {
   });
 }
 window.loadFlagsGame = function loadFlagsGame(filePath) {
-  const modeSelect = document.getElementById("flagsMode");
+  const startScreen = document.getElementById("flagsStartScreen");
+  const playScreen = document.getElementById("flagsPlayScreen");
+  const modeButtons = document.querySelectorAll(".flags-mode-button");
+
+  const currentModeLabel = document.getElementById("flagsCurrentModeLabel");
+  const changeGameButton = document.getElementById("flagsChangeGameButton");
   const shuffleButton = document.getElementById("flagsShuffleButton");
   const resetButton = document.getElementById("flagsResetButton");
 
@@ -2737,7 +2742,10 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
   const remainingEl = document.getElementById("flagsRemaining");
   const debugEl = document.getElementById("flagsDebug");
 
+  const flagImageWrap = document.getElementById("flagsImageWrap");
   const flagImage = document.getElementById("flagsImage");
+  const promptText = document.getElementById("flagsPromptText");
+
   const answerInput = document.getElementById("flagsAnswerInput");
   const submitButton = document.getElementById("flagsSubmitButton");
   const hintButton = document.getElementById("flagsHintButton");
@@ -2747,8 +2755,67 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
   const feedbackEl = document.getElementById("flagsFeedback");
   const detailsEl = document.getElementById("flagsDetails");
 
+  const gameModes = {
+    "flag-country": {
+      label: "Guess Country from Flag",
+      answerPlaceholder: "Type the country name...",
+      questionType: "flag",
+      filter: row => isYes(row.country) && !isUSState(row) && !isCanadianProvinceOrTerritory(row),
+      answerKind: "name"
+    },
+
+    "flag-us-state": {
+      label: "Guess U.S. State from Flag",
+      answerPlaceholder: "Type the U.S. state name...",
+      questionType: "flag",
+      filter: row => isUSState(row),
+      answerKind: "name"
+    },
+
+    "flag-canada-province": {
+      label: "Guess Canadian Province/Territory from Flag",
+      answerPlaceholder: "Type the province or territory name...",
+      questionType: "flag",
+      filter: row => isCanadianProvinceOrTerritory(row),
+      answerKind: "name"
+    },
+
+    "flag-fifa": {
+      label: "Guess FIFA nation from Flag",
+      answerPlaceholder: "Type the FIFA association name...",
+      questionType: "flag",
+      filter: row => isYes(row.fifa),
+      answerKind: "name"
+    },
+
+    "flag-all": {
+      label: "Guess ALL from Flag",
+      answerPlaceholder: "Type the flag name...",
+      questionType: "flag",
+      filter: row => true,
+      answerKind: "name"
+    },
+
+    "capital-to-country": {
+      label: "Guess Country from Capital City",
+      answerPlaceholder: "Type the country name...",
+      questionType: "capital-to-country",
+      filter: row => isYes(row.country) && row.capital !== "",
+      answerKind: "name"
+    },
+
+    "country-to-capital": {
+      label: "Guess Capital City from Country",
+      answerPlaceholder: "Type the capital city...",
+      questionType: "country-to-capital",
+      filter: row => isYes(row.country) && row.capital !== "",
+      answerKind: "capital"
+    }
+  };
+
   let allFlags = [];
   let activeFlags = [];
+  let activeModeId = "";
   let currentIndex = 0;
   let score = 0;
   let attempts = 0;
@@ -2756,10 +2823,12 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
   let answeredCurrent = false;
 
   if (!filePath) {
-    feedbackEl.textContent = "Missing FLAGS_CSV_URL.";
-    if (debugEl) debugEl.textContent = "No CSV URL found.";
+    showStartScreen();
+    if (debugEl) debugEl.textContent = "Missing FLAGS_CSV_URL.";
     return;
   }
+
+  showStartScreen();
 
   if (debugEl) {
     debugEl.textContent = "Loading flags CSV...";
@@ -2770,27 +2839,25 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
     header: true,
     skipEmptyLines: true,
     complete: function (results) {
-      console.log("Flags CSV results:", results);
-
       const rawRows = results.data || [];
 
       allFlags = rawRows
         .map(cleanFlagRow)
-        .filter(row => row.name && row.imageUrl);
-
-      console.log("All cleaned flags:", allFlags);
-      console.log("First cleaned flag:", allFlags[0]);
+        .filter(row => row.name);
 
       if (debugEl) {
-        debugEl.textContent = `CSV rows: ${rawRows.length} | Playable rows with image links: ${allFlags.length}`;
+        debugEl.textContent = `CSV rows loaded: ${rawRows.length}`;
       }
 
-      startGame();
+      console.log("Flags CSV results:", results);
+      console.log("Cleaned flags:", allFlags);
     },
     error: function (error) {
       console.error("Flags CSV error:", error);
-      feedbackEl.textContent = "Could not load flags CSV.";
-      if (debugEl) debugEl.textContent = "CSV loading failed. Check published CSV URL.";
+
+      if (debugEl) {
+        debugEl.textContent = "CSV loading failed. Check published CSV URL.";
+      }
     }
   });
 
@@ -2858,20 +2925,58 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
     return text;
   }
 
-  function startGame() {
-    const mode = modeSelect.value;
+  function showStartScreen() {
+    activeModeId = "";
+    activeFlags = [];
+    currentIndex = 0;
+    score = 0;
+    attempts = 0;
+    streak = 0;
+    answeredCurrent = false;
 
-    activeFlags = allFlags.filter(row => {
-      if (mode === "countries") {
-        return isYes(row.country);
-      }
+    startScreen.hidden = false;
+    playScreen.hidden = true;
 
-      if (mode === "fifa") {
-        return isYes(row.fifa);
-      }
+    if (flagImage) {
+      flagImage.removeAttribute("src");
+    }
 
-      return true;
-    });
+    if (feedbackEl) {
+      feedbackEl.textContent = "";
+      feedbackEl.className = "flags-feedback";
+    }
+
+    if (detailsEl) {
+      detailsEl.innerHTML = "";
+    }
+
+    updateScore();
+  }
+
+  function startGame(modeId) {
+    const config = gameModes[modeId];
+
+    if (!config) return;
+
+    activeModeId = modeId;
+
+    activeFlags = allFlags
+      .filter(row => config.filter(row))
+      .filter(row => {
+        if (config.questionType === "flag") {
+          return row.imageUrl !== "";
+        }
+
+        if (config.questionType === "capital-to-country") {
+          return row.capital !== "";
+        }
+
+        if (config.questionType === "country-to-capital") {
+          return row.capital !== "";
+        }
+
+        return true;
+      });
 
     activeFlags = shuffleArray(activeFlags);
 
@@ -2881,35 +2986,64 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
     streak = 0;
     answeredCurrent = false;
 
+    startScreen.hidden = true;
+    playScreen.hidden = false;
+
+    currentModeLabel.textContent = config.label;
+    answerInput.placeholder = config.answerPlaceholder;
+
     if (debugEl) {
-      debugEl.textContent += ` | Active in ${mode}: ${activeFlags.length}`;
+      debugEl.textContent = `Game mode: ${config.label} | Playable rows: ${activeFlags.length}`;
     }
 
-    showCurrentFlag();
+    showCurrentQuestion();
     updateScore();
   }
 
-  function isYes(value) {
-    const normalized = normalizeAnswer(value);
-    return normalized === "yes" || normalized === "true";
+  function changeGameMode() {
+    const confirmed = window.confirm(
+      "Are you sure you want to change your game mode? Games in progress will be lost."
+    );
+
+    if (confirmed) {
+      showStartScreen();
+    }
   }
 
-  function showCurrentFlag() {
+  function resetCurrentGame() {
+    if (!activeModeId) return;
+
+    startGame(activeModeId);
+  }
+
+  function showCurrentQuestion() {
+    const config = gameModes[activeModeId];
+
     answeredCurrent = false;
     feedbackEl.textContent = "";
     feedbackEl.className = "flags-feedback";
     detailsEl.innerHTML = "";
     answerInput.value = "";
 
+    if (!config) {
+      showStartScreen();
+      return;
+    }
+
     if (!activeFlags.length) {
       flagImage.removeAttribute("src");
-      feedbackEl.textContent = "No flags found for this mode.";
+      promptText.hidden = true;
+      flagImageWrap.hidden = false;
+      feedbackEl.textContent = "No playable rows found for this game mode yet.";
       updateScore();
       return;
     }
 
     if (currentIndex >= activeFlags.length) {
       flagImage.removeAttribute("src");
+      promptText.hidden = true;
+      flagImageWrap.hidden = false;
+
       feedbackEl.textContent = "Game complete.";
       detailsEl.innerHTML = `<strong>Final score:</strong> ${score} / ${attempts}`;
       updateScore();
@@ -2918,19 +3052,36 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
 
     const current = activeFlags[currentIndex];
 
-    console.log("Current flag:", current.name, current.imageUrl);
+    if (config.questionType === "flag") {
+      promptText.hidden = true;
+      flagImageWrap.hidden = false;
 
-    flagImage.onerror = function () {
-      console.error("Flag image failed:", current.name, current.imageUrl);
-      feedbackEl.textContent = "Image failed to load for: " + current.name;
-    };
+      flagImage.onerror = function () {
+        console.error("Flag image failed:", current.name, current.imageUrl);
+        feedbackEl.textContent = "Image failed to load for: " + current.name;
+      };
 
-    flagImage.onload = function () {
-      feedbackEl.textContent = "";
-    };
+      flagImage.onload = function () {
+        feedbackEl.textContent = "";
+      };
 
-    flagImage.src = current.imageUrl;
-    flagImage.alt = current.name + " flag";
+      flagImage.src = current.imageUrl;
+      flagImage.alt = current.name + " flag";
+    }
+
+    if (config.questionType === "capital-to-country") {
+      flagImage.removeAttribute("src");
+      flagImageWrap.hidden = true;
+      promptText.hidden = false;
+      promptText.textContent = current.capital;
+    }
+
+    if (config.questionType === "country-to-capital") {
+      flagImage.removeAttribute("src");
+      flagImageWrap.hidden = true;
+      promptText.hidden = false;
+      promptText.textContent = current.name;
+    }
 
     updateScore();
 
@@ -2941,7 +3092,7 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
 
   function submitAnswer() {
     if (answeredCurrent) {
-      nextFlag();
+      nextQuestion();
       return;
     }
 
@@ -2964,11 +3115,14 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
       score += 1;
       streak += 1;
       answeredCurrent = true;
+
       feedbackEl.textContent = "Correct.";
       feedbackEl.className = "flags-feedback flags-feedback-correct";
+
       showDetails(current);
     } else {
       streak = 0;
+
       feedbackEl.textContent = "Not quite. Try again, or reveal the answer.";
       feedbackEl.className = "flags-feedback flags-feedback-wrong";
     }
@@ -2977,16 +3131,27 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
   }
 
   function getAcceptedAnswers(row) {
+    const config = gameModes[activeModeId];
     const values = [];
 
-    values.push(row.name);
+    if (!config) return [];
 
-    if (row.alt) {
-      row.alt.split(",").forEach(item => values.push(item));
-    }
+    if (config.answerKind === "capital") {
+      values.push(row.capital);
 
-    if (row.code) {
-      values.push(row.code);
+      if (row.capitalAlt) {
+        row.capitalAlt.split(",").forEach(item => values.push(item));
+      }
+    } else {
+      values.push(row.name);
+
+      if (row.alt) {
+        row.alt.split(",").forEach(item => values.push(item));
+      }
+
+      if (row.code) {
+        values.push(row.code);
+      }
     }
 
     return values
@@ -3008,11 +3173,13 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
 
   function showHint() {
     const current = activeFlags[currentIndex];
+    const config = gameModes[activeModeId];
 
-    if (!current) return;
+    if (!current || !config) return;
 
-    const firstLetter = current.name.charAt(0);
-    const length = current.name.length;
+    const answer = config.answerKind === "capital" ? current.capital : current.name;
+    const firstLetter = answer.charAt(0);
+    const length = answer.length;
 
     feedbackEl.textContent = `Hint: starts with "${firstLetter}" and has ${length} characters including spaces.`;
     feedbackEl.className = "flags-feedback";
@@ -3020,39 +3187,42 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
 
   function revealAnswer() {
     const current = activeFlags[currentIndex];
+    const config = gameModes[activeModeId];
 
-    if (!current) return;
+    if (!current || !config) return;
 
     attempts += answeredCurrent ? 0 : 1;
     streak = 0;
     answeredCurrent = true;
 
-    feedbackEl.textContent = `Answer: ${current.name}`;
+    const answer = config.answerKind === "capital" ? current.capital : current.name;
+
+    feedbackEl.textContent = `Answer: ${answer}`;
     feedbackEl.className = "flags-feedback flags-feedback-reveal";
 
     showDetails(current);
     updateScore();
   }
 
-  function skipFlag() {
+  function skipQuestion() {
     if (!answeredCurrent) {
       attempts += 1;
       streak = 0;
     }
 
-    nextFlag();
+    nextQuestion();
   }
 
-  function nextFlag() {
+  function nextQuestion() {
     currentIndex += 1;
-    showCurrentFlag();
+    showCurrentQuestion();
   }
 
   function showDetails(row) {
     const population = row.population ? formatPopulation(row.population) : "";
 
     detailsEl.innerHTML = `
-      <div><strong>Flag:</strong> ${escapeHTML(row.name)}</div>
+      <div><strong>Flag Name:</strong> ${escapeHTML(row.name)}</div>
       ${row.type ? `<div><strong>Type:</strong> ${escapeHTML(row.type)}</div>` : ""}
       ${row.capital ? `<div><strong>Capital:</strong> ${escapeHTML(row.capital)}</div>` : ""}
       ${population ? `<div><strong>Population:</strong> ${population}</div>` : ""}
@@ -3070,6 +3240,8 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
   }
 
   function updateScore() {
+    if (!scoreEl || !streakEl || !remainingEl) return;
+
     scoreEl.textContent = `Score: ${score} / ${attempts}`;
     streakEl.textContent = `Streak: ${streak}`;
 
@@ -3088,6 +3260,35 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
     return copied;
   }
 
+  function isYes(value) {
+    const normalized = normalizeAnswer(value);
+
+    return normalized === "yes" || normalized === "true";
+  }
+
+  function isUSState(row) {
+    const type = normalizeAnswer(row.type);
+    const code = normalizeAnswer(row.code);
+
+    return (
+      type.includes("u s state") ||
+      type.includes("us state") ||
+      code.startsWith("us ")
+    );
+  }
+
+  function isCanadianProvinceOrTerritory(row) {
+    const type = normalizeAnswer(row.type);
+    const code = normalizeAnswer(row.code);
+
+    return (
+      type.includes("canadian province") ||
+      type.includes("canadian territory") ||
+      type.includes("canadian province territory") ||
+      code.startsWith("ca ")
+    );
+  }
+
   function escapeHTML(value) {
     return String(value ?? "")
       .replace(/&/g, "&amp;")
@@ -3097,12 +3298,23 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
       .replace(/'/g, "&#039;");
   }
 
+  modeButtons.forEach(button => {
+    button.addEventListener("click", function () {
+      const selectedMode = button.dataset.gameMode;
+      startGame(selectedMode);
+    });
+  });
+
+  changeGameButton.addEventListener("click", changeGameMode);
+  shuffleButton.addEventListener("click", resetCurrentGame);
+  resetButton.addEventListener("click", resetCurrentGame);
+
   submitButton.addEventListener("click", submitAnswer);
 
   answerInput.addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
       if (answeredCurrent) {
-        nextFlag();
+        nextQuestion();
       } else {
         submitAnswer();
       }
@@ -3111,8 +3323,5 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
 
   hintButton.addEventListener("click", showHint);
   revealButton.addEventListener("click", revealAnswer);
-  skipButton.addEventListener("click", skipFlag);
-  shuffleButton.addEventListener("click", startGame);
-  resetButton.addEventListener("click", startGame);
-  modeSelect.addEventListener("change", startGame);
+  skipButton.addEventListener("click", skipQuestion);
 };
