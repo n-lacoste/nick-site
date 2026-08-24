@@ -2758,6 +2758,9 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
 
   const leaderboardUrl = window.FLAGS_LEADERBOARD_URL || "";
   const highScoreEl = document.getElementById("flagsHighScore");
+  const timerEl = document.getElementById("flagsTimer");
+  const timerSelect = document.getElementById("flagsTimerSelect");
+  const endGameButton = document.getElementById("flagsEndGameButton");
   
   const gridEl = document.getElementById("flagsGrid");
   const flagImageWrap = document.getElementById("flagsImageWrap");
@@ -2871,6 +2874,11 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
   let activePlayStyle = "information";
   let activeLayoutStyle = "single";
   let activeSuggestions = "off";
+  let activeTimerLimitSeconds = 0;
+  let timerIntervalId = null;
+  let gameStartTimestamp = 0;
+  let gameEndTimestamp = 0;
+  let gameEndedByGiveUp = false;
   let currentIndex = 0;
   let score = 0;
   let attempts = 0;
@@ -3046,6 +3054,11 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
     activePlayStyle = playStyleToggle ? playStyleToggle.dataset.playStyle || "information" : "information";
     activeLayoutStyle = layoutToggle ? layoutToggle.dataset.layoutStyle || "single" : "single";
     activeSuggestions = suggestionsToggle ? suggestionsToggle.dataset.suggestions || "off" : "off";
+    activeTimerLimitSeconds = timerSelect ? Number(timerSelect.value || 0) : 0;
+
+gameStartTimestamp = Date.now();
+gameEndTimestamp = 0;
+gameEndedByGiveUp = false;
 
     activeFlags = allFlags
       .filter(row => config.filter(row))
@@ -3094,6 +3107,7 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
       debugEl.textContent = `Game mode: ${config.label} | Order: ${getSortLabel(activeSortId)} | Layout: ${getLayoutStyleLabel(activeLayoutStyle)} | Play: ${getPlayStyleLabel(activePlayStyle)} | Playable rows: ${activeFlags.length}`;
     }
 
+    startTimer();
     loadHighScore();
     showCurrentQuestion();
     updateScore();
@@ -3172,7 +3186,15 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
     updateScore();
   }
 
- function showGameComplete() {
+ function showGameComplete(gaveUp = false, timedOut = false) {
+      stopTimer();
+    
+      if (!gameEndTimestamp) {
+        gameEndTimestamp = Date.now();
+      }
+    
+      gameEndedByGiveUp = gaveUp;
+    
       if (activeLayoutStyle !== "grid" && gridEl) {
         gridEl.hidden = true;
       }
@@ -3181,22 +3203,309 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
       flagImageWrap.hidden = true;
       promptText.hidden = true;
     
+      const totalQuestions = activeFlags.length;
+      const completed = getCompletedCount();
+      const completionPercent = getCompletionPercent();
+      const leaderboardEligible = isLeaderboardEligible();
+    
       const accuracyPercent = attempts > 0
         ? Math.round((score / attempts) * 100)
         : 0;
     
-      feedbackEl.textContent = "Game complete.";
+      const statusText = timedOut
+        ? "Time is up."
+        : gaveUp
+          ? "Game ended."
+          : "Game complete.";
+    
+      feedbackEl.textContent = statusText;
     
       detailsEl.innerHTML = `
-        <div><strong>Final score:</strong> ${score} / ${attempts} (${accuracyPercent}%)</div>
+        <div><strong>Final score:</strong> ${score} / ${totalQuestions}</div>
+        <div><strong>Accuracy:</strong> ${score} / ${attempts} attempts (${accuracyPercent}%)</div>
+        <div><strong>Completed:</strong> ${completed} / ${totalQuestions} (${completionPercent}%)</div>
         <div><strong>Hints used:</strong> ${hintsUsed}</div>
-        ${getScoreSubmissionHTML()}
+        ${activeTimerLimitSeconds > 0 ? `<div><strong>Time remaining:</strong> ${formatClockTime(getTimeRemainingSeconds())}</div>` : ""}
+        <div><strong>Leaderboard eligible:</strong> ${leaderboardEligible ? "Yes" : "No"}</div>
+        ${getScoreSubmissionHTML(leaderboardEligible)}
       `;
     
       setupScoreSubmissionForm();
       updateScore();
     }
-function getScoreSubmissionHTML() {
+function getCompletedCount() {
+  return activeFlags.filter(row => row.completed).length;
+}
+
+function getCompletionPercent() {
+  if (!activeFlags.length) return 0;
+
+  return Math.round((getCompletedCount() / activeFlags.length) * 100);
+}
+
+function isLeaderboardEligible() {
+  return getCompletionPercent() >= 50;
+}
+
+function endCurrentGame() {
+  if (!activeModeId || !activeFlags.length) return;
+
+  const confirmed = window.confirm(
+    "End this game and submit your current score?"
+  );
+
+  if (!confirmed) return;
+
+  showGameComplete(true, false);
+}
+  
+function getScoreSubmissionHTML(leaderboardEligible) {
+  if (!leaderboardUrl || !activeModeId) {
+    return "";
+  }
+
+  if (!leaderboardEligible) {
+    return `
+      <div class="flags-score-submit-panel">
+        <div class="flags-score-submit-title">Public Leaderboard</div>
+        <div class="flags-score-submit-status">
+          You need to complete at least 50% of the quiz to submit a public score.
+        </div>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="flags-score-submit-panel">
+      <div class="flags-score-submit-title">Submit Your Score</div>
+
+      <div class="flags-score-submit-row">
+        <input
+          id="flagsScoreInitials"
+          type="text"
+          maxlength="4"
+          placeholder="ABCD"
+          autocomplete="off"
+        >
+
+        <button id="flagsSubmitScoreButton" type="button">
+          Submit Score
+        </button>
+      </div>
+
+      <div id="flagsSubmitScoreStatus" class="flags-score-submit-status"></div>
+    </div>
+  `;
+}
+
+function setupScoreSubmissionForm() {
+  const initialsInput = document.getElementById("flagsScoreInitials");
+  const submitScoreButton = document.getElementById("flagsSubmitScoreButton");
+  const submitScoreStatus = document.getElementById("flagsSubmitScoreStatus");
+
+  if (!initialsInput || !submitScoreButton || !submitScoreStatus) return;
+
+  initialsInput.addEventListener("input", function () {
+    initialsInput.value = cleanScoreInitials(initialsInput.value);
+  });
+
+  initialsInput.addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+      submitScoreButton.click();
+    }
+  });
+
+  submitScoreButton.addEventListener("click", function () {
+    const initials = cleanScoreInitials(initialsInput.value);
+
+    if (initials.length !== 4) {
+      submitScoreStatus.textContent = "Enter exactly 4 letters.";
+      return;
+    }
+
+    submitPublicScore(initials, submitScoreStatus, submitScoreButton);
+  });
+
+  setTimeout(() => {
+    initialsInput.focus();
+  }, 50);
+}
+
+function cleanScoreInitials(value) {
+  return String(value || "")
+    .toUpperCase()
+    .replace(/[^A-Z]/g, "")
+    .slice(0, 4);
+}
+
+function submitPublicScore(initials, statusEl, buttonEl) {
+  if (!leaderboardUrl) {
+    statusEl.textContent = "Leaderboard is not connected.";
+    return;
+  }
+
+  const config = gameModes[activeModeId];
+
+  if (!config) {
+    statusEl.textContent = "Game mode not found.";
+    return;
+  }
+
+  const completed = getCompletedCount();
+  const totalQuestions = activeFlags.length;
+
+  const payload = {
+    initials,
+    modeId: activeModeId,
+    modeLabel: config.label,
+    playStyle: getPlayStyleLabel(activePlayStyle),
+    layoutStyle: getLayoutStyleLabel(activeLayoutStyle),
+    sortOrder: getSortLabel(activeSortId),
+    suggestions: getSuggestionsLabel(activeSuggestions),
+    score,
+    attempts,
+    hintsUsed,
+    completed,
+    totalQuestions,
+    gaveUp: gameEndedByGiveUp ? "YES" : "NO",
+    timerLimitSeconds: activeTimerLimitSeconds,
+    timeUsedSeconds: getTimeUsedSeconds(),
+    timeRemainingSeconds: getTimeRemainingSeconds()
+  };
+
+  buttonEl.disabled = true;
+  statusEl.textContent = "Submitting score...";
+
+  fetch(leaderboardUrl, {
+    method: "POST",
+    mode: "no-cors",
+    headers: {
+      "Content-Type": "text/plain;charset=utf-8"
+    },
+    body: JSON.stringify(payload)
+  })
+    .then(() => {
+      statusEl.textContent = "Score submitted. Refreshing high score...";
+      setTimeout(loadHighScore, 2000);
+    })
+    .catch(error => {
+      console.error("Score submission failed:", error);
+      statusEl.textContent = "Score submission failed. Try again.";
+      buttonEl.disabled = false;
+    });
+}
+
+function loadHighScore() {
+  if (!leaderboardUrl || !highScoreEl || !activeModeId) {
+    if (highScoreEl) {
+      highScoreEl.textContent = "High Score: --";
+    }
+
+    return;
+  }
+
+  highScoreEl.textContent = "High Score: Loading...";
+
+  const callbackName = "flagsHighScoreCallback_" + Date.now();
+
+  const url = new URL(leaderboardUrl);
+  url.searchParams.set("callback", callbackName);
+  url.searchParams.set("modeId", activeModeId);
+  url.searchParams.set("playStyle", getPlayStyleLabel(activePlayStyle));
+  url.searchParams.set("layoutStyle", getLayoutStyleLabel(activeLayoutStyle));
+  url.searchParams.set("suggestions", getSuggestionsLabel(activeSuggestions));
+  url.searchParams.set("timerLimitSeconds", String(activeTimerLimitSeconds));
+  url.searchParams.set("_", Date.now());
+
+  const script = document.createElement("script");
+
+  window[callbackName] = function (data) {
+    const highScore = data && data.highScore;
+
+    if (highScore) {
+      const total = highScore.totalQuestions || highScore.attempts || 0;
+      const timePart = highScore.timerLimitSeconds > 0
+        ? `, ${formatClockTime(highScore.timeRemainingSeconds)} left`
+        : "";
+
+      highScoreEl.textContent = `High Score: ${highScore.initials} ${highScore.score}/${total}${timePart}`;
+    } else {
+      highScoreEl.textContent = "High Score: None yet";
+    }
+
+    delete window[callbackName];
+    script.remove();
+  };
+
+  script.onerror = function () {
+    highScoreEl.textContent = "High Score: unavailable";
+
+    delete window[callbackName];
+    script.remove();
+  };
+
+  script.src = url.toString();
+  document.body.appendChild(script);
+}
+  
+  function startTimer() {
+  stopTimer();
+
+  updateTimerDisplay();
+
+  if (activeTimerLimitSeconds <= 0) return;
+
+  timerIntervalId = window.setInterval(function () {
+    updateTimerDisplay();
+
+    if (getTimeRemainingSeconds() <= 0) {
+      stopTimer();
+      showGameComplete(false, true);
+    }
+  }, 500);
+}
+
+function stopTimer() {
+  if (timerIntervalId) {
+    window.clearInterval(timerIntervalId);
+    timerIntervalId = null;
+  }
+}
+
+function getTimeUsedSeconds() {
+  if (!gameStartTimestamp) return 0;
+
+  const endTime = gameEndTimestamp || Date.now();
+
+  return Math.max(0, Math.floor((endTime - gameStartTimestamp) / 1000));
+}
+
+function getTimeRemainingSeconds() {
+  if (activeTimerLimitSeconds <= 0) return 0;
+
+  return Math.max(0, activeTimerLimitSeconds - getTimeUsedSeconds());
+}
+
+function updateTimerDisplay() {
+  if (!timerEl) return;
+
+  if (activeTimerLimitSeconds <= 0) {
+    timerEl.textContent = "Timer: Off";
+    return;
+  }
+
+  timerEl.textContent = `Timer: ${formatClockTime(getTimeRemainingSeconds())}`;
+}
+
+function formatClockTime(totalSeconds) {
+  const safeSeconds = Math.max(0, Number(totalSeconds || 0));
+  const minutes = Math.floor(safeSeconds / 60);
+  const seconds = safeSeconds % 60;
+
+  return `${minutes}:${String(seconds).padStart(2, "0")}`;
+}
+  
+  function getScoreSubmissionHTML() {
   if (!leaderboardUrl || !activeModeId) {
     return "";
   }
@@ -3818,6 +4127,8 @@ function loadHighScore() {
     if (progressFillEl) {
       progressFillEl.style.width = `${progressPercent}%`;
     }
+
+    updateTimerDisplay();
   }
 
   function sortGameRows(rows, sortId) {
@@ -3885,7 +4196,15 @@ function loadHighScore() {
     
       return "Suggestions Off";
     }
-    
+
+function getTimerLabel(timerValue) {
+  const seconds = Number(timerValue || 0);
+
+  if (seconds <= 0) return "Timer Off";
+
+  return formatClockTime(seconds);
+}
+  
   function updateSuggestionsToggle() {
       if (!suggestionsToggle) return;
     
@@ -3940,21 +4259,26 @@ function loadHighScore() {
     const suggestionsValue = suggestionsToggle
       ? suggestionsToggle.dataset.suggestions || "off"
       : "off";
-  
+    
+    const timerValue = timerSelect ? timerSelect.value || "0" : "0";
+    
     const sortLabel = getSortLabel(sortId);
     const layoutLabel = getLayoutStyleLabel(layoutStyle);
     const playLabel = getPlayStyleLabel(playStyle);
     const suggestionsLabel = getSuggestionsLabel(suggestionsValue);
+
+    const timerLabel = getTimerLabel(timerValue);
   
     const isDefault =
-      sortId === "random" &&
-      layoutStyle === "single" &&
-      playStyle === "information" &&
-      suggestionsValue === "off";
-    
-    setupSummaryEl.textContent = isDefault
-      ? "Default: Random order, One at a time, Information Play, Suggestions Off"
-      : `${sortLabel}, ${layoutLabel}, ${playLabel}, ${suggestionsLabel}`;
+        sortId === "random" &&
+        layoutStyle === "single" &&
+        playStyle === "information" &&
+        suggestionsValue === "off" &&
+        timerValue === "0";
+      
+      setupSummaryEl.textContent = isDefault
+        ? "Default: Random order, One at a time, Information Play, Suggestions Off, Timer Off"
+        : `${sortLabel}, ${layoutLabel}, ${playLabel}, ${suggestionsLabel}, ${timerLabel}`;
   }
   
   function shuffleArray(array) {
@@ -4112,6 +4436,14 @@ modeButtons.forEach(button => {
     }
   });
 });
+ 
+  if (timerSelect) {
+  timerSelect.addEventListener("change", updateGameSetupSummary);
+}
+ 
+  if (endGameButton) {
+  endGameButton.addEventListener("click", endCurrentGame);
+}
   
   if (startGameButton) {
     startGameButton.addEventListener("click", function () {
