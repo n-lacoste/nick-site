@@ -2810,6 +2810,38 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
       questionType: "country-to-capital",
       filter: row => isYes(row.country) && row.capital !== "",
       answerKind: "capital"
+    },
+    
+    "us-state-capital": {
+      label: "Guess U.S. State Capital",
+      answerPlaceholder: "Type the state capital...",
+      questionType: "country-to-capital",
+      filter: row => isUSState(row) && row.capital !== "",
+      answerKind: "capital"
+    },
+
+    "canada-province-capital": {
+      label: "Guess Canadian Province/Territory Capital",
+      answerPlaceholder: "Type the provincial or territorial capital...",
+      questionType: "country-to-capital",
+      filter: row => isCanadianProvinceOrTerritory(row) && row.capital !== "",
+      answerKind: "capital"
+    },
+    
+    "north-america-subnational-capital": {
+      label: "Guess North American Province/Territory/State Capital",
+      answerPlaceholder: "Type the capital...",
+      questionType: "country-to-capital",
+      filter: row => isNorthAmericanSubnational(row) && row.capital !== "",
+      answerKind: "capital"
+    },
+    
+    "north-america-subnational-flag": {
+      label: "Guess North American Province/Territory/State Flag",
+      answerPlaceholder: "Type the state, province, or territory...",
+      questionType: "flag",
+      filter: row => isNorthAmericanSubnational(row) && row.imageUrl !== "",
+      answerKind: "name"
     }
   };
 
@@ -3288,7 +3320,9 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
       code.startsWith("ca ")
     );
   }
-
+  function isNorthAmericanSubnational(row) {
+    return isUSState(row) || isCanadianProvinceOrTerritory(row);
+  }
   function escapeHTML(value) {
     return String(value ?? "")
       .replace(/&/g, "&amp;")
