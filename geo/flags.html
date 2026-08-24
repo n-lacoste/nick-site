@@ -72,12 +72,23 @@
           <button id="flagsResetButton" type="button">Reset</button>
         </div>
 
-        <div class="flags-score-row">
-          <span id="flagsScore">Score: 0 / 0</span>
+       <div class="flags-score-row">
+          <span id="flagsScore">Score: 0 / 0 (0%)</span>
           <span id="flagsStreak">Streak: 0</span>
           <span id="flagsRemaining">Remaining: 0</span>
         </div>
-
+        
+        <div class="flags-progress-wrap">
+          <div class="flags-progress-label">
+            <span>Progress</span>
+            <span id="flagsProgressText">0%</span>
+          </div>
+        
+          <div class="flags-progress-bar" aria-label="Game progress">
+            <div id="flagsProgressFill" class="flags-progress-fill"></div>
+          </div>
+        </div>
+        
         <div id="flagsDebug" class="flags-debug"></div>
 
         <div class="flags-card">
