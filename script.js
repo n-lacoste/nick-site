@@ -345,11 +345,15 @@ function updateMoviesLastUpdatedText(rows) {
     return style;
   }
 
-  function getRatingColor(value) {
-    const num = Number(String(value ?? "").replace(/,/g, "").trim());
-
+ function getRatingColor(value) {
+    const text = String(value ?? "").replace(/,/g, "").trim();
+  
+    if (text === "" || text === "--") return "";
+  
+    const num = Number(text);
+  
     if (isNaN(num)) return "";
-
+    
     const clamped = Math.max(0, Math.min(100, num));
 
     const redColor = { r: 204, g: 0, b: 0 };
