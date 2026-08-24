@@ -1790,3 +1790,9 @@ tr:hover td:nth-child(3) {
     max-width: 100%;
   }
 }
+.flags-debug {
+  text-align: center;
+  color: #aaa;
+  font-size: 13px;
+  margin: 6px 0 12px;
+}
