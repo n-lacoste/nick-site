@@ -88,7 +88,7 @@
     <summary>
       <span class="flags-game-setup-title">Game Setup</span>
       <span id="flagsSetupSummary" class="flags-game-setup-summary">
-        Default: Random order, One at a time, Information Play, Suggestions Off
+        Default: Random order, One at a time, Information Play, Suggestions Off, Timer Off
       </span>
     </summary>
 
@@ -145,6 +145,18 @@
         </button>
       </div>
 
+      <div class="flags-setup-control">
+        <label for="flagsTimerSelect">Timer</label>
+      
+        <select id="flagsTimerSelect">
+          <option value="0" selected>Timer Off</option>
+          <option value="120">2:00</option>
+          <option value="300">5:00</option>
+          <option value="600">10:00</option>
+          <option value="900">15:00</option>
+        </select>
+      </div>
+
     </div>
 
   </details>
@@ -183,6 +195,7 @@
         <span id="flagsStreak">Streak: 0</span>
         <span id="flagsHints">Hints: 0</span>
         <span id="flagsRemaining">Remaining: 0</span>
+        <span id="flagsTimer">Timer: Off</span>
         <span id="flagsHighScore">High Score: --</span>
       </div>
         
@@ -221,11 +234,12 @@
             <button id="flagsSubmitButton" type="button">Submit</button>
           </div>
 
-          <div class="flags-action-row">
-            <button id="flagsHintButton" type="button">Hint</button>
-            <button id="flagsRevealButton" type="button">Reveal</button>
-            <button id="flagsSkipButton" type="button">Skip</button>
-          </div>
+         <div class="flags-action-row">
+          <button id="flagsHintButton" type="button">Hint</button>
+          <button id="flagsRevealButton" type="button">Reveal</button>
+          <button id="flagsSkipButton" type="button">Skip</button>
+          <button id="flagsEndGameButton" class="flags-end-game-button" type="button">End Game</button>
+        </div>
 
           <div id="flagsFeedback" class="flags-feedback"></div>
 
