@@ -2740,6 +2740,8 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
   const scoreEl = document.getElementById("flagsScore");
   const streakEl = document.getElementById("flagsStreak");
   const remainingEl = document.getElementById("flagsRemaining");
+  const progressTextEl = document.getElementById("flagsProgressText");
+  const progressFillEl = document.getElementById("flagsProgressFill");
   const debugEl = document.getElementById("flagsDebug");
 
   const flagImageWrap = document.getElementById("flagsImageWrap");
@@ -3272,14 +3274,34 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
   }
 
   function updateScore() {
-    if (!scoreEl || !streakEl || !remainingEl) return;
-
-    scoreEl.textContent = `Score: ${score} / ${attempts}`;
-    streakEl.textContent = `Streak: ${streak}`;
-
-    const remaining = Math.max(activeFlags.length - currentIndex, 0);
-    remainingEl.textContent = `Remaining: ${remaining}`;
-  }
+      if (!scoreEl || !streakEl || !remainingEl) return;
+    
+      const accuracyPercent = attempts > 0
+        ? Math.round((score / attempts) * 100)
+        : 0;
+    
+      const completed = answeredCurrent
+        ? Math.min(currentIndex + 1, activeFlags.length)
+        : Math.min(currentIndex, activeFlags.length);
+    
+      const progressPercent = activeFlags.length > 0
+        ? Math.round((completed / activeFlags.length) * 100)
+        : 0;
+    
+      const remaining = Math.max(activeFlags.length - completed, 0);
+    
+      scoreEl.textContent = `Score: ${score} / ${attempts} (${accuracyPercent}%)`;
+      streakEl.textContent = `Streak: ${streak}`;
+      remainingEl.textContent = `Remaining: ${remaining}`;
+    
+      if (progressTextEl) {
+        progressTextEl.textContent = `${progressPercent}%`;
+      }
+    
+      if (progressFillEl) {
+        progressFillEl.style.width = `${progressPercent}%`;
+      }
+    }
 
   function shuffleArray(array) {
     const copied = [...array];
