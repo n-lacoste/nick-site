@@ -2697,14 +2697,11 @@ function normalizeDriveImageUrl(url) {
     .replace(/&amp;/g, "&")
     .replace(/\\&/g, "&");
 
-  // Handles markdown links like:
-  // [https://drive.google.com/...](https://drive.google.com/...)
   const markdownMatch = text.match(/\((https:\/\/drive\.google\.com\/[^)]+)\)/);
   if (markdownMatch) {
     text = markdownMatch[1];
   }
 
-  // Handles HTML links if Google Sheets exports a rich link oddly.
   const hrefMatch = text.match(/href=["']([^"']+)["']/);
   if (hrefMatch) {
     text = hrefMatch[1];
@@ -2715,7 +2712,10 @@ function normalizeDriveImageUrl(url) {
     text.match(/[?&]id=([A-Za-z0-9_-]+)/);
 
   if (fileIdMatch) {
-    return "https://drive.google.com/thumbnail?id=" + fileIdMatch[1] + "&sz=w1000";
+    const fileId = fileIdMatch[1];
+
+    // More reliable for img src than the normal Drive file-view URL.
+    return "https://lh3.googleusercontent.com/d/" + fileId + "=w1000";
   }
 
   return text;
@@ -2777,12 +2777,17 @@ function normalizeDriveImageUrl(url) {
 
     const current = activeFlags[currentIndex];
 
-    flagImage.src = current.imageUrl;
-    flagImage.alt = current.name + " flag";
     flagImage.onerror = function () {
       console.error("Flag image failed:", current.name, current.imageUrl);
       feedbackEl.textContent = "Image failed to load for: " + current.name;
-    };
+      };
+      
+    flagImage.onload = function () {
+        feedbackEl.textContent = "";
+      };
+      
+    flagImage.src = current.imageUrl;
+    flagImage.alt = current.name + " flag";
 
     updateScore();
 
