@@ -2882,11 +2882,16 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
   let activePlayStyle = "information";
   let activeLayoutStyle = "single";
   let activeSuggestions = "off";
+  
   let activeTimerLimitSeconds = 0;
   let timerIntervalId = null;
   let gameStartTimestamp = 0;
   let gameEndTimestamp = 0;
   let gameEndedByGiveUp = false;
+  let gamePaused = false;
+  let pauseStartTimestamp = 0;
+  let totalPausedMilliseconds = 0;
+  
   let currentIndex = 0;
   let score = 0;
   let attempts = 0;
@@ -3539,10 +3544,6 @@ function loadHighScore() {
     }
   }, 500);
 }
-
-  let gamePaused = false;
-  let pauseStartTimestamp = 0;
-  let totalPausedMilliseconds = 0;
   
 function stopTimer() {
   if (timerIntervalId) {
