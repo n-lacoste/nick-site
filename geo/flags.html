@@ -15,7 +15,7 @@
 
     <section class="flags-game-shell">
 
-     <div id="flagsStartScreen" class="flags-start-screen">
+<div id="flagsStartScreen" class="flags-start-screen">
 
   <h3>Choose Game Mode</h3>
 
@@ -88,7 +88,7 @@
     <summary>
       <span class="flags-game-setup-title">Game Setup</span>
       <span id="flagsSetupSummary" class="flags-game-setup-summary">
-        Default: Random order, One at a time, Information Play
+        Default: Random order, One at a time, Information Play, Suggestions Off
       </span>
     </summary>
 
@@ -133,17 +133,18 @@
       </div>
    
       <div class="flags-setup-control">
-      <label>Answer Suggestions</label>
-    
-      <button
-        id="flagsSuggestionsToggle"
-        class="flags-start-toggle suggestions-off"
-        type="button"
-        data-suggestions="off"
-      >
-        Suggestions Off
-      </button>
-    </div>
+        <label>Answer Suggestions</label>
+
+        <button
+          id="flagsSuggestionsToggle"
+          class="flags-start-toggle suggestions-off"
+          type="button"
+          data-suggestions="off"
+        >
+          Suggestions Off
+        </button>
+      </div>
+
     </div>
 
   </details>
@@ -161,8 +162,12 @@
     Start Game
   </button>
 
-</div>
+  <div class="flags-source-credit">
+    Flag images were retrieved from Flagpedia and Free Printable Flags.
+  </div>
 
+</div>
+      
       <div id="flagsPlayScreen" class="flags-play-screen" hidden>
         <div class="flags-game-controls">
         <div id="flagsCurrentModeLabel" class="flags-current-mode-label"></div>
