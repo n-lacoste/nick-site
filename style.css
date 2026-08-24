@@ -1850,3 +1850,95 @@ thead th:nth-child(3) {
     grid-column: auto;
   }
 }
+.flags-game-shell {
+  max-width: 850px;
+  margin: 0 auto;
+}
+
+.flags-game-controls,
+.flags-score-row,
+.flags-answer-area,
+.flags-action-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 16px 0;
+}
+
+.flags-game-controls select,
+.flags-answer-area input {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #444;
+  font-size: 16px;
+}
+
+.flags-answer-area input {
+  min-width: 280px;
+}
+
+.flags-game-controls button,
+.flags-answer-area button,
+.flags-action-row button {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #444;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.flags-score-row {
+  font-weight: bold;
+}
+
+.flags-card {
+  border: 1px solid #333;
+  border-radius: 14px;
+  padding: 24px;
+  margin-top: 18px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.flags-image-wrap {
+  min-height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flags-image-wrap img {
+  max-width: 420px;
+  max-height: 260px;
+  width: auto;
+  height: auto;
+  border: 1px solid #222;
+  background: white;
+  padding: 10px;
+  object-fit: contain;
+}
+
+.flags-feedback {
+  min-height: 28px;
+  margin-top: 16px;
+  font-weight: bold;
+}
+
+.flags-feedback-correct {
+  color: #2da85f;
+}
+
+.flags-feedback-wrong {
+  color: #cc3333;
+}
+
+.flags-feedback-reveal {
+  color: #d08a00;
+}
+
+.flags-details {
+  margin-top: 16px;
+  line-height: 1.7;
+}
