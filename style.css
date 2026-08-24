@@ -2244,7 +2244,7 @@ tr:hover td:nth-child(3) {
 
 .flags-setup-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 14px;
   padding: 16px;
 }
@@ -2310,6 +2310,23 @@ tr:hover td:nth-child(3) {
   cursor: not-allowed;
 }
 
+#flagsTimer {
+  color: #5ca8ff;
+}
+
+#flagsHighScore {
+  color: #ffd966;
+}
+
+.flags-end-game-button {
+  border-color: #d08a00 !important;
+  background: #4a2f00;
+  color: #ffffff;
+}
+
+.flags-end-game-button:hover {
+  background: #6a4300;
+}
 @media (max-width: 750px) {
   .flags-setup-grid {
     grid-template-columns: 1fr;
