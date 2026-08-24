@@ -131,7 +131,19 @@
           Information Play
         </button>
       </div>
-
+   
+      <div class="flags-setup-control">
+      <label>Answer Suggestions</label>
+    
+      <button
+        id="flagsSuggestionsToggle"
+        class="flags-start-toggle suggestions-off"
+        type="button"
+        data-suggestions="off"
+      >
+        Suggestions Off
+      </button>
+    </div>
     </div>
 
   </details>
@@ -191,7 +203,15 @@
           </div>
 
           <div class="flags-answer-area">
-            <input id="flagsAnswerInput" type="text" placeholder="Type your answer..." autocomplete="off">
+            <input
+              id="flagsAnswerInput"
+              type="text"
+              placeholder="Type your answer..."
+              autocomplete="off"
+              list="flagsAnswerSuggestions"
+            >
+            
+            <datalist id="flagsAnswerSuggestions"></datalist>
             <button id="flagsSubmitButton" type="button">Submit</button>
           </div>
 
