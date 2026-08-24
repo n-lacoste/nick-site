@@ -1676,10 +1676,11 @@ tr:hover td:nth-child(3) {
 }
 
 .flags-image-wrap {
-  min-height: 260px;
+  min-height: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 18px;
 }
 
 .flags-image-wrap img {
@@ -1869,6 +1870,11 @@ tr:hover td:nth-child(3) {
   text-align: center;
 }
 
+.flags-prompt-text[hidden] {
+  display: none !important;
+  min-height: 0;
+  padding: 0;
+}
 .flags-debug {
   text-align: center;
   color: #aaa;
