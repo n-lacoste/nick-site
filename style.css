@@ -2112,6 +2112,24 @@ tr:hover td:nth-child(3) {
   border-color: #57bb8a;
 }
 
+.flags-play-mode-descriptions {
+  margin-top: 8px;
+  padding: 10px 12px;
+  border: 1px solid #333;
+  border-radius: 9px;
+  background: #151515;
+  color: #ccc;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.flags-play-mode-descriptions div + div {
+  margin-top: 8px;
+}
+
+.flags-play-mode-descriptions strong {
+  color: #f5f5f5;
+}
 .flags-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
