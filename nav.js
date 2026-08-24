@@ -34,9 +34,9 @@
           <a class="nav-menu-title" href="${base}tvshows/">TV Shows</a>
           <div class="nav-dropdown">
             <a href="${base}tvshows/">Home: TV Shows</a>
-            <a href="${base}tvshows/rankings.html">TV Show Rankings</a>
             <a href="${base}tvshows/episode-rankings.html">Episode Rankings</a>
             <a href="${base}tvshows/tvshowcard.html">TV Show Cards</a>
+            <a href="${base}tvshows/rankings.html">TV Show Rankings</a>
           </div>
         </div>
          
