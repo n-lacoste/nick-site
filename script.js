@@ -4484,7 +4484,7 @@ modeButtons.forEach(button => {
   button.addEventListener("click", function () {
     selectedModeId = button.dataset.gameMode || "";
 
-    console.log("Mode selected:", selectedModeId);
+    console.log("Selected game mode:", selectedModeId);
 
     modeButtons.forEach(otherButton => {
       otherButton.classList.remove("flags-mode-selected");
@@ -4499,27 +4499,25 @@ modeButtons.forEach(button => {
     }
 
     if (startGameButton) {
-        startGameButton.addEventListener("click", function () {
-          console.log("Start Game clicked. Selected mode:", selectedModeId);
-      
-          if (!selectedModeId) {
-            console.log("No selected mode yet.");
-            return;
-          }
-      
-          startGame(selectedModeId);
-        });
-  } else {
-        console.log("Start Game button not found.");
-  }
-          
+      startGameButton.disabled = false;
+      startGameButton.removeAttribute("disabled");
+    }
   });
 });
- 
-  if (timerSelect) {
-  timerSelect.addEventListener("change", updateGameSetupSummary);
+
+if (startGameButton) {
+  startGameButton.addEventListener("click", function () {
+    console.log("Start Game clicked. selectedModeId:", selectedModeId);
+
+    if (!selectedModeId) {
+      console.warn("No game mode selected.");
+      return;
+    }
+
+    startGame(selectedModeId);
+  });
 }
- 
+
 if (changeGameButton) {
   changeGameButton.addEventListener("click", changeGameMode);
 }
