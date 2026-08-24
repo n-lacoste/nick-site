@@ -2755,6 +2755,8 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
   const progressTextEl = document.getElementById("flagsProgressText");
   const progressFillEl = document.getElementById("flagsProgressFill");
   const debugEl = document.getElementById("flagsDebug");
+  const answerArea = answerInput ? answerInput.closest(".flags-answer-area") : null;
+  const actionRow = hintButton ? hintButton.closest(".flags-action-row") : null;
 
   const leaderboardUrl = window.FLAGS_LEADERBOARD_URL || "";
   const highScoreEl = document.getElementById("flagsHighScore");
@@ -3136,6 +3138,8 @@ gameEndedByGiveUp = false;
   }
 
   function showCurrentQuestion() {
+    setGameplayControlsVisible(true);
+    
     const config = gameModes[activeModeId];
 
     answeredCurrent = false;
@@ -3173,6 +3177,8 @@ gameEndedByGiveUp = false;
   }
 
   function showNoRowsFound() {
+    setGameplayControlsVisible(false);
+    
     if (gridEl) {
       gridEl.hidden = true;
       gridEl.innerHTML = "";
@@ -3186,8 +3192,19 @@ gameEndedByGiveUp = false;
     updateScore();
   }
 
+  function setGameplayControlsVisible(isVisible) {
+  if (answerArea) {
+    answerArea.hidden = !isVisible;
+  }
+
+  if (actionRow) {
+    actionRow.hidden = !isVisible;
+  }
+}
+  
  function showGameComplete(gaveUp = false, timedOut = false) {
       stopTimer();
+      setGameplayControlsVisible(false);
     
       if (!gameEndTimestamp) {
         gameEndTimestamp = Date.now();
