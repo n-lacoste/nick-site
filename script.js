@@ -2593,8 +2593,141 @@ async function loadTVShowCard(tvShowsPath, episodesPath) {
       </section>
     `;
   }
-// Flag game code
-  function loadFlagsGame(filePath) {
+  
+  // TV Show Card
+  function renderTVShowCard(showRow, episodeRows) {
+    const showTitle = getShowTitle(showRow);
+    const rating = getText(showRow, "My Rating");
+    const rank = getText(showRow, "Rk");
+    const tier = getText(showRow, "Tier");
+    const tierStyle = getTierStyle(tier);
+
+    output.innerHTML = `
+      <div class="tv-show-card">
+        <div class="tv-card-title-row">
+          <div>
+            <h3>${escapeHTML(showTitle)}</h3>
+            <p>
+              ${escapeHTML(formatValue(getText(showRow, "Year Start")))}
+              ${getText(showRow, "Year DONE") ? `–${escapeHTML(getText(showRow, "Year DONE"))}` : ""}
+            </p>
+          </div>
+
+          <div class="tv-card-title-stats">
+            <div class="tv-card-score-box">
+              <span>Rating</span>
+              <strong>${escapeHTML(formatValue(rating))}</strong>
+            </div>
+
+            <div class="tv-card-score-box">
+              <span>Rank</span>
+              <strong>${escapeHTML(formatValue(rank))}</strong>
+            </div>
+
+            <div class="tv-card-score-box">
+              <span>Tier</span>
+              <strong style="background:${tierStyle.bg}; color:${tierStyle.text};">
+                ${escapeHTML(formatValue(tier))}
+              </strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="tv-card-main-grid">
+          ${renderShowInfo(showRow, episodeRows)}
+          ${renderRankCountChart(episodeRows)}
+          ${renderCategoricalRanks(showRow)}
+          ${renderNotes(showRow)}
+          ${renderEpisodeGrid(episodeRows)}
+        </div>
+      </div>
+    `;
+
+    if (status) {
+      status.textContent = `Showing TV card for ${showTitle}.`;
+    }
+  }
+
+  let tvShowRows = [];
+  let episodeRows = [];
+
+  try {
+    const [showsText, episodesText] = await Promise.all([
+      fetchCSVTextForTVCard(tvShowsPath),
+      fetchCSVTextForTVCard(episodesPath)
+    ]);
+
+    tvShowRows = parseCSVRows(showsText);
+    episodeRows = parseCSVRows(episodesText);
+  } catch (error) {
+    console.error("TV show card failed to load:", error);
+
+    output.innerHTML = `
+      <p class="movie-compare-placeholder">
+        Could not load TV show card data. Check the published CSV links.
+      </p>
+    `;
+
+    if (status) {
+      status.textContent = "TV show card data failed to load.";
+    }
+
+    return;
+  }
+
+  const showOptions = tvShowRows
+    .map(row => getShowTitle(row))
+    .filter(title => title !== "")
+    .sort((a, b) => a.localeCompare(b));
+
+  datalist.innerHTML = showOptions
+    .map(title => `<option value="${escapeHTML(title)}"></option>`)
+    .join("");
+
+  function findShowByInput(value) {
+    const searchValue = normalize(value);
+
+    if (searchValue === "") return null;
+
+    return tvShowRows.find(row => normalize(getShowTitle(row)) === searchValue) || null;
+  }
+
+  function getEpisodesForShow(showTitle) {
+    return episodeRows.filter(row => {
+      return normalize(row["TV Show"]) === normalize(showTitle);
+    });
+  }
+
+  function updateCardFromInput() {
+    const showRow = findShowByInput(selectInput.value);
+
+    if (!showRow) {
+      output.innerHTML = `<p class="movie-compare-placeholder">Select a TV show to build the card.</p>`;
+
+      if (status) {
+        status.textContent = "Select a TV show to build the card.";
+      }
+
+      return;
+    }
+
+    const showTitle = getShowTitle(showRow);
+    const showEpisodes = getEpisodesForShow(showTitle);
+
+    renderTVShowCard(showRow, showEpisodes);
+  }
+
+  selectInput.addEventListener("change", updateCardFromInput);
+
+  selectInput.addEventListener("input", () => {
+    const showRow = findShowByInput(selectInput.value);
+
+    if (showRow) {
+      updateCardFromInput();
+    }
+  });
+}
+window.loadFlagsGame = function loadFlagsGame(filePath) {
   const modeSelect = document.getElementById("flagsMode");
   const shuffleButton = document.getElementById("flagsShuffleButton");
   const resetButton = document.getElementById("flagsResetButton");
@@ -2982,137 +3115,4 @@ async function loadTVShowCard(tvShowsPath, episodesPath) {
   shuffleButton.addEventListener("click", startGame);
   resetButton.addEventListener("click", startGame);
   modeSelect.addEventListener("change", startGame);
-}
-  // TV Show Card
-  function renderTVShowCard(showRow, episodeRows) {
-    const showTitle = getShowTitle(showRow);
-    const rating = getText(showRow, "My Rating");
-    const rank = getText(showRow, "Rk");
-    const tier = getText(showRow, "Tier");
-    const tierStyle = getTierStyle(tier);
-
-    output.innerHTML = `
-      <div class="tv-show-card">
-        <div class="tv-card-title-row">
-          <div>
-            <h3>${escapeHTML(showTitle)}</h3>
-            <p>
-              ${escapeHTML(formatValue(getText(showRow, "Year Start")))}
-              ${getText(showRow, "Year DONE") ? `–${escapeHTML(getText(showRow, "Year DONE"))}` : ""}
-            </p>
-          </div>
-
-          <div class="tv-card-title-stats">
-            <div class="tv-card-score-box">
-              <span>Rating</span>
-              <strong>${escapeHTML(formatValue(rating))}</strong>
-            </div>
-
-            <div class="tv-card-score-box">
-              <span>Rank</span>
-              <strong>${escapeHTML(formatValue(rank))}</strong>
-            </div>
-
-            <div class="tv-card-score-box">
-              <span>Tier</span>
-              <strong style="background:${tierStyle.bg}; color:${tierStyle.text};">
-                ${escapeHTML(formatValue(tier))}
-              </strong>
-            </div>
-          </div>
-        </div>
-
-        <div class="tv-card-main-grid">
-          ${renderShowInfo(showRow, episodeRows)}
-          ${renderRankCountChart(episodeRows)}
-          ${renderCategoricalRanks(showRow)}
-          ${renderNotes(showRow)}
-          ${renderEpisodeGrid(episodeRows)}
-        </div>
-      </div>
-    `;
-
-    if (status) {
-      status.textContent = `Showing TV card for ${showTitle}.`;
-    }
-  }
-
-  let tvShowRows = [];
-  let episodeRows = [];
-
-  try {
-    const [showsText, episodesText] = await Promise.all([
-      fetchCSVTextForTVCard(tvShowsPath),
-      fetchCSVTextForTVCard(episodesPath)
-    ]);
-
-    tvShowRows = parseCSVRows(showsText);
-    episodeRows = parseCSVRows(episodesText);
-  } catch (error) {
-    console.error("TV show card failed to load:", error);
-
-    output.innerHTML = `
-      <p class="movie-compare-placeholder">
-        Could not load TV show card data. Check the published CSV links.
-      </p>
-    `;
-
-    if (status) {
-      status.textContent = "TV show card data failed to load.";
-    }
-
-    return;
-  }
-
-  const showOptions = tvShowRows
-    .map(row => getShowTitle(row))
-    .filter(title => title !== "")
-    .sort((a, b) => a.localeCompare(b));
-
-  datalist.innerHTML = showOptions
-    .map(title => `<option value="${escapeHTML(title)}"></option>`)
-    .join("");
-
-  function findShowByInput(value) {
-    const searchValue = normalize(value);
-
-    if (searchValue === "") return null;
-
-    return tvShowRows.find(row => normalize(getShowTitle(row)) === searchValue) || null;
-  }
-
-  function getEpisodesForShow(showTitle) {
-    return episodeRows.filter(row => {
-      return normalize(row["TV Show"]) === normalize(showTitle);
-    });
-  }
-
-  function updateCardFromInput() {
-    const showRow = findShowByInput(selectInput.value);
-
-    if (!showRow) {
-      output.innerHTML = `<p class="movie-compare-placeholder">Select a TV show to build the card.</p>`;
-
-      if (status) {
-        status.textContent = "Select a TV show to build the card.";
-      }
-
-      return;
-    }
-
-    const showTitle = getShowTitle(showRow);
-    const showEpisodes = getEpisodesForShow(showTitle);
-
-    renderTVShowCard(showRow, showEpisodes);
-  }
-
-  selectInput.addEventListener("change", updateCardFromInput);
-
-  selectInput.addEventListener("input", () => {
-    const showRow = findShowByInput(selectInput.value);
-
-    if (showRow) {
-      updateCardFromInput();
-    }
-  });
-}
+};
