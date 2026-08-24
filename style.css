@@ -2136,7 +2136,7 @@ tr:hover td:nth-child(3) {
 
 .flags-setup-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
   padding: 16px;
 }
@@ -2206,4 +2206,13 @@ tr:hover td:nth-child(3) {
   .flags-setup-grid {
     grid-template-columns: 1fr;
   }
+}
+.flags-start-toggle.suggestions-off {
+  background: #333;
+  border-color: #666;
+}
+
+.flags-start-toggle.suggestions-on {
+  background: #11734b;
+  border-color: #57bb8a;
 }
