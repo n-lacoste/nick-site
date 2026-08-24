@@ -11,49 +11,85 @@
 
   <main>
     <h2>Flags Game</h2>
-    <p>Practice flags for countries, Canadian Provinces/Territories, U.S. States, capital cities, FIFA associations, and more.</p>
+    <p>Practice flags, countries, capitals, states, provinces, territories, and FIFA associations.</p>
 
     <section class="flags-game-shell">
-      <div class="flags-game-controls">
-        <label for="flagsMode">Mode</label>
-        <select id="flagsMode">
-          <option value="countries">Countries</option>
-          <option value="fifa">FIFA Associations</option>
-          <option value="all">All Flags</option>
-        </select>
 
-        <button id="flagsShuffleButton" type="button">Shuffle</button>
-        <button id="flagsResetButton" type="button">Reset</button>
+      <div id="flagsStartScreen" class="flags-start-screen">
+        <h3>What game would you like to play?</h3>
+
+        <div class="flags-game-mode-grid">
+          <button class="flags-mode-button" type="button" data-game-mode="flag-country">
+            Guess Country from Flag
+          </button>
+
+          <button class="flags-mode-button" type="button" data-game-mode="flag-us-state">
+            Guess U.S. State from Flag
+          </button>
+
+          <button class="flags-mode-button" type="button" data-game-mode="flag-canada-province">
+            Guess Canadian Province/Territory from Flag
+          </button>
+
+          <button class="flags-mode-button" type="button" data-game-mode="flag-fifa">
+            Guess FIFA nation from Flag
+          </button>
+
+          <button class="flags-mode-button" type="button" data-game-mode="flag-all">
+            Guess ALL from Flag
+          </button>
+
+          <button class="flags-mode-button" type="button" data-game-mode="capital-to-country">
+            Guess Country from Capital City
+          </button>
+
+          <button class="flags-mode-button" type="button" data-game-mode="country-to-capital">
+            Guess Capital City from Country
+          </button>
+        </div>
       </div>
 
-      <div class="flags-score-row">
-        <span id="flagsScore">Score: 0 / 0</span>
-        <span id="flagsStreak">Streak: 0</span>
-        <span id="flagsRemaining">Remaining: 0</span>
-      </div>
-      
-      <div id="flagsDebug" class="flags-debug"></div>
+      <div id="flagsPlayScreen" class="flags-play-screen" hidden>
+        <div class="flags-game-controls">
+          <span id="flagsCurrentModeLabel" class="flags-current-mode-label"></span>
 
-      <div class="flags-card">
-        <div id="flagsImageWrap" class="flags-image-wrap">
-        <img id="flagsImage" src="" alt="Flag" referrerpolicy="no-referrer">        
-      </div>
-
-        <div class="flags-answer-area">
-          <input id="flagsAnswerInput" type="text" placeholder="Type the flag name..." autocomplete="off">
-          <button id="flagsSubmitButton" type="button">Submit</button>
+          <button id="flagsChangeGameButton" type="button">Change Game Mode</button>
+          <button id="flagsShuffleButton" type="button">Shuffle</button>
+          <button id="flagsResetButton" type="button">Reset</button>
         </div>
 
-        <div class="flags-action-row">
-          <button id="flagsHintButton" type="button">Hint</button>
-          <button id="flagsRevealButton" type="button">Reveal</button>
-          <button id="flagsSkipButton" type="button">Skip</button>
+        <div class="flags-score-row">
+          <span id="flagsScore">Score: 0 / 0</span>
+          <span id="flagsStreak">Streak: 0</span>
+          <span id="flagsRemaining">Remaining: 0</span>
         </div>
 
-        <div id="flagsFeedback" class="flags-feedback"></div>
+        <div id="flagsDebug" class="flags-debug"></div>
 
-        <div id="flagsDetails" class="flags-details"></div>
+        <div class="flags-card">
+          <div id="flagsPromptText" class="flags-prompt-text" hidden></div>
+
+          <div id="flagsImageWrap" class="flags-image-wrap">
+            <img id="flagsImage" src="" alt="Flag" referrerpolicy="no-referrer">
+          </div>
+
+          <div class="flags-answer-area">
+            <input id="flagsAnswerInput" type="text" placeholder="Type your answer..." autocomplete="off">
+            <button id="flagsSubmitButton" type="button">Submit</button>
+          </div>
+
+          <div class="flags-action-row">
+            <button id="flagsHintButton" type="button">Hint</button>
+            <button id="flagsRevealButton" type="button">Reveal</button>
+            <button id="flagsSkipButton" type="button">Skip</button>
+          </div>
+
+          <div id="flagsFeedback" class="flags-feedback"></div>
+
+          <div id="flagsDetails" class="flags-details"></div>
+        </div>
       </div>
+
     </section>
   </main>
 
