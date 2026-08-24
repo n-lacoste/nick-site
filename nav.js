@@ -51,7 +51,7 @@
           <a class="nav-menu-title" href="${base}geo/">Geo</a>
           <div class="nav-dropdown">
             <a href="${base}geo/">Home: Geo</a>
-            <a href="${base}geo/flags.html">Flags Game</a>
+            <a href="${base}geo/flags.html">Interactive Games</a>
           </div>
         </div>
 
