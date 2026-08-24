@@ -2177,3 +2177,485 @@ function renderCategoryBattleWinner() {
 
   renderComparison();
 }
+async function loadTVShowCard(tvShowsPath, episodesPath) {
+  const selectInput = document.getElementById("tv-show-card-select");
+  const datalist = document.getElementById("tv-show-card-options");
+  const output = document.getElementById("tv-show-card-output");
+  const status = document.getElementById("tv-show-card-status");
+
+  if (!selectInput || !datalist || !output) return;
+
+  async function fetchCSVTextForTVCard(filePath) {
+    if (!filePath) {
+      throw new Error("Missing CSV path.");
+    }
+
+    if (typeof fetchCSVTextWithRetry === "function") {
+      return await fetchCSVTextWithRetry(filePath, 3);
+    }
+
+    const response = await fetch(filePath, { cache: "no-store" });
+
+    if (!response.ok) {
+      throw new Error(`CSV fetch failed with status ${response.status}`);
+    }
+
+    return await response.text();
+  }
+
+  function parseCSVRows(text) {
+    const parsed = Papa.parse(text.trim(), {
+      header: true,
+      skipEmptyLines: true
+    });
+
+    return parsed.data.filter(row => {
+      return Object.values(row).some(value => String(value ?? "").trim() !== "");
+    });
+  }
+
+  function escapeHTML(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function getText(row, column) {
+    return String(row?.[column] ?? "").trim();
+  }
+
+  function formatValue(value) {
+    const text = String(value ?? "").trim();
+    return text === "" ? "—" : text;
+  }
+
+  function getNumber(value) {
+    const text = String(value ?? "").replace(/,/g, "").trim();
+
+    if (text === "" || text === "--") return null;
+
+    const num = Number(text);
+
+    return isNaN(num) ? null : num;
+  }
+
+  function getShowTitle(row) {
+    return getText(row, "Tv Show");
+  }
+
+  function normalize(value) {
+    return String(value ?? "").trim().toLowerCase();
+  }
+
+  function getRankColor(value) {
+    const rank = getNumber(value);
+
+    if (rank === null) {
+      return {
+        bg: "#1f1f1f",
+        text: "#aaa"
+      };
+    }
+
+    if (rank >= 9.5) return { bg: "#57bb8a", text: "#000000" };
+    if (rank >= 9) return { bg: "#78c68e", text: "#000000" };
+    if (rank >= 8) return { bg: "#a5d675", text: "#000000" };
+    if (rank >= 7) return { bg: "#d4edbc", text: "#000000" };
+    if (rank >= 6) return { bg: "#ffe5a0", text: "#000000" };
+    if (rank >= 5) return { bg: "#f0c885", text: "#000000" };
+    if (rank >= 4) return { bg: "#ffc8aa", text: "#000000" };
+    if (rank >= 3) return { bg: "#e38451", text: "#000000" };
+
+    return { bg: "#e36351", text: "#000000" };
+  }
+
+  function getTierStyle(value) {
+    const tier = String(value ?? "").trim();
+
+    const tierColors = {
+      "S": { bg: "#efd1ff", text: "#5a3286" },
+      "(S)": { bg: "#efd1ff", text: "#5a3286" },
+      "A1": { bg: "#888ef5", text: "#473821" },
+      "A2": { bg: "#5bc0dd", text: "#215a6c" },
+      "A3": { bg: "#bfe1f6", text: "#0a53a8" },
+      "B1": { bg: "#d4edbc", text: "#11734b" },
+      "B2": { bg: "#ffe5a0", text: "#473821" },
+      "B3": { bg: "#f0c885", text: "#000000" },
+      "C1": { bg: "#ffc8aa", text: "#753800" },
+      "C2": { bg: "#e38451", text: "#000000" },
+      "C3": { bg: "#e36351", text: "#000000" },
+      "D": { bg: "#ff0000", text: "#000000" },
+      "NR": { bg: "#ffcfc9", text: "#b10202" }
+    };
+
+    return tierColors[tier] || { bg: "#1f1f1f", text: "#f5f5f5" };
+  }
+
+  function makeStatBox(label, value, extraClass = "") {
+    return `
+      <div class="tv-card-stat ${extraClass}">
+        <span>${escapeHTML(label)}</span>
+        <strong>${escapeHTML(formatValue(value))}</strong>
+      </div>
+    `;
+  }
+
+  function getAverageEpisodeRank(episodeRows) {
+    const ranks = episodeRows
+      .map(row => getNumber(row["Rank"]))
+      .filter(value => value !== null);
+
+    if (ranks.length === 0) return "—";
+
+    const total = ranks.reduce((sum, value) => sum + value, 0);
+    return (total / ranks.length).toFixed(2);
+  }
+
+  function countRankedEpisodes(episodeRows) {
+    return episodeRows.filter(row => getNumber(row["Rank"]) !== null).length;
+  }
+
+  function renderCategoricalRanks(showRow) {
+    const factors = [
+      "Plot",
+      "Main Character(s)",
+      "Side Characters",
+      "Emotion",
+      "Dialogue (Writing)",
+      "Purpose Met",
+      "Cast",
+      "Music & Sound",
+      "Rewatch Value"
+    ];
+
+    return `
+      <section class="tv-card-panel">
+        <h3>Categorical Ranks</h3>
+
+        <div class="tv-card-factor-grid">
+          ${factors.map(factor => {
+            const value = getText(showRow, factor);
+            const colors = getRankColor(value);
+
+            return `
+              <div class="tv-card-factor-row">
+                <span>${escapeHTML(factor)}</span>
+                <strong style="background:${colors.bg}; color:${colors.text};">
+                  ${escapeHTML(formatValue(value))}
+                </strong>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      </section>
+    `;
+  }
+
+  function renderRankCountChart(episodeRows) {
+    const counts = {};
+
+    for (let rank = 1; rank <= 10; rank++) {
+      counts[rank] = 0;
+    }
+
+    episodeRows.forEach(row => {
+      const rank = getNumber(row["Rank"]);
+
+      if (rank !== null) {
+        const roundedRank = Math.round(rank);
+
+        if (roundedRank >= 1 && roundedRank <= 10) {
+          counts[roundedRank]++;
+        }
+      }
+    });
+
+    const maxCount = Math.max(...Object.values(counts), 1);
+
+    return `
+      <section class="tv-card-panel">
+        <h3>Episode Counts per Rank</h3>
+
+        <div class="tv-card-rank-chart">
+          ${Object.keys(counts).reverse().map(rank => {
+            const count = counts[rank];
+            const width = Math.max(4, (count / maxCount) * 100);
+            const colors = getRankColor(rank);
+
+            return `
+              <div class="tv-card-rank-chart-row">
+                <span class="tv-card-rank-label">${rank}</span>
+
+                <div class="tv-card-rank-bar-track">
+                  <div 
+                    class="tv-card-rank-bar"
+                    style="width:${width}%; background:${colors.bg};"
+                  ></div>
+                </div>
+
+                <span class="tv-card-rank-count">${count}</span>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      </section>
+    `;
+  }
+
+  function renderShowInfo(showRow, episodeRows) {
+    const tier = getText(showRow, "Tier");
+    const tierStyle = getTierStyle(tier);
+
+    const rankedEpisodes = countRankedEpisodes(episodeRows);
+    const averageEpisodeRank = getAverageEpisodeRank(episodeRows);
+
+    return `
+      <section class="tv-card-panel">
+        <h3>Show Info</h3>
+
+        <div class="tv-card-info-grid">
+          ${makeStatBox("Times Seen", getText(showRow, "Times Seen"))}
+          ${makeStatBox("Seasons", getText(showRow, "Seasons"))}
+          ${makeStatBox("Episodes", getText(showRow, "Episodes"))}
+          ${makeStatBox("Ranked Episodes", rankedEpisodes)}
+          ${makeStatBox("Years", getText(showRow, "Years"))}
+          ${makeStatBox("Watched", getText(showRow, "Watched / Unwatched"))}
+          ${makeStatBox("Re-watch", getText(showRow, "Going to re-watch"))}
+          ${makeStatBox("Animated", getText(showRow, "Animated"))}
+          ${makeStatBox("Kids Show", getText(showRow, "Kids Show"))}
+
+          <div class="tv-card-stat tv-card-tier-box">
+            <span>Tier</span>
+            <strong style="background:${tierStyle.bg}; color:${tierStyle.text};">
+              ${escapeHTML(formatValue(tier))}
+            </strong>
+          </div>
+
+          ${makeStatBox("Average Episode Rank", averageEpisodeRank, "tv-card-wide-stat")}
+        </div>
+      </section>
+    `;
+  }
+
+  function renderEpisodeGrid(episodeRows) {
+    const seasons = {};
+
+    episodeRows.forEach(row => {
+      const season = getText(row, "Season") || "Unknown";
+
+      if (!seasons[season]) {
+        seasons[season] = [];
+      }
+
+      seasons[season].push(row);
+    });
+
+    const sortedSeasons = Object.keys(seasons).sort((a, b) => {
+      const numA = Number(a);
+      const numB = Number(b);
+
+      if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+
+      return a.localeCompare(b);
+    });
+
+    if (sortedSeasons.length === 0) {
+      return `
+        <section class="tv-card-panel tv-card-full-width">
+          <h3>Episode Grid</h3>
+          <p class="movie-compare-placeholder">No episode rows found for this show.</p>
+        </section>
+      `;
+    }
+
+    return `
+      <section class="tv-card-panel tv-card-full-width">
+        <h3>Episode Grid</h3>
+
+        <div class="tv-card-episode-grid">
+          ${sortedSeasons.map(season => {
+            const rows = seasons[season].sort((a, b) => {
+              const aNum = getNumber(a["Season Epi #"]) ?? getNumber(a["Episode Number"]) ?? 0;
+              const bNum = getNumber(b["Season Epi #"]) ?? getNumber(b["Episode Number"]) ?? 0;
+
+              return aNum - bNum;
+            });
+
+            return `
+              <div class="tv-card-season-block">
+                <h4>S${escapeHTML(season)}</h4>
+
+                <div class="tv-card-season-episodes">
+                  ${rows.map(row => {
+                    const rank = getText(row, "Rank");
+                    const colors = getRankColor(rank);
+                    const episodeTitle = getText(row, "Episode Title");
+                    const episodeNumber = getText(row, "Season Epi #") || getText(row, "Episode Number");
+
+                    return `
+                      <div 
+                        class="tv-card-episode-cell"
+                        style="background:${colors.bg}; color:${colors.text};"
+                        title="S${escapeHTML(season)}E${escapeHTML(episodeNumber)}: ${escapeHTML(episodeTitle)}"
+                      >
+                        <span>${escapeHTML(formatValue(rank))}</span>
+                      </div>
+                    `;
+                  }).join("")}
+                </div>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      </section>
+    `;
+  }
+
+  function renderNotes(showRow) {
+    const notes = getText(showRow, "Notes (Review)");
+
+    if (notes === "") return "";
+
+    return `
+      <section class="tv-card-panel tv-card-full-width">
+        <h3>Notes</h3>
+        <p class="tv-card-notes">${escapeHTML(notes)}</p>
+      </section>
+    `;
+  }
+
+  function renderTVShowCard(showRow, episodeRows) {
+    const showTitle = getShowTitle(showRow);
+    const rating = getText(showRow, "My Rating");
+    const rank = getText(showRow, "Rk");
+    const tier = getText(showRow, "Tier");
+    const tierStyle = getTierStyle(tier);
+
+    output.innerHTML = `
+      <div class="tv-show-card">
+        <div class="tv-card-title-row">
+          <div>
+            <h3>${escapeHTML(showTitle)}</h3>
+            <p>
+              ${escapeHTML(formatValue(getText(showRow, "Year Start")))}
+              ${getText(showRow, "Year DONE") ? `–${escapeHTML(getText(showRow, "Year DONE"))}` : ""}
+            </p>
+          </div>
+
+          <div class="tv-card-title-stats">
+            <div class="tv-card-score-box">
+              <span>Rating</span>
+              <strong>${escapeHTML(formatValue(rating))}</strong>
+            </div>
+
+            <div class="tv-card-score-box">
+              <span>Rank</span>
+              <strong>${escapeHTML(formatValue(rank))}</strong>
+            </div>
+
+            <div class="tv-card-score-box">
+              <span>Tier</span>
+              <strong style="background:${tierStyle.bg}; color:${tierStyle.text};">
+                ${escapeHTML(formatValue(tier))}
+              </strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="tv-card-main-grid">
+          ${renderShowInfo(showRow, episodeRows)}
+          ${renderRankCountChart(episodeRows)}
+          ${renderCategoricalRanks(showRow)}
+          ${renderNotes(showRow)}
+          ${renderEpisodeGrid(episodeRows)}
+        </div>
+      </div>
+    `;
+
+    if (status) {
+      status.textContent = `Showing TV card for ${showTitle}.`;
+    }
+  }
+
+  let tvShowRows = [];
+  let episodeRows = [];
+
+  try {
+    const [showsText, episodesText] = await Promise.all([
+      fetchCSVTextForTVCard(tvShowsPath),
+      fetchCSVTextForTVCard(episodesPath)
+    ]);
+
+    tvShowRows = parseCSVRows(showsText);
+    episodeRows = parseCSVRows(episodesText);
+  } catch (error) {
+    console.error("TV show card failed to load:", error);
+
+    output.innerHTML = `
+      <p class="movie-compare-placeholder">
+        Could not load TV show card data. Check the published CSV links.
+      </p>
+    `;
+
+    if (status) {
+      status.textContent = "TV show card data failed to load.";
+    }
+
+    return;
+  }
+
+  const showOptions = tvShowRows
+    .map(row => getShowTitle(row))
+    .filter(title => title !== "")
+    .sort((a, b) => a.localeCompare(b));
+
+  datalist.innerHTML = showOptions
+    .map(title => `<option value="${escapeHTML(title)}"></option>`)
+    .join("");
+
+  function findShowByInput(value) {
+    const searchValue = normalize(value);
+
+    if (searchValue === "") return null;
+
+    return tvShowRows.find(row => normalize(getShowTitle(row)) === searchValue) || null;
+  }
+
+  function getEpisodesForShow(showTitle) {
+    return episodeRows.filter(row => {
+      return normalize(row["TV Show"]) === normalize(showTitle);
+    });
+  }
+
+  function updateCardFromInput() {
+    const showRow = findShowByInput(selectInput.value);
+
+    if (!showRow) {
+      output.innerHTML = `<p class="movie-compare-placeholder">Select a TV show to build the card.</p>`;
+
+      if (status) {
+        status.textContent = "Select a TV show to build the card.";
+      }
+
+      return;
+    }
+
+    const showTitle = getShowTitle(showRow);
+    const showEpisodes = getEpisodesForShow(showTitle);
+
+    renderTVShowCard(showRow, showEpisodes);
+  }
+
+  selectInput.addEventListener("change", updateCardFromInput);
+
+  selectInput.addEventListener("input", () => {
+    const showRow = findShowByInput(selectInput.value);
+
+    if (showRow) {
+      updateCardFromInput();
+    }
+  });
+}
