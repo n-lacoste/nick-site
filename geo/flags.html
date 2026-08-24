@@ -1,1 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Flags Game | Nick Site</title>
+  <link rel="stylesheet" href="/nick-site/style.css">
+</head>
 
+<body>
+  <div id="site-header"></div>
+  <script src="/nick-site/nav-loader.js"></script>
+
+  <main>
+    <h2>Flags Game</h2>
+    <p>Practice flags for countries, FIFA associations, and more.</p>
+
+    <section class="flags-game-shell">
+      <div class="flags-game-controls">
+        <label for="flagsMode">Mode</label>
+        <select id="flagsMode">
+          <option value="countries">Countries</option>
+          <option value="fifa">FIFA Associations</option>
+          <option value="all">All Flags</option>
+        </select>
+
+        <button id="flagsShuffleButton" type="button">Shuffle</button>
+        <button id="flagsResetButton" type="button">Reset</button>
+      </div>
+
+      <div class="flags-score-row">
+        <span id="flagsScore">Score: 0 / 0</span>
+        <span id="flagsStreak">Streak: 0</span>
+        <span id="flagsRemaining">Remaining: 0</span>
+      </div>
+
+      <div class="flags-card">
+        <div id="flagsImageWrap" class="flags-image-wrap">
+          <img id="flagsImage" src="" alt="Flag">
+        </div>
+
+        <div class="flags-answer-area">
+          <input id="flagsAnswerInput" type="text" placeholder="Type the flag name..." autocomplete="off">
+          <button id="flagsSubmitButton" type="button">Submit</button>
+        </div>
+
+        <div class="flags-action-row">
+          <button id="flagsHintButton" type="button">Hint</button>
+          <button id="flagsRevealButton" type="button">Reveal</button>
+          <button id="flagsSkipButton" type="button">Skip</button>
+        </div>
+
+        <div id="flagsFeedback" class="flags-feedback"></div>
+
+        <div id="flagsDetails" class="flags-details"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+  <script>
+    window.NICK_SITE_INIT = function () {
+      loadFlagsGame(window.FLAGS_CSV_URL);
+    };
+  </script>
+
+  <script src="/nick-site/script-loader.js"></script>
+</body>
+</html>
