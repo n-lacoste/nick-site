@@ -2729,6 +2729,10 @@ async function loadTVShowCard(tvShowsPath, episodesPath) {
 }
 
 window.loadFlagsGame = function loadFlagsGame(filePath) {
+  const startGameButton = document.getElementById("flagsStartGameButton");
+  const setupSummaryEl = document.getElementById("flagsSetupSummary");
+  const selectedGameSummaryEl = document.getElementById("flagsSelectedGameSummary");
+  
   const startScreen = document.getElementById("flagsStartScreen");
   const playScreen = document.getElementById("flagsPlayScreen");
   const modeButtons = document.querySelectorAll(".flags-mode-button");
@@ -2866,6 +2870,7 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
   let streak = 0;
   let hintsUsed = 0;
   let answeredCurrent = false;
+  let selectedModeId = "";
 
   updatePlayStyleToggle();
   updateLayoutToggle();
@@ -3682,7 +3687,34 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
 
     return "One at a Time";
   }
-
+  
+  function updateGameSetupSummary() {
+    if (!setupSummaryEl) return;
+  
+    const sortId = sortSelect ? sortSelect.value : "random";
+  
+    const layoutStyle = layoutToggle
+      ? layoutToggle.dataset.layoutStyle || "single"
+      : "single";
+  
+    const playStyle = playStyleToggle
+      ? playStyleToggle.dataset.playStyle || "information"
+      : "information";
+  
+    const sortLabel = getSortLabel(sortId);
+    const layoutLabel = getLayoutStyleLabel(layoutStyle);
+    const playLabel = getPlayStyleLabel(playStyle);
+  
+    const isDefault =
+      sortId === "random" &&
+      layoutStyle === "single" &&
+      playStyle === "information";
+  
+    setupSummaryEl.textContent = isDefault
+      ? "Default: Random order, One at a time, Information Play"
+      : `${sortLabel}, ${layoutLabel}, ${playLabel}`;
+  }
+  
   function shuffleArray(array) {
     const copied = [...array];
 
@@ -3770,37 +3802,66 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
   }
 
   if (playStyleToggle) {
-    playStyleToggle.addEventListener("click", function () {
-      const currentStyle = playStyleToggle.dataset.playStyle || "information";
+  playStyleToggle.addEventListener("click", function () {
+    const currentStyle = playStyleToggle.dataset.playStyle || "information";
 
-      playStyleToggle.dataset.playStyle = currentStyle === "information"
-        ? "speed"
-        : "information";
+    playStyleToggle.dataset.playStyle = currentStyle === "information"
+      ? "speed"
+      : "information";
 
-      updatePlayStyleToggle();
-    });
-  }
-
-  if (layoutToggle) {
-    layoutToggle.addEventListener("click", function () {
-      const currentLayout = layoutToggle.dataset.layoutStyle || "single";
-
-      layoutToggle.dataset.layoutStyle = currentLayout === "single"
-        ? "grid"
-        : "single";
-
-      updateLayoutToggle();
-    });
-  }
-
-  modeButtons.forEach(button => {
-    button.addEventListener("click", function () {
-      const selectedMode = button.dataset.gameMode;
-
-      startGame(selectedMode);
-    });
+    updatePlayStyleToggle();
+    updateGameSetupSummary();
   });
+}
 
+if (layoutToggle) {
+  layoutToggle.addEventListener("click", function () {
+    const currentLayout = layoutToggle.dataset.layoutStyle || "single";
+
+    layoutToggle.dataset.layoutStyle = currentLayout === "single"
+      ? "grid"
+      : "single";
+
+    updateLayoutToggle();
+    updateGameSetupSummary();
+  });
+}
+
+if (sortSelect) {
+  sortSelect.addEventListener("change", updateGameSetupSummary);
+}
+
+updateGameSetupSummary();
+
+modeButtons.forEach(button => {
+  button.addEventListener("click", function () {
+    selectedModeId = button.dataset.gameMode;
+
+    modeButtons.forEach(otherButton => {
+      otherButton.classList.remove("flags-mode-selected");
+    });
+
+    button.classList.add("flags-mode-selected");
+
+    const config = gameModes[selectedModeId];
+
+    if (selectedGameSummaryEl && config) {
+      selectedGameSummaryEl.textContent = `Selected: ${config.label}`;
+    }
+
+    if (startGameButton) {
+      startGameButton.disabled = false;
+    }
+  });
+});
+  
+  if (startGameButton) {
+    startGameButton.addEventListener("click", function () {
+      if (!selectedModeId) return;
+  
+      startGame(selectedModeId);
+    });
+  }  
   changeGameButton.addEventListener("click", changeGameMode);
   resetButton.addEventListener("click", resetCurrentGame);
 
