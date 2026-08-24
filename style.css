@@ -2356,11 +2356,11 @@ tr:hover td:nth-child(3) {
 
 .flags-large-grid-feedback .flags-answer-area {
   position: fixed;
-  left: calc(50% - 170px);
+  left: 50%;
   bottom: 16px;
   transform: translateX(-50%);
   z-index: 5000;
-  width: min(720px, calc(100vw - 390px));
+  width: min(760px, calc(100vw - 32px));
   margin: 0;
   padding: 14px;
   background: #111;
@@ -2376,14 +2376,16 @@ tr:hover td:nth-child(3) {
 
 .flags-large-grid-feedback .flags-side-feedback-panel {
   position: fixed;
-  left: calc(50% + 210px);
+  right: 18px;
   bottom: 16px;
   z-index: 4999;
-  width: 300px;
-  max-height: 110px;
+  width: fit-content;
+  min-width: 220px;
+  max-width: 360px;
+  max-height: 260px;
   overflow-y: auto;
   margin: 0;
-  padding: 14px 16px;
+  padding: 12px 14px;
   border: 1px solid #444;
   border-radius: 12px;
   background: #111;
@@ -2391,13 +2393,34 @@ tr:hover td:nth-child(3) {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
 }
 
-.flags-large-grid-feedback .flags-action-row {
-  margin-top: 18px;
+.flags-info-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .flags-large-grid-feedback .flags-feedback {
-  margin-top: 0;
-  min-height: 24px;
+  min-height: 0;
+  margin: 0;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.flags-info-toggle-button {
+  padding: 5px 8px;
+  border: 1px solid #555;
+  border-radius: 7px;
+  background: #222;
+  color: #f5f5f5;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.flags-info-toggle-button:hover {
+  background: #333;
 }
 
 .flags-large-grid-feedback .flags-details {
@@ -2406,25 +2429,31 @@ tr:hover td:nth-child(3) {
   line-height: 1.45;
 }
 
-@media (max-width: 1050px) {
-  .flags-large-grid-feedback .flags-card {
-    width: min(900px, calc(100vw - 24px));
-    padding-bottom: 280px;
-  }
+.flags-info-panel-minimized {
+  max-height: none;
+  overflow: visible;
+}
 
-  .flags-large-grid-feedback .flags-answer-area {
-    left: 50%;
-    bottom: 16px;
-    width: calc(100vw - 24px);
-    transform: translateX(-50%);
-  }
+.flags-info-panel-minimized .flags-details {
+  display: none;
+}
 
+.flags-action-row {
+  margin-top: 18px;
+}
+
+@media (max-width: 1250px) {
   .flags-large-grid-feedback .flags-side-feedback-panel {
     left: 50%;
-    bottom: 115px;
-    width: calc(100vw - 24px);
-    max-height: 130px;
+    right: auto;
+    bottom: 105px;
+    width: min(760px, calc(100vw - 32px));
+    max-width: none;
     transform: translateX(-50%);
+  }
+
+  .flags-large-grid-feedback .flags-card {
+    padding-bottom: 270px;
   }
 }
 
