@@ -2114,7 +2114,7 @@ tr:hover td:nth-child(3) {
 .flags-game-setup > summary::before {
   content: "▸";
   color: #f5f5f5;
-  font-size: 18px;
+  font-size: 28px;
   line-height: 1;
   transition: transform 0.15s ease;
 }
