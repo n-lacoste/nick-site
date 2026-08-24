@@ -170,7 +170,7 @@ async function loadCSV(
       .replaceAll("'", "&#039;");
   }
 
-  function formatHeader(header) {
+   function formatHeader(header) {
     const headerBreaks = {
       "Me vs. IMDB": "vs.<br>IMDB",
       "Movie Series?": "Movie Series",
@@ -179,12 +179,13 @@ async function loadCSV(
       "Dialogue (Writing)": "Dialogue<br>(Writing)",
       "Purpose Met": "Purpose<br>Met",
       "Music & Sound": "Music &<br>Sound",
-      "Rewatch Value": "Rewatch<br>Value"
+      "Rewatch Value": "Rewatch<br>Value",
+      "Sarah :)": "Sarah's<br>Rank",
+      "Nick <3": "Nick's<br>Rank"
     };
-
+  
     return headerBreaks[header] || escapeHTML(header);
   }
-
   function formatCellValue(header, value) {
     const text = String(value ?? "");
 
