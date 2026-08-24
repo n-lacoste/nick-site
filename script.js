@@ -2905,7 +2905,7 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
     const fifa = cleanCell(row["FIFA Member"]);
     const capital = cleanCell(row["Capital"]);
     const capitalAlt = cleanCell(row["Capital Alt. Spelling"]);
-    const population = cleanCell(row["Population_2026"]);
+    const population = cleanCell(row["Population"]);
     const code = cleanCell(row["Code"]);
     const link = cleanCell(row["Link"]);
 
