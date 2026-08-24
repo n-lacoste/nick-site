@@ -2316,11 +2316,16 @@ tr:hover td:nth-child(3) {
 
 .flags-large-grid-feedback .flags-card {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 300px;
-  grid-template-rows: auto auto auto;
+  grid-template-columns: minmax(0, 1fr) 320px;
   gap: 18px;
   align-items: start;
   overflow: visible;
+
+  /* removes the big outer box */
+  border: none;
+  background: transparent;
+  padding: 0 0 120px;
+  margin-top: 18px;
 }
 
 .flags-large-grid-feedback .flags-answer-area {
@@ -2344,7 +2349,7 @@ tr:hover td:nth-child(3) {
 }
 
 .flags-large-grid-feedback .flags-card {
-  padding-bottom: 120px;
+  padding-bottom: 230px;
 }
 
 .flags-large-grid-feedback .flags-grid {
@@ -2361,19 +2366,22 @@ tr:hover td:nth-child(3) {
 
 .flags-large-grid-feedback .flags-side-feedback-panel {
   grid-column: 2;
-  grid-row: 2 / span 2;
+  grid-row: 2;
   order: 0;
-  position: sticky;
-  top: 90px;
-  z-index: 80;
-  min-height: 160px;
-  margin-top: 0;
+  position: fixed;
+  right: 18px;
+  bottom: 105px;
+  z-index: 4999;
+  width: 300px;
+  max-height: 42vh;
+  overflow-y: auto;
+  margin: 0;
   padding: 16px;
   border: 1px solid #444;
   border-radius: 12px;
   background: #111;
   text-align: left;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
 }
 
 .flags-large-grid-feedback .flags-feedback {
@@ -2483,6 +2491,19 @@ tr:hover td:nth-child(3) {
   order: 4;
 }
 
+@media (max-width: 1050px) {
+  .flags-large-grid-feedback .flags-side-feedback-panel {
+    position: static;
+    width: auto;
+    max-height: none;
+    overflow-y: visible;
+    margin-top: 14px;
+  }
+
+  .flags-large-grid-feedback .flags-card {
+    padding-bottom: 140px;
+  }
+}
 .flags-source-credit {
   margin-top: 14px;
   text-align: right;
