@@ -2593,7 +2593,8 @@ async function loadTVShowCard(tvShowsPath, episodesPath) {
       </section>
     `;
   }
-function loadFlagsGame(filePath) {
+// Flag game code
+  function loadFlagsGame(filePath) {
   const modeSelect = document.getElementById("flagsMode");
   const shuffleButton = document.getElementById("flagsShuffleButton");
   const resetButton = document.getElementById("flagsResetButton");
@@ -2601,6 +2602,7 @@ function loadFlagsGame(filePath) {
   const scoreEl = document.getElementById("flagsScore");
   const streakEl = document.getElementById("flagsStreak");
   const remainingEl = document.getElementById("flagsRemaining");
+  const debugEl = document.getElementById("flagsDebug");
 
   const flagImage = document.getElementById("flagsImage");
   const answerInput = document.getElementById("flagsAnswerInput");
@@ -2622,7 +2624,12 @@ function loadFlagsGame(filePath) {
 
   if (!filePath) {
     feedbackEl.textContent = "Missing FLAGS_CSV_URL.";
+    if (debugEl) debugEl.textContent = "No CSV URL found.";
     return;
+  }
+
+  if (debugEl) {
+    debugEl.textContent = "Loading flags CSV...";
   }
 
   Papa.parse(filePath, {
@@ -2630,56 +2637,56 @@ function loadFlagsGame(filePath) {
     header: true,
     skipEmptyLines: true,
     complete: function (results) {
-      allFlags = results.data
+      console.log("Flags CSV results:", results);
+
+      const rawRows = results.data || [];
+
+      allFlags = rawRows
         .map(cleanFlagRow)
         .filter(row => row.name && row.imageUrl);
+
+      console.log("All cleaned flags:", allFlags);
+      console.log("First cleaned flag:", allFlags[0]);
+
+      if (debugEl) {
+        debugEl.textContent = `CSV rows: ${rawRows.length} | Playable rows with image links: ${allFlags.length}`;
+      }
 
       startGame();
     },
     error: function (error) {
-      console.error(error);
+      console.error("Flags CSV error:", error);
       feedbackEl.textContent = "Could not load flags CSV.";
+      if (debugEl) debugEl.textContent = "CSV loading failed. Check published CSV URL.";
     }
   });
 
- function cleanFlagRow(row) {
-  const name = getFirstExisting(row, ["Flag Name", "Name"]);
-  const alt = getFirstExisting(row, ["Alt. Spelling", "Alt Spelling", "Aliases", "Alias"]);
-  const type = getFirstExisting(row, ["Type"]);
-  const country = getFirstExisting(row, ["Country"]);
-  const fifa = getFirstExisting(row, ["FIFA Member", "FIFA"]);
-  const capital = getFirstExisting(row, ["Capital"]);
-  const capitalAlt = getFirstExisting(row, ["Capital Alt. Spelling", "Capital Alt Spelling"]);
-  const population = getFirstExisting(row, ["Population_2026", "Population"]);
-  const code = getFirstExisting(row, ["Code"]);
+  function cleanFlagRow(row) {
+    const name = cleanCell(row["Flag Name"]);
+    const alt = cleanCell(row["Alt. Spelling"]);
+    const type = cleanCell(row["Type"]);
+    const country = cleanCell(row["Country"]);
+    const fifa = cleanCell(row["FIFA Member"]);
+    const capital = cleanCell(row["Capital"]);
+    const capitalAlt = cleanCell(row["Capital Alt. Spelling"]);
+    const population = cleanCell(row["Population_2026"]);
+    const code = cleanCell(row["Code"]);
+    const link = cleanCell(row["Link"]);
 
-  // Your CSV uses this column name.
-  const link = getFirstExisting(row, ["Link"]);
+    const imageUrl = normalizeDriveImageUrl(link);
 
-  const imageUrl = normalizeDriveImageUrl(link);
-
-  return {
-    name: cleanCell(name),
-    alt: cleanCell(alt),
-    type: cleanCell(type),
-    country: cleanCell(country),
-    fifa: cleanCell(fifa),
-    capital: cleanCell(capital),
-    capitalAlt: cleanCell(capitalAlt),
-    population: cleanCell(population),
-    code: cleanCell(code),
-    imageUrl: imageUrl
-  };
-}
-
-  function getFirstExisting(row, possibleHeaders) {
-    for (const header of possibleHeaders) {
-      if (row[header] !== undefined && row[header] !== null && String(row[header]).trim() !== "") {
-        return row[header];
-      }
-    }
-
-    return "";
+    return {
+      name,
+      alt,
+      type,
+      country,
+      fifa,
+      capital,
+      capitalAlt,
+      population,
+      code,
+      imageUrl
+    };
   }
 
   function cleanCell(value) {
@@ -2688,38 +2695,35 @@ function loadFlagsGame(filePath) {
       .trim();
   }
 
-function normalizeDriveImageUrl(url) {
-  let text = cleanCell(url);
+  function normalizeDriveImageUrl(url) {
+    let text = cleanCell(url);
 
-  if (!text) return "";
+    if (!text) return "";
 
-  text = text
-    .replace(/&amp;/g, "&")
-    .replace(/\\&/g, "&");
+    text = text
+      .replace(/&amp;/g, "&")
+      .replace(/\\&/g, "&");
 
-  const markdownMatch = text.match(/\((https:\/\/drive\.google\.com\/[^)]+)\)/);
-  if (markdownMatch) {
-    text = markdownMatch[1];
+    const markdownMatch = text.match(/\((https:\/\/drive\.google\.com\/[^)]+)\)/);
+    if (markdownMatch) {
+      text = markdownMatch[1];
+    }
+
+    const hrefMatch = text.match(/href=["']([^"']+)["']/);
+    if (hrefMatch) {
+      text = hrefMatch[1];
+    }
+
+    const fileIdMatch =
+      text.match(/\/d\/([A-Za-z0-9_-]+)/) ||
+      text.match(/[?&]id=([A-Za-z0-9_-]+)/);
+
+    if (fileIdMatch) {
+      return "https://drive.google.com/thumbnail?id=" + fileIdMatch[1] + "&sz=w1000";
+    }
+
+    return text;
   }
-
-  const hrefMatch = text.match(/href=["']([^"']+)["']/);
-  if (hrefMatch) {
-    text = hrefMatch[1];
-  }
-
-  const fileIdMatch =
-    text.match(/\/d\/([A-Za-z0-9_-]+)/) ||
-    text.match(/[?&]id=([A-Za-z0-9_-]+)/);
-
-  if (fileIdMatch) {
-    const fileId = fileIdMatch[1];
-
-    // More reliable for img src than the normal Drive file-view URL.
-    return "https://lh3.googleusercontent.com/d/" + fileId + "=w1000";
-  }
-
-  return text;
-}
 
   function startGame() {
     const mode = modeSelect.value;
@@ -2744,17 +2748,23 @@ function normalizeDriveImageUrl(url) {
     streak = 0;
     answeredCurrent = false;
 
+    if (debugEl) {
+      debugEl.textContent += ` | Active in ${mode}: ${activeFlags.length}`;
+    }
+
     showCurrentFlag();
     updateScore();
   }
 
   function isYes(value) {
-    return normalizeAnswer(value) === "yes" || normalizeAnswer(value) === "true";
+    const normalized = normalizeAnswer(value);
+    return normalized === "yes" || normalized === "true";
   }
 
   function showCurrentFlag() {
     answeredCurrent = false;
     feedbackEl.textContent = "";
+    feedbackEl.className = "flags-feedback";
     detailsEl.innerHTML = "";
     answerInput.value = "";
 
@@ -2768,24 +2778,24 @@ function normalizeDriveImageUrl(url) {
     if (currentIndex >= activeFlags.length) {
       flagImage.removeAttribute("src");
       feedbackEl.textContent = "Game complete.";
-      detailsEl.innerHTML = `
-        <strong>Final score:</strong> ${score} / ${attempts}
-      `;
+      detailsEl.innerHTML = `<strong>Final score:</strong> ${score} / ${attempts}`;
       updateScore();
       return;
     }
 
     const current = activeFlags[currentIndex];
 
+    console.log("Current flag:", current.name, current.imageUrl);
+
     flagImage.onerror = function () {
       console.error("Flag image failed:", current.name, current.imageUrl);
       feedbackEl.textContent = "Image failed to load for: " + current.name;
-      };
-      
+    };
+
     flagImage.onload = function () {
-        feedbackEl.textContent = "";
-      };
-      
+      feedbackEl.textContent = "";
+    };
+
     flagImage.src = current.imageUrl;
     flagImage.alt = current.name + " flag";
 
@@ -2973,7 +2983,7 @@ function normalizeDriveImageUrl(url) {
   resetButton.addEventListener("click", startGame);
   modeSelect.addEventListener("change", startGame);
 }
-  
+  // TV Show Card
   function renderTVShowCard(showRow, episodeRows) {
     const showTitle = getShowTitle(showRow);
     const rating = getText(showRow, "My Rating");
