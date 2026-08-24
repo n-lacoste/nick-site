@@ -3579,53 +3579,6 @@ function cleanScoreInitials(value) {
     .slice(0, 4);
 }
 
-function submitPublicScore(initials, statusEl, buttonEl) {
-  if (!leaderboardUrl) {
-    statusEl.textContent = "Leaderboard is not connected.";
-    return;
-  }
-
-  const config = gameModes[activeModeId];
-
-  if (!config) {
-    statusEl.textContent = "Game mode not found.";
-    return;
-  }
-
-  const payload = {
-    initials,
-    modeId: activeModeId,
-    modeLabel: config.label,
-    playStyle: getPlayStyleLabel(activePlayStyle),
-    layoutStyle: getLayoutStyleLabel(activeLayoutStyle),
-    sortOrder: getSortLabel(activeSortId),
-    suggestions: getSuggestionsLabel(activeSuggestions),
-    score,
-    attempts,
-    hintsUsed
-  };
-
-  buttonEl.disabled = true;
-  statusEl.textContent = "Submitting score...";
-
-  fetch(leaderboardUrl, {
-    method: "POST",
-    mode: "no-cors",
-    headers: {
-      "Content-Type": "text/plain;charset=utf-8"
-    },
-    body: JSON.stringify(payload)
-  })
-    .then(() => {
-      statusEl.textContent = "Score submitted. Refreshing high score...";
-      setTimeout(loadHighScore, 2000);
-    })
-    .catch(error => {
-      console.error("Score submission failed:", error);
-      statusEl.textContent = "Score submission failed. Try again.";
-      buttonEl.disabled = false;
-    });
-}
 function loadHighScore() {
   if (!leaderboardUrl || !highScoreEl || !activeModeId) {
     if (highScoreEl) {
