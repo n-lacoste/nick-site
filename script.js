@@ -2785,6 +2785,8 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
   const resumeButton = document.getElementById("flagsResumeButton");
 
   const pauseModeLabel = document.getElementById("flagsPauseModeLabel");
+  const topScoresPanel = document.getElementById("flagsTopScoresPanel");
+  const topScoresList = document.getElementById("flagsTopScoresList");
 
   const gameModes = {
     "flag-country": {
@@ -3545,18 +3547,21 @@ function loadHighScore() {
 
   const script = document.createElement("script");
 
-  window[callbackName] = function (data) {
+window[callbackName] = function (data) {
     const highScore = data && data.highScore;
-
+    const topScores = data && data.topScores;
+  
     if (highScore) {
       const total = highScore.totalQuestions || highScore.attempts || 0;
       const highScoreTimeText = formatHighScoreTime(highScore);
-
+  
       highScoreEl.textContent = `High Score: ${highScore.initials} ${highScore.score}/${total}, ${highScoreTimeText}`;
     } else {
       highScoreEl.textContent = "High Score: None yet";
     }
-
+  
+    renderTopScores(topScores || (highScore ? [highScore] : []));
+  
     delete window[callbackName];
     script.remove();
   };
@@ -3572,6 +3577,32 @@ function loadHighScore() {
   document.body.appendChild(script);
 }
 
+function renderTopScores(scores) {
+  if (!topScoresList) return;
+
+  if (!scores || !scores.length) {
+    topScoresList.innerHTML = "No scores yet";
+    return;
+  }
+
+  topScoresList.innerHTML = scores
+    .slice(0, 10)
+    .map((record, index) => {
+      const total = record.totalQuestions || record.attempts || 0;
+      const timeText = formatHighScoreTime(record);
+
+      return `
+        <div class="flags-top-score-row">
+          <span class="flags-top-score-rank">${index + 1}.</span>
+          <span class="flags-top-score-name">${escapeHTML(record.initials || "----")}</span>
+          <span class="flags-top-score-score">${record.score}/${total}</span>
+          <span class="flags-top-score-time">${escapeHTML(timeText)}</span>
+        </div>
+      `;
+    })
+    .join("");
+}
+  
 function startTimer() {
   stopTimer();
   updateTimerDisplay();
