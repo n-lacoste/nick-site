@@ -3012,6 +3012,7 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
     playScreen.hidden = true;
 
     playScreen.classList.remove("flags-grid-layout-active");
+    playScreen.classList.remove("flags-large-grid-feedback");
 
     if (gridEl) {
       gridEl.hidden = true;
@@ -3094,6 +3095,11 @@ gameEndedByGiveUp = false;
     playScreen.hidden = false;
     
     playScreen.classList.toggle("flags-grid-layout-active", activeLayoutStyle === "grid");
+
+    playScreen.classList.toggle(
+      "flags-large-grid-feedback",
+      activeLayoutStyle === "grid" && activeFlags.length >= 50
+    );
 
     currentModeLabel.innerHTML = `
       <span class="flags-current-mode-name">${escapeHTML(config.label)}</span>
