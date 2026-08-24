@@ -2755,7 +2755,6 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
   const progressTextEl = document.getElementById("flagsProgressText");
   const progressFillEl = document.getElementById("flagsProgressFill");
   const debugEl = document.getElementById("flagsDebug");
-  // deleted answerArea and actionRow //
 
   const leaderboardUrl = window.FLAGS_LEADERBOARD_URL || "";
   const highScoreEl = document.getElementById("flagsHighScore");
@@ -2776,6 +2775,9 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
 
   const feedbackEl = document.getElementById("flagsFeedback");
   const detailsEl = document.getElementById("flagsDetails");
+
+  const answerArea = document.querySelector(".flags-answer-area");
+  const actionRow = document.querySelector(".flags-action-row");
 
   const gameModes = {
     "flag-country": {
@@ -3143,7 +3145,7 @@ gameEndedByGiveUp = false;
   }
 
   function showCurrentQuestion() {
-   // setGameplayControlsVisible(true);
+   setGameplayControlsVisible(true);
     
     const config = gameModes[activeModeId];
 
@@ -3182,7 +3184,7 @@ gameEndedByGiveUp = false;
   }
 
   function showNoRowsFound() {
-  //  setGameplayControlsVisible(false);
+    setGameplayControlsVisible(false);
     
     if (gridEl) {
       gridEl.hidden = true;
@@ -3197,7 +3199,16 @@ gameEndedByGiveUp = false;
     updateScore();
   }
 
-  // took out function setGameplayControlsVisible
+ function setGameplayControlsVisible(isVisible) {
+  if (answerArea) {
+    answerArea.hidden = !isVisible;
+  }
+
+  if (actionRow) {
+    actionRow.hidden = !isVisible;
+  }
+}
+  
  function showGameComplete(gaveUp = false, timedOut = false) {
       stopTimer();
       // setGameplayControlsVisible(false);
