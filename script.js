@@ -2642,33 +2642,35 @@ function loadFlagsGame(filePath) {
     }
   });
 
-  function cleanFlagRow(row) {
-    const name = getFirstExisting(row, ["Flag Name", "Country", "Name"]);
-    const alt = getFirstExisting(row, ["Alt. Spelling", "Alt Spelling", "Aliases", "Alias"]);
-    const type = getFirstExisting(row, ["Type"]);
-    const country = getFirstExisting(row, ["Country"]);
-    const fifa = getFirstExisting(row, ["FIFA Member", "FIFA"]);
-    const capital = getFirstExisting(row, ["Capital"]);
-    const capitalAlt = getFirstExisting(row, ["Capital Alt. Spelling", "Capital Alt Spelling"]);
-    const population = getFirstExisting(row, ["Population_2026", "Population"]);
-    const code = getFirstExisting(row, ["Code"]);
-    const link = getFirstExisting(row, ["Link", "Thumbnail URL", "Thumbnail", "Flag URL", "Flag Image", "Image URL"]);
+ function cleanFlagRow(row) {
+  const name = getFirstExisting(row, ["Flag Name", "Name"]);
+  const alt = getFirstExisting(row, ["Alt. Spelling", "Alt Spelling", "Aliases", "Alias"]);
+  const type = getFirstExisting(row, ["Type"]);
+  const country = getFirstExisting(row, ["Country"]);
+  const fifa = getFirstExisting(row, ["FIFA Member", "FIFA"]);
+  const capital = getFirstExisting(row, ["Capital"]);
+  const capitalAlt = getFirstExisting(row, ["Capital Alt. Spelling", "Capital Alt Spelling"]);
+  const population = getFirstExisting(row, ["Population_2026", "Population"]);
+  const code = getFirstExisting(row, ["Code"]);
 
-    const imageUrl = normalizeDriveImageUrl(link);
+  // Your CSV uses this column name.
+  const link = getFirstExisting(row, ["Link"]);
 
-    return {
-      name: cleanCell(name),
-      alt: cleanCell(alt),
-      type: cleanCell(type),
-      country: cleanCell(country),
-      fifa: cleanCell(fifa),
-      capital: cleanCell(capital),
-      capitalAlt: cleanCell(capitalAlt),
-      population: cleanCell(population),
-      code: cleanCell(code),
-      imageUrl: imageUrl
-    };
-  }
+  const imageUrl = normalizeDriveImageUrl(link);
+
+  return {
+    name: cleanCell(name),
+    alt: cleanCell(alt),
+    type: cleanCell(type),
+    country: cleanCell(country),
+    fifa: cleanCell(fifa),
+    capital: cleanCell(capital),
+    capitalAlt: cleanCell(capitalAlt),
+    population: cleanCell(population),
+    code: cleanCell(code),
+    imageUrl: imageUrl
+  };
+}
 
   function getFirstExisting(row, possibleHeaders) {
     for (const header of possibleHeaders) {
@@ -2686,24 +2688,38 @@ function loadFlagsGame(filePath) {
       .trim();
   }
 
-  function normalizeDriveImageUrl(url) {
-    const text = cleanCell(url);
+function normalizeDriveImageUrl(url) {
+  let text = cleanCell(url);
 
-    if (!text) return "";
+  if (!text) return "";
 
-    const markdownMatch = text.match(/\((https:\/\/drive\.google\.com\/[^)]+)\)/);
-    const cleaned = markdownMatch ? markdownMatch[1] : text;
+  text = text
+    .replace(/&amp;/g, "&")
+    .replace(/\\&/g, "&");
 
-    const fileIdMatch =
-      cleaned.match(/\/d\/([A-Za-z0-9_-]+)/) ||
-      cleaned.match(/[?&]id=([A-Za-z0-9_-]+)/);
-
-    if (fileIdMatch) {
-      return "https://drive.google.com/thumbnail?id=" + fileIdMatch[1] + "&sz=w1000";
-    }
-
-    return cleaned;
+  // Handles markdown links like:
+  // [https://drive.google.com/...](https://drive.google.com/...)
+  const markdownMatch = text.match(/\((https:\/\/drive\.google\.com\/[^)]+)\)/);
+  if (markdownMatch) {
+    text = markdownMatch[1];
   }
+
+  // Handles HTML links if Google Sheets exports a rich link oddly.
+  const hrefMatch = text.match(/href=["']([^"']+)["']/);
+  if (hrefMatch) {
+    text = hrefMatch[1];
+  }
+
+  const fileIdMatch =
+    text.match(/\/d\/([A-Za-z0-9_-]+)/) ||
+    text.match(/[?&]id=([A-Za-z0-9_-]+)/);
+
+  if (fileIdMatch) {
+    return "https://drive.google.com/thumbnail?id=" + fileIdMatch[1] + "&sz=w1000";
+  }
+
+  return text;
+}
 
   function startGame() {
     const mode = modeSelect.value;
@@ -2763,6 +2779,10 @@ function loadFlagsGame(filePath) {
 
     flagImage.src = current.imageUrl;
     flagImage.alt = current.name + " flag";
+    flagImage.onerror = function () {
+      console.error("Flag image failed:", current.name, current.imageUrl);
+      feedbackEl.textContent = "Image failed to load for: " + current.name;
+    };
 
     updateScore();
 
