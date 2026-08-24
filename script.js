@@ -3584,8 +3584,11 @@ function updateTimerDisplay() {
     timerEl.textContent = timerText;
   }
 
-  if (timerFloatingEl) {
-    timerFloatingEl.textContent = timerText;
+ if (timerFloatingEl) {
+    timerFloatingEl.textContent = timerIsOn
+      ? formatClockTime(getTimeRemainingSeconds())
+      : "";
+  
     timerFloatingEl.hidden = !timerIsOn;
   }
 
