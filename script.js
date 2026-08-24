@@ -2740,6 +2740,8 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
 
   const playStyleToggle = document.getElementById("flagsPlayStyleToggle");
   const layoutToggle = document.getElementById("flagsLayoutToggle");
+  const suggestionsToggle = document.getElementById("flagsSuggestionsToggle");
+  const answerSuggestions = document.getElementById("flagsAnswerSuggestions");
 
   const currentModeLabel = document.getElementById("flagsCurrentModeLabel");
   const changeGameButton = document.getElementById("flagsChangeGameButton");
@@ -2864,6 +2866,7 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
   let activeSortId = "random";
   let activePlayStyle = "information";
   let activeLayoutStyle = "single";
+  let activeSuggestions = "off";
   let currentIndex = 0;
   let score = 0;
   let attempts = 0;
@@ -2871,9 +2874,6 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
   let hintsUsed = 0;
   let answeredCurrent = false;
   let selectedModeId = "";
-
-  updatePlayStyleToggle();
-  updateLayoutToggle();
 
   if (!filePath) {
     showStartScreen();
@@ -3035,6 +3035,7 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
     activeSortId = sortSelect ? sortSelect.value : "random";
     activePlayStyle = playStyleToggle ? playStyleToggle.dataset.playStyle || "information" : "information";
     activeLayoutStyle = layoutToggle ? layoutToggle.dataset.layoutStyle || "single" : "single";
+    activeSuggestions = suggestionsToggle ? suggestionsToggle.dataset.suggestions || "off" : "off";
 
     activeFlags = allFlags
       .filter(row => config.filter(row))
@@ -3055,6 +3056,7 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
       }));
 
     activeFlags = sortGameRows(activeFlags, activeSortId);
+    updateAnswerSuggestions();
 
     currentIndex = 0;
     score = 0;
@@ -3688,6 +3690,50 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
     return "One at a Time";
   }
   
+  function getSuggestionsLabel(suggestionsValue) {
+      if (suggestionsValue === "on") return "Suggestions On";
+    
+      return "Suggestions Off";
+    }
+    
+  function updateSuggestionsToggle() {
+      if (!suggestionsToggle) return;
+    
+      const currentValue = suggestionsToggle.dataset.suggestions || "off";
+    
+      suggestionsToggle.classList.remove("suggestions-on", "suggestions-off");
+    
+      if (currentValue === "on") {
+        suggestionsToggle.textContent = "Suggestions On";
+        suggestionsToggle.classList.add("suggestions-on");
+      } else {
+        suggestionsToggle.textContent = "Suggestions Off";
+        suggestionsToggle.classList.add("suggestions-off");
+      }
+    }
+    
+    function updateAnswerSuggestions() {
+      if (!answerSuggestions) return;
+    
+      answerSuggestions.innerHTML = "";
+    
+      if (activeSuggestions !== "on") return;
+    
+      const config = gameModes[activeModeId];
+    
+      if (!config) return;
+    
+      const suggestionValues = activeFlags
+        .map(row => config.answerKind === "capital" ? row.capital : row.name)
+        .filter(value => value && value.trim() !== "");
+    
+      const uniqueSuggestions = [...new Set(suggestionValues)]
+        .sort((a, b) => a.localeCompare(b));
+    
+      answerSuggestions.innerHTML = uniqueSuggestions
+        .map(value => `<option value="${escapeHTML(value)}"></option>`)
+        .join("");
+    }
   function updateGameSetupSummary() {
     if (!setupSummaryEl) return;
   
@@ -3700,19 +3746,25 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
     const playStyle = playStyleToggle
       ? playStyleToggle.dataset.playStyle || "information"
       : "information";
+   
+    const suggestionsValue = suggestionsToggle
+      ? suggestionsToggle.dataset.suggestions || "off"
+      : "off";
   
     const sortLabel = getSortLabel(sortId);
     const layoutLabel = getLayoutStyleLabel(layoutStyle);
     const playLabel = getPlayStyleLabel(playStyle);
+    const suggestionsLabel = getSuggestionsLabel(suggestionsValue);
   
     const isDefault =
       sortId === "random" &&
       layoutStyle === "single" &&
-      playStyle === "information";
-  
+      playStyle === "information" &&
+      suggestionsValue === "off";
+    
     setupSummaryEl.textContent = isDefault
-      ? "Default: Random order, One at a time, Information Play"
-      : `${sortLabel}, ${layoutLabel}, ${playLabel}`;
+      ? "Default: Random order, One at a time, Information Play, Suggestions Off"
+      : `${sortLabel}, ${layoutLabel}, ${playLabel}, ${suggestionsLabel}`;
   }
   
   function shuffleArray(array) {
@@ -3827,11 +3879,27 @@ if (layoutToggle) {
   });
 }
 
-if (sortSelect) {
-  sortSelect.addEventListener("change", updateGameSetupSummary);
-}
-
-updateGameSetupSummary();
+  if (suggestionsToggle) {
+      suggestionsToggle.addEventListener("click", function () {
+        const currentValue = suggestionsToggle.dataset.suggestions || "off";
+    
+        suggestionsToggle.dataset.suggestions = currentValue === "off"
+          ? "on"
+          : "off";
+    
+        updateSuggestionsToggle();
+        updateGameSetupSummary();
+      });
+    }
+  
+  if (sortSelect) {
+    sortSelect.addEventListener("change", updateGameSetupSummary);
+    }
+    
+  updatePlayStyleToggle();
+  updateLayoutToggle();
+  updateSuggestionsToggle();
+  updateGameSetupSummary();
 
 modeButtons.forEach(button => {
   button.addEventListener("click", function () {
