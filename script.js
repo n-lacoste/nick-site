@@ -193,7 +193,33 @@ async function loadCSV(
 
     return escapeHTML(text);
   }
+const dateColumns = ["Added", "Updated"];
 
+function parseMovieDate(value) {
+  const text = String(value ?? "").trim();
+
+  if (text === "") return null;
+
+  const parts = text.split("/");
+
+  if (parts.length === 3) {
+    const month = Number(parts[0]);
+    const day = Number(parts[1]);
+    let year = Number(parts[2]);
+
+    if (year < 100) {
+      year += year >= 70 ? 1900 : 2000;
+    }
+
+    if (!isNaN(month) && !isNaN(day) && !isNaN(year)) {
+      return new Date(year, month - 1, day).getTime();
+    }
+  }
+
+  const fallbackDate = new Date(text).getTime();
+
+  return isNaN(fallbackDate) ? null : fallbackDate;
+}
   function getColumnWidthStyle(header) {
     let style = "";
 
@@ -513,34 +539,49 @@ async function loadCSV(
     setupExpandableCells();
   }
 
-  function applySort() {
-    if (!sortColumn) {
-      renderTable(currentData);
-      return;
-    }
+ function applySort() {
+  if (!sortColumn) {
+    renderTable(currentData);
+    return;
+  }
 
-    currentData.sort((a, b) => {
-      const valueA = String(a[sortColumn] ?? "").trim();
-      const valueB = String(b[sortColumn] ?? "").trim();
+  currentData.sort((a, b) => {
+    const valueA = String(a[sortColumn] ?? "").trim();
+    const valueB = String(b[sortColumn] ?? "").trim();
 
-      if (valueA === "" && valueB === "") return 0;
-      if (valueA === "") return 1;
-      if (valueB === "") return -1;
+    if (valueA === "" && valueB === "") return 0;
+    if (valueA === "") return 1;
+    if (valueB === "") return -1;
 
-      const numA = Number(valueA.replace(/,/g, ""));
-      const numB = Number(valueB.replace(/,/g, ""));
+    if (dateColumns.includes(sortColumn)) {
+      const dateA = parseMovieDate(valueA);
+      const dateB = parseMovieDate(valueB);
 
-      if (!isNaN(numA) && !isNaN(numB)) {
-        return sortDirection === "asc" ? numA - numB : numB - numA;
+      if (dateA !== null && dateB !== null) {
+        return sortDirection === "asc"
+          ? dateA - dateB
+          : dateB - dateA;
       }
 
-      return sortDirection === "asc"
-        ? valueA.localeCompare(valueB)
-        : valueB.localeCompare(valueA);
-    });
+      if (dateA !== null && dateB === null) return -1;
+      if (dateA === null && dateB !== null) return 1;
+      return 0;
+    }
 
-    renderTable(currentData);
-  }
+    const numA = Number(valueA.replace(/,/g, ""));
+    const numB = Number(valueB.replace(/,/g, ""));
+
+    if (!isNaN(numA) && !isNaN(numB)) {
+      return sortDirection === "asc" ? numA - numB : numB - numA;
+    }
+
+    return sortDirection === "asc"
+      ? valueA.localeCompare(valueB)
+      : valueB.localeCompare(valueA);
+  });
+
+  renderTable(currentData);
+}
 
   function rowMatchesSearch(row) {
     if (!searchId) return true;
