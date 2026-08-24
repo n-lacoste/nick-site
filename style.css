@@ -1553,9 +1553,9 @@ thead th:nth-child(3) {
 
 #year-start-filter,
 #year-end-filter {
-  width: 80px !important;
-  max-width: 80px !important;
-  min-width: 80px !important;
+  width: 100px !important;
+  max-width: 100px !important;
+  min-width: 100px !important;
   text-align: center;
   justify-self: center;
 }
@@ -1569,9 +1569,9 @@ thead th:nth-child(3) {
 }
 
 #mins-mode-filter {
-  width: 112px !important;
-  max-width: 112px !important;
-  min-width: 112px !important;
+  width: 140px !important;
+  max-width: 140px !important;
+  min-width: 140px !important;
 }
 
 #mins-value-filter {
