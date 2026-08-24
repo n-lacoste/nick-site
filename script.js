@@ -2784,6 +2784,8 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
   const pauseOverlay = document.getElementById("flagsPauseOverlay");
   const resumeButton = document.getElementById("flagsResumeButton");
 
+  const pauseModeLabel = document.getElementById("flagsPauseModeLabel");
+
   const gameModes = {
     "flag-country": {
       label: "Guess Country from Flag",
@@ -3668,6 +3670,14 @@ function pauseGame() {
     playScreen.classList.add("flags-game-paused");
   }
 
+  if (pauseModeLabel) {
+      const config = gameModes[activeModeId];
+    
+      pauseModeLabel.textContent = config
+        ? config.label
+        : "Current Game";
+    }
+  
   if (pauseOverlay) {
     pauseOverlay.hidden = false;
   }
@@ -4351,10 +4361,10 @@ function getTimerLabel(timerValue) {
         layoutStyle === "single" &&
         playStyle === "information" &&
         suggestionsValue === "off" &&
-        timerValue === "0";
+        timerValue === "stopwatch";
       
       setupSummaryEl.textContent = isDefault
-        ? "Default: Random order, One at a time, Information Play, Suggestions Off, Timer Off"
+        ? "Default: Random order, One at a time, Information Play, Suggestions Off, Stopwatch"
         : `${sortLabel}, ${layoutLabel}, ${playLabel}, ${suggestionsLabel}, ${timerLabel}`;
   }
   
