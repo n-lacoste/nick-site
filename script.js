@@ -3290,6 +3290,18 @@ function getCompletedCount() {
   return activeFlags.filter(row => row.completed).length;
 }
 
+  const infoPanel = document.getElementById("flagsInfoPanel");
+  const infoToggleButton = document.getElementById("flagsInfoToggleButton");
+
+  function updateInfoPanelToggle() {
+  if (!infoPanel || !infoToggleButton) return;
+
+  const isMinimized = infoPanel.classList.contains("flags-info-panel-minimized");
+
+  infoToggleButton.textContent = isMinimized ? "Show Info" : "Minimize";
+  infoToggleButton.setAttribute("aria-expanded", isMinimized ? "false" : "true");
+}
+  
 function getLeaderboardEligibility() {
   const completed = getCompletedCount();
   const totalQuestions = activeFlags.length;
@@ -4445,6 +4457,15 @@ function getTimerLabel(timerValue) {
   });
 }
 
+  if (infoToggleButton && infoPanel) {
+  infoToggleButton.addEventListener("click", function () {
+    infoPanel.classList.toggle("flags-info-panel-minimized");
+    updateInfoPanelToggle();
+  });
+
+  updateInfoPanelToggle();
+}
+  
 if (layoutToggle) {
   layoutToggle.addEventListener("click", function () {
     const currentLayout = layoutToggle.dataset.layoutStyle || "single";
