@@ -1580,3 +1580,271 @@ thead th:nth-child(3) {
   min-width: 80px !important;
   text-align: center;
 }
+/* TV Show Card page */
+
+.tv-card-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 520px;
+  margin: 18px 0;
+}
+
+.tv-card-controls label {
+  color: #f5f5f5;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.tv-card-search {
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+}
+
+.tv-show-card {
+  border: 1px solid #333;
+  border-radius: 14px;
+  background: #111;
+  padding: 18px;
+}
+
+.tv-card-title-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: center;
+  border-bottom: 1px solid #333;
+  padding-bottom: 14px;
+  margin-bottom: 16px;
+}
+
+.tv-card-title-row h3 {
+  margin: 0;
+  color: #f5f5f5;
+  font-size: 28px;
+  line-height: 1.1;
+}
+
+.tv-card-title-row p {
+  margin: 6px 0 0;
+  color: #aaa;
+}
+
+.tv-card-title-stats {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.tv-card-score-box {
+  min-width: 84px;
+  border: 1px solid #333;
+  border-radius: 10px;
+  background: #1a1a1a;
+  overflow: hidden;
+  text-align: center;
+}
+
+.tv-card-score-box span {
+  display: block;
+  padding: 5px 8px;
+  color: #aaa;
+  font-size: 12px;
+  border-bottom: 1px solid #333;
+}
+
+.tv-card-score-box strong {
+  display: block;
+  padding: 9px 10px;
+  color: #f5f5f5;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.tv-card-main-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 1fr);
+  gap: 16px;
+}
+
+.tv-card-panel {
+  border: 1px solid #333;
+  border-radius: 12px;
+  background: #151515;
+  padding: 14px;
+  min-width: 0;
+}
+
+.tv-card-panel h3 {
+  margin: 0 0 12px;
+  color: #f5f5f5;
+  font-size: 18px;
+  text-align: center;
+}
+
+.tv-card-full-width {
+  grid-column: 1 / -1;
+}
+
+.tv-card-info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.tv-card-stat {
+  border: 1px solid #333;
+  border-radius: 9px;
+  background: #1f1f1f;
+  overflow: hidden;
+  text-align: center;
+}
+
+.tv-card-stat span {
+  display: block;
+  padding: 5px 6px;
+  color: #aaa;
+  font-size: 11px;
+  border-bottom: 1px solid #333;
+}
+
+.tv-card-stat strong {
+  display: block;
+  padding: 8px 6px;
+  color: #f5f5f5;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.tv-card-wide-stat {
+  grid-column: span 2;
+}
+
+.tv-card-tier-box strong {
+  padding: 8px 6px;
+}
+
+.tv-card-factor-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 10px;
+}
+
+.tv-card-factor-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 52px;
+  gap: 8px;
+  align-items: center;
+  border-bottom: 1px solid #292929;
+  padding-bottom: 6px;
+}
+
+.tv-card-factor-row span {
+  color: #ddd;
+  font-size: 13px;
+  min-width: 0;
+}
+
+.tv-card-factor-row strong {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  border-radius: 6px;
+  font-size: 15px;
+}
+
+.tv-card-rank-chart {
+  display: grid;
+  gap: 7px;
+}
+
+.tv-card-rank-chart-row {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) 32px;
+  gap: 8px;
+  align-items: center;
+}
+
+.tv-card-rank-label,
+.tv-card-rank-count {
+  color: #ccc;
+  font-size: 12px;
+  text-align: center;
+}
+
+.tv-card-rank-bar-track {
+  height: 14px;
+  background: #262626;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.tv-card-rank-bar {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.tv-card-notes {
+  margin: 0;
+  color: #ddd;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.tv-card-episode-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.tv-card-season-block {
+  border: 1px solid #333;
+  border-radius: 10px;
+  background: #1a1a1a;
+  padding: 10px;
+}
+
+.tv-card-season-block h4 {
+  margin: 0 0 8px;
+  color: #f5f5f5;
+  font-size: 15px;
+}
+
+.tv-card-season-episodes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(38px, 1fr));
+  gap: 6px;
+}
+
+.tv-card-episode-cell {
+  min-height: 34px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 13px;
+  cursor: default;
+}
+
+@media (max-width: 900px) {
+  .tv-card-title-row,
+  .tv-card-main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tv-card-title-stats {
+    justify-content: flex-start;
+  }
+
+  .tv-card-info-grid,
+  .tv-card-factor-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tv-card-wide-stat {
+    grid-column: auto;
+  }
+}
