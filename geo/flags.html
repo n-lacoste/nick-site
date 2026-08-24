@@ -30,6 +30,15 @@
         </select>
       </div>
         
+  <div class="flags-start-options">
+      <button id="flagsPlayStyleToggle" class="flags-start-toggle information-play" type="button" data-play-style="information">
+        Information Play
+      </button>
+    
+      <button id="flagsLayoutToggle" class="flags-start-toggle one-at-a-time" type="button" data-layout-style="single">
+        One at a Time
+      </button>
+    </div>      
   <div class="flags-start-columns">
 
     <section class="flags-start-column">
@@ -106,6 +115,8 @@
         <div id="flagsDebug" class="flags-debug"></div>
 
         <div class="flags-card">
+          <div id="flagsGrid" class="flags-grid" hidden></div>
+          
           <div id="flagsPromptText" class="flags-prompt-text" hidden></div>
 
           <div id="flagsImageWrap" class="flags-image-wrap">
