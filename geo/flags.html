@@ -178,16 +178,37 @@
   </div>
 
 </div>
-      
-      <div id="flagsPlayScreen" class="flags-play-screen" hidden>
-        <div class="flags-game-controls">
-        <div id="flagsCurrentModeLabel" class="flags-current-mode-label"></div>
-      
-        <div class="flags-game-button-row">
-          <button id="flagsChangeGameButton" type="button">Change Game Mode</button>
-          <button id="flagsResetButton" type="button">Reset</button>
-        </div>
-      </div>
+
+<div id="flagsPlayScreen" class="flags-play-screen" hidden>
+
+  <div class="flags-game-controls">
+    <div id="flagsCurrentModeLabel" class="flags-current-mode-label"></div>
+
+    <div class="flags-game-button-row">
+      <button id="flagsChangeGameButton" type="button">Change Game Mode</button>
+      <button id="flagsResetButton" type="button">Reset</button>
+    </div>
+  </div>
+
+  <div class="flags-score-row">
+    <span id="flagsScore">Score: 0 / 0 (0%)</span>
+    <span id="flagsStreak">Streak: 0</span>
+    <span id="flagsHints">Hints: 0</span>
+    <span id="flagsRemaining">Remaining: 0</span>
+    <span id="flagsTimer">Timer: Off</span>
+    <span id="flagsHighScore">High Score: --</span>
+  </div>
+
+  <!-- rest of your play screen / card goes here -->
+
+  <div id="flagsPauseOverlay" class="flags-pause-overlay" hidden>
+    <div class="flags-pause-box">
+      <div class="flags-pause-title">Game Paused</div>
+      <button id="flagsResumeButton" type="button">Resume</button>
+    </div>
+  </div>
+
+</div>
 
        <div class="flags-score-row">
         <span id="flagsScore">Score: 0 / 0 (0%)</span>
@@ -220,7 +241,15 @@
             <img id="flagsImage" src="" alt="Flag" referrerpolicy="no-referrer">
           </div>
 
-          <div class="flags-answer-area">
+         <div class="flags-answer-area">
+            <span id="flagsTimerFloating" class="flags-timer-floating" hidden>
+              Timer: Off
+            </span>
+          
+            <button id="flagsPauseButton" class="flags-pause-button" type="button" hidden>
+              Pause
+            </button>
+          
             <input
               id="flagsAnswerInput"
               type="text"
@@ -228,8 +257,9 @@
               autocomplete="off"
               list="flagsAnswerSuggestions"
             >
-            
+          
             <datalist id="flagsAnswerSuggestions"></datalist>
+          
             <button id="flagsSubmitButton" type="button">Submit</button>
           </div>
 
