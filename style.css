@@ -1685,6 +1685,19 @@ tr:hover td:nth-child(3) {
   margin: 16px 0;
 }
 
+.flags-high-score-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: -6px 0 14px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.flags-high-score-row #flagsHighScore {
+  color: #ffd966;
+}
+
 .flags-game-controls select,
 .flags-answer-area input {
   padding: 10px 12px;
