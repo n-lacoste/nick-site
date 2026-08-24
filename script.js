@@ -196,7 +196,69 @@ async function loadCSV(
     return escapeHTML(text);
   }
 const dateColumns = ["Added", "Updated"];
+function csvEscape(value) {
+  const text = String(value ?? "");
 
+  if (
+    text.includes(",") ||
+    text.includes('"') ||
+    text.includes("\n") ||
+    text.includes("\r")
+  ) {
+    return `"${text.replaceAll('"', '""')}"`;
+  }
+
+  return text;
+}
+
+function downloadVisibleTableAsCSV() {
+  const rowsToExport = rowLimit === "all"
+    ? currentData
+    : currentData.slice(0, rowLimit);
+
+  const csvRows = [];
+
+  csvRows.push(
+    visibleHeaders
+      .map(header => csvEscape(header))
+      .join(",")
+  );
+
+  rowsToExport.forEach(row => {
+    csvRows.push(
+      visibleHeaders
+        .map(header => csvEscape(row[header]))
+        .join(",")
+    );
+  });
+
+  const csvText = "\uFEFF" + csvRows.join("\r\n");
+
+  const blob = new Blob([csvText], {
+    type: "text/csv;charset=utf-8;"
+  });
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  const today = new Date().toISOString().slice(0, 10);
+
+  link.href = url;
+  link.download = `movie-rankings-visible-${today}.csv`;
+
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  URL.revokeObjectURL(url);
+}
+
+function setupDownloadVisibleCSVButton() {
+  const button = document.getElementById("movies-download-csv");
+
+  if (!button) return;
+
+  button.addEventListener("click", downloadVisibleTableAsCSV);
+}
 function parseMovieDate(value) {
   const text = String(value ?? "").trim();
 
@@ -1299,6 +1361,7 @@ function markFiltersPending() {
   setupAdvancedInputFilters();
   setupApplyFiltersButton();
   setupClearFiltersButton();
+  setupDownloadVisibleCSVButton();
 
   applyAllFiltersAndSort();
 }
