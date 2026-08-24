@@ -2755,8 +2755,7 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
   const progressTextEl = document.getElementById("flagsProgressText");
   const progressFillEl = document.getElementById("flagsProgressFill");
   const debugEl = document.getElementById("flagsDebug");
-  const answerArea = answerInput ? answerInput.closest(".flags-answer-area") : null;
-  const actionRow = hintButton ? hintButton.closest(".flags-action-row") : null;
+  // deleted answerArea and actionRow //
 
   const leaderboardUrl = window.FLAGS_LEADERBOARD_URL || "";
   const highScoreEl = document.getElementById("flagsHighScore");
@@ -3144,7 +3143,7 @@ gameEndedByGiveUp = false;
   }
 
   function showCurrentQuestion() {
-    setGameplayControlsVisible(true);
+   // setGameplayControlsVisible(true);
     
     const config = gameModes[activeModeId];
 
@@ -3183,7 +3182,7 @@ gameEndedByGiveUp = false;
   }
 
   function showNoRowsFound() {
-    setGameplayControlsVisible(false);
+  //  setGameplayControlsVisible(false);
     
     if (gridEl) {
       gridEl.hidden = true;
@@ -3198,19 +3197,10 @@ gameEndedByGiveUp = false;
     updateScore();
   }
 
-  function setGameplayControlsVisible(isVisible) {
-  if (answerArea) {
-    answerArea.hidden = !isVisible;
-  }
-
-  if (actionRow) {
-    actionRow.hidden = !isVisible;
-  }
-}
-  
+  // took out function setGameplayControlsVisible
  function showGameComplete(gaveUp = false, timedOut = false) {
       stopTimer();
-      setGameplayControlsVisible(false);
+      // setGameplayControlsVisible(false);
     
       if (!gameEndTimestamp) {
         gameEndTimestamp = Date.now();
@@ -4424,22 +4414,35 @@ modeButtons.forEach(button => {
   timerSelect.addEventListener("change", updateGameSetupSummary);
 }
  
-  if (endGameButton) {
+ if (changeGameButton) {
+  changeGameButton.addEventListener("click", changeGameMode);
+}
+
+if (resetButton) {
+  resetButton.addEventListener("click", resetCurrentGame);
+}
+
+if (submitButton) {
+  submitButton.addEventListener("click", submitAnswer);
+}
+
+if (hintButton) {
+  hintButton.addEventListener("click", showHint);
+}
+
+if (revealButton) {
+  revealButton.addEventListener("click", revealAnswer);
+}
+
+if (skipButton) {
+  skipButton.addEventListener("click", skipQuestion);
+}
+
+if (endGameButton) {
   endGameButton.addEventListener("click", endCurrentGame);
 }
-  
-  if (startGameButton) {
-    startGameButton.addEventListener("click", function () {
-      if (!selectedModeId) return;
-  
-      startGame(selectedModeId);
-    });
-  }  
-  changeGameButton.addEventListener("click", changeGameMode);
-  resetButton.addEventListener("click", resetCurrentGame);
 
-  submitButton.addEventListener("click", submitAnswer);
-
+  if (answerInput) {
   answerInput.addEventListener("keydown", function (event) {
     if (event.key === "Tab" && activeLayoutStyle === "grid") {
       event.preventDefault();
@@ -4455,8 +4458,5 @@ modeButtons.forEach(button => {
       }
     }
   });
-
-  hintButton.addEventListener("click", showHint);
-  revealButton.addEventListener("click", revealAnswer);
-  skipButton.addEventListener("click", skipQuestion);
+}
 };
