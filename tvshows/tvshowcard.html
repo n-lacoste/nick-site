@@ -1,1 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>TV Show Card | Nick Site</title>
+  <link rel="stylesheet" href="/nick-site/style.css">
+</head>
 
+<body>
+  <div id="site-header"></div>
+  <script src="/nick-site/nav.js?v=10"></script>
+
+  <main>
+    <div class="page-topline">
+      <div>
+        <h2>TV Show Card</h2>
+        <p>TV Show dashboard with categorical ranks, review notes, and episode-by-episode ranks. </p>
+      </div>
+    </div>
+
+    <div class="tv-card-controls">
+      <label for="tv-show-card-select">TV Show</label>
+
+      <input
+        id="tv-show-card-select"
+        class="search-box tv-card-search"
+        list="tv-show-card-options"
+        placeholder="Select a TV show..."
+      >
+
+      <datalist id="tv-show-card-options"></datalist>
+    </div>
+
+    <p id="tv-show-card-status" class="last-updated">Select a TV show.</p>
+
+    <section id="tv-show-card-output" class="tv-show-card-output">
+      <p class="movie-compare-placeholder">TV show details will appear here.</p>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="/nick-site/script.js?v=16"></script>
+
+  <script>
+    loadTVShowCard(
+      window.TVSHOWS_CSV_URL,
+      window.TVEPISODES_CSV_URL
+    );
+  </script>
+</body>
+</html>
