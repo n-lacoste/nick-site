@@ -1,18 +1,31 @@
 (function () {
-  const existingScript = document.querySelector('script[data-nick-nav-script="true"]');
+  function loadNavScript() {
+    const headerTarget = document.getElementById("site-header");
 
-  if (existingScript) return;
+    if (!headerTarget) {
+      console.error("Could not find #site-header.");
+      return;
+    }
 
-  const script = document.createElement("script");
+    const existingScript = document.querySelector('script[data-nick-nav-script="true"]');
 
-  script.dataset.nickNavScript = "true";
+    if (existingScript) return;
 
-  // During active building, this always loads the freshest nav.js.
-  script.src = "/nick-site/nav.js?v=" + Date.now();
+    const script = document.createElement("script");
 
-  script.onerror = function () {
-    console.error("Could not load /nick-site/nav.js");
-  };
+    script.dataset.nickNavScript = "true";
+    script.src = "/nick-site/nav.js?v=" + Date.now();
 
-  document.head.appendChild(script);
+    script.onerror = function () {
+      console.error("Could not load /nick-site/nav.js");
+    };
+
+    document.body.appendChild(script);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", loadNavScript);
+  } else {
+    loadNavScript();
+  }
 })();
