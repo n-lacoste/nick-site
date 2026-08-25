@@ -4038,34 +4038,46 @@ function cleanScoreInitials(value) {
   }
 
   function getAcceptedAnswers(row) {
-    const config = gameModes[activeModeId];
-    const values = [];
-
-    if (!config) return [];
-
-    if (config.answerKind === "capital") {
-      values.push(row.capital);
-
-      if (row.capitalAlt) {
-        row.capitalAlt.split(",").forEach(item => values.push(item));
-      }
-    } else {
-      values.push(row.name);
-
-      if (row.alt) {
-        row.alt.split(",").forEach(item => values.push(item));
-      }
-
-      if (row.code) {
-        values.push(row.code);
-      }
-    }
-
-    return values
-      .map(normalizeAnswer)
-      .filter(Boolean);
+        const config = gameModes[activeModeId];
+        const values = [];
+      
+        if (!config) return [];
+      
+        if (config.answerKind === "capital") {
+          values.push(row.capital);
+      
+          getAlternateAnswerValues(row.capitalAlt).forEach(item => {
+            values.push(item);
+          });
+        } else {
+          values.push(row.name);
+      
+          getAlternateAnswerValues(row.alt).forEach(item => {
+            values.push(item);
+          });
+      
+          if (row.code) {
+            values.push(row.code);
+          }
+        }
+      
+        return values
+          .map(normalizeAnswer)
+          .filter(Boolean);
   }
 
+  function getAlternateAnswerValues(value) {
+        const text = String(value ?? "").trim();
+      
+        if (!text) return [];
+      
+        const delimiter = text.includes(";") ? ";" : ",";
+      
+        return text
+          .split(delimiter)
+          .map(item => item.trim())
+          .filter(Boolean);
+}  
   function normalizeAnswer(value) {
     return String(value ?? "")
       .normalize("NFD")
