@@ -181,7 +181,7 @@
     const tvDisplayColumns = [
       "Tier",
       "Rk",
-      "Tv Show",
+      "TV Show",
       "TV ID",
       "Times Seen",
       "Seasons",
@@ -256,17 +256,42 @@
       }
     ];
 
-    loadCSV(
-      window.TVSHOWS_CSV_URL,
-      "tvshows-table",
-      "rankings-search",
-      tvShowsDisplayColumns,
-      "rankings-columns",
-      "rankings-sort-column",
-      "rankings-sort-direction",
-      tvShowsFilters,
-      "rankings-show-count"
-    );
+    const tvShowsDisplayColumns = [
+        "Tier",
+        "Rk",
+        "TV Show",
+        "Times Seen",
+        "Seasons",
+        "Episodes",
+        "Years",
+        "My Rating",
+        "Me vs. IMDB",
+        "Updated",
+        "Plot",
+        "Main Character(s)",
+        "Side Characters",
+        "Emotion",
+        "Dialogue (Writing)",
+        "Purpose Met",
+        "Cast",
+        "Music & Sound",
+        "Rewatch Value",
+        "Episode Average",
+        "Notes (Review)"
+      ];
+
+const tvShowsFilters = [];
+   loadCSV(
+        window.TVSHOWS_CSV_URL,
+        "tvshows-table",
+        "rankings-search",
+        tvShowsDisplayColumns,
+        "rankings-columns",
+        "rankings-sort-column",
+        "rankings-sort-direction",
+        tvShowsFilters,
+        "rankings-show-count"
+      ).catch(showTVShowsError);
   </script>
 </body>
 </html>
