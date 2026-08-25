@@ -3352,3 +3352,12 @@ tr:hover td:nth-child(3) {
   }
 }
 
+/* Centre and tighten Geo game play mode description */
+#flagsPlayStyleDescription {
+  max-width: 220px;
+  margin: 12px auto 0;
+  text-align: center;
+  line-height: 1.35;
+}
+
+
