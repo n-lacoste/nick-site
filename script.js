@@ -1383,7 +1383,7 @@ function getSelectedFilterSummary(filter) {
   const label = getFilterSummaryLabel(filter);
 
   if (selectedValues.length === 0) {
-    return `${label}: none`;
+    return `${label} = none`;
   }
 
   const selectedText = selectedValues.length <= 5
@@ -1395,10 +1395,10 @@ function getSelectedFilterSummary(filter) {
       ? "must contain all"
       : "contains either";
 
-    return `${label}: ${selectedText} (${modeText})`;
+    return `${label} = ${selectedText} (${modeText})`;
   }
 
-  return `${label}: ${selectedText}`;
+  return `${label} = ${selectedText}`;
 }
 
 function updateAppliedFiltersSummary() {
