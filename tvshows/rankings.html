@@ -167,10 +167,10 @@
       </div>
     </details>
 
-    <p id="movies-row-count" class="last-updated"></p>
+    <p id="row-count" class="last-updated"></p>
 
     <div class="table-wrap">
-      <table id="tv-rankings-table"></table>
+      <table id="rankings-table" class="rankings-table"></table>
     </div>
   </main>
 
@@ -181,7 +181,7 @@
   function showRankingsError(error) {
     console.error(error);
 
-    const table = document.getElementById("tvshows-table");
+    const table = document.getElementById("rankings-table");
 
     if (table) {
       table.innerHTML = `
@@ -273,18 +273,17 @@
     }
 
     loadCSV(
-      window.TVSHOWS_CSV_URL,
-      "tvshows-table",
-      "rankings-search",
-      tvShowsDisplayColumns,
-      "rankings-columns",
-      "rankings-sort-column",
-      "rankings-sort-direction",
-      tvShowsFilters,
-      "rankings-show-count"
-    ).catch(showRankingsError);
-  } catch (error) {
-    showRankingsError(error);
+        window.TVSHOWS_CSV_URL,
+        "rankings-table",
+        "rankings-search",
+        tvShowsDisplayColumns,
+        "rankings-columns",
+        "rankings-sort-column",
+        "rankings-sort-direction",
+        tvShowsFilters,
+        "rankings-show-count",
+        "tv-rating-status"
+      ).catch(showRankingsError);
   }
 </script>
 </body>
