@@ -4779,22 +4779,27 @@ function getTimerLabel(timerValue) {
     }
 
   function updatePlayStyleDescription() {
-  if (!playStyleDescriptionEl || !playStyleToggle) return;
-
-  const playStyle = playStyleToggle.dataset.playStyle || "information";
-
-  if (playStyle === "speed") {
-    playStyleDescriptionEl.innerHTML = `
-      <strong>Speed Play:</strong>
-      A correct guess automatically goes to the next item, without showing the correct answer’s details.
-    `;
-    return;
-  }
-
-  playStyleDescriptionEl.innerHTML = `
-    <strong>Information Play:</strong>
-    See information for each correct answer, which requires an additional click to go to the next guess.
-  `;
+            if (!playStyleDescriptionEl || !playStyleToggle) return;
+          
+            const playStyle = playStyleToggle.dataset.playStyle || "information";
+          
+            if (playStyle === "speed") {
+              playStyleToggle.textContent = "Speed Play";
+              playStyleToggle.classList.remove("information-play");
+              playStyleToggle.classList.add("speed-play");
+          
+              playStyleDescriptionEl.textContent =
+                "A correct guess automatically goes to the next item, without showing the correct answer’s details.";
+          
+              return;
+            }
+          
+            playStyleToggle.textContent = "Information Play";
+            playStyleToggle.classList.remove("speed-play");
+            playStyleToggle.classList.add("information-play");
+          
+            playStyleDescriptionEl.textContent =
+              "See information for each correct answer, which requires an additional click to go to the next guess.";
 }
   
   function updateGameSetupSummary() {
@@ -4922,16 +4927,17 @@ function getTimerLabel(timerValue) {
   }
 
   if (playStyleToggle) {
-  playStyleToggle.addEventListener("click", function () {
-    const currentStyle = playStyleToggle.dataset.playStyle || "information";
-
-    playStyleToggle.dataset.playStyle = currentStyle === "information"
-      ? "speed"
-      : "information";
-
-    updateGameSetupSummary();
-    updatePlayStyleDescription();
-  });
+      playStyleToggle.addEventListener("click", function () {
+        const currentStyle = playStyleToggle.dataset.playStyle || "information";
+    
+        playStyleToggle.dataset.playStyle = currentStyle === "information"
+          ? "speed"
+          : "information";
+    
+        updatePlayStyleToggle();
+        updatePlayStyleDescription();
+        updateGameSetupSummary();
+      });
 }
 
   if (infoToggleButton && infoPanel) {
