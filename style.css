@@ -3791,3 +3791,7 @@ tr:hover td:nth-child(3) {
   line-height: 1.2;
 }
 
+.tv-card-tags-stat strong {
+  white-space: pre-line;
+}
+
