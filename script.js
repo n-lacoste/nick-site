@@ -830,6 +830,38 @@ function renderExpandableCell(header, value) {
     }
   }
 
+function getVisibleEpisodeRankAverage(rowsToShow) {
+  const isEpisodeRankingsTable =
+    allHeaders.includes("Episode Title") &&
+    allHeaders.includes("Rank");
+
+  if (!isEpisodeRankingsTable) {
+    return "";
+  }
+
+  const rankValues = rowsToShow
+    .map(row => {
+      const value = String(row["Rank"] ?? "").replace(/,/g, "").trim();
+      const number = Number(value);
+
+      return isNaN(number) ? null : number;
+    })
+    .filter(value => value !== null);
+
+  if (rankValues.length === 0) {
+    return "Average Rank: —";
+  }
+
+  const average =
+    rankValues.reduce((sum, value) => sum + value, 0) / rankValues.length;
+
+  const formattedAverage = average
+    .toFixed(2)
+    .replace(/\.?0+$/, "");
+
+  return `Average Rank: ${formattedAverage}`;
+}
+  
   function renderTable(rows) {
     clearExpandedCellStore();
 
@@ -846,8 +878,13 @@ function renderExpandableCell(header, value) {
         document.getElementById("row-count") ||
         document.getElementById("movies-row-count");
 
-    if (rowCount) {
-      rowCount.textContent = `Showing ${rowsToShow.length} of ${rows.length} matches.`;
+   if (rowCount) {
+      const averageRank = getVisibleEpisodeRankAverage(rowsToShow);
+    
+      rowCount.innerHTML = `
+        <span>Showing ${rowsToShow.length} of ${rows.length} matches.</span>
+        <span>${averageRank}</span>
+      `;
     }
 
     rowsToShow.forEach(row => {
