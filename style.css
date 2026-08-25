@@ -3018,3 +3018,6 @@ tr:hover td:nth-child(3) {
 .flags-change-game-end-button:hover {
   background: #0d66cc;
 }
+#cell-modal-text {
+  white-space: pre-line;
+}
