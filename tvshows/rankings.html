@@ -16,31 +16,31 @@
         <p>Nick and Sarah's database of TV shows, with rankings, tags, and review information.</p>
       </div>
 
-      <p id="movies-last-updated" class="last-updated">Last updated: —</p>
+      <p id="last-updated" class="last-updated">Last updated: —</p>
     </div>
 
     <div class="movie-controls-row">
 
-      <details id="tvshows-columns-dropdown" class="filter-dropdown">
+      <details id="rankings-columns-dropdown" class="filter-dropdown">
         <summary>Display Columns</summary>
 
         <label class="filter-option select-all-option">
-          <input type="checkbox" id="tvshows-columns-select-all">
+          <input type="checkbox" id="rankings-columns-select-all">
           Select All
         </label>
 
-        <div id="tvshows-columns" class="filter-options"></div>
+        <div id="rankings-columns" class="filter-options"></div>
       </details>
 
       <div class="table-controls">
-        <label for="tvshows-sort-column">Sort by:</label>
-        <select id="tvshows-sort-column" class="sort-select"></select>
-        <button id="tvshows-sort-direction" class="sort-button" type="button">A–Z</button>
+        <label for="rankings-sort-column">Sort by:</label>
+        <select id="rankings-sort-column" class="sort-select"></select>
+        <button id="rankings-sort-direction" class="sort-button" type="button">A–Z</button>
       </div>
 
       <div class="show-control">
-        <label for="tvshows-show-count">Show:</label>
-        <select id="tvshows-show-count" class="sort-select">
+        <label for="rankings-show-count">Show:</label>
+        <select id="rankings-show-count" class="sort-select">
           <option value="25" selected>25</option>
           <option value="50">50</option>
           <option value="100">100</option>
@@ -49,7 +49,7 @@
         </select>
       </div>
 
-      <button id="movies-download-csv" class="download-button" type="button" aria-label="Download CSV">
+      <button id="download-csv" class="download-button" type="button" aria-label="Download CSV">
         <svg class="download-icon" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"></path>
         </svg>
@@ -57,7 +57,7 @@
 
       <input
         type="text"
-        id="tvshows-search"
+        id="rankings-search"
         placeholder="Search TV shows..."
         class="search-box"
       >
