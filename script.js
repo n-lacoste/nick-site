@@ -3176,7 +3176,7 @@ function renderEpisodeGridAsSeasonColumns(episodeRows) {
     setupTVCardEpisodeGridControls(showRow, episodeRows);
     
     if (status) {
-      status.textContent = `Showing TV card for ${showTitle}.`;
+      status.hidden = true;
     }
   }
 
@@ -3293,6 +3293,7 @@ function renderTVShowSuggestions() {
      output.innerHTML = "";
 
       if (status) {
+        status.hidden = false;
         status.textContent = "Select a TV show to generate a card.";
       }
 
