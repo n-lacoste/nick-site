@@ -2319,6 +2319,14 @@ async function loadMovieComparison(filePath) {
     return `#${text}`;
   }
   
+  function formatTagsForInfo(value) {
+  return String(value ?? "")
+    .split(";")
+    .map(tag => tag.trim())
+    .filter(Boolean)
+    .join(", ");
+}
+  
   function formatValue(value) {
     const text = String(value ?? "").trim();
     return text === "" ? "—" : text;
@@ -2821,19 +2829,17 @@ window.loadTVShowCard = async function loadTVShowCard(tvShowsPath, episodesPath)
     const averageEpisodeRank = getAverageEpisodeRank(episodeRows);
 
     return `
-      <section class="tv-card-panel">
+      <section class="tv-card-panel tv-card-full-width tv-card-show-info-panel">
         <h3>Show Info</h3>
 
-        <div class="tv-card-info-grid">
+        <div class="tv-card-info-grid tv-card-info-grid-compact">
           ${makeStatBox("Times Seen", getText(showRow, "Times Seen"))}
+          ${makeStatBox("Years", getText(showRow, "Years"))}
           ${makeStatBox("Seasons", getText(showRow, "Seasons"))}
           ${makeStatBox("Episodes", getText(showRow, "Episodes"))}
           ${makeStatBox("Ranked Episodes", rankedEpisodes)}
-          ${makeStatBox("Years", getText(showRow, "Years"))}
           ${makeStatBox("Watched", getText(showRow, "Watched / Unwatched"))}
-          ${makeStatBox("Re-watch", getText(showRow, "Going to re-watch"))}
-          ${makeStatBox("Animated", getText(showRow, "Animated"))}
-          ${makeStatBox("Kids Show", getText(showRow, "Kids Show"))}
+          ${makeStatBox("Tags", formatTagsForInfo(getText(showRow, "Tags")), "tv-card-tags-stat")}
 
           <div class="tv-card-stat tv-card-tier-box">
             <span>Tier</span>
@@ -3117,8 +3123,12 @@ function renderEpisodeGridAsSeasonColumns(episodeRows) {
 
         <div class="tv-card-main-grid">
           ${renderShowInfo(showRow, episodeRows)}
-          ${renderRankCountChart(episodeRows)}
-          ${renderCategoricalRanks(showRow)}
+        
+          <div class="tv-card-side-by-side-panels">
+            ${renderRankCountChart(episodeRows)}
+            ${renderCategoricalRanks(showRow)}
+          </div>
+        
           ${renderNotes(showRow)}
           ${renderEpisodeGrid(episodeRows)}
         </div>
