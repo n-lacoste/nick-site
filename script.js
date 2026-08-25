@@ -3235,6 +3235,12 @@ function hideTVShowSuggestions() {
   suggestionsBox.innerHTML = "";
 }
 
+function chooseTVShowSuggestion(title) {
+  selectInput.value = title;
+  hideTVShowSuggestions();
+  updateCardFromInput();
+}
+  
 function renderTVShowSuggestions() {
   if (!suggestionsBox) return;
 
@@ -3261,15 +3267,21 @@ function renderTVShowSuggestions() {
 
   suggestionsBox.hidden = false;
 
-  suggestionsBox.querySelectorAll(".tv-card-suggestion-option").forEach(button => {
-    button.addEventListener("click", function () {
-      const title = button.dataset.tvShowTitle || "";
+ suggestionsBox.querySelectorAll(".tv-card-suggestion-option").forEach(button => {
+  button.addEventListener("mousedown", function (event) {
+    event.preventDefault();
 
-      selectInput.value = title;
-      hideTVShowSuggestions();
-      updateCardFromInput();
-    });
+    const title = button.dataset.tvShowTitle || "";
+    chooseTVShowSuggestion(title);
   });
+
+  button.addEventListener("click", function (event) {
+    event.preventDefault();
+
+    const title = button.dataset.tvShowTitle || "";
+    chooseTVShowSuggestion(title);
+  });
+});
 }
 
   function findShowByInput(value) {
