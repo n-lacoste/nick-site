@@ -3372,6 +3372,34 @@ showStartScreen();
         <div><strong>Leaderboard eligible:</strong> ${leaderboardEligible ? "Yes" : "No"}</div>
         ${getScoreSubmissionHTML()}
       `;
+   
+   detailsEl.insertAdjacentHTML("beforeend", `
+      <div class="flags-end-options-row">
+        <button id="flagsPlayAgainButton" class="flags-end-option-button" type="button">
+          Play Again
+        </button>
+    
+        <button id="flagsChangeGameEndButton" class="flags-end-option-button flags-change-game-end-button" type="button">
+          Change Game
+        </button>
+      </div>
+    `);
+    
+    const playAgainButton = document.getElementById("flagsPlayAgainButton");
+    const changeGameEndButton = document.getElementById("flagsChangeGameEndButton");
+    
+    if (playAgainButton) {
+      playAgainButton.addEventListener("click", function () {
+        if (!activeModeId) return;
+        startGame(activeModeId);
+      });
+    }
+    
+    if (changeGameEndButton) {
+      changeGameEndButton.addEventListener("click", function () {
+        changeGameMode();
+      });
+    }
     
       setupScoreSubmissionForm();
       updateScore();
