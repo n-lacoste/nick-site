@@ -1698,6 +1698,25 @@ tr:hover td:nth-child(3) {
   color: #ffd966;
 }
 
+.flags-top-scores-header {
+  display: grid;
+  grid-template-columns: 26px 48px 62px 1fr;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 6px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #333;
+  color: #aaa;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.flags-top-scores-header span:last-child {
+  text-align: right;
+}
+
 .flags-game-controls select,
 .flags-answer-area input {
   padding: 10px 12px;
