@@ -3525,6 +3525,7 @@ tr:hover td:nth-child(3) {
   }
 }
 
+/* TV SHOW CARD PAGE */
 /* TV Show Card episode grid toggle */
 .tv-card-episode-grid-toolbar {
   display: flex;
@@ -3614,4 +3615,73 @@ tr:hover td:nth-child(3) {
 
 .tv-card-episode-matrix-empty {
   background: transparent;
+}
+
+/* TV Show Card layout refinements */
+.tv-card-show-info-panel {
+  padding: 14px 16px;
+}
+
+.tv-card-show-info-panel h3 {
+  margin-bottom: 10px;
+}
+
+.tv-card-info-grid-compact {
+  display: grid;
+  grid-template-columns: repeat(11, minmax(72px, 1fr));
+  gap: 8px;
+  overflow-x: auto;
+}
+
+.tv-card-show-info-panel .tv-card-stat {
+  min-height: 0;
+  padding: 8px 7px;
+}
+
+.tv-card-show-info-panel .tv-card-stat span {
+  margin-bottom: 4px;
+  font-size: 10px;
+  line-height: 1.1;
+}
+
+.tv-card-show-info-panel .tv-card-stat strong {
+  font-size: 14px;
+  line-height: 1.15;
+}
+
+.tv-card-show-info-panel .tv-card-wide-stat {
+  grid-column: auto;
+}
+
+.tv-card-side-by-side-panels {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+.tv-card-side-by-side-panels .tv-card-panel {
+  height: 100%;
+}
+
+@media (max-width: 900px) {
+  .tv-card-side-by-side-panels {
+    grid-template-columns: 1fr;
+  }
+
+  .tv-card-info-grid-compact {
+    grid-template-columns: repeat(4, minmax(80px, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .tv-card-info-grid-compact {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.tv-card-tags-stat strong {
+  font-size: 11px;
+  line-height: 1.2;
 }
