@@ -2636,6 +2636,7 @@ async function loadMovieComparison(filePath) {
   renderComparison();
 }
 
+/* TV SHOW CARD */
 window.loadTVShowCard = async function loadTVShowCard(tvShowsPath, episodesPath) {
   const selectInput = document.getElementById("tv-show-card-select");
   const datalist = document.getElementById("tv-show-card-options");
@@ -3021,7 +3022,7 @@ function renderEpisodeGridAsSeasonBlocks(episodeRows) {
                       style="background:${colors.bg}; color:${colors.text};"
                       title="S${escapeHTML(season)}E${escapeHTML(episodeNumber)}: ${escapeHTML(episodeTitle)}"
                     >
-                     <span>${escapeHTML(formatRankWithHash(rank))}</span>
+                     <span>${escapeHTML(formatValue(rank))}</span>
                     </div>
                   `;
                 }).join("")}
@@ -3090,7 +3091,7 @@ function renderEpisodeGridAsSeasonColumns(episodeRows) {
                           style="background:${colors.bg}; color:${colors.text};"
                           title="S${escapeHTML(season)}E${escapeHTML(seasonEpisodeNumber)}: ${escapeHTML(episodeTitle)}"
                         >
-                          <span class="tv-card-matrix-rank">${escapeHTML(formatRankWithHash(rank))}</span>
+                          <span class="tv-card-matrix-rank">${escapeHTML(formatValue(rank))}</span>
                           <span class="tv-card-matrix-title">${escapeHTML(episodeTitle)}</span>
                         </div>
                       </td>
