@@ -48,11 +48,11 @@
         </select>
       </div>
 
-      <button id="movies-download-csv" class="download-button" type="button" aria-label="Download CSV">
-        <svg class="download-icon" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"></path>
-        </svg>
-      </button>
+      <button id="download-csv" class="download-button" type="button" aria-label="Download CSV">
+      <svg class="download-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"></path>
+      </svg>
+    </button>
 
       <input 
         type="text" 
@@ -274,17 +274,21 @@
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script src="../script.js?v=10"></script>
 
-  <script>
-    try {
-      if (typeof Papa === "undefined") {
-        throw new Error("PapaParse did not load.");
-      }
+ <script>
+  try {
+    if (typeof Papa === "undefined") {
+      throw new Error("PapaParse did not load.");
+    }
 
-      if (typeof loadCSV !== "function") {
-        throw new Error("loadCSV is not defined. script.js did not load correctly or has a syntax error.");
-      }
+    if (typeof loadCSV !== "function") {
+      throw new Error("loadCSV is not defined. script.js did not load correctly or has a syntax error.");
+    }
 
-      loadCSV(window.MOVIES_CSV_URL, "movies-table", "movies-search", [
+    loadCSV(
+      window.MOVIES_CSV_URL,
+      "movies-table",
+      "rankings-search",
+      [
         "Tier",
         "Rk",
         "Name",
@@ -312,7 +316,11 @@
         "Music & Sound",
         "Rewatch Value",
         "Notes (Review)"
-      ], "movies-columns", "movies-sort-column", "movies-sort-direction", [
+      ],
+      "rankings-columns",
+      "rankings-sort-column",
+      "rankings-sort-direction",
+      [
         {
           column: "Watched?",
           targetId: "watched-filter",
@@ -378,16 +386,14 @@
           blankLabel: "NO",
           options: ["YES", "NO"]
         }
-      ], "movies-show-count", "movies-rating-status")
-        .catch(showMoviesError);
-
-      document.getElementById("movies-download-csv").addEventListener("click", () => {
-        exportTableToCSV("movies-table", "movies-export.csv");
-      });
-    } catch (error) {
-      showMoviesError(error);
-    }
-  </script>
+      ],
+      "rankings-show-count",
+      "movies-rating-status"
+    ).catch(showMoviesError);
+  } catch (error) {
+    showMoviesError(error);
+  }
+</script>
 </body>
 </html>
 
