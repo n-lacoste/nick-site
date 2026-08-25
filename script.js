@@ -888,17 +888,15 @@ function getVisibleEpisodeRankAverage(rowsToShow) {
     .filter(value => value !== null);
 
   if (rankValues.length === 0) {
-    return "Average Rank: —";
+    return "—";
   }
 
   const average =
     rankValues.reduce((sum, value) => sum + value, 0) / rankValues.length;
 
-  const formattedAverage = average
+  return average
     .toFixed(2)
     .replace(/\.?0+$/, "");
-
-  return `Average Rank: ${formattedAverage}`;
 }
   
   function renderTable(rows) {
@@ -917,14 +915,18 @@ function getVisibleEpisodeRankAverage(rowsToShow) {
         document.getElementById("row-count") ||
         document.getElementById("movies-row-count");
 
-   if (rowCount) {
+       if (rowCount) {
       const averageRank = getVisibleEpisodeRankAverage(rowsToShow);
     
       rowCount.innerHTML = `
         <span>Showing ${rowsToShow.length} of ${rows.length} matches.</span>
-        <span>${averageRank}</span>
+        ${averageRank ? `
+          <span class="visible-rank-average">
+            Average Rank: <span class="visible-rank-average-number">${averageRank}</span>
+          </span>
+        ` : ""}
       `;
-    }
+}
 
     rowsToShow.forEach(row => {
       html += "<tr>";
