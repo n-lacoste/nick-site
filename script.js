@@ -1224,13 +1224,20 @@ function renderExpandableCell(header, value) {
             input.addEventListener("change", () => {
               const changedHeader = input.value;
         
-              if (input.checked) {
-                if (!visibleHeaders.includes(changedHeader)) {
+             if (input.checked) {
+              if (!visibleHeaders.includes(changedHeader)) {
+                const insertBeforeHeader = window.RANKINGS_ADDED_COLUMNS_BEFORE || "";
+            
+                if (insertBeforeHeader && visibleHeaders.includes(insertBeforeHeader)) {
+                  const insertIndex = visibleHeaders.indexOf(insertBeforeHeader);
+                  visibleHeaders.splice(insertIndex, 0, changedHeader);
+                } else {
                   visibleHeaders.push(changedHeader);
                 }
-              } else {
-                visibleHeaders = visibleHeaders.filter(header => header !== changedHeader);
               }
+            } else {
+              visibleHeaders = visibleHeaders.filter(header => header !== changedHeader);
+            }
         
               updateColumnPickerSelectAll();
               updateColumnSummary();
