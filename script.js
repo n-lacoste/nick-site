@@ -1202,62 +1202,70 @@ function renderExpandableCell(header, value) {
   }
 
   function setupColumnPicker() {
-    if (!columnPickerId) return;
-
-    const picker = document.getElementById(columnPickerId);
-    const selectAllCheckbox = document.getElementById(`${columnPickerId}-select-all`);
-
-    if (!picker) return;
-
-    picker.innerHTML = allHeaders.map(header => {
-      const checked = visibleHeaders.includes(header) ? "checked" : "";
-
-      return `
-        <label class="filter-option">
-          <input type="checkbox" value="${escapeHTML(header)}" ${checked}>
-          ${escapeHTML(header)}
-        </label>
-      `;
-    }).join("");
-
-    picker.querySelectorAll("input").forEach(input => {
-      input.addEventListener("change", () => {
-    const checkedHeaders = Array.from(
-        picker.querySelectorAll("input:checked")
-      ).map(checkbox => checkbox.value);
-      
-      visibleHeaders = allHeaders.filter(header => checkedHeaders.includes(header));
-
-        updateColumnPickerSelectAll();
-        updateColumnSummary();
-        updateSortDropdown();
-        renderTable(currentData);
-      });
-    });
-
-    if (selectAllCheckbox) {
-      selectAllCheckbox.addEventListener("change", () => {
-        const inputs = Array.from(picker.querySelectorAll("input"));
-
-        inputs.forEach(input => {
-          input.checked = selectAllCheckbox.checked;
-        });
-
-    const checkedHeaders = Array.from(
-          picker.querySelectorAll("input:checked")
-        ).map(checkbox => checkbox.value);
+          if (!columnPickerId) return;
         
-        visibleHeaders = allHeaders.filter(header => checkedHeaders.includes(header));
-
-        selectAllCheckbox.indeterminate = false;
-        updateColumnSummary();
-        updateSortDropdown();
-        renderTable(currentData);
-      });
-    }
-
-    updateColumnPickerSelectAll();
-  }
+          const picker = document.getElementById(columnPickerId);
+          const selectAllCheckbox = document.getElementById(`${columnPickerId}-select-all`);
+        
+          if (!picker) return;
+        
+          picker.innerHTML = allHeaders.map(header => {
+            const checked = visibleHeaders.includes(header) ? "checked" : "";
+        
+            return `
+              <label class="filter-option">
+                <input type="checkbox" value="${escapeHTML(header)}" ${checked}>
+                ${escapeHTML(header)}
+              </label>
+            `;
+          }).join("");
+        
+          picker.querySelectorAll("input").forEach(input => {
+            input.addEventListener("change", () => {
+              const changedHeader = input.value;
+        
+              if (input.checked) {
+                if (!visibleHeaders.includes(changedHeader)) {
+                  visibleHeaders.push(changedHeader);
+                }
+              } else {
+                visibleHeaders = visibleHeaders.filter(header => header !== changedHeader);
+              }
+        
+              updateColumnPickerSelectAll();
+              updateColumnSummary();
+              updateSortDropdown();
+              renderTable(currentData);
+            });
+          });
+        
+          if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener("change", () => {
+              const inputs = Array.from(picker.querySelectorAll("input"));
+        
+              inputs.forEach(input => {
+                input.checked = selectAllCheckbox.checked;
+              });
+        
+              if (selectAllCheckbox.checked) {
+                allHeaders.forEach(header => {
+                  if (!visibleHeaders.includes(header)) {
+                    visibleHeaders.push(header);
+                  }
+                });
+              } else {
+                visibleHeaders = [];
+              }
+        
+              selectAllCheckbox.indeterminate = false;
+              updateColumnSummary();
+              updateSortDropdown();
+              renderTable(currentData);
+            });
+          }
+        
+          updateColumnPickerSelectAll();
+}
 
   function getActiveFilterCount() {
     let count = 0;
