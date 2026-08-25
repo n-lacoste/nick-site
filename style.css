@@ -3018,6 +3018,18 @@ tr:hover td:nth-child(3) {
 .flags-change-game-end-button:hover {
   background: #0d66cc;
 }
+
 #cell-modal-text {
   white-space: pre-line;
+}
+
+/* Homepage title centre alignment */
+.hero {
+  text-align: center;
+}
+
+.hero h2 {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
 }
