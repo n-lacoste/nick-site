@@ -262,12 +262,12 @@ function updateMoviesLastUpdatedText(rows) {
 const MOVIE_PINNED_COLUMNS = [
   "Tier",
   "Rk",
-  "Name",
+  "Movie Title",
   "Year",
   "Mins.",
   "h:mm",
   "My Rating",
-  "Me vs. IMDB",
+  "vs. IMDB",
   "Watched?",
   "Updated"
 ];
@@ -288,7 +288,7 @@ function isMovieRankingTable(headers) {
   return (
     headers.includes("Tier") &&
     headers.includes("Rk") &&
-    headers.includes("Name") &&
+    headers.includes("Movie Title") &&
     headers.includes("My Rating") &&
     headers.includes("Updated")
   );
@@ -369,24 +369,19 @@ async function loadCSV(
       "Notes (Review)",
       "OMDB_Plot",
       "Blurb",
-      "Notes",
       "Season Episode Counts"
     ];
   let expandedCellCounter = 0;
   const expandedCellStore = {};
 
   const columnWidths = {
+    /* Movie + TV tables */
     "Tier": "80px",
     "Rk": "70px",
-    "Name": "240px",
-    "Times Seen": "58px",
-    "Tv Show": "240px",
-    "TV Show": "240px",
-    "Episode Title": "260px",
-    "Me vs. IMDB": "65px",
+    "Notes (Review)": "500px",
+    "vs. IMDB": "65px",
     "Tags": "150px",
-    "Movie Series?": "120px",
-
+    
     "Plot": "50px",
     "Main Character(s)": "50px",
     "Side Characters": "50px",
@@ -396,44 +391,62 @@ async function loadCSV(
     "Cast": "50px",
     "Music & Sound": "50px",
     "Rewatch Value": "50px",
-
-    "Notes (Review)": "500px",
+    
+    /* Movie Table only */
+    "Movie Title": "240px",
+    "Movie Series?": "120px",
     "OMDB_Plot": "420px",
     "OMDB_Top_3_Actors": "180px",
     "OMDB_Director": "150px",
     "OMDB_Genre": "150px",
     
-    "Blurb": "240px",
+    /* TV Show Table only */
+    "TV Show": "240px",
+    "Times Seen": "75px",
+
+    /* Episodes Table only */
+    "Episode Title": "260px",
+    "Blurb": "400px",
+    "Release Date": "240px"
     "Season Epi #": "50px",
     "Rank": "50px",
-    "Notes": "240px"
+    "Notes": "400px"
   };
 
   const cellFontSizes = {
+    /* Movie + TV tables */
     "Notes (Review)": "13px",
-    "OMDB_Plot": "13px",
     "Tags": "13px",
+        
+    /* Movie Table only */
     "Movie Series?": "13px",
+    "OMDB_Plot": "13px",
     "OMDB_Genre": "13px",
     "OMDB_Director": "13px",
     "OMDB_Top_3_Actors": "13px",
     
+    /* TV Show Table only */
     "Times Seen": "12px",
     
-    "Blurb": "13px",
-    "Release Date": "13px",
-    "Season Epi #": "18px",
+    /* Episodes Table only */
+    "Blurb": "11px",
+    "Release Date": "14px",
+    "Season Epi #": "14px",
     "Rank": "18px",
-    "Notes": "13px"
+    "Notes": "11px"
   };
 
-  const defaultHeaderFontSize = "14px";
+  const defaultHeaderFontSize = "18px";
 
   const headerFontSizes = {
-    "Season": "12px",
+    /* TV Show Table only */
+    "Times Seen": "12px",
+    
+    /* Episodes Table only */
+    "Season": "14px",
     "Season Epi #": "12px",
     "Release Date": "13px",
-    "Times Seen": "12px"
+    "Rank": "12px"
   };
 
   const factorHeaderFontSize = "12px";
@@ -480,7 +493,7 @@ async function loadCSV(
   function formatHeader(header) {
     const headerBreaks = {
       "OMDB_Top_3_Actors": "Actors (3)",
-      "Me vs. IMDB": "vs.<br>IMDB",
+      "vs. IMDB": "vs.<br>IMDB",
       "Movie Series?": "Movie Series",
       "Main Character(s)": "Main<br>Character(s)",
       "Side Characters": "Side<br>Characters",
@@ -1077,7 +1090,7 @@ function getVisibleEpisodeRankAverage(rowsToShow) {
 
     if (sampleTerm !== "") {
       const sampleText = [
-        row["Name"],
+        row["Movie Title"],
         row["Tags"],
         row["Movie Series?"],
         row["OMDB_Genre"],
@@ -2010,13 +2023,13 @@ async function loadMovieWatchHistory(filePath) {
     const searchableText = [
       row["Added"],
       row["Updated"],
-      row["Name"],
+      row["Movie Title"],
       row["Year"],
       row["Tier"],
       row["My Rating"],
       row["Rk"],
       formatRank(row["Rk"]),
-      row["Me vs. IMDB"],
+      row["vs. IMDB"],
       row["Notes (Review)"]
     ]
       .map(value => String(value ?? "").toLowerCase())
@@ -2045,7 +2058,7 @@ async function loadMovieWatchHistory(filePath) {
   }
 
   function formatReviewWithTitle(row) {
-    const title = String(row["Name"] ?? "").trim();
+    const title = String(row["Movie Title"] ?? "").trim();
     const year = String(row["Year"] ?? "").trim();
     const review = String(row["Notes (Review)"] ?? "").trim();
 
@@ -2104,12 +2117,12 @@ async function loadMovieWatchHistory(filePath) {
         <tr>
           <td>${escapeHTML(formatDate(row["Added"]))}</td>
           <td>${escapeHTML(formatDate(row["Updated"]))}</td>
-          <td>${escapeHTML(row["Name"])}</td>
+          <td>${escapeHTML(row["Movie Title"])}</td>
           <td>${escapeHTML(row["Year"])}</td>
           <td style="${getTierStyle(row["Tier"])}">${escapeHTML(row["Tier"])}</td>
           <td style="${getRatingColor(row["My Rating"])}">${escapeHTML(row["My Rating"])}</td>
           <td>${escapeHTML(formatRank(row["Rk"]))}</td>
-          <td>${escapeHTML(row["Me vs. IMDB"])}</td>
+          <td>${escapeHTML(row["vs. IMDB"])}</td>
           <td>${escapeHTML(formatReviewWithTitle(row))}</td>
         </tr>
       `;
@@ -2267,7 +2280,7 @@ async function loadMovieComparison(filePath) {
   }
 
   function makeMovieLabel(row) {
-    const title = String(row["Name"] ?? "").trim();
+    const title = String(row["Movie Title"] ?? "").trim();
     const year = String(row["Year"] ?? "").trim();
 
     if (title === "" && year === "") return "";
@@ -2366,7 +2379,7 @@ async function loadMovieComparison(filePath) {
     }
 
     target.innerHTML = `
-      <h3>${escapeHTML(movie["Name"])}</h3>
+      <h3>${escapeHTML(movie["Movie Title"])}</h3>
 
       <div class="movie-compare-meta">
         <span>${escapeHTML(movie["Year"])}</span>
@@ -2378,7 +2391,7 @@ async function loadMovieComparison(filePath) {
       <dl class="movie-compare-details">
         <div>
           <dt>vs. IMDB</dt>
-          <dd>${escapeHTML(formatValue(movie["Me vs. IMDB"]))}</dd>
+          <dd>${escapeHTML(formatValue(movie["vs. IMDB"]))}</dd>
         </div>
 
         <div>
