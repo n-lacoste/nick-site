@@ -402,8 +402,11 @@ async function loadCSV(
     "OMDB_Top_3_Actors": "180px",
     "OMDB_Director": "150px",
     "OMDB_Genre": "150px",
-    "Blurb": "420px",
-    "Notes": "420px"
+    
+    "Blurb": "240px",
+    "Season Epi #": "50px",
+    "Rank": "50px"
+    "Notes": "240px"
   };
 
   const cellFontSizes = {
@@ -414,12 +417,23 @@ async function loadCSV(
     "OMDB_Genre": "13px",
     "OMDB_Director": "13px",
     "OMDB_Top_3_Actors": "13px",
+    
     "Times Seen": "12px",
+    
     "Blurb": "13px",
     "Release Date": "13px",
-    "Season Epi #": "14px",
+    "Season Epi #": "18px",
     "Rank": "18px",
     "Notes": "13px"
+  };
+
+  const defaultHeaderFontSize = "14px";
+
+  const headerFontSizes = {
+    "Season": "12px",
+    "Season Epi #": "12px",
+    "Release Date": "13px",
+    "Times Seen": "12px"
   };
 
   const factorHeaderFontSize = "12px";
@@ -475,7 +489,8 @@ async function loadCSV(
       "Music & Sound": "Music &<br>Sound",
       "Rewatch Value": "Rewatch<br>Value",
       "Sarah :)": "Sarah's<br>Rank",
-      "Nick <3": "Nick's<br>Rank"
+      "Nick <3": "Nick's<br>Rank",
+      "Season Epi #": "Season<br>Epi #",
     };
 
     return headerBreaks[header] || escapeHTML(header);
@@ -594,24 +609,35 @@ async function loadCSV(
   }
 
   function getHeaderStyle(header) {
-    let style = getColumnWidthStyle(header);
-
-    if (factorColumns.includes(header)) {
-      style += `
-        font-size: ${factorHeaderFontSize};
-        line-height: 1.1;
-      `;
-    }
-
-    if (compactHeaderColumns.includes(header)) {
-      style += `
-        padding-left: 4px;
-        padding-right: 4px;
-      `;
-    }
-
-    return style;
-  }
+            let style = getColumnWidthStyle(header);
+          
+            style += `
+              font-size: ${defaultHeaderFontSize};
+            `;
+          
+            if (headerFontSizes[header]) {
+              style += `
+                font-size: ${headerFontSizes[header]};
+                line-height: 1.1;
+              `;
+            }
+          
+            if (factorColumns.includes(header)) {
+              style += `
+                font-size: ${factorHeaderFontSize};
+                line-height: 1.1;
+              `;
+            }
+          
+            if (compactHeaderColumns.includes(header)) {
+              style += `
+                padding-left: 4px;
+                padding-right: 4px;
+              `;
+            }
+          
+            return style;
+          }
 
   function getCellStyle(header) {
     let style = getColumnWidthStyle(header);
