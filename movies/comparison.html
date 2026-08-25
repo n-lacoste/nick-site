@@ -7,7 +7,7 @@
 
 <body>
   <div id="site-header"></div>
-  <script src="/nick-site/nav.js?v=17"></script>
+  <script src="/nick-site/nav-loader.js"></script>
 
   <main>
     <div class="page-topline">
@@ -93,10 +93,36 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <script src="/nick-site/script.js?v=10"></script>
 
-  <script>
-    loadMovieComparison(window.MOVIES_CSV_URL);
-  </script>
+    <script>
+      window.NICK_SITE_INIT = function () {
+        try {
+          if (typeof Papa === "undefined") {
+            throw new Error("PapaParse did not load.");
+          }
+    
+          if (typeof loadMovieComparison !== "function") {
+            throw new Error("loadMovieComparison is not defined. script.js did not load correctly or has a syntax error.");
+          }
+    
+          loadMovieComparison(window.MOVIES_CSV_URL);
+        } catch (error) {
+          console.error(error);
+    
+          const comparisonArea =
+            document.getElementById("movie-comparison") ||
+            document.querySelector("main");
+    
+          if (comparisonArea) {
+            comparisonArea.insertAdjacentHTML(
+              "beforeend",
+              `<p class="last-updated">Could not load movie comparison. Check the console for details.</p>`
+            );
+          }
+        }
+      };
+    </script>
+    
+    <script src="/nick-site/script-loader.js"></script>
 </body>
 </html>
