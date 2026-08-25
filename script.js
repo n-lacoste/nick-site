@@ -1353,12 +1353,128 @@ function renderExpandableCell(header, value) {
       filtersPanel.classList.add("filters-active-panel");
     }
   }
+function getFilterSummaryLabel(filter) {
+  const container = document.getElementById(filter.targetId);
+  const details = container ? container.closest("details") : null;
+  const summary = details ? details.querySelector("summary") : null;
 
+  if (summary) {
+    return summary.textContent.replace(/\s+/g, " ").trim();
+  }
+
+  return filter.column || "Filter";
+}
+
+function getSelectedFilterSummary(filter) {
+  const container = document.getElementById(filter.targetId);
+
+  if (!container) return null;
+
+  const inputs = Array.from(container.querySelectorAll("input"));
+
+  if (inputs.length === 0) return null;
+
+  const selectedValues = inputs
+    .filter(input => input.checked)
+    .map(input => input.value);
+
+  if (selectedValues.length === inputs.length) return null;
+
+  const label = getFilterSummaryLabel(filter);
+
+  if (selectedValues.length === 0) {
+    return `${label}: none`;
+  }
+
+  const selectedText = selectedValues.length <= 5
+    ? selectedValues.join(", ")
+    : `${selectedValues.length} selected`;
+
+  if (filter.modeButtonId) {
+    const modeText = filter.mode === "and"
+      ? "must contain all"
+      : "contains either";
+
+    return `${label}: ${selectedText} (${modeText})`;
+  }
+
+  return `${label}: ${selectedText}`;
+}
+
+function updateAppliedFiltersSummary() {
+          const summaryBox = document.getElementById("filters-applied-summary");
+          const summaryText = document.getElementById("filters-applied-summary-text");
+        
+          if (!summaryBox || !summaryText) return;
+        
+          const parts = [];
+        
+          const searchBox = searchId ? document.getElementById(searchId) : null;
+        
+          if (searchBox && searchBox.value.trim() !== "") {
+            parts.push(`Search: "${searchBox.value.trim()}"`);
+          }
+        
+          const ratingSelect = ratingStatusId ? document.getElementById(ratingStatusId) : null;
+        
+          if (ratingSelect && ratingSelect.value !== "all") {
+            const selectedOption = ratingSelect.options[ratingSelect.selectedIndex];
+            const label = selectedOption ? selectedOption.textContent.trim() : ratingSelect.value;
+        
+            parts.push(`Rating: ${label}`);
+          }
+        
+          const sampleInput = document.getElementById("sample-filter");
+          const yearStartInput = document.getElementById("year-start-filter");
+          const yearEndInput = document.getElementById("year-end-filter");
+          const minsModeInput = document.getElementById("mins-mode-filter");
+          const minsValueInput = document.getElementById("mins-value-filter");
+        
+          if (sampleInput && sampleInput.value.trim() !== "") {
+            parts.push(`Sample: "${sampleInput.value.trim()}"`);
+          }
+        
+          const yearStart = yearStartInput ? yearStartInput.value.trim() : "";
+          const yearEnd = yearEndInput ? yearEndInput.value.trim() : "";
+        
+          if (yearStart !== "" || yearEnd !== "") {
+            parts.push(`Year: ${yearStart || "any"} to ${yearEnd || "any"}`);
+          }
+        
+          const minsValue = minsValueInput ? minsValueInput.value.trim() : "";
+        
+          if (minsValue !== "") {
+            const minsMode = minsModeInput ? minsModeInput.value : "greater";
+            const minsText = minsMode === "less" ? "less than" : "greater than";
+        
+            parts.push(`Mins.: ${minsText} ${minsValue}`);
+          }
+        
+          safeFilters.forEach(filter => {
+            const filterSummary = getSelectedFilterSummary(filter);
+        
+            if (filterSummary) {
+              parts.push(filterSummary);
+            }
+          });
+        
+          if (parts.length === 0) {
+            summaryBox.hidden = true;
+            summaryText.textContent = "None";
+            return;
+          }
+        
+          summaryText.textContent = parts.join("; ");
+          summaryBox.hidden = false;
+}
+  
   function updateFilterIndicator() {
     const indicator = document.getElementById("filters-active-indicator");
     const filtersPanel = document.querySelector(".filters-panel");
 
     const activeCount = getActiveFilterCount();
+
+    updateAppliedFiltersSummary();
 
     if (activeCount > 0) {
       setApplyButtonState("applied");
