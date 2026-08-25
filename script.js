@@ -365,7 +365,13 @@ async function loadCSV(
   let sortDirection = "asc";
   let rowLimit = 25;
 
-  const expandableColumns = ["Notes (Review)", "OMDB_Plot", "Blurb", "Notes"];
+  const expandableColumns = [
+      "Notes (Review)",
+      "OMDB_Plot",
+      "Blurb",
+      "Notes",
+      "Season Episode Counts"
+    ];
   let expandedCellCounter = 0;
   const expandedCellStore = {};
 
@@ -742,25 +748,46 @@ async function loadCSV(
     });
   }
 
-  function renderExpandableCell(header, value) {
-    const text = String(value ?? "").trim();
-
-    if (text === "") return "";
-
-    const cellId = `cell-${expandedCellCounter++}`;
-
-    expandedCellStore[cellId] = {
-      title: header,
-      text: text
-    };
-
-    return `
-      <div class="expandable-cell">
-        <button class="cell-expand-button" type="button" data-cell-id="${cellId}">+</button>
-        <span class="cell-preview">${escapeHTML(text)}</span>
-      </div>
-    `;
-  }
+  function formatSeasonEpisodeCounts(value) {
+      const parts = String(value ?? "")
+        .split(";")
+        .map(part => part.trim())
+        .filter(Boolean);
+    
+      return parts.map((count, index) => {
+        return `S${index + 1} = ${count}`;
+      });
+}
+  
+function renderExpandableCell(header, value) {
+      const text = String(value ?? "").trim();
+    
+      if (text === "") return "";
+    
+      const cellId = `cell-${expandedCellCounter++}`;
+    
+      let previewText = text;
+      let modalText = text;
+    
+      if (header === "Season Episode Counts") {
+        const seasonLines = formatSeasonEpisodeCounts(value);
+    
+        previewText = seasonLines[0] || text;
+        modalText = seasonLines.length ? seasonLines.join("\n") : text;
+      }
+    
+      expandedCellStore[cellId] = {
+        title: header,
+        text: modalText
+      };
+    
+      return `
+        <div class="expandable-cell">
+          <button class="cell-expand-button" type="button" data-cell-id="${cellId}">+</button>
+          <span class="cell-preview">${escapeHTML(previewText)}</span>
+        </div>
+      `;
+}
 
   function setupExpandableCells() {
     table.querySelectorAll(".cell-expand-button").forEach(button => {
