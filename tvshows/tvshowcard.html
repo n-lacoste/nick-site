@@ -7,7 +7,7 @@
 
 <body>
   <div id="site-header"></div>
-  <script src="/nick-site/nav.js?v=10"></script>
+  <script src="/nick-site/nav-loader.js"></script>
 
   <main>
     <div class="page-topline">
@@ -38,13 +38,43 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <script src="/nick-site/script.js?v=16"></script>
 
   <script>
-    loadTVShowCard(
-      window.TVSHOWS_CSV_URL,
-      window.EPISODES_CSV_URL
-    );
+    window.NICK_SITE_INIT = function () {
+      try {
+        if (typeof Papa === "undefined") {
+          throw new Error("PapaParse did not load.");
+        }
+
+        if (typeof loadTVShowCard !== "function") {
+          throw new Error("loadTVShowCard is not defined. script.js did not load correctly or has a syntax error.");
+        }
+
+        loadTVShowCard(
+          window.TVSHOWS_CSV_URL,
+          window.EPISODES_CSV_URL
+        );
+      } catch (error) {
+        console.error(error);
+
+        const status = document.getElementById("tv-show-card-status");
+        const output = document.getElementById("tv-show-card-output");
+
+        if (status) {
+          status.textContent = "Could not load TV show card. Check the console for details.";
+        }
+
+        if (output) {
+          output.innerHTML = `
+            <p class="movie-compare-placeholder">
+              TV show card failed to load.
+            </p>
+          `;
+        }
+      }
+    };
   </script>
+
+  <script src="/nick-site/script-loader.js"></script>
 </body>
 </html>
