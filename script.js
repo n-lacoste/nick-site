@@ -481,7 +481,7 @@ async function loadCSV(
 
     if (header === "Tags") {
       return text
-        .split(/[;,|]/)
+        .split(";")
         .map(tag => tag.trim())
         .filter(tag => tag !== "")
         .map(tag => escapeHTML(tag))
