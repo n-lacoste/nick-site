@@ -2318,10 +2318,24 @@ async function loadMovieComparison(filePath) {
 
     return `#${text}`;
   }
-
+  
   function formatValue(value) {
     const text = String(value ?? "").trim();
     return text === "" ? "—" : text;
+  }
+
+  function formatRankWithHash(value) {
+          const text = String(value ?? "").trim();
+        
+          if (text === "" || text === "—" || text === "--") {
+            return "—";
+          }
+        
+          if (text.startsWith("#")) {
+            return text;
+          }
+        
+          return `#${text}`;
   }
 
   function getNumber(value) {
@@ -2964,7 +2978,7 @@ function renderEpisodeGridAsSeasonBlocks(episodeRows) {
                       style="background:${colors.bg}; color:${colors.text};"
                       title="S${escapeHTML(season)}E${escapeHTML(episodeNumber)}: ${escapeHTML(episodeTitle)}"
                     >
-                      <span>${escapeHTML(formatValue(rank))}</span>
+                     <span>${escapeHTML(formatRankWithHash(rank))}</span>
                     </div>
                   `;
                 }).join("")}
@@ -3033,7 +3047,7 @@ function renderEpisodeGridAsSeasonColumns(episodeRows) {
                           style="background:${colors.bg}; color:${colors.text};"
                           title="S${escapeHTML(season)}E${escapeHTML(seasonEpisodeNumber)}: ${escapeHTML(episodeTitle)}"
                         >
-                          <span class="tv-card-matrix-rank">${escapeHTML(formatValue(rank))}</span>
+                          <span class="tv-card-matrix-rank">${escapeHTML(formatRankWithHash(rank))}</span>
                           <span class="tv-card-matrix-title">${escapeHTML(episodeTitle)}</span>
                         </div>
                       </td>
