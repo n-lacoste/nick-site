@@ -810,7 +810,9 @@ async function loadCSV(
     html += "</tr></thead><tbody>";
 
     const rowsToShow = rowLimit === "all" ? rows : rows.slice(0, rowLimit);
-    const rowCount = document.getElementById("movies-row-count");
+    const rowCount =
+        document.getElementById("row-count") ||
+        document.getElementById("movies-row-count");
 
     if (rowCount) {
       rowCount.textContent = `Showing ${rowsToShow.length} of ${rows.length} matches.`;
