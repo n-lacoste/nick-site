@@ -3141,8 +3141,8 @@ function renderEpisodeGridAsSeasonColumns(episodeRows) {
 
           <div class="tv-card-title-stats">
             <div class="tv-card-score-box">
-              <span>Rating</span>
-              <strong>${escapeHTML(formatValue(rating))}</strong>
+              <span>Rank</span>
+              <strong>${escapeHTML(formatRankWithHash(rank))}</strong>
             </div>
 
             <div class="tv-card-score-box">
