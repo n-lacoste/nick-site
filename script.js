@@ -2879,15 +2879,15 @@ function getNumber(value) {
       <section class="tv-card-panel tv-card-full-width tv-card-show-info-panel">
         <h3>Show Info</h3>
 
-        <div class="tv-card-info-grid tv-card-info-grid-compact">
-          ${makeStatBox("Times Seen", getText(showRow, "Times Seen"), "tv-card-small-stat")}
-          ${makeStatBox("Years", getText(showRow, "Years"), "tv-card-medium-stat")}
-          ${makeStatBox("Seasons", getText(showRow, "Seasons"), "tv-card-small-stat")}
-          ${makeStatBox("Episodes", getText(showRow, "Episodes"), "tv-card-small-stat")}
-          ${makeStatBox("Ranked Episodes", rankedEpisodes, "tv-card-medium-stat")}
-          ${makeStatBox("Watched", getText(showRow, "Watched / Unwatched"), "tv-card-small-stat")}
+       <div class="tv-card-info-grid tv-card-info-grid-compact">
+          ${makeStatBox("Times Seen", getText(showRow, "Times Seen"), "tv-card-times-seen-stat")}
+          ${makeStatBox("Years", getText(showRow, "Years"), "tv-card-years-stat")}
+          ${makeStatBox("Seasons", getText(showRow, "Seasons"), "tv-card-seasons-stat")}
+          ${makeStatBox("Episodes", getText(showRow, "Episodes"), "tv-card-episodes-stat")}
+          ${makeStatBox("Ranked Episodes", rankedEpisodes, "tv-card-ranked-episodes-stat")}
+          ${makeStatBox("Watched", getText(showRow, "Watched / Unwatched"), "tv-card-watched-stat")}
           ${makeStatBox("Tags", formatTagsForInfo(getText(showRow, "Tags")), "tv-card-tags-stat")}
-          ${makeStatBox("Average Episode Rank", averageEpisodeRank, "tv-card-medium-stat")}
+          ${makeStatBox("Average Episode Rank", averageEpisodeRank, "tv-card-average-episode-rank-stat")}
         </div>
       </section>
     `;
