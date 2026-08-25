@@ -3087,6 +3087,7 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
     
     if (playScreen) {
       playScreen.classList.remove("flags-game-paused");
+      playScreen.classList.remove("flags-game-ended");
     }
     
     if (pauseOverlay) {
@@ -3243,15 +3244,25 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
       stopTimer();
       setGameplayControlsVisible(false);
     
+      if (playScreen) {
+        playScreen.classList.add("flags-game-ended");
+      }
+    
+      if (infoPanel) {
+        infoPanel.classList.remove("flags-info-panel-minimized");
+        updateInfoPanelToggle();
+      }
+    
       if (!gameEndTimestamp) {
         gameEndTimestamp = Date.now();
       }
     
       gameEndedByGiveUp = gaveUp;
     
-      if (activeLayoutStyle !== "grid" && gridEl) {
-        gridEl.hidden = true;
-      }
+      if (gridEl) {
+          gridEl.hidden = true;
+          gridEl.innerHTML = "";
+        }
     
       flagImage.removeAttribute("src");
       flagImageWrap.hidden = true;
