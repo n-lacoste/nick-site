@@ -2702,7 +2702,7 @@ function formatTagsForInfo(value) {
     .split(";")
     .map(tag => tag.trim())
     .filter(Boolean)
-    .join(", ");
+    .join("\n");
 }
 
 function formatRankWithHash(value) {
