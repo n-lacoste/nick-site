@@ -389,7 +389,7 @@ async function loadCSV(
 
     "Notes (Review)": "500px",
     "OMDB_Plot": "420px",
-    "OMDB_Actors": "180px",
+    "OMDB_Top_3_Actors": "180px",
     "OMDB_Director": "150px",
     "OMDB_Genre": "150px",
     "Blurb": "420px",
@@ -403,7 +403,7 @@ async function loadCSV(
     "Movie Series?": "13px",
     "OMDB_Genre": "13px",
     "OMDB_Director": "13px",
-    "OMDB_Actors": "13px",
+    "OMDB_Top_3_Actors": "13px",
     "Blurb": "13px",
     "Notes": "13px"
   };
@@ -451,6 +451,7 @@ async function loadCSV(
 
   function formatHeader(header) {
     const headerBreaks = {
+      "OMDB_Top_3_Actors": "Actors (3)",
       "Me vs. IMDB": "vs.<br>IMDB",
       "Movie Series?": "Movie Series",
       "Main Character(s)": "Main<br>Character(s)",
@@ -979,7 +980,7 @@ async function loadCSV(
         row["Movie Series?"],
         row["OMDB_Genre"],
         row["OMDB_Director"],
-        row["OMDB_Actors"],
+        row["OMDB_Top_3_Actors"],
         row["OMDB_Plot"],
         row["Notes (Review)"]
       ]
