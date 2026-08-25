@@ -405,7 +405,7 @@ async function loadCSV(
     
     "Blurb": "240px",
     "Season Epi #": "50px",
-    "Rank": "50px"
+    "Rank": "50px",
     "Notes": "240px"
   };
 
