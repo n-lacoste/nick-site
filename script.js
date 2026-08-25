@@ -2332,6 +2332,14 @@ async function loadMovieComparison(filePath) {
     return text === "" ? "—" : text;
   }
 
+  function formatTagsForInfo(value) {
+  return String(value ?? "")
+    .split(";")
+    .map(tag => tag.trim())
+    .filter(Boolean)
+    .join(", ");
+}
+  
   function formatRankWithHash(value) {
           const text = String(value ?? "").trim();
         
