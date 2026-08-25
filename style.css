@@ -3193,3 +3193,14 @@ tr:hover td:nth-child(3) {
   line-height: 1.55 !important;
   white-space: pre-line !important;
 }
+/* Expanded-cell modal centred on screen */
+.cell-modal {
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 24px !important;
+}
+
+.cell-modal-box {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
