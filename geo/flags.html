@@ -15,287 +15,283 @@
 
     <section class="flags-game-shell">
 
-<div id="flagsStartScreen" class="flags-start-screen">
+      <div id="flagsStartScreen" class="flags-start-screen">
 
-  <h3>Choose Game Mode</h3>
+        <h3>Choose Game Mode</h3>
 
-  <div class="flags-start-columns">
+        <div class="flags-start-columns">
 
-    <section class="flags-start-column">
-      <h4>Guess the Flag</h4>
+          <section class="flags-start-column">
+            <h4>Guess the Flag</h4>
 
-      <div class="flags-game-mode-grid">
+            <div class="flags-game-mode-grid">
+              <button class="flags-mode-button" type="button" data-game-mode="flag-country">
+                Guess Country from Flag
+              </button>
 
-        <button class="flags-mode-button" type="button" data-game-mode="flag-country">
-          Guess Country from Flag
-        </button>
+              <button class="flags-mode-button" type="button" data-game-mode="flag-us-state">
+                Guess U.S. State from Flag
+              </button>
 
-        <button class="flags-mode-button" type="button" data-game-mode="flag-us-state">
-          Guess U.S. State from Flag
-        </button>
+              <button class="flags-mode-button" type="button" data-game-mode="flag-canada-province">
+                Guess Canadian Province/Territory from Flag
+              </button>
 
-        <button class="flags-mode-button" type="button" data-game-mode="flag-canada-province">
-          Guess Canadian Province/Territory from Flag
-        </button>
+              <button class="flags-mode-button" type="button" data-game-mode="flag-fifa">
+                Guess FIFA Nation from Flag
+              </button>
 
-        <button class="flags-mode-button" type="button" data-game-mode="flag-fifa">
-          Guess FIFA Nation from Flag
-        </button>
+              <button class="flags-mode-button" type="button" data-game-mode="north-america-subnational-flag">
+                Guess North American Province/Territory/State from Flag
+              </button>
 
-        <button class="flags-mode-button" type="button" data-game-mode="north-america-subnational-flag">
-          Guess North American Province/Territory/State from Flag
-        </button>
-
-        <button class="flags-mode-button" type="button" data-game-mode="flag-all">
-          Guess All from Flag
-        </button>
-
-      </div>
-    </section>
-
-    <section class="flags-start-column">
-      <h4>Guess the Capital</h4>
-
-      <div class="flags-game-mode-grid">
-
-        <button class="flags-mode-button" type="button" data-game-mode="capital-to-country">
-          Guess Country from Capital City
-        </button>
-
-        <button class="flags-mode-button" type="button" data-game-mode="country-to-capital">
-          Guess Capital City from Country
-        </button>
-
-        <button class="flags-mode-button" type="button" data-game-mode="us-state-capital">
-          Guess U.S. State Capital
-        </button>
-
-        <button class="flags-mode-button" type="button" data-game-mode="canada-province-capital">
-          Guess Canadian Province/Territory Capital
-        </button>
-
-        <button class="flags-mode-button" type="button" data-game-mode="north-america-subnational-capital">
-          Guess North American Province/Territory/State Capital
-        </button>
-
-      </div>
-    </section>
-
-  </div>
-
-  <details id="flagsGameSetup" class="flags-game-setup">
-
-    <summary>
-      <span class="flags-game-setup-title">Game Setup</span>
-      <span id="flagsSetupSummary" class="flags-game-setup-summary">
-        Default: Random order, One at a time, Information Play, Suggestions Off, Stopwatch On
-      </span>
-    </summary>
-
-    <div class="flags-setup-grid">
-
-  <div class="flags-setup-control">
-    <label for="flagsSortSelect">List Order</label>
-
-    <select id="flagsSortSelect">
-      <option value="random" selected>Random</option>
-      <option value="name-az">Name A-Z</option>
-      <option value="name-za">Name Z-A</option>
-      <option value="population-high-low">Population High-to-Low</option>
-      <option value="population-low-high">Population Low-to-High</option>
-    </select>
-  </div>
-
-  <div class="flags-setup-control">
-    <label>Guess Order</label>
-
-    <button
-      id="flagsLayoutToggle"
-      class="flags-start-toggle one-at-a-time"
-      type="button"
-      data-layout-style="single"
-    >
-      One at a Time
-    </button>
-  </div>
-
- <div class="flags-setup-control">
-          <label>Play Mode</label>
-        
-          <button
-            id="flagsPlayStyleToggle"
-            class="flags-start-toggle information-play"
-            type="button"
-            data-play-style="information"
-          >
-            Information Play
-          </button>
-        
-          <div class="flags-play-mode-descriptions">
-            <div>
-              <strong>Information Play:</strong>
-              See information for each correct answer, which requires an additional click to go to the next guess.
+              <button class="flags-mode-button" type="button" data-game-mode="flag-all">
+                Guess All from Flag
+              </button>
             </div>
-        
-            <div>
-              <strong>Speed Play:</strong>
-              A correct guess automatically goes to the next item, without showing the correct answer’s details.
+          </section>
+
+          <section class="flags-start-column">
+            <h4>Guess the Capital</h4>
+
+            <div class="flags-game-mode-grid">
+              <button class="flags-mode-button" type="button" data-game-mode="capital-to-country">
+                Guess Country from Capital City
+              </button>
+
+              <button class="flags-mode-button" type="button" data-game-mode="country-to-capital">
+                Guess Capital City from Country
+              </button>
+
+              <button class="flags-mode-button" type="button" data-game-mode="us-state-capital">
+                Guess U.S. State Capital
+              </button>
+
+              <button class="flags-mode-button" type="button" data-game-mode="canada-province-capital">
+                Guess Canadian Province/Territory Capital
+              </button>
+
+              <button class="flags-mode-button" type="button" data-game-mode="north-america-subnational-capital">
+                Guess North American Province/Territory/State Capital
+              </button>
             </div>
+          </section>
+
+        </div>
+
+        <details id="flagsGameSetup" class="flags-game-setup">
+          <summary>
+            <span class="flags-game-setup-title">Game Setup</span>
+            <span id="flagsSetupSummary" class="flags-game-setup-summary">
+              Default: Random order, One at a time, Information Play, Suggestions Off, Stopwatch
+            </span>
+          </summary>
+
+          <div class="flags-setup-grid">
+
+            <div class="flags-setup-control">
+              <label for="flagsSortSelect">List Order</label>
+
+              <select id="flagsSortSelect">
+                <option value="random" selected>Random</option>
+                <option value="name-az">Name A-Z</option>
+                <option value="name-za">Name Z-A</option>
+                <option value="population-high-low">Population High-to-Low</option>
+                <option value="population-low-high">Population Low-to-High</option>
+              </select>
+            </div>
+
+            <div class="flags-setup-control">
+              <label>Guess Order</label>
+
+              <button
+                id="flagsLayoutToggle"
+                class="flags-start-toggle one-at-a-time"
+                type="button"
+                data-layout-style="single"
+              >
+                One at a Time
+              </button>
+            </div>
+
+            <div class="flags-setup-control">
+              <label>Play Mode</label>
+
+              <button
+                id="flagsPlayStyleToggle"
+                class="flags-start-toggle information-play"
+                type="button"
+                data-play-style="information"
+              >
+                Information Play
+              </button>
+
+              <div class="flags-play-mode-descriptions">
+                <div>
+                  <strong>Information Play:</strong>
+                  See information for each correct answer, which requires an additional click to go to the next guess.
+                </div>
+
+                <div>
+                  <strong>Speed Play:</strong>
+                  A correct guess automatically goes to the next item, without showing the correct answer’s details.
+                </div>
+              </div>
+            </div>
+
+            <div class="flags-setup-control">
+              <label>Answer Suggestions</label>
+
+              <button
+                id="flagsSuggestionsToggle"
+                class="flags-start-toggle suggestions-off"
+                type="button"
+                data-suggestions="off"
+              >
+                Suggestions Off
+              </button>
+            </div>
+
+            <div class="flags-setup-control">
+              <label for="flagsTimerSelect">Timer</label>
+
+              <select id="flagsTimerSelect">
+                <option value="0">Timer Off</option>
+                <option value="stopwatch" selected>Stopwatch</option>
+                <option value="120">2:00</option>
+                <option value="300">5:00</option>
+                <option value="600">10:00</option>
+                <option value="900">15:00</option>
+              </select>
+            </div>
+
           </div>
-</div>
+        </details>
 
-  <div class="flags-setup-control">
-    <label>Answer Suggestions</label>
+        <div id="flagsSelectedGameSummary" class="flags-selected-game-summary">
+          Choose a game mode above.
+        </div>
 
-    <button
-      id="flagsSuggestionsToggle"
-      class="flags-start-toggle suggestions-off"
-      type="button"
-      data-suggestions="off"
-    >
-      Suggestions Off
-    </button>
-  </div>
-
-  <div class="flags-setup-control">
-    <label for="flagsTimerSelect">Timer</label>
-
-    <select id="flagsTimerSelect">
-      <option value="0"> Timer Off</option>
-      <option value="stopwatch" selected>Stopwatch</option>
-      <option value="120">2:00</option>
-      <option value="300">5:00</option>
-      <option value="600">10:00</option>
-      <option value="900">15:00</option>
-    </select>
-  </div>
-
-</div>
-
-</details>
-
-<div id="flagsSelectedGameSummary" class="flags-selected-game-summary">
-  Choose a game mode above.
-</div>
-
-<button
-  id="flagsStartGameButton"
-  class="flags-start-game-button"
-  type="button"
-  disabled
->
-  Start Game
-</button>
-
-<div class="flags-source-credit">
-  Flag images were retrieved from Flagpedia and Free Printable Flags.
-</div>
-
-</div>
-
-<div id="flagsPlayScreen" class="flags-play-screen" hidden>
-
-  <div class="flags-game-controls">
-    <div id="flagsCurrentModeLabel" class="flags-current-mode-label"></div>
-
-    <div class="flags-game-button-row">
-      <button id="flagsChangeGameButton" type="button">Change Game Mode</button>
-      <button id="flagsResetButton" type="button">Reset</button>
-    </div>
-  </div>
-
-  <div class="flags-score-row">
-      <span id="flagsScore">Score: 0 / 0 (0%)</span>
-      <span id="flagsStreak">Streak: 0</span>
-      <span id="flagsHints">Hints: 0</span>
-      <span id="flagsRemaining">Remaining: 0</span>
-    </div>
-    
-  <div class="flags-high-score-row">
-      <span id="flagsHighScore">High Score: --</span>
-  </div>
-
-  <div id="flagsTopScoresPanel" class="flags-top-scores-panel">
-      <div class="flags-top-scores-title">Top 10</div>
-      <div id="flagsTopScoresList" class="flags-top-scores-list">
-        No scores yet
-      </div>
-  </div>
-  <div class="flags-progress-wrap">
-    <div class="flags-progress-label">
-      <span>Progress</span>
-      <span id="flagsProgressText">0%</span>
-    </div>
-
-    <div class="flags-progress-bar" aria-label="Game progress">
-      <div id="flagsProgressFill" class="flags-progress-fill"></div>
-    </div>
-  </div>
-
-  <div id="flagsDebug" class="flags-debug"></div>
-
-  <div class="flags-card">
-    <div id="flagsGrid" class="flags-grid" hidden></div>
-
-    <div id="flagsPromptText" class="flags-prompt-text" hidden></div>
-
-    <div id="flagsImageWrap" class="flags-image-wrap">
-      <img id="flagsImage" src="" alt="Flag" referrerpolicy="no-referrer">
-    </div>
-
-   <div class="flags-answer-area">
-        <span id="flagsTimerFloating" class="flags-timer-floating" hidden>
-          0:00
-        </span>
-      
-        <button id="flagsPauseButton" class="flags-pause-button" type="button" hidden>
-          Pause
-        </button>
-      
-        <input
-          id="flagsAnswerInput"
-          type="text"
-          placeholder="Type your answer..."
-          autocomplete="off"
-          list="flagsAnswerSuggestions"
+        <button
+          id="flagsStartGameButton"
+          class="flags-start-game-button"
+          type="button"
+          disabled
         >
-      
-        <datalist id="flagsAnswerSuggestions"></datalist>
-      
-        <button id="flagsSubmitButton" type="button">Submit</button>
-  </div>
-
-    <div class="flags-action-row">
-      <button id="flagsHintButton" type="button">Hint</button>
-      <button id="flagsRevealButton" type="button">Reveal</button>
-      <button id="flagsSkipButton" type="button">Skip</button>
-      <button id="flagsEndGameButton" class="flags-end-game-button" type="button">End Game</button>
-    </div>
-
-    <div id="flagsInfoPanel" class="flags-side-feedback-panel flags-info-panel-minimized">
-      <div class="flags-info-panel-header">
-        <div id="flagsFeedback" class="flags-feedback"></div>
-    
-        <button id="flagsInfoToggleButton" class="flags-info-toggle-button" type="button">
-          Show Info
+          Start Game
         </button>
+
+        <div class="flags-source-credit">
+          Flag images were retrieved from Flagpedia and Free Printable Flags.
+        </div>
+
       </div>
-    
-      <div id="flagsDetails" class="flags-details"></div>
-    </div>
-  </div>
 
-  <div id="flagsPauseOverlay" class="flags-pause-overlay" hidden>
-    <div class="flags-pause-box">
-      <div class="flags-pause-title">Game Paused</div>
-      <button id="flagsResumeButton" type="button">Resume</button>
-    </div>
-  </div>
+      <div id="flagsPlayScreen" class="flags-play-screen" hidden>
 
-</div>
+        <div class="flags-game-controls">
+          <div id="flagsCurrentModeLabel" class="flags-current-mode-label"></div>
 
-</section>
-</main>
+          <div class="flags-game-button-row">
+            <button id="flagsChangeGameButton" type="button">Change Game Mode</button>
+            <button id="flagsResetButton" type="button">Reset</button>
+          </div>
+        </div>
+
+        <div class="flags-score-row">
+          <span id="flagsScore">Score: 0 / 0 (0%)</span>
+          <span id="flagsStreak">Streak: 0</span>
+          <span id="flagsHints">Hints: 0</span>
+          <span id="flagsRemaining">Remaining: 0</span>
+        </div>
+
+        <div class="flags-high-score-row">
+          <span id="flagsHighScore">High Score: --</span>
+        </div>
+
+        <div id="flagsTopScoresPanel" class="flags-top-scores-panel">
+          <div class="flags-top-scores-title">Top 10</div>
+          <div id="flagsTopScoresList" class="flags-top-scores-list">
+            No scores yet
+          </div>
+        </div>
+
+        <div class="flags-progress-wrap">
+          <div class="flags-progress-label">
+            <span>Progress</span>
+            <span id="flagsProgressText">0%</span>
+          </div>
+
+          <div class="flags-progress-bar" aria-label="Game progress">
+            <div id="flagsProgressFill" class="flags-progress-fill"></div>
+          </div>
+        </div>
+
+        <div id="flagsDebug" class="flags-debug"></div>
+
+        <div class="flags-card">
+          <div id="flagsGrid" class="flags-grid" hidden></div>
+
+          <div id="flagsPromptText" class="flags-prompt-text" hidden></div>
+
+          <div id="flagsImageWrap" class="flags-image-wrap">
+            <img id="flagsImage" src="" alt="Flag" referrerpolicy="no-referrer">
+          </div>
+
+          <div class="flags-answer-area">
+            <span id="flagsTimerFloating" class="flags-timer-floating" hidden>
+              0:00
+            </span>
+
+            <button id="flagsPauseButton" class="flags-pause-button" type="button" hidden>
+              Pause
+            </button>
+
+            <input
+              id="flagsAnswerInput"
+              type="text"
+              placeholder="Type your answer..."
+              autocomplete="off"
+              list="flagsAnswerSuggestions"
+            >
+
+            <datalist id="flagsAnswerSuggestions"></datalist>
+
+            <button id="flagsSubmitButton" type="button">Submit</button>
+          </div>
+
+          <div class="flags-action-row">
+            <button id="flagsHintButton" type="button">Hint</button>
+            <button id="flagsRevealButton" type="button">Reveal</button>
+            <button id="flagsSkipButton" type="button">Skip</button>
+            <button id="flagsEndGameButton" class="flags-end-game-button" type="button">End Game</button>
+          </div>
+
+          <div id="flagsInfoPanel" class="flags-side-feedback-panel flags-info-panel-minimized">
+            <div class="flags-info-panel-header">
+              <div id="flagsFeedback" class="flags-feedback"></div>
+
+              <button id="flagsInfoToggleButton" class="flags-info-toggle-button" type="button">
+                Show Info
+              </button>
+            </div>
+
+            <div id="flagsDetails" class="flags-details"></div>
+          </div>
+        </div>
+
+        <div id="flagsPauseOverlay" class="flags-pause-overlay" hidden>
+          <div class="flags-pause-box">
+            <div id="flagsPauseModeLabel" class="flags-pause-mode-label"></div>
+            <div class="flags-pause-title">Game Paused</div>
+            <button id="flagsResumeButton" type="button">Resume</button>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+  </main>
 
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
