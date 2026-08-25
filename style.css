@@ -3415,7 +3415,7 @@ tr:hover td:nth-child(3) {
   margin-top: 26px;
 }
 
-.home-hero-chips span {
+.home-hero-chips a {
   padding: 8px 12px;
   border: 1px solid #3a3a3a;
   border-radius: 999px;
@@ -3423,6 +3423,12 @@ tr:hover td:nth-child(3) {
   color: #e8e8e8;
   font-size: 13px;
   font-weight: bold;
+  text-decoration: none;
+}
+
+.home-hero-chips a:hover {
+  border-color: #57bb8a;
+  background: #202020;
 }
 
 .home-feature-grid {
