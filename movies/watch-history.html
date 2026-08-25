@@ -7,7 +7,7 @@
 
 <body>
   <div id="site-header"></div>
-  <script src="/nick-site/nav.js?v=10"></script>
+  <script src="/nick-site/nav-loader.js"></script>
 
   <main>
     <div class="page-topline">
@@ -53,10 +53,37 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <script src="/nick-site/script.js?v=10"></script>
 
-  <script>
-    loadMovieWatchHistory(window.MOVIES_CSV_URL);
-  </script>
+    <script>
+      window.NICK_SITE_INIT = function () {
+        try {
+          if (typeof Papa === "undefined") {
+            throw new Error("PapaParse did not load.");
+          }
+    
+          if (typeof loadMovieWatchHistory !== "function") {
+            throw new Error("loadMovieWatchHistory is not defined. script.js did not load correctly or has a syntax error.");
+          }
+    
+          loadMovieWatchHistory(window.MOVIES_CSV_URL);
+        } catch (error) {
+          console.error(error);
+    
+          const table = document.getElementById("watch-history-table");
+    
+          if (table) {
+            table.innerHTML = `
+              <tbody>
+                <tr>
+                  <td>Could not load watch history. Check the console for details.</td>
+                </tr>
+              </tbody>
+            `;
+          }
+        }
+      };
+    </script>
+    
+    <script src="/nick-site/script-loader.js"></script>
 </body>
 </html>
