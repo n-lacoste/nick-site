@@ -2672,6 +2672,24 @@ window.loadTVShowCard = async function loadTVShowCard(tvShowsPath, episodesPath)
     return String(row?.[column] ?? "").trim();
   }
 
+  function formatYearRange(showRow) {
+  const startYear = getText(showRow, "Year Start");
+  const endYear = getText(showRow, "Year DONE");
+
+  if (startYear === "" && endYear === "") {
+    return "—";
+  }
+
+  if (startYear !== "" && endYear === "") {
+    return `${startYear} - Present`;
+  }
+
+  if (startYear !== "" && endYear !== "") {
+    return `${startYear} - ${endYear}`;
+  }
+
+  return endYear;
+}
   function formatValue(value) {
   const text = String(value ?? "").trim();
   return text === "" ? "—" : text;
@@ -3115,8 +3133,7 @@ function renderEpisodeGridAsSeasonColumns(episodeRows) {
           <div>
             <h3>${escapeHTML(showTitle)}</h3>
             <p>
-              ${escapeHTML(formatValue(getText(showRow, "Year Start")))}
-              ${getText(showRow, "Year DONE") ? `–${escapeHTML(getText(showRow, "Year DONE"))}` : ""}
+              ${escapeHTML(formatYearRange(showRow))}
             </p>
           </div>
 
