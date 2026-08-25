@@ -174,8 +174,7 @@
     </div>
   </main>
 
- <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-<script src="/nick-site/script.js?v=14"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
 <script>
   function showRankingsError(error) {
@@ -263,30 +262,34 @@
     }
   ];
 
-  try {
-    if (typeof Papa === "undefined") {
-      throw new Error("PapaParse did not load.");
-    }
+  window.NICK_SITE_INIT = function () {
+    try {
+      if (typeof Papa === "undefined") {
+        throw new Error("PapaParse did not load.");
+      }
 
-    if (typeof loadCSV !== "function") {
-      throw new Error("loadCSV is not defined. script.js did not load correctly or has a syntax error.");
-    }
+      if (typeof loadCSV !== "function") {
+        throw new Error("loadCSV is not defined. script.js did not load correctly or has a syntax error.");
+      }
 
-    loadCSV(
-      window.TVSHOWS_CSV_URL,
-      "rankings-table",
-      "rankings-search",
-      tvShowsDisplayColumns,
-      "rankings-columns",
-      "rankings-sort-column",
-      "rankings-sort-direction",
-      tvShowsFilters,
-      "rankings-show-count",
-      "tv-rating-status"
-    ).catch(showRankingsError);
-  } catch (error) {
-    showRankingsError(error);
-  }
+      loadCSV(
+        window.TVSHOWS_CSV_URL,
+        "rankings-table",
+        "rankings-search",
+        tvShowsDisplayColumns,
+        "rankings-columns",
+        "rankings-sort-column",
+        "rankings-sort-direction",
+        tvShowsFilters,
+        "rankings-show-count",
+        "tv-rating-status"
+      ).catch(showRankingsError);
+    } catch (error) {
+      showRankingsError(error);
+    }
+  };
 </script>
+
+<script src="/nick-site/script-loader.js"></script>
 </body>
 </html>
