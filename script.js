@@ -4803,7 +4803,7 @@ function getTimerLabel(timerValue) {
               playStyleToggle.classList.add("speed-play");
           
               playStyleDescriptionEl.textContent =
-                "A correct guess automatically goes to the next item, without showing the correct answer’s details.";
+                "A correct guess automatically goes to the next item, without showing correct answer details.";
           
               return;
             }
