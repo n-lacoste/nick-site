@@ -240,7 +240,9 @@ function formatLongMovieDate(timestamp) {
 }
 
 function updateMoviesLastUpdatedText(rows) {
-  const lastUpdatedElement = document.getElementById("movies-last-updated");
+  const lastUpdatedElement =
+    document.getElementById("last-updated") ||
+    document.getElementById("movies-last-updated");
 
   if (!lastUpdatedElement) return;
 
@@ -256,6 +258,7 @@ function updateMoviesLastUpdatedText(rows) {
 
   lastUpdatedElement.textContent = `Last updated: ${formatLongMovieDate(latestTimestamp)}`;
 }
+
 const MOVIE_PINNED_COLUMNS = [
   "Tier",
   "Rk",
@@ -540,11 +543,13 @@ async function loadCSV(
     URL.revokeObjectURL(url);
   }
 
-  function setupDownloadVisibleCSVButton() {
-    const button = document.getElementById("movies-download-csv");
-
+ function setupDownloadVisibleCSVButton() {
+    const button =
+      document.getElementById("download-csv") ||
+      document.getElementById("movies-download-csv");
+  
     if (!button) return;
-
+  
     button.addEventListener("click", downloadVisibleTableAsCSV);
   }
 
