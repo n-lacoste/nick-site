@@ -21,7 +21,7 @@
 
     <div class="movie-controls-row">
 
-      <details id="movies-columns-dropdown" class="filter-dropdown">
+      <details id="rankings-columns-dropdown" class="filter-dropdown">
         <summary>Display Columns</summary>
 
         <label class="filter-option select-all-option">
@@ -64,6 +64,17 @@
 
     </div>
 
+    <div id="column-summary" class="column-summary" hidden>
+      <div>
+        <strong>Displayed:</strong>
+        <span id="visible-columns-summary"></span>
+      </div>
+    
+      <div>
+        <strong>Not visible:</strong>
+        <span id="hidden-columns-summary"></span>
+      </div>
+    </div>
     <details id="movies-filters-panel" class="filters-panel">
      <summary class="filters-panel-summary">
   <span class="filters-summary-inner">
