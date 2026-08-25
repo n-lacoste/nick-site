@@ -120,26 +120,26 @@
           <div id="tv-rewatch-filter" class="filter-options"></div>
         </details>
 
-        <details class="filter-dropdown">
+       <details class="filter-dropdown">
           <summary>Animated</summary>
-
+        
           <label class="filter-option select-all-option">
-            <input type="checkbox" id="tv-animated-select-all" checked>
+            <input type="checkbox" id="animated-select-all" checked>
             Select All
           </label>
-
-          <div id="tv-animated-filter" class="filter-options"></div>
+        
+          <div id="animated-filter" class="filter-options"></div>
         </details>
-
+        
         <details class="filter-dropdown">
-          <summary>Kids Show</summary>
-
+          <summary>For Kids</summary>
+        
           <label class="filter-option select-all-option">
-            <input type="checkbox" id="tv-kids-select-all" checked>
+            <input type="checkbox" id="kids-select-all" checked>
             Select All
           </label>
-
-          <div id="tv-kids-filter" class="filter-options"></div>
+        
+          <div id="kids-filter" class="filter-options"></div>
         </details>
 
         <details class="filter-dropdown">
@@ -230,17 +230,22 @@
         selectAllId: "tv-rewatch-select-all",
         mode: "or"
       },
+      
       {
         column: "Animated",
-        targetId: "tv-animated-filter",
-        selectAllId: "tv-animated-select-all",
-        mode: "or"
+        targetId: "animated-filter",
+        selectAllId: "animated-select-all",
+        mode: "or",
+        blankLabel: "NO",
+        options: ["YES", "MIXED", "NO"]
       },
       {
-        column: "Kids Show",
-        targetId: "tv-kids-filter",
-        selectAllId: "tv-kids-select-all",
-        mode: "or"
+        column: "Kids?",
+        targetId: "kids-filter",
+        selectAllId: "kids-select-all",
+        mode: "or",
+        blankLabel: "NO",
+        options: ["YES", "SORTA", "NO"]
       },
       {
         column: "Tracking Episode-by-Episode Ranks?",
