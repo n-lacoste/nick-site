@@ -62,6 +62,9 @@
             <a href="${base}professional/">Home: Professional Work</a>
           </div>
         </div>
+
+        <a href="${base}contact.html">Contact</a>
+        
       </nav>
     </header>
   `;
