@@ -7,7 +7,7 @@
 
 <body>
   <div id="site-header"></div>
-  <script src="/nick-site/nav.js?v=10"></script>
+  <script src="/nick-site/nav-loader.js"></script>
 
   <main>
     <div class="page-topline">
@@ -19,21 +19,26 @@
 
     <div class="movie-controls-row">
 
-      <details class="column-picker-wrap">
-        <summary class="filter-button">Display Columns</summary>
-        <div id="episode-column-picker" class="column-picker"></div>
+      <details id="rankings-columns-dropdown" class="filter-dropdown">
+        <summary>Display Columns</summary>
+
+        <label class="filter-option select-all-option">
+          <input type="checkbox" id="rankings-columns-select-all">
+          Select All
+        </label>
+
+        <div id="rankings-columns" class="filter-options"></div>
       </details>
 
-      <div class="sort-control">
-        <label for="episode-sort-column">Sort by:</label>
-        <select id="episode-sort-column" class="sort-select"></select>
+      <div class="table-controls">
+        <label for="rankings-sort-column">Sort by:</label>
+        <select id="rankings-sort-column" class="sort-select"></select>
+        <button id="rankings-sort-direction" class="sort-button" type="button">A–Z</button>
       </div>
 
-      <button id="episode-sort-direction" class="filter-button" type="button">A–Z</button>
-
       <div class="show-control">
-        <label for="episode-show-count">Show:</label>
-        <select id="episode-show-count" class="sort-select">
+        <label for="rankings-show-count">Show:</label>
+        <select id="rankings-show-count" class="sort-select">
           <option value="25" selected>25</option>
           <option value="50">50</option>
           <option value="100">100</option>
@@ -42,21 +47,32 @@
         </select>
       </div>
 
-      <button id="movies-download-csv" class="download-button" type="button" aria-label="Download CSV">
+      <button id="download-csv" class="download-button" type="button" aria-label="Download CSV">
         <svg class="download-icon" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"></path>
         </svg>
       </button>
 
-      <input 
-        type="text" 
-        id="episode-search" 
+      <input
+        type="text"
+        id="rankings-search"
         placeholder="Search episodes..."
         class="search-box"
       >
+
     </div>
 
-    <div id="column-summary" class="column-summary"></div>
+    <div id="column-summary" class="column-summary" hidden>
+      <div>
+        <strong>Displayed:</strong>
+        <span id="visible-columns-summary"></span>
+      </div>
+
+      <div>
+        <strong>Not visible:</strong>
+        <span id="hidden-columns-summary"></span>
+      </div>
+    </div>
 
     <details id="episode-filters-panel" class="filters-panel">
       <summary class="filters-panel-summary">
@@ -136,17 +152,34 @@
       </div>
     </details>
 
-    <p id="movies-row-count" class="last-updated"></p>
+    <div id="row-count" class="row-count"></div>
 
     <div class="table-wrap">
-      <table id="episode-rankings-table"></table>
+      <table id="rankings-table" class="rankings-table"></table>
     </div>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <script src="/nick-site/script.js?v=15"></script>
 
   <script>
+    function showRankingsError(error) {
+      console.error(error);
+
+      const table = document.getElementById("rankings-table");
+
+      if (table) {
+        table.innerHTML = `
+          <tbody>
+            <tr>
+              <td>
+                Could not load episode rankings. Check the console for details.
+              </td>
+            </tr>
+          </tbody>
+        `;
+      }
+    }
+
     const episodeDisplayColumns = [
       "TV Show",
       "Episode Count",
@@ -195,18 +228,34 @@
       }
     ];
 
-    loadCSV(
-      window.EPISODES_CSV_URL,
-      "episode-rankings-table",
-      "episode-search",
-      episodeDisplayColumns,
-      "episode-column-picker",
-      "episode-sort-column",
-      "episode-sort-direction",
-      episodeFilters,
-      "episode-show-count",
-      null
-    );
+    window.NICK_SITE_INIT = function () {
+      try {
+        if (typeof Papa === "undefined") {
+          throw new Error("PapaParse did not load.");
+        }
+
+        if (typeof loadCSV !== "function") {
+          throw new Error("loadCSV is not defined. script.js did not load correctly or has a syntax error.");
+        }
+
+        loadCSV(
+          window.EPISODES_CSV_URL,
+          "rankings-table",
+          "rankings-search",
+          episodeDisplayColumns,
+          "rankings-columns",
+          "rankings-sort-column",
+          "rankings-sort-direction",
+          episodeFilters,
+          "rankings-show-count",
+          null
+        ).catch(showRankingsError);
+      } catch (error) {
+        showRankingsError(error);
+      }
+    };
   </script>
+
+  <script src="/nick-site/script-loader.js"></script>
 </body>
 </html>
