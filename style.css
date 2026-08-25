@@ -3229,3 +3229,23 @@ tr:hover td:nth-child(3) {
     margin-left: 0;
   }
 }
+
+/* Applied filters summary */
+.filters-applied-summary {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border: 1px solid #333;
+  border-radius: 10px;
+  background: #111;
+  color: #ccc;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.filters-applied-summary strong {
+  color: #f5f5f5;
+}
+
+.filters-applied-summary[hidden] {
+  display: none !important;
+}
