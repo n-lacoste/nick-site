@@ -174,129 +174,118 @@
     </div>
   </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <script src="/nick-site/script.js?v=14"></script>
+ <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="/nick-site/script.js?v=14"></script>
 
-  <script>
-    const tvDisplayColumns = [
-      "Tier",
-      "Rk",
-      "TV Show",
-      "TV ID",
-      "Times Seen",
-      "Seasons",
-      "Episodes",
-      "Year Start",
-      "Year DONE",
-      "Years",
-      "IMDB Pub.",
-      "IMDB x10",
-      "My Rating",
-      "Me vs. IMDB",
-      "Added",
-      "Updated",
-      "Watched / Unwatched",
-      "Going to re-watch",
-      "Animated",
-      "Kids Show",
-      "Score",
-      "Plot",
-      "Main Character(s)",
-      "Side Characters",
-      "Emotion",
-      "Dialogue (Writing)",
-      "Purpose Met",
-      "Cast",
-      "Music & Sound",
-      "Rewatch Value",
-      "Notes (Review)",
-      "Tracking Episode-by-Episode Ranks?",
-      "Last Episode in Ranking",
-      "Episode Average",
-      "TV SHOW SCORE",
-      "TV SHOW TIER"
-    ];
+<script>
+  function showRankingsError(error) {
+    console.error(error);
 
-    const tvFilters = [
-      {
-        column: "Watched / Unwatched",
-        targetId: "tv-watched-filter",
-        selectAllId: "tv-watched-select-all",
-        mode: "or"
-      },
-      {
-        column: "Going to re-watch",
-        targetId: "tv-rewatch-filter",
-        selectAllId: "tv-rewatch-select-all",
-        mode: "or"
-      },
-      
-      {
-        column: "Animated",
-        targetId: "animated-filter",
-        selectAllId: "animated-select-all",
-        mode: "or",
-        blankLabel: "NO",
-        options: ["YES", "MIXED", "NO"]
-      },
-      {
-        column: "Kids?",
-        targetId: "kids-filter",
-        selectAllId: "kids-select-all",
-        mode: "or",
-        blankLabel: "NO",
-        options: ["YES", "SORTA", "NO"]
-      },
-      {
-        column: "Tracking Episode-by-Episode Ranks?",
-        targetId: "tv-tracking-filter",
-        selectAllId: "tv-tracking-select-all",
-        mode: "or"
-      },
-      {
-        column: "TV SHOW TIER",
-        targetId: "tv-show-tier-filter",
-        selectAllId: "tv-show-tier-select-all",
-        mode: "or"
-      }
-    ];
+    const table = document.getElementById("tvshows-table");
 
-    const tvShowsDisplayColumns = [
-        "Tier",
-        "Rk",
-        "TV Show",
-        "Times Seen",
-        "Seasons",
-        "Episodes",
-        "Years",
-        "My Rating",
-        "Me vs. IMDB",
-        "Updated",
-        "Plot",
-        "Main Character(s)",
-        "Side Characters",
-        "Emotion",
-        "Dialogue (Writing)",
-        "Purpose Met",
-        "Cast",
-        "Music & Sound",
-        "Rewatch Value",
-        "Episode Average",
-        "Notes (Review)"
-      ];
+    if (table) {
+      table.innerHTML = `
+        <tbody>
+          <tr>
+            <td>
+              Could not load TV show rankings. Check the console for details.
+            </td>
+          </tr>
+        </tbody>
+      `;
+    }
+  }
 
-const tvShowsFilters = [];
-   loadCSV(
-        window.TVSHOWS_CSV_URL,
-        "tvshows-table",
-        "rankings-search",
-        tvShowsDisplayColumns,
-        "rankings-columns",
-        "rankings-sort-column",
-        "rankings-sort-direction",
-        tvShowsFilters,
-        "rankings-show-count"
-      ).catch(showTVShowsError);
-  </script>
+  const tvShowsDisplayColumns = [
+    "Tier",
+    "Rk",
+    "TV Show",
+    "Times Seen",
+    "Seasons",
+    "Episodes",
+    "Years",
+    "My Rating",
+    "Me vs. IMDB",
+    "Updated",
+    "Plot",
+    "Main Character(s)",
+    "Side Characters",
+    "Emotion",
+    "Dialogue (Writing)",
+    "Purpose Met",
+    "Cast",
+    "Music & Sound",
+    "Rewatch Value",
+    "Episode Average",
+    "Notes (Review)"
+  ];
+
+  const tvShowsFilters = [
+    {
+      column: "Watched / Unwatched",
+      targetId: "tv-watched-filter",
+      selectAllId: "tv-watched-select-all",
+      mode: "or"
+    },
+    {
+      column: "Going to re-watch",
+      targetId: "tv-rewatch-filter",
+      selectAllId: "tv-rewatch-select-all",
+      mode: "or"
+    },
+    {
+      column: "Animated",
+      targetId: "animated-filter",
+      selectAllId: "animated-select-all",
+      mode: "or",
+      blankLabel: "NO",
+      options: ["YES", "MIXED", "NO"]
+    },
+    {
+      column: "Kids Show",
+      targetId: "kids-filter",
+      selectAllId: "kids-select-all",
+      mode: "or",
+      blankLabel: "NO",
+      options: ["YES", "SORTA", "NO"]
+    },
+    {
+      column: "Tracking Episode-by-Episode Ranks?",
+      targetId: "tv-tracking-filter",
+      selectAllId: "tv-tracking-select-all",
+      mode: "or"
+    },
+    {
+      column: "TV SHOW TIER",
+      targetId: "tv-show-tier-filter",
+      selectAllId: "tv-show-tier-select-all",
+      mode: "or"
+    }
+  ];
+
+  try {
+    if (typeof Papa === "undefined") {
+      throw new Error("PapaParse did not load.");
+    }
+
+    if (typeof loadCSV !== "function") {
+      throw new Error("loadCSV is not defined. script.js did not load correctly or has a syntax error.");
+    }
+
+    loadCSV(
+      window.TVSHOWS_CSV_URL,
+      "tvshows-table",
+      "rankings-search",
+      tvShowsDisplayColumns,
+      "rankings-columns",
+      "rankings-sort-column",
+      "rankings-sort-direction",
+      tvShowsFilters,
+      "rankings-show-count"
+    ).catch(showRankingsError);
+  } catch (error) {
+    showRankingsError(error);
+  }
+</script>
 </body>
 </html>
