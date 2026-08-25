@@ -2642,6 +2642,7 @@ window.loadTVShowCard = async function loadTVShowCard(tvShowsPath, episodesPath)
   const datalist = document.getElementById("tv-show-card-options");
   const output = document.getElementById("tv-show-card-output");
   const status = document.getElementById("tv-show-card-status");
+  const suggestionsBox = document.getElementById("tv-show-card-suggestions");
 
   if (!selectInput || !datalist || !output) return;
 
@@ -3215,6 +3216,62 @@ function renderEpisodeGridAsSeasonColumns(episodeRows) {
     .map(title => `<option value="${escapeHTML(title)}"></option>`)
     .join("");
 
+  function getFilteredTVShowOptions(value) {
+  const searchValue = normalize(value);
+
+  if (searchValue === "") {
+    return showOptions.slice(0, 12);
+  }
+
+  return showOptions
+    .filter(title => normalize(title).includes(searchValue))
+    .slice(0, 12);
+}
+
+function hideTVShowSuggestions() {
+  if (!suggestionsBox) return;
+
+  suggestionsBox.hidden = true;
+  suggestionsBox.innerHTML = "";
+}
+
+function renderTVShowSuggestions() {
+  if (!suggestionsBox) return;
+
+  const matches = getFilteredTVShowOptions(selectInput.value);
+
+  if (matches.length === 0) {
+    hideTVShowSuggestions();
+    return;
+  }
+
+  suggestionsBox.innerHTML = matches
+    .map(title => {
+      return `
+        <button
+          class="tv-card-suggestion-option"
+          type="button"
+          data-tv-show-title="${escapeHTML(title)}"
+        >
+          ${escapeHTML(title)}
+        </button>
+      `;
+    })
+    .join("");
+
+  suggestionsBox.hidden = false;
+
+  suggestionsBox.querySelectorAll(".tv-card-suggestion-option").forEach(button => {
+    button.addEventListener("click", function () {
+      const title = button.dataset.tvShowTitle || "";
+
+      selectInput.value = title;
+      hideTVShowSuggestions();
+      updateCardFromInput();
+    });
+  });
+}
+
   function findShowByInput(value) {
     const searchValue = normalize(value);
 
@@ -3248,15 +3305,33 @@ function renderEpisodeGridAsSeasonColumns(episodeRows) {
     renderTVShowCard(showRow, showEpisodes);
   }
 
-  selectInput.addEventListener("change", updateCardFromInput);
+  selectInput.addEventListener("focus", renderTVShowSuggestions);
 
-  selectInput.addEventListener("input", () => {
-    const showRow = findShowByInput(selectInput.value);
+selectInput.addEventListener("change", function () {
+  updateCardFromInput();
+  hideTVShowSuggestions();
+});
 
-    if (showRow) {
-      updateCardFromInput();
-    }
-  });
+selectInput.addEventListener("input", function () {
+  renderTVShowSuggestions();
+
+  const showRow = findShowByInput(selectInput.value);
+
+  if (showRow) {
+    updateCardFromInput();
+  }
+});
+
+document.addEventListener("click", function (event) {
+  if (!suggestionsBox) return;
+
+  const clickedInsideSuggestions = suggestionsBox.contains(event.target);
+  const clickedInput = event.target === selectInput;
+
+  if (!clickedInsideSuggestions && !clickedInput) {
+    hideTVShowSuggestions();
+  }
+});
 }
 
 // load flags game //
