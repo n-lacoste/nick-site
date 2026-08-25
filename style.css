@@ -3249,3 +3249,16 @@ tr:hover td:nth-child(3) {
 .filters-applied-summary[hidden] {
   display: none !important;
 }
+
+/* Rankings row-count text */
+.row-count,
+.movies-row-count,
+#row-count,
+#movies-row-count {
+  margin: 8px 0 10px;
+  color: #aaa;
+  font-size: 13px;
+  font-weight: normal;
+  line-height: 1.3;
+  text-align: left;
+}
