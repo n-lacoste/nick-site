@@ -2880,14 +2880,14 @@ function getNumber(value) {
         <h3>Show Info</h3>
 
         <div class="tv-card-info-grid tv-card-info-grid-compact">
-          ${makeStatBox("Times Seen", getText(showRow, "Times Seen"))}
-          ${makeStatBox("Years", getText(showRow, "Years"))}
-          ${makeStatBox("Seasons", getText(showRow, "Seasons"))}
-          ${makeStatBox("Episodes", getText(showRow, "Episodes"))}
-          ${makeStatBox("Ranked Episodes", rankedEpisodes)}
-          ${makeStatBox("Watched", getText(showRow, "Watched / Unwatched"))}
+          ${makeStatBox("Times Seen", getText(showRow, "Times Seen"), "tv-card-small-stat")}
+          ${makeStatBox("Years", getText(showRow, "Years"), "tv-card-medium-stat")}
+          ${makeStatBox("Seasons", getText(showRow, "Seasons"), "tv-card-small-stat")}
+          ${makeStatBox("Episodes", getText(showRow, "Episodes"), "tv-card-small-stat")}
+          ${makeStatBox("Ranked Episodes", rankedEpisodes, "tv-card-medium-stat")}
+          ${makeStatBox("Watched", getText(showRow, "Watched / Unwatched"), "tv-card-small-stat")}
           ${makeStatBox("Tags", formatTagsForInfo(getText(showRow, "Tags")), "tv-card-tags-stat")}
-          ${makeStatBox("Average Episode Rank", averageEpisodeRank, "tv-card-wide-stat")}
+          ${makeStatBox("Average Episode Rank", averageEpisodeRank, "tv-card-medium-stat")}
         </div>
       </section>
     `;
