@@ -379,6 +379,7 @@ async function loadCSV(
     "Tier": "80px",
     "Rk": "70px",
     "Name": "240px",
+    "Times Seen": "58px",
     "Tv Show": "240px",
     "TV Show": "240px",
     "Episode Title": "260px",
@@ -413,6 +414,7 @@ async function loadCSV(
     "OMDB_Genre": "13px",
     "OMDB_Director": "13px",
     "OMDB_Top_3_Actors": "13px",
+    "Times Seen": "12px",
     "Blurb": "13px",
     "Notes": "13px"
   };
