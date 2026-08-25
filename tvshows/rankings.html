@@ -273,17 +273,19 @@
     }
 
     loadCSV(
-        window.TVSHOWS_CSV_URL,
-        "rankings-table",
-        "rankings-search",
-        tvShowsDisplayColumns,
-        "rankings-columns",
-        "rankings-sort-column",
-        "rankings-sort-direction",
-        tvShowsFilters,
-        "rankings-show-count",
-        "tv-rating-status"
-      ).catch(showRankingsError);
+      window.TVSHOWS_CSV_URL,
+      "rankings-table",
+      "rankings-search",
+      tvShowsDisplayColumns,
+      "rankings-columns",
+      "rankings-sort-column",
+      "rankings-sort-direction",
+      tvShowsFilters,
+      "rankings-show-count",
+      "tv-rating-status"
+    ).catch(showRankingsError);
+  } catch (error) {
+    showRankingsError(error);
   }
 </script>
 </body>
