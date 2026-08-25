@@ -2885,3 +2885,81 @@ tr:hover td:nth-child(3) {
   margin-right: auto;
   text-align: center;
 }
+
+/* GEO RESOURCE PAGE */
+.geo-resource-shell {
+  max-width: 1000px;
+  margin: 28px auto 0;
+}
+
+.geo-resource-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #333;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #111;
+}
+
+.geo-resource-table th,
+.geo-resource-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #333;
+  text-align: left;
+  vertical-align: top;
+}
+
+.geo-resource-table th {
+  background: #1a1a1a;
+  color: #f5f5f5;
+  font-weight: bold;
+}
+
+.geo-resource-table td {
+  color: #ddd;
+  line-height: 1.45;
+}
+
+.geo-resource-table tr:last-child td {
+  border-bottom: none;
+}
+
+.geo-resource-table a {
+  color: #5ca8ff;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.geo-resource-table a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 700px) {
+  .geo-resource-table,
+  .geo-resource-table thead,
+  .geo-resource-table tbody,
+  .geo-resource-table th,
+  .geo-resource-table td,
+  .geo-resource-table tr {
+    display: block;
+  }
+
+  .geo-resource-table thead {
+    display: none;
+  }
+
+  .geo-resource-table tr {
+    border-bottom: 1px solid #333;
+    padding: 10px 0;
+  }
+
+  .geo-resource-table td {
+    border-bottom: none;
+    padding: 8px 14px;
+  }
+
+  .geo-resource-table td:first-child {
+    font-weight: bold;
+    color: #f5f5f5;
+  }
+}
