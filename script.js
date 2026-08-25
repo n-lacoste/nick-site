@@ -2834,79 +2834,220 @@ window.loadTVShowCard = async function loadTVShowCard(tvShowsPath, episodesPath)
     `;
   }
 
-  function renderEpisodeGrid(episodeRows) {
-    const seasons = {};
+  let tvCardEpisodeGridLayout = "blocks";
 
-    episodeRows.forEach(row => {
-      const season = getText(row, "Season") || "Unknown";
+function renderEpisodeGridControls() {
+  const blocksActive = tvCardEpisodeGridLayout === "blocks";
+  const columnsActive = tvCardEpisodeGridLayout === "columns";
 
-      if (!seasons[season]) {
-        seasons[season] = [];
-      }
+  return `
+    <div class="tv-card-episode-grid-toolbar">
+      <span>Grid View</span>
 
-      seasons[season].push(row);
+      <button
+        id="tvCardEpisodeGridBlocks"
+        class="tv-card-grid-toggle ${blocksActive ? "active" : ""}"
+        type="button"
+      >
+        Season Blocks
+      </button>
+
+      <button
+        id="tvCardEpisodeGridColumns"
+        class="tv-card-grid-toggle ${columnsActive ? "active" : ""}"
+        type="button"
+      >
+        Season Columns
+      </button>
+    </div>
+  `;
+}
+
+function setupTVCardEpisodeGridControls(showRow, episodeRows) {
+  const blocksButton = document.getElementById("tvCardEpisodeGridBlocks");
+  const columnsButton = document.getElementById("tvCardEpisodeGridColumns");
+
+  if (blocksButton) {
+    blocksButton.addEventListener("click", function () {
+      tvCardEpisodeGridLayout = "blocks";
+      renderTVShowCard(showRow, episodeRows);
     });
+  }
 
-    const sortedSeasons = Object.keys(seasons).sort((a, b) => {
-      const numA = Number(a);
-      const numB = Number(b);
-
-      if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
-
-      return a.localeCompare(b);
+  if (columnsButton) {
+    columnsButton.addEventListener("click", function () {
+      tvCardEpisodeGridLayout = "columns";
+      renderTVShowCard(showRow, episodeRows);
     });
+  }
+}
 
-    if (sortedSeasons.length === 0) {
-      return `
-        <section class="tv-card-panel tv-card-full-width">
-          <h3>Episode Grid</h3>
-          <p class="movie-compare-placeholder">No episode rows found for this show.</p>
-        </section>
-      `;
+function getEpisodeSortNumber(row) {
+  return getNumber(row["Season Epi #"]) ?? getNumber(row["Episode Number"]) ?? 0;
+}
+
+function getEpisodesGroupedBySeason(episodeRows) {
+  const seasons = {};
+
+  episodeRows.forEach(row => {
+    const season = getText(row, "Season") || "Unknown";
+
+    if (!seasons[season]) {
+      seasons[season] = [];
     }
 
+    seasons[season].push(row);
+  });
+
+  const sortedSeasons = Object.keys(seasons).sort((a, b) => {
+    const numA = Number(a);
+    const numB = Number(b);
+
+    if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+
+    return a.localeCompare(b);
+  });
+
+  sortedSeasons.forEach(season => {
+    seasons[season].sort((a, b) => {
+      return getEpisodeSortNumber(a) - getEpisodeSortNumber(b);
+    });
+  });
+
+  return { seasons, sortedSeasons };
+}
+
+function renderEpisodeGrid(episodeRows) {
+  if (episodeRows.length === 0) {
     return `
       <section class="tv-card-panel tv-card-full-width">
         <h3>Episode Grid</h3>
-
-        <div class="tv-card-episode-grid">
-          ${sortedSeasons.map(season => {
-            const rows = seasons[season].sort((a, b) => {
-              const aNum = getNumber(a["Season Epi #"]) ?? getNumber(a["Episode Number"]) ?? 0;
-              const bNum = getNumber(b["Season Epi #"]) ?? getNumber(b["Episode Number"]) ?? 0;
-
-              return aNum - bNum;
-            });
-
-            return `
-              <div class="tv-card-season-block">
-                <h4>S${escapeHTML(season)}</h4>
-
-                <div class="tv-card-season-episodes">
-                  ${rows.map(row => {
-                    const rank = getText(row, "Rank");
-                    const colors = getRankColor(rank);
-                    const episodeTitle = getText(row, "Episode Title");
-                    const episodeNumber = getText(row, "Season Epi #") || getText(row, "Episode Number");
-
-                    return `
-                      <div 
-                        class="tv-card-episode-cell"
-                        style="background:${colors.bg}; color:${colors.text};"
-                        title="S${escapeHTML(season)}E${escapeHTML(episodeNumber)}: ${escapeHTML(episodeTitle)}"
-                      >
-                        <span>${escapeHTML(formatValue(rank))}</span>
-                      </div>
-                    `;
-                  }).join("")}
-                </div>
-              </div>
-            `;
-          }).join("")}
-        </div>
+        <p class="movie-compare-placeholder">No episode rows found for this show.</p>
       </section>
     `;
   }
+
+  if (tvCardEpisodeGridLayout === "columns") {
+    return renderEpisodeGridAsSeasonColumns(episodeRows);
+  }
+
+  return renderEpisodeGridAsSeasonBlocks(episodeRows);
+}
+
+function renderEpisodeGridAsSeasonBlocks(episodeRows) {
+  const { seasons, sortedSeasons } = getEpisodesGroupedBySeason(episodeRows);
+
+  return `
+    <section class="tv-card-panel tv-card-full-width">
+      <h3>Episode Grid</h3>
+
+      ${renderEpisodeGridControls()}
+
+      <div class="tv-card-episode-grid">
+        ${sortedSeasons.map(season => {
+          const rows = seasons[season];
+
+          return `
+            <div class="tv-card-season-block">
+              <h4>S${escapeHTML(season)}</h4>
+
+              <div class="tv-card-season-episodes">
+                ${rows.map(row => {
+                  const rank = getText(row, "Rank");
+                  const colors = getRankColor(rank);
+                  const episodeTitle = getText(row, "Episode Title");
+                  const episodeNumber = getText(row, "Season Epi #") || getText(row, "Episode Number");
+
+                  return `
+                    <div
+                      class="tv-card-episode-cell"
+                      style="background:${colors.bg}; color:${colors.text};"
+                      title="S${escapeHTML(season)}E${escapeHTML(episodeNumber)}: ${escapeHTML(episodeTitle)}"
+                    >
+                      <span>${escapeHTML(formatValue(rank))}</span>
+                    </div>
+                  `;
+                }).join("")}
+              </div>
+            </div>
+          `;
+        }).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function renderEpisodeGridAsSeasonColumns(episodeRows) {
+  const { seasons, sortedSeasons } = getEpisodesGroupedBySeason(episodeRows);
+
+  const maxEpisodeCount = Math.max(
+    ...sortedSeasons.map(season => seasons[season].length),
+    0
+  );
+
+  return `
+    <section class="tv-card-panel tv-card-full-width">
+      <h3>Episode Grid</h3>
+
+      ${renderEpisodeGridControls()}
+
+      <div class="tv-card-episode-matrix-wrap">
+        <table class="tv-card-episode-matrix">
+          <thead>
+            <tr>
+              <th class="tv-card-episode-count-header">#</th>
+              ${sortedSeasons.map(season => {
+                return `<th>S${escapeHTML(season)}</th>`;
+              }).join("")}
+            </tr>
+          </thead>
+
+          <tbody>
+            ${Array.from({ length: maxEpisodeCount }, (_, index) => {
+              const episodeNumber = index + 1;
+
+              return `
+                <tr>
+                  <th class="tv-card-episode-row-number">${episodeNumber}</th>
+
+                  ${sortedSeasons.map(season => {
+                    const rows = seasons[season];
+
+                    const row =
+                      rows.find(item => getEpisodeSortNumber(item) === episodeNumber) ||
+                      rows[index];
+
+                    if (!row) {
+                      return `<td class="tv-card-episode-matrix-empty"></td>`;
+                    }
+
+                    const rank = getText(row, "Rank");
+                    const colors = getRankColor(rank);
+                    const episodeTitle = getText(row, "Episode Title");
+                    const seasonEpisodeNumber = getText(row, "Season Epi #") || episodeNumber;
+
+                    return `
+                      <td>
+                        <div
+                          class="tv-card-episode-matrix-cell"
+                          style="background:${colors.bg}; color:${colors.text};"
+                          title="S${escapeHTML(season)}E${escapeHTML(seasonEpisodeNumber)}: ${escapeHTML(episodeTitle)}"
+                        >
+                          <span class="tv-card-matrix-rank">${escapeHTML(formatValue(rank))}</span>
+                          <span class="tv-card-matrix-title">${escapeHTML(episodeTitle)}</span>
+                        </div>
+                      </td>
+                    `;
+                  }).join("")}
+                </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  `;
+}
 
   function renderNotes(showRow) {
     const notes = getText(showRow, "Notes (Review)");
@@ -2970,6 +3111,8 @@ window.loadTVShowCard = async function loadTVShowCard(tvShowsPath, episodesPath)
       </div>
     `;
 
+    setupTVCardEpisodeGridControls(showRow, episodeRows);
+    
     if (status) {
       status.textContent = `Showing TV card for ${showTitle}.`;
     }
