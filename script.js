@@ -2685,6 +2685,20 @@ function formatTagsForInfo(value) {
     .join(", ");
 }
 
+function formatRankWithHash(value) {
+  const text = String(value ?? "").trim();
+
+  if (text === "" || text === "—" || text === "--") {
+    return "—";
+  }
+
+  if (text.startsWith("#")) {
+    return text;
+  }
+
+  return `#${text}`;
+}
+
 function getNumber(value) {
     const text = String(value ?? "").replace(/,/g, "").trim();
 
