@@ -7,13 +7,13 @@
 
 <body>
   <div id="site-header"></div>
-  <script src="/nick-site/nav.js?v=10"></script>
+  <script src="/nick-site/nav-loader.js"></script>
 
   <main>
     <div class="page-topline">
       <div>
-        <h2>TV Show Rankings</h2>
-        <p>Sortable and filterable TV show rankings.</p>
+        <h2>TV Shows</h2>
+        <p>Nick and Sarah's database of TV shows, with rankings, tags, and review information.</p>
       </div>
 
       <p id="movies-last-updated" class="last-updated">Last updated: —</p>
@@ -21,21 +21,26 @@
 
     <div class="movie-controls-row">
 
-      <details class="column-picker-wrap">
-        <summary class="filter-button">Display Columns</summary>
-        <div id="tv-column-picker" class="column-picker"></div>
+      <details id="tvshows-columns-dropdown" class="filter-dropdown">
+        <summary>Display Columns</summary>
+
+        <label class="filter-option select-all-option">
+          <input type="checkbox" id="tvshows-columns-select-all">
+          Select All
+        </label>
+
+        <div id="tvshows-columns" class="filter-options"></div>
       </details>
 
-      <div class="sort-control">
-        <label for="tv-sort-column">Sort by:</label>
-        <select id="tv-sort-column" class="sort-select"></select>
+      <div class="table-controls">
+        <label for="tvshows-sort-column">Sort by:</label>
+        <select id="tvshows-sort-column" class="sort-select"></select>
+        <button id="tvshows-sort-direction" class="sort-button" type="button">A–Z</button>
       </div>
 
-      <button id="tv-sort-direction" class="filter-button" type="button">A–Z</button>
-
       <div class="show-control">
-        <label for="tv-show-count">Show:</label>
-        <select id="tv-show-count" class="sort-select">
+        <label for="tvshows-show-count">Show:</label>
+        <select id="tvshows-show-count" class="sort-select">
           <option value="25" selected>25</option>
           <option value="50">50</option>
           <option value="100">100</option>
@@ -50,12 +55,13 @@
         </svg>
       </button>
 
-      <input 
-        type="text" 
-        id="tv-search" 
+      <input
+        type="text"
+        id="tvshows-search"
         placeholder="Search TV shows..."
         class="search-box"
       >
+
     </div>
 
     <div id="column-summary" class="column-summary"></div>
