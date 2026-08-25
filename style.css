@@ -3736,3 +3736,58 @@ tr:hover td:nth-child(3) {
   border-bottom: 0;
 }
 
+/* TV Show Card Show Info sizing */
+.tv-card-show-info-panel {
+  padding: 12px 14px;
+}
+
+.tv-card-show-info-panel h3 {
+  margin: 0 0 10px;
+  font-size: 16px;
+}
+
+.tv-card-info-grid-compact {
+  display: grid;
+  grid-template-columns:
+    minmax(70px, 0.7fr)
+    minmax(95px, 0.95fr)
+    minmax(70px, 0.7fr)
+    minmax(75px, 0.75fr)
+    minmax(110px, 1.1fr)
+    minmax(85px, 0.85fr)
+    minmax(180px, 1.8fr)
+    minmax(130px, 1.25fr);
+  gap: 8px;
+  align-items: stretch;
+}
+
+.tv-card-show-info-panel .tv-card-stat {
+  /* TO ADJUST SHOW INFO CARD HEIGHT */
+  min-height: 56px;
+  padding: 7px 8px;
+}
+
+.tv-card-show-info-panel .tv-card-stat span {
+  margin-bottom: 4px;
+  font-size: 10px;
+  line-height: 1.1;
+}
+
+.tv-card-show-info-panel .tv-card-stat strong {
+  font-size: 14px;
+  line-height: 1.15;
+}
+
+.tv-card-show-info-panel .tv-card-small-stat strong {
+  font-size: 15px;
+}
+
+.tv-card-show-info-panel .tv-card-medium-stat strong {
+  font-size: 14px;
+}
+
+.tv-card-show-info-panel .tv-card-tags-stat strong {
+  font-size: 11px;
+  line-height: 1.2;
+}
+
