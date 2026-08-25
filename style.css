@@ -3795,3 +3795,119 @@ tr:hover td:nth-child(3) {
   white-space: pre-line;
 }
 
+/* TV Show Card Show Info: individual box controls */
+.tv-card-show-info-panel .tv-card-stat span {
+  font-size: 12px;
+  line-height: 1.15;
+}
+
+.tv-card-show-info-panel .tv-card-stat strong {
+  font-size: 17px;
+  line-height: 1.15;
+}
+
+/* Times Seen */
+.tv-card-times-seen-stat {
+  min-width: 70px;
+}
+
+.tv-card-times-seen-stat span {
+  font-size: 10px !important;
+}
+
+.tv-card-times-seen-stat strong {
+  font-size: 13px !important;
+}
+
+/* Years */
+.tv-card-years-stat {
+  min-width: 95px;
+}
+
+.tv-card-years-stat span {
+  font-size: 12px !important;
+}
+
+.tv-card-years-stat strong {
+  font-size: 17px !important;
+}
+
+/* Seasons */
+.tv-card-seasons-stat {
+  min-width: 75px;
+}
+
+.tv-card-seasons-stat span {
+  font-size: 12px !important;
+}
+
+.tv-card-seasons-stat strong {
+  font-size: 18px !important;
+}
+
+/* Episodes */
+.tv-card-episodes-stat {
+  min-width: 80px;
+}
+
+.tv-card-episodes-stat span {
+  font-size: 12px !important;
+}
+
+.tv-card-episodes-stat strong {
+  font-size: 18px !important;
+}
+
+/* Ranked Episodes */
+.tv-card-ranked-episodes-stat {
+  min-width: 115px;
+}
+
+.tv-card-ranked-episodes-stat span {
+  font-size: 12px !important;
+}
+
+.tv-card-ranked-episodes-stat strong {
+  font-size: 17px !important;
+}
+
+/* Watched */
+.tv-card-watched-stat {
+  min-width: 85px;
+}
+
+.tv-card-watched-stat span {
+  font-size: 10px !important;
+}
+
+.tv-card-watched-stat strong {
+  font-size: 13px !important;
+}
+
+/* Tags */
+.tv-card-tags-stat {
+  min-width: 170px;
+}
+
+.tv-card-tags-stat span {
+  font-size: 10px !important;
+}
+
+.tv-card-tags-stat strong {
+  font-size: 11px !important;
+  line-height: 1.2;
+  white-space: pre-line;
+}
+
+/* Average Episode Rank */
+.tv-card-average-episode-rank-stat {
+  min-width: 130px;
+}
+
+.tv-card-average-episode-rank-stat span {
+  font-size: 12px !important;
+}
+
+.tv-card-average-episode-rank-stat strong {
+  font-size: 17px !important;
+}
