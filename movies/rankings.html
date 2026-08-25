@@ -250,151 +250,154 @@
     </div>
   </div>
   
-  <script>
-    function showMoviesError(error) {
-      const errorBox = document.getElementById("movies-error");
+ <script>
+  function showMoviesError(error) {
+    const errorBox = document.getElementById("movies-error");
 
-      if (!errorBox) {
-        alert("Movies table error: " + error.message);
-        return;
+    if (!errorBox) {
+      alert("Movies table error: " + error.message);
+      return;
+    }
+
+    errorBox.style.display = "block";
+    errorBox.textContent = "Table failed to load: " + error.message;
+  }
+
+  window.addEventListener("error", event => {
+    showMoviesError(event.error || new Error(event.message));
+  });
+
+  window.addEventListener("unhandledrejection", event => {
+    showMoviesError(event.reason || new Error("Unhandled promise rejection"));
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+<script>
+  window.NICK_SITE_INIT = function () {
+    try {
+      if (typeof Papa === "undefined") {
+        throw new Error("PapaParse did not load.");
       }
 
-      errorBox.style.display = "block";
-      errorBox.textContent = "Table failed to load: " + error.message;
+      if (typeof loadCSV !== "function") {
+        throw new Error("loadCSV is not defined. script.js did not load correctly or has a syntax error.");
+      }
+
+      loadCSV(
+        window.MOVIES_CSV_URL,
+        "movies-table",
+        "rankings-search",
+        [
+          "Tier",
+          "Rk",
+          "Name",
+          "Year",
+          "Mins.",
+          "h:mm",
+          "My Rating",
+          "Me vs. IMDB",
+          "Watched?",
+          "Updated",
+          "Tags",
+          "Movie Series?",
+          "OMDB_Genre",
+          "OMDB_Director",
+          "OMDB_Top_3_Actors",
+          "OMDB_Plot",
+          "Criterion?",
+          "Plot",
+          "Main Character(s)",
+          "Side Characters",
+          "Emotion",
+          "Dialogue (Writing)",
+          "Purpose Met",
+          "Cast",
+          "Music & Sound",
+          "Rewatch Value",
+          "Notes (Review)"
+        ],
+        "rankings-columns",
+        "rankings-sort-column",
+        "rankings-sort-direction",
+        [
+          {
+            column: "Watched?",
+            targetId: "watched-filter",
+            selectAllId: "watched-select-all",
+            mode: "or",
+            filterType: "watchedStatus",
+            options: ["Watched", "Unwatched"]
+          },
+          {
+            column: "Animated",
+            targetId: "animated-filter",
+            selectAllId: "animated-select-all",
+            mode: "or",
+            blankLabel: "NO",
+            options: ["YES", "MIXED", "NO"]
+          },
+          {
+            column: "Holiday?",
+            targetId: "holiday-filter",
+            selectAllId: "holiday-select-all",
+            mode: "or",
+            blankLabel: "NO",
+            options: ["XMAS", "HALLOWEEN", "SORTA", "NO"]
+          },
+          {
+            column: "Sports?",
+            targetId: "sports-filter",
+            selectAllId: "sports-select-all",
+            mode: "or",
+            blankLabel: "NO",
+            options: ["YES", "SORTA", "NO"]
+          },
+          {
+            column: "Movie Series?",
+            targetId: "movie-series-filter",
+            selectAllId: "movie-series-select-all",
+            modeButtonId: "movie-series-mode",
+            mode: "or"
+          },
+          {
+            column: "OMDB_Genre",
+            targetId: "genre-filter",
+            selectAllId: "genre-select-all",
+            mode: "or"
+          },
+          {
+            column: "OMDB_Director",
+            targetId: "director-filter",
+            selectAllId: "director-select-all",
+            mode: "or"
+          },
+          {
+            column: "OMDB_Top_3_Actors",
+            targetId: "actor-filter",
+            selectAllId: "actor-select-all",
+            mode: "or"
+          },
+          {
+            column: "Criterion?",
+            targetId: "criterion-filter",
+            selectAllId: "criterion-select-all",
+            mode: "or",
+            blankLabel: "NO",
+            options: ["YES", "NO"]
+          }
+        ],
+        "rankings-show-count",
+        "movies-rating-status"
+      ).catch(showMoviesError);
+    } catch (error) {
+      showMoviesError(error);
     }
-
-    window.addEventListener("error", event => {
-      showMoviesError(event.error || new Error(event.message));
-    });
-
-    window.addEventListener("unhandledrejection", event => {
-      showMoviesError(event.reason || new Error("Unhandled promise rejection"));
-    });
-  </script>
-
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <script src="../script.js?v=10"></script>
-
- <script>
-  try {
-    if (typeof Papa === "undefined") {
-      throw new Error("PapaParse did not load.");
-    }
-
-    if (typeof loadCSV !== "function") {
-      throw new Error("loadCSV is not defined. script.js did not load correctly or has a syntax error.");
-    }
-
-    loadCSV(
-      window.MOVIES_CSV_URL,
-      "movies-table",
-      "rankings-search",
-      [
-        "Tier",
-        "Rk",
-        "Name",
-        "Year",
-        "Mins.",
-        "h:mm",
-        "My Rating",
-        "Me vs. IMDB",
-        "Watched?",
-        "Updated",
-        "Tags",
-        "Movie Series?",
-        "OMDB_Genre",
-        "OMDB_Director",
-        "OMDB_Top_3_Actors",
-        "OMDB_Plot",
-        "Criterion?",
-        "Plot",
-        "Main Character(s)",
-        "Side Characters",
-        "Emotion",
-        "Dialogue (Writing)",
-        "Purpose Met",
-        "Cast",
-        "Music & Sound",
-        "Rewatch Value",
-        "Notes (Review)"
-      ],
-      "rankings-columns",
-      "rankings-sort-column",
-      "rankings-sort-direction",
-      [
-        {
-          column: "Watched?",
-          targetId: "watched-filter",
-          selectAllId: "watched-select-all",
-          mode: "or",
-          filterType: "watchedStatus",
-          options: ["Watched", "Unwatched"]
-        },
-        {
-          column: "Animated",
-          targetId: "animated-filter",
-          selectAllId: "animated-select-all",
-          mode: "or",
-          blankLabel: "NO",
-          options: ["YES", "MIXED", "NO"]
-        },
-        {
-          column: "Holiday?",
-          targetId: "holiday-filter",
-          selectAllId: "holiday-select-all",
-          mode: "or",
-          blankLabel: "NO",
-          options: ["XMAS", "HALLOWEEN", "SORTA", "NO"]
-        },
-        {
-          column: "Sports?",
-          targetId: "sports-filter",
-          selectAllId: "sports-select-all",
-          mode: "or",
-          blankLabel: "NO",
-          options: ["YES", "SORTA", "NO"]
-        },
-        {
-          column: "Movie Series?",
-          targetId: "movie-series-filter",
-          selectAllId: "movie-series-select-all",
-          modeButtonId: "movie-series-mode",
-          mode: "or"
-        },
-        {
-          column: "OMDB_Genre",
-          targetId: "genre-filter",
-          selectAllId: "genre-select-all",
-          mode: "or"
-        },
-        {
-          column: "OMDB_Director",
-          targetId: "director-filter",
-          selectAllId: "director-select-all",
-          mode: "or"
-        },
-        {
-          column: "OMDB_Top_3_Actors",
-          targetId: "actor-filter",
-          selectAllId: "actor-select-all",
-          mode: "or"
-        },
-        {
-          column: "Criterion?",
-          targetId: "criterion-filter",
-          selectAllId: "criterion-select-all",
-          mode: "or",
-          blankLabel: "NO",
-          options: ["YES", "NO"]
-        }
-      ],
-      "rankings-show-count",
-      "movies-rating-status"
-    ).catch(showMoviesError);
-  } catch (error) {
-    showMoviesError(error);
-  }
+  };
 </script>
+
+<script src="/nick-site/script-loader.js"></script>
 </body>
 </html>
 
