@@ -3315,3 +3315,36 @@ tr:hover td:nth-child(3) {
   }
 }
 
+/* Geo game setup: keep each setup control in its own column */
+.flags-game-setup-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1.15fr 1.15fr 1.15fr 1.15fr;
+  gap: 14px;
+  align-items: start;
+}
+
+.flags-setup-field {
+  min-width: 0;
+}
+
+.flags-setup-field label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.flags-play-mode-descriptions {
+  margin-top: 16px;
+}
+
+@media (max-width: 1000px) {
+  .flags-game-setup-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 650px) {
+  .flags-game-setup-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
