@@ -3271,3 +3271,14 @@ tr:hover td:nth-child(3) {
 .filter-grid .filter-dropdown {
   align-self: flex-start;
 }
+
+/* TV Shows rankings: smaller/skinnier Times Seen column */
+#rankings-table th[data-column="Times Seen"],
+#rankings-table td:nth-child(4) {
+  width: 58px !important;
+  min-width: 58px !important;
+  max-width: 58px !important;
+  font-size: 12px !important;
+  text-align: center;
+  line-height: 1.1;
+}
