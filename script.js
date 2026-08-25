@@ -3204,10 +3204,10 @@ function renderEpisodeGridAsSeasonColumns(episodeRows) {
     const showRow = findShowByInput(selectInput.value);
 
     if (!showRow) {
-      output.innerHTML = `<p class="movie-compare-placeholder">Select a TV show to build the card.</p>`;
+     output.innerHTML = "";
 
       if (status) {
-        status.textContent = "Select a TV show to build the card.";
+        status.textContent = "Select a TV show to generate a card.";
       }
 
       return;
