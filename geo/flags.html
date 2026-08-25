@@ -79,87 +79,86 @@
 
         </div>
 
-        <details id="flagsGameSetup" class="flags-game-setup">
-          <summary>
-            <span class="flags-game-setup-title">Game Setup</span>
-            <span id="flagsSetupSummary" class="flags-game-setup-summary">
-              Default: Random order, One at a time, Information Play, Suggestions Off, Stopwatch
-            </span>
-          </summary>
+       <details id="flagsGameSetup" class="flags-game-setup">
+  <summary>
+    <span class="flags-game-setup-title">Game Setup</span>
+    <span id="flagsSetupSummary" class="flags-game-setup-summary">
+      Default: Random order, One at a time, Information Play, Suggestions Off, Stopwatch
+    </span>
+  </summary>
 
-          <div class="flags-setup-grid">
+  <div class="flags-setup-grid">
 
-            <div class="flags-setup-control">
-              <label for="flagsSortSelect">List Order</label>
+    <div class="flags-setup-control">
+      <label for="flagsSortSelect">List Order</label>
 
-              <select id="flagsSortSelect">
-                <option value="random" selected>Random</option>
-                <option value="name-az">Name A-Z</option>
-                <option value="name-za">Name Z-A</option>
-                <option value="population-high-low">Population High-to-Low</option>
-                <option value="population-low-high">Population Low-to-High</option>
-              </select>
-            </div>
+      <select id="flagsSortSelect">
+        <option value="random" selected>Random</option>
+        <option value="name-az">Name A-Z</option>
+        <option value="name-za">Name Z-A</option>
+        <option value="population-high-low">Population High-to-Low</option>
+        <option value="population-low-high">Population Low-to-High</option>
+      </select>
+    </div>
 
-            <div class="flags-setup-control">
-              <label>Guess Order</label>
+    <div class="flags-setup-control">
+      <label>Guess Order</label>
 
-              <button
-                id="flagsLayoutToggle"
-                class="flags-start-toggle one-at-a-time"
-                type="button"
-                data-layout-style="single"
-              >
-                One at a Time
-              </button>
-            </div>
+      <button
+        id="flagsLayoutToggle"
+        class="flags-start-toggle one-at-a-time"
+        type="button"
+        data-layout-style="single"
+      >
+        One at a Time
+      </button>
+    </div>
 
-            <div class="flags-setup-control">
-              <label>Play Mode</label>
+    <div class="flags-setup-control">
+      <label>Play Mode</label>
 
-              <button
-                id="flagsPlayStyleToggle"
-                class="flags-start-toggle information-play"
-                type="button"
-                data-play-style="information"
-              >
-                Information Play
-              </button>
+      <button
+        id="flagsPlayStyleToggle"
+        class="flags-start-toggle information-play"
+        type="button"
+        data-play-style="information"
+      >
+        Information Play
+      </button>
 
-              <div class="flags-play-mode-descriptions">
-           <div id="flagsPlayStyleDescription" class="flags-play-mode-descriptions">
-            See information for each correct answer, which requires an additional click to go to the next guess.
-          </div>
-            </div>
+      <div id="flagsPlayStyleDescription" class="flags-play-mode-descriptions">
+        <strong>Information Play:</strong> See information for each correct answer, which requires an additional click to go to the next guess.
+      </div>
+    </div>
 
-            <div class="flags-setup-control">
-              <label>Answer Suggestions</label>
+    <div class="flags-setup-control">
+      <label>Answer Suggestions</label>
 
-              <button
-                id="flagsSuggestionsToggle"
-                class="flags-start-toggle suggestions-off"
-                type="button"
-                data-suggestions="off"
-              >
-                Suggestions Off
-              </button>
-            </div>
+      <button
+        id="flagsSuggestionsToggle"
+        class="flags-start-toggle suggestions-off"
+        type="button"
+        data-suggestions="off"
+      >
+        Suggestions Off
+      </button>
+    </div>
 
-            <div class="flags-setup-control">
-              <label for="flagsTimerSelect">Timer</label>
+    <div class="flags-setup-control">
+      <label for="flagsTimerSelect">Timer</label>
 
-              <select id="flagsTimerSelect">
-                <option value="0">Timer Off</option>
-                <option value="stopwatch" selected>Stopwatch</option>
-                <option value="120">2:00</option>
-                <option value="300">5:00</option>
-                <option value="600">10:00</option>
-                <option value="900">15:00</option>
-              </select>
-            </div>
+      <select id="flagsTimerSelect">
+        <option value="0">Timer Off</option>
+        <option value="stopwatch" selected>Stopwatch</option>
+        <option value="120">2:00</option>
+        <option value="300">5:00</option>
+        <option value="600">10:00</option>
+        <option value="900">15:00</option>
+      </select>
+    </div>
 
-          </div>
-        </details>
+  </div>
+</details>
 
         <div id="flagsSelectedGameSummary" class="flags-selected-game-summary">
           Choose a game mode above.
