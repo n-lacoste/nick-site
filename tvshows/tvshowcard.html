@@ -21,13 +21,15 @@
       <label for="tv-show-card-select">TV Show</label>
 
       <input
-        id="tv-show-card-select"
-        class="search-box tv-card-search"
-        list="tv-show-card-options"
-        placeholder="Select a TV show..."
-      >
-
-      <datalist id="tv-show-card-options"></datalist>
+          id="tv-show-card-select"
+          class="search-box tv-card-search"
+          placeholder="Select a TV show..."
+          autocomplete="off"
+        >
+        
+        <datalist id="tv-show-card-options"></datalist>
+        
+      <div id="tv-show-card-suggestions" class="tv-card-suggestions" hidden></div>
     </div>
 
     <p id="tv-show-card-status" class="last-updated">Select a TV show to generate a card.</p>
