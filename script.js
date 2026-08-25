@@ -239,24 +239,28 @@ function formatLongMovieDate(timestamp) {
   return `${month} ${day}${getOrdinalSuffix(day)}, ${year}`;
 }
 
-function updateMoviesLastUpdatedText(rows) {
-  const lastUpdatedElement =
-    document.getElementById("last-updated") ||
-    document.getElementById("movies-last-updated");
-
-  if (!lastUpdatedElement) return;
-
-  const latestTimestamp = rows
-    .map(row => parseMovieDate(row["Updated"]))
-    .filter(timestamp => timestamp !== null)
-    .sort((a, b) => b - a)[0];
-
-  if (!latestTimestamp) {
-    lastUpdatedElement.textContent = "Last updated: —";
-    return;
-  }
-
-  lastUpdatedElement.textContent = `Last updated: ${formatLongMovieDate(latestTimestamp)}`;
+function updateRankingsLastUpdatedText(rows) {
+      const lastUpdatedElement =
+        document.getElementById("last-updated") ||
+        document.getElementById("movies-last-updated");
+    
+      if (!lastUpdatedElement) return;
+    
+      const latestTimestamp = rows
+        .map(row => parseMovieDate(row["Updated"]))
+        .filter(timestamp => timestamp !== null)
+        .sort((a, b) => b - a)[0];
+    
+      if (!latestTimestamp) {
+        lastUpdatedElement.textContent = "Last updated: —";
+        return;
+      }
+    
+      lastUpdatedElement.textContent = `Last updated: ${formatLongMovieDate(latestTimestamp)}`;
+    }
+    
+    function updateMoviesLastUpdatedText(rows) {
+      updateRankingsLastUpdatedText(rows);
 }
 
 const MOVIE_PINNED_COLUMNS = [
@@ -375,6 +379,9 @@ async function loadCSV(
   const expandedCellStore = {};
 
   const columnWidths = {
+    /* All tables */
+    "Updated": "105px",
+      
     /* Movie + TV tables */
     "Tier": "80px",
     "Rk": "70px",
@@ -414,6 +421,9 @@ async function loadCSV(
   };
 
   const cellFontSizes = {
+    /* All tables */
+    "Updated": "12px",
+    
     /* Movie + TV tables */
     "Notes (Review)": "13px",
     "Tags": "13px",
@@ -439,6 +449,10 @@ async function loadCSV(
   const defaultHeaderFontSize = "18px";
 
   const headerFontSizes = {
+    /* All tables */
+
+    /* Movie table only */
+    
     /* TV Show Table only */
     "Times Seen": "12px",
     
