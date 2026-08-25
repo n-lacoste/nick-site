@@ -416,6 +416,9 @@ async function loadCSV(
     "OMDB_Top_3_Actors": "13px",
     "Times Seen": "12px",
     "Blurb": "13px",
+    "Release Date": "13px",
+    "Season Epi #": "14px",
+    "Rank": "18px",
     "Notes": "13px"
   };
 
