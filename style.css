@@ -3204,3 +3204,28 @@ tr:hover td:nth-child(3) {
   margin-top: 0 !important;
   margin-bottom: 0 !important;
 }
+
+/* Wider rankings search bar */
+.movie-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.movie-controls-row .search-box {
+  flex: 1 1 420px;
+  min-width: 340px;
+  max-width: 620px;
+  margin-left: auto;
+}
+
+@media (max-width: 750px) {
+  .movie-controls-row .search-box {
+    flex-basis: 100%;
+    min-width: 0;
+    max-width: none;
+    width: 100%;
+    margin-left: 0;
+  }
+}
