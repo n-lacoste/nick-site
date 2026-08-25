@@ -3108,7 +3108,8 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
         correct: false,
         revealed: false,
         skipped: false,
-        hintUsed: false
+        hintUsed: false,
+        attemptCount: 0
       }));
 
     activeFlags = sortGameRows(activeFlags, activeSortId);
@@ -3240,7 +3241,7 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
   
  function showGameComplete(gaveUp = false, timedOut = false) {
       stopTimer();
-      // setGameplayControlsVisible(false);
+      setGameplayControlsVisible(false);
     
       if (!gameEndTimestamp) {
         gameEndTimestamp = Date.now();
@@ -3951,42 +3952,43 @@ function cleanScoreInitials(value) {
   }
 
   function submitAnswer() {
-    if (answeredCurrent) {
-      nextQuestion();
-      return;
+      if (answeredCurrent) {
+        nextQuestion();
+        return;
+      }
+    
+      const current = activeFlags[currentIndex];
+    
+      if (!current) return;
+    
+      if (current.completed) {
+        feedbackEl.textContent = "This one is already complete. Press Tab or click another one.";
+        return;
+      }
+    
+      const guess = answerInput.value;
+    
+      if (!guess.trim()) {
+        feedbackEl.textContent = "Type an answer first.";
+        return;
+      }
+    
+      const acceptedAnswers = getAcceptedAnswers(current);
+    
+      attempts += 1;
+      current.attemptCount = Number(current.attemptCount || 0) + 1;
+    
+      if (acceptedAnswers.includes(normalizeAnswer(guess))) {
+        handleCorrectAnswer(current);
+      } else {
+        streak = 0;
+    
+        feedbackEl.textContent = "Not quite. Try again, or reveal the answer.";
+        feedbackEl.className = "flags-feedback flags-feedback-wrong";
+    
+        updateScore();
+      }
     }
-
-    const current = activeFlags[currentIndex];
-
-    if (!current) return;
-
-    if (current.completed) {
-      feedbackEl.textContent = "This one is already complete. Press Tab or click another one.";
-      return;
-    }
-
-    const guess = answerInput.value;
-
-    if (!guess.trim()) {
-      feedbackEl.textContent = "Type an answer first.";
-      return;
-    }
-
-    const acceptedAnswers = getAcceptedAnswers(current);
-
-    attempts += 1;
-
-    if (acceptedAnswers.includes(normalizeAnswer(guess))) {
-      handleCorrectAnswer(current);
-    } else {
-      streak = 0;
-
-      feedbackEl.textContent = "Not quite. Try again, or reveal the answer.";
-      feedbackEl.className = "flags-feedback flags-feedback-wrong";
-
-      updateScore();
-    }
-  }
 
   function handleCorrectAnswer(row) {
     score += 1;
@@ -4092,73 +4094,106 @@ function cleanScoreInitials(value) {
   }
 
   function revealAnswer() {
-    const current = activeFlags[currentIndex];
-    const config = gameModes[activeModeId];
-
-    if (!current || !config) return;
-
-    if (current.completed) {
-      feedbackEl.textContent = "This one is already complete.";
-      showDetails(current);
-      return;
-    }
-
-    attempts += 1;
-    streak = 0;
-    answeredCurrent = true;
-
-    current.completed = true;
-    current.correct = false;
-    current.revealed = true;
-    current.skipped = false;
-
-    const answer = config.answerKind === "capital" ? current.capital : current.name;
-
-    feedbackEl.textContent = `Answer: ${answer}`;
-    feedbackEl.className = "flags-feedback flags-feedback-reveal";
-
-    showDetails(current);
-
-    if (activeLayoutStyle === "grid") {
-      renderGrid();
-    }
-
-    updateScore();
+        const current = activeFlags[currentIndex];
+        const config = gameModes[activeModeId];
+      
+        if (!current || !config) return;
+      
+        if (current.completed) {
+          feedbackEl.textContent = "This one is already complete.";
+          showDetails(current);
+          return;
+        }
+      
+        const typedAttemptsForThisItem = Number(current.attemptCount || 0);
+      
+        if (typedAttemptsForThisItem === 0) {
+          attempts += 1;
+          current.attemptCount = 1;
+        }
+      
+        streak = 0;
+        answeredCurrent = true;
+      
+        current.completed = true;
+        current.correct = false;
+        current.revealed = true;
+        current.skipped = false;
+      
+        const answer = config.answerKind === "capital" ? current.capital : current.name;
+      
+        feedbackEl.textContent = `Answer: ${answer}`;
+        feedbackEl.className = "flags-feedback flags-feedback-reveal";
+      
+        showDetails(current);
+      
+        if (activeLayoutStyle === "grid") {
+          renderGrid();
+        }
+      
+        updateScore();
   }
 
-  function skipQuestion() {
-    const current = activeFlags[currentIndex];
-
-    if (!current) return;
-
-    if (!current.completed) {
-      attempts += 1;
-      streak = 0;
-
-      current.completed = true;
-      current.correct = false;
-      current.revealed = false;
-      current.skipped = true;
-    }
-
-    nextQuestion();
-  }
-
-  function nextQuestion() {
-    if (activeLayoutStyle === "grid") {
-      const nextPending = getNextPendingIndex(currentIndex + 1);
-
-      if (nextPending === -1) {
-        showGameComplete();
+ function skipQuestion() {
+      const current = activeFlags[currentIndex];
+    
+      if (!current) return;
+    
+      if (current.completed) {
+        nextQuestion();
         return;
       }
+    
+      streak = 0;
+    
+      current.skipped = true;
+      current.completed = false;
+      current.correct = false;
+      current.revealed = false;
+    
+      feedbackEl.textContent = "Skipped. This one will come back later.";
+      feedbackEl.className = "flags-feedback";
+      detailsEl.innerHTML = "";
+      answerInput.value = "";
+      answeredCurrent = false;
+    
+      if (activeLayoutStyle === "grid") {
+        renderGrid();
+      }
+    
+      const nextIndex = getNextOtherUncompletedIndex(currentIndex);
+    
+      if (nextIndex === -1) {
+        feedbackEl.textContent = "This is the last unfinished item.";
+        updateScore();
+        return;
+      }
+    
+      currentIndex = nextIndex;
+      showCurrentQuestion();
+  }
 
-      selectGridIndex(nextPending);
-      return;
-    }
-
-    currentIndex += 1;
-    showCurrentQuestion();
+ function nextQuestion() {
+      const nextPending = getNextPendingIndex(currentIndex + 1);
+    
+        if (nextPending === -1) {
+          showGameComplete();
+          return;
+        }
+      
+        if (nextPending === currentIndex && activeFlags[currentIndex] && !activeFlags[currentIndex].completed) {
+          feedbackEl.textContent = "This is the last unfinished item.";
+          updateScore();
+          return;
+        }
+      
+        if (activeLayoutStyle === "grid") {
+          selectGridIndex(nextPending);
+          return;
+        }
+      
+        currentIndex = nextPending;
+        showCurrentQuestion();
   }
 
   function selectNextGridTile() {
@@ -4183,6 +4218,21 @@ function cleanScoreInitials(value) {
     return -1;
   }
 
+  function getNextOtherUncompletedIndex(startIndex) {
+      if (!activeFlags.length) return -1;
+    
+      for (let step = 1; step < activeFlags.length; step += 1) {
+        const index = (startIndex + step) % activeFlags.length;
+        const row = activeFlags[index];
+    
+        if (row && !row.completed) {
+          return index;
+        }
+      }
+    
+      return -1;
+}
+  
   function allQuestionsCompleted() {
     return activeFlags.length > 0 && activeFlags.every(row => row.completed);
   }
