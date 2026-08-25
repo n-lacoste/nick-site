@@ -2673,11 +2673,19 @@ window.loadTVShowCard = async function loadTVShowCard(tvShowsPath, episodesPath)
   }
 
   function formatValue(value) {
-    const text = String(value ?? "").trim();
-    return text === "" ? "—" : text;
-  }
+  const text = String(value ?? "").trim();
+  return text === "" ? "—" : text;
+}
 
-  function getNumber(value) {
+function formatTagsForInfo(value) {
+  return String(value ?? "")
+    .split(";")
+    .map(tag => tag.trim())
+    .filter(Boolean)
+    .join(", ");
+}
+
+function getNumber(value) {
     const text = String(value ?? "").replace(/,/g, "").trim();
 
     if (text === "" || text === "--") return null;
@@ -2830,9 +2838,6 @@ window.loadTVShowCard = async function loadTVShowCard(tvShowsPath, episodesPath)
   }
 
   function renderShowInfo(showRow, episodeRows) {
-    const tier = getText(showRow, "Tier");
-    const tierStyle = getTierStyle(tier);
-
     const rankedEpisodes = countRankedEpisodes(episodeRows);
     const averageEpisodeRank = getAverageEpisodeRank(episodeRows);
 
@@ -2848,14 +2853,6 @@ window.loadTVShowCard = async function loadTVShowCard(tvShowsPath, episodesPath)
           ${makeStatBox("Ranked Episodes", rankedEpisodes)}
           ${makeStatBox("Watched", getText(showRow, "Watched / Unwatched"))}
           ${makeStatBox("Tags", formatTagsForInfo(getText(showRow, "Tags")), "tv-card-tags-stat")}
-
-          <div class="tv-card-stat tv-card-tier-box">
-            <span>Tier</span>
-            <strong style="background:${tierStyle.bg}; color:${tierStyle.text};">
-              ${escapeHTML(formatValue(tier))}
-            </strong>
-          </div>
-
           ${makeStatBox("Average Episode Rank", averageEpisodeRank, "tv-card-wide-stat")}
         </div>
       </section>
@@ -3229,6 +3226,7 @@ function renderEpisodeGridAsSeasonColumns(episodeRows) {
     }
   });
 }
+
 // load flags game //
 window.loadFlagsGame = function loadFlagsGame(filePath) {
   const startGameButton = document.getElementById("flagsStartGameButton");
