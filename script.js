@@ -256,6 +256,64 @@ function updateMoviesLastUpdatedText(rows) {
 
   lastUpdatedElement.textContent = `Last updated: ${formatLongMovieDate(latestTimestamp)}`;
 }
+const MOVIE_PINNED_COLUMNS = [
+  "Tier",
+  "Rk",
+  "Name",
+  "Year",
+  "Mins.",
+  "h:mm",
+  "My Rating",
+  "Me vs. IMDB",
+  "Watched?",
+  "Updated"
+];
+
+const MOVIE_FACTOR_SCORE_COLUMNS = [
+  "Plot",
+  "Main Character(s)",
+  "Side Characters",
+  "Emotion",
+  "Dialogue (Writing)",
+  "Purpose Met",
+  "Cast",
+  "Music & Sound",
+  "Rewatch Value"
+];
+
+function isMovieRankingTable(headers) {
+  return (
+    headers.includes("Tier") &&
+    headers.includes("Rk") &&
+    headers.includes("Name") &&
+    headers.includes("My Rating") &&
+    headers.includes("Updated")
+  );
+}
+
+function getOrderedMovieHeaders(headers) {
+  if (!isMovieRankingTable(headers)) {
+    return headers;
+  }
+
+  const usedHeaders = new Set();
+  const orderedHeaders = [];
+
+  function addHeader(header) {
+    if (!headers.includes(header)) return;
+    if (usedHeaders.has(header)) return;
+
+    orderedHeaders.push(header);
+    usedHeaders.add(header);
+  }
+
+  MOVIE_PINNED_COLUMNS.forEach(addHeader);
+  MOVIE_FACTOR_SCORE_COLUMNS.forEach(addHeader);
+
+  headers.forEach(addHeader);
+
+  return orderedHeaders;
+}
 
 async function loadCSV(
   filePath,
@@ -276,8 +334,9 @@ async function loadCSV(
     skipEmptyLines: true
   });
 
-  const allHeaders = parsed.meta.fields || [];
-
+  const sourceHeaders = parsed.meta.fields || [];
+  const allHeaders = getOrderedMovieHeaders(sourceHeaders);
+  
   const data = parsed.data.filter(row => {
     return allHeaders.some(header => {
       return String(row[header] ?? "").trim() !== "";
@@ -287,8 +346,8 @@ async function loadCSV(
   updateMoviesLastUpdatedText(data);
 
   let visibleHeaders = displayColumns
-    ? displayColumns.filter(column => allHeaders.includes(column))
-    : allHeaders;
+      ? allHeaders.filter(column => displayColumns.includes(column))
+      : allHeaders;
 
   const table = document.getElementById(tableId);
 
@@ -1128,9 +1187,11 @@ async function loadCSV(
 
     picker.querySelectorAll("input").forEach(input => {
       input.addEventListener("change", () => {
-        visibleHeaders = Array.from(
-          picker.querySelectorAll("input:checked")
-        ).map(checkbox => checkbox.value);
+    const checkedHeaders = Array.from(
+        picker.querySelectorAll("input:checked")
+      ).map(checkbox => checkbox.value);
+      
+      visibleHeaders = allHeaders.filter(header => checkedHeaders.includes(header));
 
         updateColumnPickerSelectAll();
         updateColumnSummary();
@@ -1147,9 +1208,11 @@ async function loadCSV(
           input.checked = selectAllCheckbox.checked;
         });
 
-        visibleHeaders = Array.from(
+    const checkedHeaders = Array.from(
           picker.querySelectorAll("input:checked")
         ).map(checkbox => checkbox.value);
+        
+        visibleHeaders = allHeaders.filter(header => checkedHeaders.includes(header));
 
         selectAllCheckbox.indeterminate = false;
         updateColumnSummary();
