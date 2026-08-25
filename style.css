@@ -3262,3 +3262,12 @@ tr:hover td:nth-child(3) {
   line-height: 1.3;
   text-align: left;
 }
+
+/* Keep filter dropdowns top-aligned when one is open */
+.filter-grid {
+  align-items: flex-start;
+}
+
+.filter-grid .filter-dropdown {
+  align-self: flex-start;
+}
