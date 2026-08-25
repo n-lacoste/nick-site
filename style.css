@@ -3360,4 +3360,167 @@ tr:hover td:nth-child(3) {
   line-height: 1.35;
 }
 
+/* Homepage redesign */
+.home-page {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 34px 18px 60px;
+}
 
+.home-hero {
+  padding: 54px 28px;
+  border: 1px solid #333;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at top left, rgba(92, 168, 255, 0.18), transparent 34%),
+    radial-gradient(circle at bottom right, rgba(87, 187, 138, 0.16), transparent 34%),
+    #111;
+  text-align: center;
+}
+
+.home-hero-kicker {
+  display: inline-block;
+  margin-bottom: 14px;
+  padding: 6px 12px;
+  border: 1px solid #444;
+  border-radius: 999px;
+  color: #ccc;
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.home-hero h2 {
+  max-width: 900px;
+  margin: 0 auto 16px;
+  color: #f5f5f5;
+  font-size: clamp(32px, 5vw, 58px);
+  line-height: 1.02;
+}
+
+.home-hero p {
+  max-width: 760px;
+  margin: 0 auto;
+  color: #cfcfcf;
+  font-size: 18px;
+  line-height: 1.55;
+}
+
+.home-hero-chips {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 26px;
+}
+
+.home-hero-chips span {
+  padding: 8px 12px;
+  border: 1px solid #3a3a3a;
+  border-radius: 999px;
+  background: #181818;
+  color: #e8e8e8;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.home-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 24px;
+}
+
+.home-feature-card {
+  display: block;
+  min-height: 210px;
+  padding: 22px;
+  border: 1px solid #333;
+  border-radius: 18px;
+  background: #141414;
+  color: #f5f5f5;
+  text-decoration: none;
+}
+
+.home-feature-card:hover {
+  border-color: #5ca8ff;
+  background: #181818;
+}
+
+.home-card-kicker {
+  margin-bottom: 18px;
+  color: #9fbfff;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.home-feature-card h3 {
+  margin: 0 0 10px;
+  color: #fff;
+  font-size: 24px;
+}
+
+.home-feature-card p {
+  margin: 0 0 20px;
+  color: #c9c9c9;
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.home-feature-card span {
+  color: #57bb8a;
+  font-weight: bold;
+}
+
+.home-quick-links {
+  margin-top: 26px;
+  padding: 22px;
+  border: 1px solid #333;
+  border-radius: 18px;
+  background: #111;
+}
+
+.home-quick-links h3 {
+  margin: 0 0 14px;
+  color: #f5f5f5;
+}
+
+.home-quick-link-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.home-quick-link-row a {
+  padding: 9px 12px;
+  border: 1px solid #333;
+  border-radius: 999px;
+  background: #181818;
+  color: #f5f5f5;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.home-quick-link-row a:hover {
+  border-color: #57bb8a;
+}
+
+@media (max-width: 900px) {
+  .home-feature-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .home-feature-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .home-hero {
+    padding: 38px 18px;
+  }
+}
