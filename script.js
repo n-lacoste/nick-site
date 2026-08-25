@@ -2811,6 +2811,7 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
   const sortSelect = document.getElementById("flagsSortSelect");
 
   const playStyleToggle = document.getElementById("flagsPlayStyleToggle");
+  const playStyleDescriptionEl = document.getElementById("flagsPlayStyleDescription");
   const layoutToggle = document.getElementById("flagsLayoutToggle");
   const suggestionsToggle = document.getElementById("flagsSuggestionsToggle");
   const answerSuggestions = document.getElementById("flagsAnswerSuggestions");
@@ -2975,17 +2976,19 @@ window.loadFlagsGame = function loadFlagsGame(filePath) {
   let answeredCurrent = false;
   let selectedModeId = "";
 
-  if (!filePath) {
-    showStartScreen();
-
-    if (debugEl) {
-      debugEl.textContent = "Missing FLAGS_CSV_URL.";
+ if (!filePath) {
+      showStartScreen();
+    
+      if (debugEl) {
+        debugEl.textContent = "Missing FLAGS_CSV_URL.";
+      }
+    
+      return;
     }
-
-    return;
-  }
-
-  showStartScreen();
+    
+updateGameSetupSummary();
+updatePlayStyleDescription();
+showStartScreen();
 
   if (debugEl) {
     debugEl.textContent = "Loading flags CSV...";
@@ -4505,6 +4508,26 @@ function getTimerLabel(timerValue) {
         .map(value => `<option value="${escapeHTML(value)}"></option>`)
         .join("");
     }
+
+  function updatePlayStyleDescription() {
+  if (!playStyleDescriptionEl || !playStyleToggle) return;
+
+  const playStyle = playStyleToggle.dataset.playStyle || "information";
+
+  if (playStyle === "speed") {
+    playStyleDescriptionEl.innerHTML = `
+      <strong>Speed Play:</strong>
+      A correct guess automatically goes to the next item, without showing the correct answer’s details.
+    `;
+    return;
+  }
+
+  playStyleDescriptionEl.innerHTML = `
+    <strong>Information Play:</strong>
+    See information for each correct answer, which requires an additional click to go to the next guess.
+  `;
+}
+  
   function updateGameSetupSummary() {
     if (!setupSummaryEl) return;
   
@@ -4637,8 +4660,8 @@ function getTimerLabel(timerValue) {
       ? "speed"
       : "information";
 
-    updatePlayStyleToggle();
     updateGameSetupSummary();
+    updatePlayStyleDescription();
   });
 }
 
