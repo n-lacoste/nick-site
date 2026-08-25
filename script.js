@@ -2606,7 +2606,7 @@ async function loadMovieComparison(filePath) {
   renderComparison();
 }
 
-async function loadTVShowCard(tvShowsPath, episodesPath) {
+window.loadTVShowCard = async function loadTVShowCard(tvShowsPath, episodesPath) {
   const selectInput = document.getElementById("tv-show-card-select");
   const datalist = document.getElementById("tv-show-card-options");
   const output = document.getElementById("tv-show-card-output");
@@ -2658,7 +2658,7 @@ async function loadTVShowCard(tvShowsPath, episodesPath) {
   }
 
   function getShowTitle(row) {
-    return getText(row, "Tv Show");
+    return getText(row, "TV Show");
   }
 
   function normalize(value) {
