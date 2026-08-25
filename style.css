@@ -3272,3 +3272,46 @@ tr:hover td:nth-child(3) {
   align-self: flex-start;
 }
 
+/* Rankings row-count with right-side average */
+.row-count,
+.movies-row-count,
+#row-count,
+#movies-row-count {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin: 8px 0 10px;
+  color: #aaa;
+  font-size: 13px;
+  font-weight: normal;
+  line-height: 1.3;
+}
+
+.row-count span:last-child,
+#row-count span:last-child {
+  margin-left: auto;
+  text-align: right;
+  color: #ccc;
+  font-weight: bold;
+}
+
+@media (max-width: 650px) {
+  .row-count,
+  #row-count {
+    display: block;
+  }
+
+  .row-count span,
+  #row-count span {
+    display: block;
+    text-align: left;
+  }
+
+  .row-count span:last-child,
+  #row-count span:last-child {
+    margin-top: 4px;
+    text-align: left;
+  }
+}
+
