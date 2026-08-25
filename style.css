@@ -2985,3 +2985,36 @@ tr:hover td:nth-child(3) {
   font-size: 13px;
   line-height: 1.45;
 }
+
+/* Flags end screen action buttons */
+.flags-end-options-row {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 22px auto 0;
+}
+
+.flags-end-option-button {
+  padding: 12px 18px;
+  border: 1px solid #57bb8a;
+  border-radius: 10px;
+  background: #11734b;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.flags-end-option-button:hover {
+  background: #16865a;
+}
+
+.flags-change-game-end-button {
+  border-color: #5ca8ff;
+  background: #0a53a8;
+}
+
+.flags-change-game-end-button:hover {
+  background: #0d66cc;
+}
