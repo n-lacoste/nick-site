@@ -2342,9 +2342,23 @@ tr:hover td:nth-child(3) {
 }
 
 .flags-side-feedback-panel {
-  margin-top: 16px;
+  position: fixed;
+  right: 18px;
+  bottom: 16px;
+  z-index: 4999;
+  width: fit-content;
+  min-width: 220px;
+  max-width: 360px;
+  max-height: 260px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid #444;
+  border-radius: 12px;
+  background: #111;
+  text-align: left;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
 }
-
 .flags-large-grid-feedback .flags-card {
   display: block;
   width: min(900px, calc(100vw - 40px));
@@ -2724,4 +2738,159 @@ tr:hover td:nth-child(3) {
     max-height: none;
     margin: 14px auto;
   }
+}
+/* Universal fixed feedback/info box for every mode */
+.flags-side-feedback-panel {
+  position: fixed !important;
+  right: 18px !important;
+  bottom: 16px !important;
+  left: auto !important;
+  transform: none !important;
+  z-index: 4999;
+  width: fit-content;
+  min-width: 220px;
+  max-width: 360px;
+  max-height: 260px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid #444;
+  border-radius: 12px;
+  background: #111;
+  text-align: left;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
+}
+
+.flags-info-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.flags-feedback {
+  min-height: 0;
+  margin: 0;
+  font-weight: bold;
+}
+
+.flags-details {
+  margin-top: 10px;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.flags-info-toggle-button {
+  padding: 5px 8px;
+  border: 1px solid #555;
+  border-radius: 7px;
+  background: #222;
+  color: #f5f5f5;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.flags-info-toggle-button:hover {
+  background: #333;
+}
+
+.flags-info-panel-minimized {
+  max-height: none;
+  overflow: visible;
+}
+
+.flags-info-panel-minimized .flags-details {
+  display: none;
+}
+
+/* Mobile: stack info box above the fixed answer/search bar */
+@media (max-width: 900px) {
+  .flags-side-feedback-panel {
+    left: 50% !important;
+    right: auto !important;
+    bottom: 105px !important;
+    width: calc(100vw - 24px);
+    max-width: none;
+    transform: translateX(-50%) !important;
+  }
+}
+
+/* Ending screen: hide gameplay and show only centered ending details */
+.flags-game-ended .flags-game-controls,
+.flags-game-ended .flags-score-row,
+.flags-game-ended .flags-high-score-row,
+.flags-game-ended .flags-top-scores-panel,
+.flags-game-ended .flags-progress-wrap,
+.flags-game-ended .flags-debug,
+.flags-game-ended .flags-grid,
+.flags-game-ended .flags-prompt-text,
+.flags-game-ended .flags-image-wrap,
+.flags-game-ended .flags-answer-area,
+.flags-game-ended .flags-action-row {
+  display: none !important;
+}
+
+.flags-game-ended .flags-card {
+  display: block !important;
+  width: min(640px, calc(100vw - 32px)) !important;
+  margin: 48px auto 0 !important;
+  padding: 24px !important;
+  border: 1px solid #333 !important;
+  border-radius: 14px !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  text-align: center !important;
+  overflow: visible !important;
+}
+
+.flags-game-ended .flags-side-feedback-panel {
+  position: static !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+  width: 100% !important;
+  min-width: 0;
+  max-width: none;
+  max-height: none;
+  overflow: visible;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.flags-game-ended .flags-info-panel-header {
+  justify-content: center;
+}
+
+.flags-game-ended .flags-info-toggle-button {
+  display: none !important;
+}
+
+.flags-game-ended .flags-feedback {
+  margin: 0;
+  font-size: 22px;
+  text-align: center;
+  white-space: normal;
+}
+
+.flags-game-ended .flags-info-panel-minimized .flags-details,
+.flags-game-ended .flags-details {
+  display: block !important;
+  max-width: 440px;
+  margin: 16px auto 0;
+  text-align: left;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.flags-game-ended .flags-details > div {
+  margin: 5px 0;
+}
+
+.flags-game-ended .flags-score-submit-panel {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
 }
