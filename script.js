@@ -5420,3 +5420,279 @@ if (answerInput) {
 
 console.log("Flags game listeners loaded.");
 };
+
+window.loadHomeTierSummary = async function loadHomeTierSummary() {
+  const table = document.getElementById("home-tier-table");
+  const select = document.getElementById("home-tier-dataset");
+
+  if (!table || !select) return;
+
+  const tierOrder = [
+    "S",
+    "(S)",
+    "A1",
+    "A2",
+    "A3",
+    "B1",
+    "B2",
+    "B3",
+    "C1",
+    "C2",
+    "C3",
+    "D",
+    "NR"
+  ];
+
+  const configs = {
+    albums: {
+      label: "Albums",
+      url: window.ALBUMS_CSV_URL,
+      tierColumns: ["Tier", "Album Tier"],
+      titleColumns: ["Album", "Album Title", "Project", "Project Name", "Name"],
+      scoreColumns: ["My Rating", "Rating", "Score"]
+    },
+    movies: {
+      label: "Movies",
+      url: window.MOVIES_CSV_URL,
+      tierColumns: ["Tier"],
+      titleColumns: ["Movie Title", "Name", "Title"],
+      scoreColumns: ["My Rating", "Rating", "Score"]
+    },
+    tvshows: {
+      label: "TV Shows",
+      url: window.TVSHOWS_CSV_URL,
+      tierColumns: ["Tier", "TV SHOW TIER", "TV Show Tier"],
+      titleColumns: ["TV Show", "Tv Show", "Name", "Title"],
+      scoreColumns: ["My Rating", "Rating", "Score"]
+    }
+  };
+
+  function escapeHTML(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function getFirstExistingColumn(headers, candidates) {
+    return candidates.find(column => headers.includes(column)) || null;
+  }
+
+  function getNumericScore(row, scoreColumn) {
+    if (!scoreColumn) return null;
+
+    const value = String(row[scoreColumn] ?? "").replace(/,/g, "").trim();
+    const number = Number(value);
+
+    return isNaN(number) ? null : number;
+  }
+
+  function getTierSortIndex(tier) {
+    const index = tierOrder.indexOf(tier);
+
+    return index === -1 ? 999 : index;
+  }
+
+  function getTierStyle(tier) {
+    if (typeof getTierColor !== "function") return "";
+
+    const colors = getTierColor(tier);
+
+    if (!colors || !colors.bg || !colors.text) return "";
+
+    return `
+      background-color: ${colors.bg};
+      color: ${colors.text};
+      font-weight: bold;
+    `;
+  }
+
+  function showLoading(label) {
+    table.innerHTML = `
+      <tbody>
+        <tr>
+          <td class="rankings-loading-cell">Loading ${escapeHTML(label)} tier summary...</td>
+        </tr>
+      </tbody>
+    `;
+  }
+
+  function showError(label) {
+    table.innerHTML = `
+      <tbody>
+        <tr>
+          <td class="home-tier-empty">
+            Could not load ${escapeHTML(label)} tier summary.
+          </td>
+        </tr>
+      </tbody>
+    `;
+  }
+
+  async function loadDataset(datasetKey) {
+    const config = configs[datasetKey];
+
+    if (!config || !config.url) {
+      showError(config ? config.label : "selected");
+      return;
+    }
+
+    showLoading(config.label);
+
+    try {
+      const text = await getCSVText(config.url);
+
+      const parsed = Papa.parse(text.trim(), {
+        header: true,
+        skipEmptyLines: true
+      });
+
+      const headers = parsed.meta.fields || [];
+      const rows = parsed.data || [];
+
+      const tierColumn = getFirstExistingColumn(headers, config.tierColumns);
+      const titleColumn = getFirstExistingColumn(headers, config.titleColumns);
+      const scoreColumn = getFirstExistingColumn(headers, config.scoreColumns);
+
+      if (!tierColumn) {
+        table.innerHTML = `
+          <tbody>
+            <tr>
+              <td class="home-tier-empty">
+                No tier column found for ${escapeHTML(config.label)}.
+              </td>
+            </tr>
+          </tbody>
+        `;
+        return;
+      }
+
+      const groups = new Map();
+
+      rows.forEach(row => {
+        const tier = String(row[tierColumn] ?? "").trim();
+
+        if (tier === "") return;
+
+        if (!groups.has(tier)) {
+          groups.set(tier, {
+            tier,
+            count: 0,
+            examples: [],
+            scores: []
+          });
+        }
+
+        const group = groups.get(tier);
+        const title = titleColumn ? String(row[titleColumn] ?? "").trim() : "";
+        const score = getNumericScore(row, scoreColumn);
+
+        group.count++;
+
+        if (title !== "") {
+          group.examples.push({
+            title,
+            score
+          });
+        }
+
+        if (score !== null) {
+          group.scores.push(score);
+        }
+      });
+
+      const summaryRows = Array.from(groups.values())
+        .sort((a, b) => {
+          const tierCompare = getTierSortIndex(a.tier) - getTierSortIndex(b.tier);
+
+          if (tierCompare !== 0) return tierCompare;
+
+          return a.tier.localeCompare(b.tier);
+        });
+
+      const maxCount = Math.max(...summaryRows.map(row => row.count), 1);
+      const totalCount = summaryRows.reduce((sum, row) => sum + row.count, 0);
+
+      if (summaryRows.length === 0) {
+        table.innerHTML = `
+          <tbody>
+            <tr>
+              <td class="home-tier-empty">
+                No tier data found for ${escapeHTML(config.label)}.
+              </td>
+            </tr>
+          </tbody>
+        `;
+        return;
+      }
+
+      let html = `
+        <thead>
+          <tr>
+            <th>Tier</th>
+            <th>Count</th>
+            <th>Spread</th>
+            <th>Example</th>
+            <th>Score Range</th>
+          </tr>
+        </thead>
+        <tbody>
+      `;
+
+      summaryRows.forEach(row => {
+        const percentageOfTotal = totalCount > 0
+          ? Math.round((row.count / totalCount) * 100)
+          : 0;
+
+        const barWidth = Math.max(3, Math.round((row.count / maxCount) * 100));
+
+        const bestExample = row.examples
+          .sort((a, b) => {
+            if (a.score === null && b.score === null) return 0;
+            if (a.score === null) return 1;
+            if (b.score === null) return -1;
+
+            return b.score - a.score;
+          })[0];
+
+        const exampleText = bestExample ? bestExample.title : "—";
+
+        const scoreRange = row.scores.length
+          ? `${Math.min(...row.scores)}–${Math.max(...row.scores)}`
+          : "—";
+
+        html += `
+          <tr>
+            <td style="${getTierStyle(row.tier)}">${escapeHTML(row.tier)}</td>
+            <td>${escapeHTML(row.count)}</td>
+            <td class="home-tier-bar-cell">
+              <div class="home-tier-bar-track">
+                <div class="home-tier-bar-fill" style="width: ${barWidth}%;"></div>
+                <div class="home-tier-bar-label">${percentageOfTotal}%</div>
+              </div>
+            </td>
+            <td class="home-tier-example">${escapeHTML(exampleText)}</td>
+            <td>${escapeHTML(scoreRange)}</td>
+          </tr>
+        `;
+      });
+
+      html += `
+        </tbody>
+      `;
+
+      table.innerHTML = html;
+    } catch (error) {
+      console.error(error);
+      showError(config.label);
+    }
+  }
+
+  select.addEventListener("change", function () {
+    loadDataset(select.value);
+  });
+
+  loadDataset(select.value);
+};
