@@ -104,5 +104,16 @@
     </div>
   </section>
 </main>
+
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script>
+  window.NICK_SITE_INIT = function () {
+    if (typeof loadHomeTierSummary === "function") {
+      loadHomeTierSummary();
+    }
+  };
+</script>
+<script src="/nick-site/script-loader.js"></script>
+
 </body>
 </html>
