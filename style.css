@@ -4058,3 +4058,12 @@ tr:hover td:nth-child(3) {
     opacity: 0.35;
   }
 }
+
+/* Keep rankings controls top-aligned when dropdowns open */
+.movie-controls-row {
+  align-items: flex-start !important;
+}
+
+.movie-controls-row > * {
+  align-self: flex-start !important;
+}
