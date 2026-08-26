@@ -1190,13 +1190,28 @@ function getVisibleEpisodeRankAverage(rowsToShow) {
   }
 
   function setupSearch() {
-    if (!searchId) return;
-
-    const searchBox = document.getElementById(searchId);
-    if (!searchBox) return;
-
-    searchBox.addEventListener("input", applyAllFiltersAndSort);
-  }
+          if (!searchId) return;
+        
+          const searchInput = document.getElementById(searchId);
+          const searchButton = document.getElementById(`${searchId}-button`);
+        
+          if (!searchInput) return;
+        
+          function runSearch() {
+            applyAllFiltersAndSort();
+          }
+        
+          searchInput.addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              runSearch();
+            }
+          });
+        
+          if (searchButton) {
+            searchButton.addEventListener("click", runSearch);
+          }
+}
 
   function setupRowLimit() {
     if (!rowLimitId) return;
