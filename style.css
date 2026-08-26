@@ -3911,3 +3911,47 @@ tr:hover td:nth-child(3) {
 .tv-card-average-episode-rank-stat strong {
   font-size: 17px !important;
 }
+
+/* Rankings search with manual search button */
+.rankings-search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 480px;
+  min-width: 340px;
+  max-width: 720px;
+  margin-left: auto;
+}
+
+.rankings-search-wrap .search-box {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin-left: 0;
+}
+
+.rankings-search-button {
+  padding: 9px 13px;
+  border: 1px solid #444;
+  border-radius: 10px;
+  background: #181818;
+  color: #f5f5f5;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.rankings-search-button:hover {
+  border-color: #57bb8a;
+  background: #202020;
+}
+
+@media (max-width: 750px) {
+  .rankings-search-wrap {
+    flex-basis: 100%;
+    min-width: 0;
+    max-width: none;
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
