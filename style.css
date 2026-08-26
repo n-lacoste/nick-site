@@ -3955,3 +3955,71 @@ tr:hover td:nth-child(3) {
   }
 }
 
+/* Search button inside rankings search box */
+.rankings-search-wrap {
+  position: relative;
+  flex: 1 1 480px;
+  min-width: 340px;
+  max-width: 720px;
+  margin-left: auto;
+}
+
+.rankings-search-wrap .search-box,
+.rankings-search-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding-right: 86px;
+}
+
+.rankings-search-button {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  height: calc(100% - 12px);
+  padding: 0 13px;
+  border: 1px solid #444;
+  border-radius: 8px;
+  background: #181818;
+  color: #f5f5f5;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.rankings-search-button:hover {
+  border-color: #57bb8a;
+  background: #202020;
+}
+
+@media (max-width: 750px) {
+  .rankings-search-wrap {
+    flex-basis: 100%;
+    min-width: 0;
+    max-width: none;
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
+/* Keep Displayed / Not visible summary inside page width */
+.column-summary {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.column-summary div,
+.column-summary p {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+#visible-columns-summary,
+#hidden-columns-summary {
+  display: inline;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
