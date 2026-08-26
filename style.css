@@ -4023,3 +4023,38 @@ tr:hover td:nth-child(3) {
   overflow-wrap: anywhere;
   word-break: break-word;
 }
+
+/* Clear loading state for rankings tables */
+.rankings-loading-cell {
+  padding: 34px 18px;
+  border: 1px solid #5a4a22;
+  border-radius: 10px;
+  background: #201a0f;
+  color: #ffd966;
+  font-size: 15px;
+  font-weight: bold;
+  font-style: normal;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+.rankings-loading-cell::before {
+  content: "●";
+  display: inline-block;
+  margin-right: 8px;
+  animation: rankings-loading-pulse 1s infinite ease-in-out;
+}
+
+@keyframes rankings-loading-pulse {
+  0% {
+    opacity: 0.35;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.35;
+  }
+}
