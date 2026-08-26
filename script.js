@@ -1190,27 +1190,53 @@ function getVisibleEpisodeRankAverage(rowsToShow) {
   }
 
   function setupSearch() {
-          if (!searchId) return;
-        
-          const searchInput = document.getElementById(searchId);
-          const searchButton = document.getElementById(`${searchId}-button`);
-        
-          if (!searchInput) return;
-        
-          function runSearch() {
-            applyAllFiltersAndSort();
+        if (!searchId) return;
+      
+        const searchInput = document.getElementById(searchId);
+        const searchButton = document.getElementById(`${searchId}-button`);
+        const clearButton = document.getElementById(`${searchId}-clear`);
+      
+        if (!searchInput) return;
+      
+      function updateClearButton() {
+          if (!clearButton) return;
+      
+          clearButton.hidden = searchInput.value.trim() === "";
+        }
+      
+        function runSearch() {
+          applyAllFiltersAndSort();
+          updateClearButton();
+        }
+      
+        searchInput.addEventListener("keydown", function (event) {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            runSearch();
           }
-        
-          searchInput.addEventListener("keydown", function (event) {
-            if (event.key === "Enter") {
-              event.preventDefault();
-              runSearch();
-            }
+      
+          if (event.key === "Escape") {
+            event.preventDefault();
+            searchInput.value = "";
+            runSearch();
+          }
+        });
+      
+        searchInput.addEventListener("input", updateClearButton);
+      
+        if (searchButton) {
+          searchButton.addEventListener("click", runSearch);
+        }
+      
+        if (clearButton) {
+          clearButton.addEventListener("click", function () {
+            searchInput.value = "";
+            runSearch();
+            searchInput.focus();
           });
-        
-          if (searchButton) {
-            searchButton.addEventListener("click", runSearch);
-          }
+        }
+      
+        updateClearButton();
 }
 
   function setupRowLimit() {
