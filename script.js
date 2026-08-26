@@ -5696,3 +5696,165 @@ window.loadHomeTierSummary = async function loadHomeTierSummary() {
 
   loadDataset(select.value);
 };
+
+window.loadHomeTop10Summaries = async function loadHomeTop10Summaries() {
+  const configs = {
+    albums: {
+      listId: "home-top10-albums",
+      url: window.ALBUMS_CSV_URL,
+      titleColumns: ["Album", "Album Title", "Project", "Project Name", "Name", "Title"],
+      rankColumns: ["Rk", "Rank", "Album Rank"],
+      scoreColumns: ["My Rating", "Rating", "Score"],
+      metaColumns: ["Artist", "Album Artist", "Tier"]
+    },
+    songs: {
+      listId: "home-top10-songs",
+      url: window.SONGS_CSV_URL,
+      titleColumns: ["Song", "Song Name", "Song Title", "Track", "Track Name", "Name", "Title"],
+      rankColumns: ["Rk", "Rank", "Song Rank"],
+      scoreColumns: ["My Rating", "Rating", "Score"],
+      metaColumns: ["Artist", "Artists", "Tier"]
+    },
+    movies: {
+      listId: "home-top10-movies",
+      url: window.MOVIES_CSV_URL,
+      titleColumns: ["Movie Title", "Name", "Title"],
+      rankColumns: ["Rk", "Rank"],
+      scoreColumns: ["My Rating", "Rating", "Score"],
+      metaColumns: ["Year", "Tier"]
+    },
+    tvshows: {
+      listId: "home-top10-tvshows",
+      url: window.TVSHOWS_CSV_URL,
+      titleColumns: ["TV Show", "Tv Show", "Name", "Title"],
+      rankColumns: ["Rk", "Rank"],
+      scoreColumns: ["My Rating", "Rating", "Score"],
+      metaColumns: ["Years", "Tier"]
+    }
+  };
+
+  function escapeHTML(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function getFirstExistingColumn(headers, candidates) {
+    return candidates.find(column => headers.includes(column)) || null;
+  }
+
+  function getNumber(row, column) {
+    if (!column) return null;
+
+    const text = String(row[column] ?? "").replace(/,/g, "").trim();
+    const number = Number(text);
+
+    return isNaN(number) ? null : number;
+  }
+
+  function getText(row, column) {
+    if (!column) return "";
+
+    return String(row[column] ?? "").trim();
+  }
+
+  function getBestMeta(row, metaColumns) {
+    const values = metaColumns
+      .map(column => getText(row, column))
+      .filter(value => value !== "");
+
+    if (values.length === 0) return "";
+
+    return values.slice(0, 2).join(" • ");
+  }
+
+  function rowHasContent(row, headers) {
+    return headers.some(header => {
+      return String(row[header] ?? "").trim() !== "";
+    });
+  }
+
+  async function loadTop10(config) {
+    const list = document.getElementById(config.listId);
+
+    if (!list) return;
+
+    list.innerHTML = `<li class="home-top10-loading">Loading...</li>`;
+
+    try {
+      const text = await getCSVText(config.url);
+
+      const parsed = Papa.parse(text.trim(), {
+        header: true,
+        skipEmptyLines: true
+      });
+
+      const headers = parsed.meta.fields || [];
+      const rows = (parsed.data || []).filter(row => rowHasContent(row, headers));
+
+      const titleColumn = getFirstExistingColumn(headers, config.titleColumns);
+      const rankColumn = getFirstExistingColumn(headers, config.rankColumns);
+      const scoreColumn = getFirstExistingColumn(headers, config.scoreColumns);
+
+      if (!titleColumn) {
+        list.innerHTML = `<li class="home-top10-empty">No title column found.</li>`;
+        return;
+      }
+
+      const rankedRows = rows
+        .map(row => {
+          return {
+            row,
+            title: getText(row, titleColumn),
+            rank: getNumber(row, rankColumn),
+            score: getNumber(row, scoreColumn),
+            meta: getBestMeta(row, config.metaColumns)
+          };
+        })
+        .filter(item => item.title !== "")
+        .filter(item => item.rank !== null || item.score !== null)
+        .sort((a, b) => {
+          if (a.rank !== null && b.rank !== null) {
+            return a.rank - b.rank;
+          }
+
+          if (a.rank !== null && b.rank === null) return -1;
+          if (a.rank === null && b.rank !== null) return 1;
+
+          if (a.score !== null && b.score !== null) {
+            return b.score - a.score;
+          }
+
+          return a.title.localeCompare(b.title);
+        })
+        .slice(0, 10);
+
+      if (rankedRows.length === 0) {
+        list.innerHTML = `<li class="home-top10-empty">No ranked items found.</li>`;
+        return;
+      }
+
+      list.innerHTML = rankedRows.map(item => {
+        const rankText = item.rank !== null ? `#${item.rank}` : "";
+        const scoreText = item.score !== null ? `${item.score}` : "";
+        const metaParts = [rankText, scoreText, item.meta].filter(Boolean);
+        const metaText = metaParts.join(" • ");
+
+        return `
+          <li>
+            <span class="home-top10-item-title">${escapeHTML(item.title)}</span>
+            ${metaText ? `<span class="home-top10-item-meta">${escapeHTML(metaText)}</span>` : ""}
+          </li>
+        `;
+      }).join("");
+    } catch (error) {
+      console.error(error);
+      list.innerHTML = `<li class="home-top10-empty">Could not load data.</li>`;
+    }
+  }
+
+  Object.values(configs).forEach(loadTop10);
+};
