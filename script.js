@@ -1531,7 +1531,7 @@ function updateAppliedFiltersSummary() {
           const searchBox = searchId ? document.getElementById(searchId) : null;
         
           if (searchBox && searchBox.value.trim() !== "") {
-            parts.push(`Search: "${searchBox.value.trim()}"`);
+            parts.push(`Search = "${searchBox.value.trim()}"`);
           }
         
           const ratingSelect = ratingStatusId ? document.getElementById(ratingStatusId) : null;
@@ -1540,7 +1540,7 @@ function updateAppliedFiltersSummary() {
             const selectedOption = ratingSelect.options[ratingSelect.selectedIndex];
             const label = selectedOption ? selectedOption.textContent.trim() : ratingSelect.value;
         
-            parts.push(`Rating: ${label}`);
+            parts.push(`Rating = ${label}`);
           }
         
           const sampleInput = document.getElementById("sample-filter");
@@ -1550,14 +1550,14 @@ function updateAppliedFiltersSummary() {
           const minsValueInput = document.getElementById("mins-value-filter");
         
           if (sampleInput && sampleInput.value.trim() !== "") {
-            parts.push(`Sample: "${sampleInput.value.trim()}"`);
+            parts.push(`Sample = "${sampleInput.value.trim()}"`);
           }
         
           const yearStart = yearStartInput ? yearStartInput.value.trim() : "";
           const yearEnd = yearEndInput ? yearEndInput.value.trim() : "";
         
           if (yearStart !== "" || yearEnd !== "") {
-            parts.push(`Year: ${yearStart || "any"} to ${yearEnd || "any"}`);
+            parts.push(`Year = ${yearStart || "any"} to ${yearEnd || "any"}`);
           }
         
           const minsValue = minsValueInput ? minsValueInput.value.trim() : "";
@@ -1566,7 +1566,7 @@ function updateAppliedFiltersSummary() {
             const minsMode = minsModeInput ? minsModeInput.value : "greater";
             const minsText = minsMode === "less" ? "less than" : "greater than";
         
-            parts.push(`Mins.: ${minsText} ${minsValue}`);
+            parts.push(`Mins. = ${minsText} ${minsValue}`);
           }
         
           safeFilters.forEach(filter => {
