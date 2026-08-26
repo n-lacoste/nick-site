@@ -5777,6 +5777,27 @@ window.loadHomeTop10Summaries = async function loadHomeTop10Summaries() {
     });
   }
 
+  function renderTop10List(list, items) {
+    if (items.length === 0) {
+      list.innerHTML = `<li class="home-top10-empty">No ranked items found.</li>`;
+      return;
+    }
+
+    list.innerHTML = items.map(item => {
+      const rankText = item.rank !== null ? `#${item.rank}` : "";
+      const scoreText = item.score !== null ? `${item.score}` : "";
+      const metaParts = [rankText, scoreText, item.meta].filter(Boolean);
+      const metaText = metaParts.join(" • ");
+
+      return `
+        <li>
+          <span class="home-top10-item-title">${escapeHTML(item.title)}</span>
+          ${metaText ? `<span class="home-top10-item-meta">${escapeHTML(metaText)}</span>` : ""}
+        </li>
+      `;
+    }).join("");
+  }
+
   async function loadTop10(config) {
     const list = document.getElementById(config.listId);
 
@@ -5832,29 +5853,116 @@ window.loadHomeTop10Summaries = async function loadHomeTop10Summaries() {
         })
         .slice(0, 10);
 
-      if (rankedRows.length === 0) {
-        list.innerHTML = `<li class="home-top10-empty">No ranked items found.</li>`;
-        return;
-      }
-
-      list.innerHTML = rankedRows.map(item => {
-        const rankText = item.rank !== null ? `#${item.rank}` : "";
-        const scoreText = item.score !== null ? `${item.score}` : "";
-        const metaParts = [rankText, scoreText, item.meta].filter(Boolean);
-        const metaText = metaParts.join(" • ");
-
-        return `
-          <li>
-            <span class="home-top10-item-title">${escapeHTML(item.title)}</span>
-            ${metaText ? `<span class="home-top10-item-meta">${escapeHTML(metaText)}</span>` : ""}
-          </li>
-        `;
-      }).join("");
+      renderTop10List(list, rankedRows);
     } catch (error) {
       console.error(error);
       list.innerHTML = `<li class="home-top10-empty">Could not load data.</li>`;
     }
   }
 
-  Object.values(configs).forEach(loadTop10);
+  async function loadTop10ArtistsFromSongs() {
+    const list = document.getElementById("home-top10-artists");
+
+    if (!list) return;
+
+    list.innerHTML = `<li class="home-top10-loading">Loading...</li>`;
+
+    try {
+      const text = await getCSVText(window.SONGS_CSV_URL);
+
+      const parsed = Papa.parse(text.trim(), {
+        header: true,
+        skipEmptyLines: true
+      });
+
+      const headers = parsed.meta.fields || [];
+      const rows = (parsed.data || []).filter(row => rowHasContent(row, headers));
+
+      const artistColumn = getFirstExistingColumn(headers, ["Artist", "Artists", "Artist 1"]);
+      const rankColumn = getFirstExistingColumn(headers, ["Artist Rank", "Artist Rk", "Rk", "Rank"]);
+      const scoreColumn = getFirstExistingColumn(headers, ["My Rating", "Rating", "Score"]);
+
+      if (!artistColumn) {
+        list.innerHTML = `<li class="home-top10-empty">No artist column found.</li>`;
+        return;
+      }
+
+      const artistMap = new Map();
+
+      rows.forEach(row => {
+        const artistText = getText(row, artistColumn);
+
+        if (artistText === "") return;
+
+        const artists = artistText
+          .split(/[;,]/)
+          .map(artist => artist.trim())
+          .filter(Boolean);
+
+        artists.forEach(artist => {
+          if (!artistMap.has(artist)) {
+            artistMap.set(artist, {
+              title: artist,
+              bestRank: null,
+              bestScore: null,
+              count: 0
+            });
+          }
+
+          const item = artistMap.get(artist);
+          const rank = getNumber(row, rankColumn);
+          const score = getNumber(row, scoreColumn);
+
+          item.count++;
+
+          if (rank !== null && (item.bestRank === null || rank < item.bestRank)) {
+            item.bestRank = rank;
+          }
+
+          if (score !== null && (item.bestScore === null || score > item.bestScore)) {
+            item.bestScore = score;
+          }
+        });
+      });
+
+      const artists = Array.from(artistMap.values())
+        .filter(item => item.bestRank !== null || item.bestScore !== null)
+        .sort((a, b) => {
+          if (a.bestRank !== null && b.bestRank !== null) {
+            return a.bestRank - b.bestRank;
+          }
+
+          if (a.bestRank !== null && b.bestRank === null) return -1;
+          if (a.bestRank === null && b.bestRank !== null) return 1;
+
+          if (a.bestScore !== null && b.bestScore !== null) {
+            return b.bestScore - a.bestScore;
+          }
+
+          return b.count - a.count;
+        })
+        .slice(0, 10)
+        .map(item => {
+          return {
+            title: item.title,
+            rank: item.bestRank,
+            score: item.bestScore,
+            meta: `${item.count} song${item.count === 1 ? "" : "s"}`
+          };
+        });
+
+      renderTop10List(list, artists);
+    } catch (error) {
+      console.error(error);
+      list.innerHTML = `<li class="home-top10-empty">Could not load artists.</li>`;
+    }
+  }
+
+  loadTop10(configs.albums);
+  loadTop10ArtistsFromSongs();
+  loadTop10(configs.songs);
+  loadTop10(configs.movies);
+  loadTop10(configs.tvshows);
 };
+
+
