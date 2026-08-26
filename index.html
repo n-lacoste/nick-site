@@ -148,6 +148,10 @@
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script>
   window.NICK_SITE_INIT = function () {
+    if (typeof loadHomeTop10Summaries === "function") {
+      loadHomeTop10Summaries();
+    }
+
     if (typeof loadHomeTierSummary === "function") {
       loadHomeTierSummary();
     }
