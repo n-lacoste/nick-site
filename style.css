@@ -6162,16 +6162,8 @@ tr:hover td:nth-child(3) {
 
 /* TV Show Card, tighter search row with tier scale aligned right */
 .tv-card-search-row {
-  display: grid !important;
-  grid-template-columns: 280px minmax(0, 1fr) auto !important;
-  align-items: stretch !important;
-  gap: 18px !important;
-
-  width: 100% !important;
-  max-width: none !important;
-  box-sizing: border-box !important;
-
-  margin: 28px 0 18px 0 !important;
+  width: calc(100vw - 48px) !important;
+  max-width: calc(100vw - 48px) !important;
 }
 
 .tv-card-search-left {
