@@ -6160,18 +6160,18 @@ tr:hover td:nth-child(3) {
   display: none !important;
 }
 
-/* TV Show Card, search box left and tier scale far right */
+/* TV Show Card, tighter search row with tier scale aligned right */
 .tv-card-search-row {
   display: grid !important;
   grid-template-columns: 280px minmax(0, 1fr) auto !important;
-  align-items: center !important;
+  align-items: stretch !important;
   gap: 18px !important;
 
-  width: calc(100vw - 48px) !important;
-  max-width: calc(100vw - 48px) !important;
+  width: 100% !important;
+  max-width: none !important;
   box-sizing: border-box !important;
 
-  margin: 80px 0 18px 0 !important;
+  margin: 28px 0 18px 0 !important;
 }
 
 .tv-card-search-left {
@@ -6180,18 +6180,22 @@ tr:hover td:nth-child(3) {
   width: 280px !important;
   min-width: 280px !important;
   max-width: 280px !important;
+  height: 44px !important;
 }
 
 #tv-show-card-select {
   width: 100% !important;
   height: 44px !important;
+  min-height: 44px !important;
+  max-height: 44px !important;
   box-sizing: border-box !important;
+  margin: 0 !important;
 }
 
 .tv-card-tier-scale {
   grid-column: 3 !important;
   justify-self: end !important;
-  align-self: center !important;
+  align-self: stretch !important;
 
   display: flex !important;
   align-items: center !important;
@@ -6199,7 +6203,10 @@ tr:hover td:nth-child(3) {
   gap: 6px !important;
 
   height: 44px !important;
+  min-height: 44px !important;
+  max-height: 44px !important;
   box-sizing: border-box !important;
+  margin: 0 !important;
   padding: 0 10px !important;
 
   border: 1px solid #333 !important;
@@ -6215,6 +6222,7 @@ tr:hover td:nth-child(3) {
   min-width: 34px !important;
   height: 28px !important;
   padding: 0 7px !important;
+  box-sizing: border-box !important;
   border-radius: 7px !important;
 
   font-size: 13px !important;
