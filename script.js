@@ -6272,54 +6272,74 @@ window.loadHomeTierSummary = async function loadHomeTierSummary() {
       `;
 
       summaryRows.forEach(row => {
-        const percentageOfTotal = totalCount > 0
-          ? Math.round((row.count / totalCount) * 100)
-          : 0;
+  const percentageOfTotal = totalCount > 0
+    ? Math.round((row.count / totalCount) * 100)
+    : 0;
 
-        const barWidth = Math.max(3, Math.round((row.count / maxCount) * 100));
+  const barWidth = Math.max(3, Math.round((row.count / maxCount) * 100));
 
-        const bestExample = row.examples
-          .sort((a, b) => {
-            if (a.score === null && b.score === null) return 0;
-            if (a.score === null) return 1;
-            if (b.score === null) return -1;
+  const tierKey = String(row.tier ?? "").trim();
 
-            return b.score - a.score;
-          })[0];
+  const tierStyle = tierColors[tierKey] || {
+    bg: "#57bb8a",
+    text: "#000000"
+  };
 
-       const exampleText = bestExample
-        ? `${bestExample.title}${bestExample.year ? ` (${bestExample.year})` : ""}`
-        : "—";
+  const tierCellStyle = `
+    background: ${tierStyle.bg};
+    color: ${tierStyle.text};
+  `;
 
-        const scoreRange = row.scores.length
-            ? (() => {
-                const minScore = Math.round(Math.min(...row.scores));
-                const maxScore = Math.round(Math.max(...row.scores));
-          
-                const isSTier = String(row.tier ?? "").trim().toUpperCase() === "S";
-          
-                const displayMin = isSTier ? Math.min(minScore, 99) : minScore;
-                const displayMax = isSTier ? Math.min(maxScore, 99) : maxScore;
-          
-                return `${displayMin} – ${displayMax}`;
-              })()
-            : "—";
+  const bestExample = row.examples
+    .sort((a, b) => {
+      if (a.score === null && b.score === null) return 0;
+      if (a.score === null) return 1;
+      if (b.score === null) return -1;
 
-        html += `
-          <tr>
-            <td style="${getTierStyle(row.tier)}">${escapeHTML(row.tier)}</td>
-            <td>${escapeHTML(row.count)}</td>
-            <td class="home-tier-bar-cell">
-              <div class="home-tier-bar-track">
-                <div class="home-tier-bar-fill" style="width: ${barWidth}%;"></div>
-                <div class="home-tier-bar-label">${percentageOfTotal}%</div>
-              </div>
-            </td>
-            <td class="home-tier-example">${escapeHTML(exampleText)}</td>
-            <td>${escapeHTML(scoreRange)}</td>
-          </tr>
-        `;
-      });
+      return b.score - a.score;
+    })[0];
+
+  const exampleText = bestExample
+    ? `${bestExample.title}${bestExample.year ? ` (${bestExample.year})` : ""}`
+    : "—";
+
+  const scoreRange = row.scores.length
+    ? (() => {
+        const minScore = Math.round(Math.min(...row.scores));
+        const maxScore = Math.round(Math.max(...row.scores));
+
+        const isSTier = String(row.tier ?? "").trim().toUpperCase() === "S";
+
+        const displayMin = isSTier ? Math.min(minScore, 99) : minScore;
+        const displayMax = isSTier ? Math.min(maxScore, 99) : maxScore;
+
+        return `${displayMin} – ${displayMax}`;
+      })()
+    : "—";
+
+  html += `
+    <tr>
+      <td style="${tierCellStyle}">${escapeHTML(row.tier)}</td>
+      <td>${escapeHTML(row.count)}</td>
+      <td class="home-tier-bar-cell">
+        <div class="home-tier-bar-track">
+          <div 
+            class="home-tier-bar-fill"
+            style="
+              width: ${barWidth}%;
+              background: ${tierStyle.bg};
+            "
+          ></div>
+          <span class="home-tier-bar-label">
+            ${percentageOfTotal}%
+          </span>
+        </div>
+      </td>
+      <td class="home-tier-example">${escapeHTML(exampleText)}</td>
+      <td>${escapeHTML(scoreRange)}</td>
+    </tr>
+  `;
+});
 
       html += `
         </tbody>
