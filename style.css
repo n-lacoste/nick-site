@@ -6675,3 +6675,32 @@ tr:hover td:nth-child(3) {
   }
 }
 
+/* TV Show Card, align tier scale right edge with card stat boxes */
+:root {
+  --tv-card-page-gutter: 24px;
+}
+
+.tv-card-search-row {
+  display: grid !important;
+  grid-template-columns: 280px minmax(0, 1fr) auto !important;
+  align-items: stretch !important;
+  gap: 18px !important;
+
+  width: auto !important;
+  max-width: none !important;
+  box-sizing: border-box !important;
+
+  margin: 28px var(--tv-card-page-gutter) 18px var(--tv-card-page-gutter) !important;
+}
+
+.tv-card-tier-scale {
+  grid-column: 3 !important;
+  justify-self: end !important;
+  margin-left: auto !important;
+}
+
+.tv-show-card {
+  margin-left: var(--tv-card-page-gutter) !important;
+  margin-right: var(--tv-card-page-gutter) !important;
+  box-sizing: border-box !important;
+}
