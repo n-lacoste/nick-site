@@ -5670,7 +5670,11 @@ window.loadHomeTierSummary = async function loadHomeTierSummary() {
           .replace(/\.0$/, "");
     
     if (nrSummary) {
-      nrSummary.textContent = `Ranked Count = ${totalCount}   Average = ${averageText}   Not Ranked (NR) = ${nrCount}`;
+      nrSummary.innerHTML = `
+        <span>Ranked Count = ${totalCount}</span>
+        <span>Average = ${averageText}</span>
+        <span>Not Ranked (NR) = ${nrCount}</span>
+      `;
     }
 
       if (summaryRows.length === 0) {
