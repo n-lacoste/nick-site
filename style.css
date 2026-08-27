@@ -5044,3 +5044,12 @@ tr:hover td:nth-child(3) {
   color: #000000 !important;
   border-radius: 0 0 8px 8px;
 }
+
+.tv-card-average-episode-rank-stat strong {
+  color: #000000 !important;
+  border-radius: 0 0 8px 8px;
+}
+
+.tv-card-average-episode-rank-stat span {
+  color: #bdbdbd !important;
+}
