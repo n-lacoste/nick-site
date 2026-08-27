@@ -419,6 +419,7 @@ async function loadCSV(
 
     /* Episodes Table only */
     "Episode Title": "260px",
+    "Season": "85px",
     "Blurb": "400px",
     "Release Date": "240px",
     "Season Epi #": "75px",
