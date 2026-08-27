@@ -4586,3 +4586,47 @@ tr:hover td:nth-child(3) {
   font-size: 11.5px;
   line-height: 1.25;
 }
+
+/* Refined Top 10 card typography */
+.home-top10-row {
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 9px;
+  align-items: start;
+  padding: 9px 0;
+}
+
+.home-top10-number {
+  width: 26px;
+  height: 26px;
+  border: 1px solid rgba(87, 187, 138, 0.75);
+  background: rgba(87, 187, 138, 0.08);
+  color: #73d7a3;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.home-top10-item-title {
+  display: block;
+  color: #f5f5f5;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.22;
+  letter-spacing: 0;
+}
+
+.home-top10-item-meta {
+  display: block;
+  margin-top: 3px;
+  color: #b8b8b8;
+  font-size: 11.25px;
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+.home-top10-card h3 {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.15;
+  text-align: center;
+}
