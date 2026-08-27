@@ -5031,3 +5031,7 @@ tr:hover td:nth-child(3) {
   font-size: 17px !important;
 }
 
+.tv-card-coloured-stat span,
+.tv-card-coloured-stat strong {
+  color: inherit !important;
+}
