@@ -5035,3 +5035,12 @@ tr:hover td:nth-child(3) {
 .tv-card-coloured-stat strong {
   color: inherit !important;
 }
+
+.tv-card-rating-score-box span {
+  color: #bdbdbd !important;
+}
+
+.tv-card-rating-score-box strong {
+  color: #000000 !important;
+  border-radius: 0 0 8px 8px;
+}
