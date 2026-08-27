@@ -2986,6 +2986,38 @@ tr:hover td:nth-child(3) {
   line-height: 1.45;
 }
 
+
+.geo-resources-table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.geo-resources-table th,
+.geo-resources-table td {
+  border-left: none !important;
+  border-right: none !important;
+}
+
+.geo-resources-table th {
+  border-bottom: 1px solid #333 !important;
+}
+
+.geo-resources-table td {
+  border-bottom: 1px solid #2b2b2b !important;
+}
+
+.geo-resources-table tr:last-child td {
+  border-bottom: none !important;
+}
+
+.geo-resource-table a, 
+.geo-resource-table a:visited {
+  color: #5ca8ff;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+
 /* Flags end screen action buttons */
 .flags-end-options-row {
   display: flex;
@@ -4936,29 +4968,6 @@ tr:hover td:nth-child(3) {
   box-sizing: border-box;
 }
 
-.geo-resources-table {
-  border-collapse: collapse;
-  border-spacing: 0;
-}
-
-.geo-resources-table th,
-.geo-resources-table td {
-  border-left: none !important;
-  border-right: none !important;
-}
-
-.geo-resources-table th {
-  border-bottom: 1px solid #333 !important;
-}
-
-.geo-resources-table td {
-  border-bottom: 1px solid #2b2b2b !important;
-}
-
-.geo-resources-table tr:last-child td {
-  border-bottom: none !important;
-}
-
 /* Episodes table, force true horizontal overflow */
 .episodes-page .table-wrap {
   display: block;
@@ -6816,6 +6825,52 @@ tr:hover td:nth-child(3) {
 .home-tier-bar-label {
   color: #f5f5f5 !important;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+}
+
+/* Homepage Tier Distribution, stacked tier split bar */
+.home-tier-split-bar {
+  margin: 12px auto 10px;
+  width: min(900px, 92%);
+}
+
+.home-tier-split-bar[hidden] {
+  display: none !important;
+}
+
+.home-tier-split-track {
+  display: flex;
+  width: 100%;
+  height: 30px;
+  overflow: hidden;
+  border: 1px solid #333;
+  border-radius: 999px;
+  background: #181818;
+}
+
+.home-tier-split-segment {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 8px;
+  height: 100%;
+  box-sizing: border-box;
+  border-right: 1px solid rgba(0, 0, 0, 0.28);
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.home-tier-split-segment:last-child {
+  border-right: 0;
+}
+
+.home-tier-split-segment span {
+  display: block;
+  padding: 0 5px;
+  overflow: hidden;
+  text-overflow: clip;
 }
 
 
