@@ -2984,6 +2984,93 @@ function getShowTitle(row) {
     `;
   }
 
+function renderEpisodeRankPieChart(episodeRows) {
+  const counts = {};
+
+  for (let rank = 1; rank <= 10; rank++) {
+    counts[rank] = 0;
+  }
+
+  episodeRows.forEach(row => {
+    const rank = getNumber(row["Rank"]);
+
+    if (rank !== null) {
+      const roundedRank = Math.round(rank);
+
+      if (roundedRank >= 1 && roundedRank <= 10) {
+        counts[roundedRank]++;
+      }
+    }
+  });
+
+  const total = Object.values(counts).reduce((sum, count) => sum + count, 0);
+
+  if (total === 0) {
+    return `
+      <section class="tv-card-panel tv-card-rank-pie-panel">
+        <h3>Episode Rank Share</h3>
+        <p class="movie-compare-placeholder">No ranked episodes found for this show.</p>
+      </section>
+    `;
+  }
+
+  let currentPercent = 0;
+
+  const gradientParts = Object.keys(counts)
+    .reverse()
+    .filter(rank => counts[rank] > 0)
+    .map(rank => {
+      const count = counts[rank];
+      const startPercent = currentPercent;
+      const endPercent = currentPercent + (count / total) * 100;
+      const colors = getRankColor(rank);
+
+      currentPercent = endPercent;
+
+      return `${colors.bg} ${startPercent}% ${endPercent}%`;
+    });
+
+  const pieStyle = `background: conic-gradient(${gradientParts.join(", ")});`;
+
+  return `
+    <section class="tv-card-panel tv-card-rank-pie-panel">
+      <h3>Episode Rank Share</h3>
+
+      <div class="tv-card-rank-pie-wrap">
+        <div class="tv-card-rank-pie" style="${pieStyle}">
+          <div class="tv-card-rank-pie-centre">
+            <strong>${escapeHTML(total)}</strong>
+            <span>Ranked</span>
+          </div>
+        </div>
+
+        <div class="tv-card-rank-pie-legend">
+          ${Object.keys(counts).reverse().map(rank => {
+            const count = counts[rank];
+            const colors = getRankColor(rank);
+            const percent = total === 0 ? 0 : (count / total) * 100;
+
+            return `
+              <div class="tv-card-rank-pie-legend-row">
+                <span 
+                  class="tv-card-rank-pie-swatch"
+                  style="background:${colors.bg};"
+                ></span>
+
+                <span class="tv-card-rank-pie-rank">Rank ${escapeHTML(rank)}</span>
+                <strong>${escapeHTML(count)}</strong>
+                <span class="tv-card-rank-pie-percent">
+                  ${escapeHTML(percent.toFixed(1).replace(/\\.0$/, ""))}%
+                </span>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      </div>
+    </section>
+  `;
+}
+  
   function renderShowInfo(showRow, episodeRows) {
     const rankedEpisodes = countRankedEpisodes(episodeRows);
     const averageEpisodeRank = getAverageEpisodeRank(episodeRows);
@@ -3288,8 +3375,9 @@ function renderEpisodeGridAsSeasonColumns(episodeRows) {
               <div class="tv-card-main-grid">
                 ${renderShowInfo(showRow, episodeRows)}
         
-                <div class="tv-card-side-by-side-panels">
+                <div class="tv-card-side-by-side-panels tv-card-three-panel-row">
                   ${renderRankCountChart(episodeRows)}
+                  ${renderEpisodeRankPieChart(episodeRows)}
                   ${renderCategoricalRanks(showRow)}
                 </div>
         
