@@ -6422,3 +6422,28 @@ tr:hover td:nth-child(3) {
   line-height: 1 !important;
 }
 
+/* TV Show Card, Season Blocks stats left and episode cells right */
+.tv-card-season-block-row {
+  display: grid !important;
+  grid-template-columns: 190px minmax(0, 1fr) !important;
+  gap: 10px !important;
+  align-items: start !important;
+}
+
+.tv-card-season-stats-blocks {
+  width: 190px !important;
+  min-width: 190px !important;
+  margin: 0 !important;
+  align-self: start !important;
+}
+
+.tv-card-season-block-row .tv-card-season-episodes {
+  min-width: 0 !important;
+  align-content: start !important;
+}
+
+/* Bold episode ranks */
+.tv-card-episode-cell span,
+.tv-card-matrix-rank {
+  font-weight: 900 !important;
+}
