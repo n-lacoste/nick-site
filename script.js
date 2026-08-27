@@ -3226,8 +3226,7 @@ function setupTVCardEpisodeDetailClicks() {
 function renderEpisodeGridControls() {
   const blocksActive = tvCardEpisodeGridLayout === "blocks";
   const columnsActive = tvCardEpisodeGridLayout === "columns";
-  const defaultActive = tvCardEpisodeGridDensity === "default";
-  const compactActive = tvCardEpisodeGridDensity === "compact";
+  const densityToggleButton = document.getElementById("tvCardEpisodeGridDensityToggle");
 
   return `
     <div class="tv-card-episode-grid-toolbar">
@@ -3251,23 +3250,16 @@ function renderEpisodeGridControls() {
         </button>
       </div>
 
-      <div class="tv-card-episode-grid-toolbar-group">
+     <div class="tv-card-episode-grid-toolbar-group">
         <span>Detail</span>
-
+      
         <button
-          id="tvCardEpisodeGridDefault"
-          class="tv-card-grid-toggle ${defaultActive ? "active" : ""}"
+          id="tvCardEpisodeGridDensityToggle"
+          class="tv-card-grid-toggle tv-card-density-toggle tv-card-density-${tvCardEpisodeGridDensity}"
           type="button"
+          aria-pressed="${tvCardEpisodeGridDensity === "compact" ? "true" : "false"}"
         >
-          Default
-        </button>
-
-        <button
-          id="tvCardEpisodeGridCompact"
-          class="tv-card-grid-toggle ${compactActive ? "active" : ""}"
-          type="button"
-        >
-          Compact
+          ${tvCardEpisodeGridDensity === "compact" ? "Compact" : "Default"}
         </button>
       </div>
     </div>
@@ -3294,19 +3286,15 @@ function setupTVCardEpisodeGridControls(showRow, episodeRows) {
     });
   }
 
-  if (defaultButton) {
-    defaultButton.addEventListener("click", function () {
-      tvCardEpisodeGridDensity = "default";
-      renderTVShowCard(showRow, episodeRows);
-    });
-  }
-
-  if (compactButton) {
-    compactButton.addEventListener("click", function () {
-      tvCardEpisodeGridDensity = "compact";
-      renderTVShowCard(showRow, episodeRows);
-    });
-  }
+      if (densityToggleButton) {
+      densityToggleButton.addEventListener("click", function () {
+        tvCardEpisodeGridDensity = tvCardEpisodeGridDensity === "compact"
+          ? "default"
+          : "compact";
+    
+        renderTVShowCard(showRow, episodeRows);
+      });
+    }
 }
 
 function getEpisodeSortNumber(row) {
@@ -3398,7 +3386,7 @@ function renderEpisodeGrid(episodeRows) {
     return `
       <section class="tv-card-panel tv-card-full-width">
         <h3>Episode Grid</h3>
-        <p class="movie-compare-placeholder">No episode rows found for this show.</p>
+        <p class="movie-compare-placeholder">No episodes ranked for this show.</p>
       </section>
     `;
   }
