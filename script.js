@@ -5705,50 +5705,103 @@ window.loadHomeTierSummary = async function loadHomeTierSummary() {
 
 window.loadHomeTop10Summaries = async function loadHomeTop10Summaries() {
   const configs = {
-    albums: {
+   albums: {
       listId: "home-top10-albums",
       label: "albums",
       url: window.ALBUMS_CSV_URL,
+    
       titleColumns: ["Album", "Album Title", "Project", "Project Name", "Name", "Title"],
-      rankColumns: ["Rk", "Rank", "Album Rank"],
-      scoreColumns: ["My Rating", "Rating", "Score", "Album Score"],
-      metaColumns: ["Artist", "Album Artist", "Tier"]
+    
+      rankColumns: ["Ranking"],
+      scoreColumns: [],
+    
+      metaColumns: ["Year", "Genres"],
+    
+      sortColumns: ["Ranking"],
+      sortDirection: "asc",
+      sortType: "text",
+    
+      showRank: false,
+      showScore: false
     },
-    artists: {
-      listId: "home-top10-artists",
-      label: "artists",
-      url: window.ARTISTS_CSV_URL,
-      titleColumns: ["Artist"],
-      rankColumns: ["Rk", "Artist Rank", "Rank"],
-      scoreColumns: ["Artist Score", "Score"],
-      metaColumns: ["Tier", "Ranked Songs"]
-    },
+   
+   artists: {
+          listId: "home-top10-artists",
+          label: "artists",
+          url: window.ARTISTS_CSV_URL,
+        
+          titleColumns: ["Artist"],
+          rankColumns: ["Rk", "Artist Rank", "Rank"],
+          scoreColumns: ["Artist Score", "Score"],
+        
+          metaColumns: ["Tier"],
+        
+          sortColumns: ["Rk", "Artist Rank", "Rank"],
+          sortDirection: "asc",
+          sortType: "number",
+        
+          showRank: false,
+          showScore: false,
+          useArtistSongCount: true
+        },
+    
     songs: {
-      listId: "home-top10-songs",
-      label: "songs",
-      url: window.FAV_SONGS_CSV_URL || window.SONGS_CSV_URL,
-      titleColumns: ["Song Title", "Song", "Track", "Track Name", "Name", "Title"],
-      rankColumns: ["Rk", "Rank", "Song Rank"],
-      scoreColumns: ["My Rating", "Rating", "Score", "Song Score"],
-      metaColumns: ["Artist", "Artists", "Album", "Tier"]
-    },
+          listId: "home-top10-songs",
+          label: "songs",
+          url: window.FAV_SONGS_CSV_URL,
+        
+          titleColumns: ["Song Title"],
+          rankColumns: ["Rank"],
+          scoreColumns: [],
+        
+          metaColumns: ["Artist-Group", "Tier"],
+        
+          sortColumns: ["Rank"],
+          sortDirection: "asc",
+          sortType: "number",
+        
+          showRank: false,
+          showScore: false
+        },
+
     movies: {
-      listId: "home-top10-movies",
-      label: "movies",
-      url: window.MOVIES_CSV_URL,
-      titleColumns: ["Movie Title", "Name", "Title"],
-      rankColumns: ["Rk", "Rank"],
-      scoreColumns: ["My Rating", "Rating", "Score"],
-      metaColumns: ["Year", "Tier"]
-    },
-    tvshows: {
-      listId: "home-top10-tvshows",
-      label: "TV shows",
-      url: window.TVSHOWS_CSV_URL,
-      titleColumns: ["TV Show", "Tv Show", "Name", "Title"],
-      rankColumns: ["Rk", "Rank"],
-      scoreColumns: ["My Rating", "Rating", "Score"],
-      metaColumns: ["Years", "Tier"]
+          listId: "home-top10-movies",
+          label: "movies",
+          url: window.MOVIES_CSV_URL,
+        
+          titleColumns: ["Movie Title", "Name", "Title"],
+          rankColumns: [],
+          scoreColumns: [],
+        
+          metaColumns: [],
+        
+          sortColumns: ["SORT"],
+          sortDirection: "desc",
+          sortType: "text",
+        
+          showRank: false,
+          showScore: false,
+          customMeta: "movies"
+        },
+    
+   tvshows: {
+        listId: "home-top10-tvshows",
+        label: "TV shows",
+        url: window.TVSHOWS_CSV_URL,
+      
+        titleColumns: ["TV Show", "Tv Show", "Name", "Title"],
+        rankColumns: [],
+        scoreColumns: [],
+      
+        metaColumns: [],
+      
+        sortColumns: ["/100"],
+        sortDirection: "desc",
+        sortType: "number",
+      
+        showRank: false,
+        showScore: false,
+        customMeta: "tvshows"
     }
   };
 
@@ -5791,12 +5844,85 @@ window.loadHomeTop10Summaries = async function loadHomeTop10Summaries() {
     return values.slice(0, 2).join(" • ");
   }
 
+  function formatMovieTop10Meta(row) {
+        const year = getText(row, "Year");
+        const mins = getText(row, "Mins.");
+        const rating = getText(row, "My Rating");
+      
+        const minsText = mins !== "" ? `${mins} Mins.` : "";
+        const ratingText = rating !== "" ? rating : "";      
+    
+        return [year, minsText, ratingText]
+          .filter(Boolean)
+          .join(" • ");
+  }
+
+function formatTVShowTop10Meta(row) {
+  const years = getText(row, "Years");
+  const seasons = getText(row, "Seasons");
+  const episodes = getText(row, "Episodes");
+  const rating = getText(row, "My Rating");
+
+  const seasonsText = seasons !== "" && episodes !== ""
+    ? `${seasons} (${episodes})`
+    : seasons || episodes;
+
+  const ratingText = rating !== "" ? `Score: ${rating}` : "";
+
+  return [years, seasonsText, ratingText]
+    .filter(Boolean)
+    .join(" • ");
+}
+  
   function rowHasContent(row, headers) {
     return headers.some(header => {
       return String(row[header] ?? "").trim() !== "";
     });
   }
 
+  async function getArtistSongCounts() {
+  const counts = new Map();
+
+  if (!window.ARTIST_SONGS_CSV_URL) {
+    return counts;
+  }
+
+  try {
+    const text = await getCSVText(window.ARTIST_SONGS_CSV_URL);
+
+    const parsed = Papa.parse(text.trim(), {
+      header: true,
+      skipEmptyLines: true
+    });
+
+    const headers = parsed.meta.fields || [];
+    const rows = parsed.data || [];
+
+    const artistColumn = getFirstExistingColumn(headers, ["Artist"]);
+    const songColumn = getFirstExistingColumn(headers, ["Song Title", "Song", "Title"]);
+
+    if (!artistColumn || !songColumn) {
+      return counts;
+    }
+
+    rows.forEach(row => {
+      const artist = getText(row, artistColumn);
+      const songTitle = getText(row, songColumn);
+
+      if (artist === "" || songTitle === "") return;
+
+      counts.set(artist, (counts.get(artist) || 0) + 1);
+    });
+
+    return counts;
+  } catch (error) {
+    console.error("Could not load artist song counts:", error);
+    return counts;
+  }
+}
+
+  const artistSongCounts = await getArtistSongCounts();
+  
   function showCardMessage(list, message) {
     list.innerHTML = `<li class="home-top10-empty">${escapeHTML(message)}</li>`;
   }
@@ -5836,11 +5962,30 @@ window.loadHomeTop10Summaries = async function loadHomeTop10Summaries() {
 
       const rankedRows = rows
         .map(row => {
+                    const title = getText(row, titleColumn);
+          let meta = getBestMeta(row, config.metaColumns);
+
+            if (config.customMeta === "movies") {
+              meta = formatMovieTop10Meta(row);
+            }
+            
+            if (config.customMeta === "tvshows") {
+              meta = formatTVShowTop10Meta(row);
+            }
+          
+          if (config.useArtistSongCount) {
+            const count = artistSongCounts.get(title) || 0;
+            const countText = `${count} ranked song${count === 1 ? "" : "s"}`;
+          
+            meta = [meta, countText].filter(Boolean).join(" • ");
+          }
+          
           return {
-            title: getText(row, titleColumn),
+            title,
             rank: getNumber(row, rankColumn),
             score: getNumber(row, scoreColumn),
-            meta: getBestMeta(row, config.metaColumns)
+            meta,
+            sortValue
           };
         })
         .filter(item => item.title !== "")
@@ -5867,9 +6012,19 @@ window.loadHomeTop10Summaries = async function loadHomeTop10Summaries() {
       }
 
       list.innerHTML = rankedRows.map(item => {
-        const rankText = item.rank !== null ? `#${item.rank}` : "";
-        const scoreText = item.score !== null ? `${item.score}` : "";
-        const metaText = [rankText, scoreText, item.meta].filter(Boolean).join(" • ");
+        const rankText = config.showRank === false
+            ? ""
+            : item.rank !== null
+              ? `#${item.rank}`
+              : "";
+          
+          const scoreText = config.showScore === false
+            ? ""
+            : item.score !== null
+              ? `${item.score}`
+              : "";
+          
+          const metaText = [rankText, scoreText, item.meta].filter(Boolean).join(" • ");
 
         return `
           <li>
