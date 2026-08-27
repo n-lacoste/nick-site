@@ -6718,3 +6718,75 @@ tr:hover td:nth-child(3) {
   align-self: center !important;
   margin-left: auto !important;
 }
+
+/* TV Show Card, episode grid toolbar layout */
+.tv-card-episode-grid-toolbar {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 14px !important;
+  width: 100% !important;
+  margin-bottom: 16px !important;
+}
+
+.tv-card-episode-grid-toolbar-left,
+.tv-card-episode-grid-toolbar-right {
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  flex-wrap: wrap !important;
+}
+
+.tv-card-episode-grid-toolbar-left {
+  justify-content: flex-start !important;
+}
+
+.tv-card-episode-grid-toolbar-right {
+  justify-content: flex-end !important;
+  margin-left: auto !important;
+}
+
+.tv-card-episode-grid-toolbar-group {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+}
+
+.tv-card-episode-grid-toolbar-group span {
+  color: #d6d6d6 !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+}
+
+/* TV Show Card, fixed skinny # column in Season Columns */
+:root {
+  --tv-card-episode-number-column-width: 46px;
+}
+
+.tv-card-episode-matrix .tv-card-episode-number-col {
+  width: var(--tv-card-episode-number-column-width) !important;
+  min-width: var(--tv-card-episode-number-column-width) !important;
+  max-width: var(--tv-card-episode-number-column-width) !important;
+}
+
+.tv-card-episode-matrix th.tv-card-episode-count-header,
+.tv-card-episode-matrix th.tv-card-episode-row-number {
+  width: var(--tv-card-episode-number-column-width) !important;
+  min-width: var(--tv-card-episode-number-column-width) !important;
+  max-width: var(--tv-card-episode-number-column-width) !important;
+  padding-left: 4px !important;
+  padding-right: 4px !important;
+  text-align: center !important;
+  font-size: 15px !important;
+  font-weight: 900 !important;
+}
+
+.tv-card-episode-matrix .tv-card-season-stats-corner {
+  width: var(--tv-card-episode-number-column-width) !important;
+  min-width: var(--tv-card-episode-number-column-width) !important;
+  max-width: var(--tv-card-episode-number-column-width) !important;
+  padding-left: 4px !important;
+  padding-right: 4px !important;
+}
+
