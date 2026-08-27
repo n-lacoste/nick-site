@@ -170,8 +170,58 @@
       </div>
     </details>
 
-    <div id="row-count" class="row-count"></div>
+   <div class="rankings-count-details-row">
+      <div id="row-count"></div>
+    
+      <button id="watch-rankings-details-button" class="rankings-details-button" type="button">
+        Details
+      </button>
+    </div>
 
+<div id="watch-rankings-details-modal" class="rankings-details-modal" hidden>
+  <div class="rankings-details-modal-box" role="dialog" aria-modal="true" aria-labelledby="watch-rankings-details-title">
+    <button id="watch-rankings-details-close" class="rankings-details-close" type="button" aria-label="Close details">
+      ×
+    </button>
+
+    <h3 id="watch-rankings-details-title">Ranking Details</h3>
+
+    <section class="rankings-details-section">
+      <h4>Tier Scale</h4>
+
+      <div class="rankings-details-tier-scale">
+        <span class="tv-tier-pill tv-tier-s">S</span>
+        <span class="tv-tier-pill tv-tier-a1">A1</span>
+        <span class="tv-tier-pill tv-tier-a2">A2</span>
+        <span class="tv-tier-pill tv-tier-a3">A3</span>
+        <span class="tv-tier-pill tv-tier-b1">B1</span>
+        <span class="tv-tier-pill tv-tier-b2">B2</span>
+        <span class="tv-tier-pill tv-tier-b3">B3</span>
+        <span class="tv-tier-pill tv-tier-c1">C1</span>
+        <span class="tv-tier-pill tv-tier-c2">C2</span>
+        <span class="tv-tier-pill tv-tier-c3">C3</span>
+        <span class="tv-tier-pill tv-tier-d">D</span>
+      </div>
+    </section>
+
+    <section class="rankings-details-section">
+      <h4>Category Weights</h4>
+
+      <div class="rankings-details-weights-grid">
+        <div><span>Plot</span><strong>15</strong></div>
+        <div><span>Main Character(s)</span><strong>16.5</strong></div>
+        <div><span>Side Characters</span><strong>16.5</strong></div>
+        <div><span>Emotion</span><strong>1</strong></div>
+        <div><span>Dialogue (Writing)</span><strong>10</strong></div>
+        <div><span>Purpose Met</span><strong>10</strong></div>
+        <div><span>Cast</span><strong>1</strong></div>
+        <div><span>Music & Sound</span><strong>7.5</strong></div>
+        <div><span>Rewatch Value</span><strong>22.5</strong></div>
+      </div>
+    </section>
+  </div>
+</div>
+    
     <div class="table-wrap">
       <table id="rankings-table" class="rankings-table">
         <tbody>
