@@ -5960,8 +5960,12 @@ function formatTVShowTop10Meta(row) {
       const rows = (parsed.data || []).filter(row => rowHasContent(row, headers));
 
       const titleColumn = getFirstExistingColumn(headers, config.titleColumns);
-      const rankColumn = getFirstExistingColumn(headers, config.rankColumns);
-      const scoreColumn = getFirstExistingColumn(headers, config.scoreColumns);
+      const rankColumn = getFirstExistingColumn(headers, config.rankColumns || []);
+      const scoreColumn = getFirstExistingColumn(headers, config.scoreColumns || []);
+      const sortColumn = getFirstExistingColumn(
+        headers,
+        config.sortColumns || config.rankColumns || config.scoreColumns || []
+      );
 
       if (!titleColumn) {
         console.warn(`No title column found for ${config.label}. Headers found:`, headers);
@@ -5970,49 +5974,60 @@ function formatTVShowTop10Meta(row) {
       }
 
       const rankedRows = rows
-        .map(row => {
-                    const title = getText(row, titleColumn);
-          let meta = getBestMeta(row, config.metaColumns);
-
+                  .map(row => {
+            const title = getText(row, titleColumn);
+          
+            const sortValue = config.sortType === "text"
+              ? getText(row, sortColumn)
+              : getNumber(row, sortColumn);
+          
+            let meta = getBestMeta(row, config.metaColumns || []);
+          
             if (config.customMeta === "movies") {
               meta = formatMovieTop10Meta(row);
             }
-            
+          
             if (config.customMeta === "tvshows") {
               meta = formatTVShowTop10Meta(row);
             }
           
-          if (config.useArtistSongCount) {
-            const count = artistSongCounts.get(title) || 0;
-            const countText = `${count} ranked song${count === 1 ? "" : "s"}`;
+            if (config.useArtistSongCount) {
+              const count = artistSongCounts.get(title) || 0;
+              const countText = `${count} ranked song${count === 1 ? "" : "s"}`;
           
-            meta = [meta, countText].filter(Boolean).join(" • ");
-          }
+              meta = [meta, countText].filter(Boolean).join(" • ");
+            }
           
-          return {
-            title,
-            rank: getNumber(row, rankColumn),
-            score: getNumber(row, scoreColumn),
-            meta,
-            sortValue
-          };
-        })
+            return {
+              title,
+              rank: getNumber(row, rankColumn),
+              score: getNumber(row, scoreColumn),
+              meta,
+              sortValue
+            };
+          })
+        
         .filter(item => item.title !== "")
         .filter(item => item.rank !== null || item.score !== null)
         .sort((a, b) => {
-          if (a.rank !== null && b.rank !== null) {
-            return a.rank - b.rank;
-          }
-
-          if (a.rank !== null && b.rank === null) return -1;
-          if (a.rank === null && b.rank !== null) return 1;
-
-          if (a.score !== null && b.score !== null) {
-            return b.score - a.score;
-          }
-
-          return a.title.localeCompare(b.title);
-        })
+              if (a.sortValue === null && b.sortValue === null) {
+                return a.title.localeCompare(b.title);
+              }
+            
+              if (a.sortValue === null || a.sortValue === "") return 1;
+              if (b.sortValue === null || b.sortValue === "") return -1;
+            
+              if (config.sortType === "text") {
+                return config.sortDirection === "desc"
+                  ? String(b.sortValue).localeCompare(String(a.sortValue))
+                  : String(a.sortValue).localeCompare(String(b.sortValue));
+              }
+            
+              return config.sortDirection === "desc"
+                ? b.sortValue - a.sortValue
+                : a.sortValue - b.sortValue;
+            })
+        
         .slice(0, 10);
 
       if (rankedRows.length === 0) {
