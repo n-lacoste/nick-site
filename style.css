@@ -4670,6 +4670,16 @@ tr:hover td:nth-child(3) {
   line-height: 1.25;
 }
 
+.home-tier-table th:nth-child(1),
+.home-tier-table td:nth-child(1),
+.home-tier-table th:nth-child(2),
+.home-tier-table td:nth-child(2) {
+  width: 110px;
+  min-width: 110px;
+  max-width: 110px;
+  text-align: center;
+}
+
 .home-tier-table td:nth-child(1) {
   font-size: 18px;
   font-weight: 800;
