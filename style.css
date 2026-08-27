@@ -4797,3 +4797,29 @@ tr:hover td:nth-child(3) {
   font-size: 11px;
   letter-spacing: 0.08em;
 }
+
+/* Top 10 cards, tighter number column so names have more room */
+.home-top10-row {
+  grid-template-columns: 28px minmax(0, 1fr);
+  min-height: 48px;
+}
+
+.home-top10-number {
+  font-size: 16px;
+  font-weight: 800;
+  padding: 0;
+}
+
+.home-top10-main {
+  padding: 7px 0 7px 8px;
+}
+
+.home-top10-item-title {
+  font-size: 13.5px;
+  line-height: 1.2;
+}
+
+.home-top10-item-meta {
+  font-size: 11.25px;
+  line-height: 1.2;
+}
