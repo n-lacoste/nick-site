@@ -5984,6 +5984,7 @@ window.loadHomeTierSummary = async function loadHomeTierSummary() {
   const table = document.getElementById("home-tier-table");
   const select = document.getElementById("home-tier-dataset");
   const nrSummary = document.getElementById("home-tier-nr-summary");
+  const splitBar = document.getElementById("home-tier-split-bar");
 
   if (!table || !select) return;
 
@@ -6100,19 +6101,24 @@ window.loadHomeTierSummary = async function loadHomeTierSummary() {
   }
 
   function showLoading() {
-      if (nrSummary) {
-        nrSummary.hidden = true;
-        nrSummary.innerHTML = "";
-      }
-    
-      table.innerHTML = `
-        <tbody>
-          <tr>
-            <td class="rankings-loading-cell">Loading tier summary...</td>
-          </tr>
-        </tbody>
-      `;
-    }
+        if (nrSummary) {
+          nrSummary.hidden = true;
+          nrSummary.innerHTML = "";
+        }
+      
+        if (splitBar) {
+          splitBar.hidden = true;
+          splitBar.innerHTML = "";
+        }
+      
+        table.innerHTML = `
+          <tbody>
+            <tr>
+              <td class="rankings-loading-cell">Loading tier summary...</td>
+            </tr>
+          </tbody>
+        `;
+  }
 
   function showError(label) {
     table.innerHTML = `
@@ -6346,6 +6352,47 @@ window.loadHomeTierSummary = async function loadHomeTierSummary() {
       `;
 
       table.innerHTML = html;
+
+      if (splitBar) {
+  const splitSegments = summaryRows
+    .filter(row => row.count > 0)
+    .map(row => {
+      const percentageOfTotal = totalCount > 0
+        ? Math.round((row.count / totalCount) * 100)
+        : 0;
+
+      const tierKey = String(row.tier ?? "").trim();
+
+      const tierStyle = tierColors[tierKey] || {
+        bg: "#57bb8a",
+        text: "#000000"
+      };
+
+      return `
+        <div
+          class="home-tier-split-segment"
+          style="
+            width: ${percentageOfTotal}%;
+            background: ${tierStyle.bg};
+            color: ${tierStyle.text};
+          "
+          title="${escapeHTML(row.tier)}: ${escapeHTML(row.count)} items, ${escapeHTML(percentageOfTotal)}%"
+        >
+          <span>${escapeHTML(row.tier)} ${escapeHTML(percentageOfTotal)}%</span>
+        </div>
+      `;
+    })
+    .join("");
+
+  splitBar.innerHTML = `
+    <div class="home-tier-split-track">
+      ${splitSegments}
+    </div>
+  `;
+
+  splitBar.hidden = false;
+}
+      
     } catch (error) {
       console.error(error);
       showError(config.label);
