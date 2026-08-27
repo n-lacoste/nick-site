@@ -2778,14 +2778,58 @@ function formatRankWithHash(value) {
 }
 
 function getNumber(value) {
-    const text = String(value ?? "").replace(/,/g, "").trim();
+  const text = String(value ?? "").replace(/,/g, "").trim();
 
-    if (text === "" || text === "--") return null;
+  if (text === "" || text === "--") return null;
 
-    const num = Number(text);
+  const num = Number(text);
 
-    return isNaN(num) ? null : num;
+  return isNaN(num) ? null : num;
+}
+
+function getMovieRatingStyle(value) {
+  const text = String(value ?? "").replace(/,/g, "").trim();
+
+  if (text === "" || text === "--" || text === "—") return "";
+
+  const num = Number(text);
+
+  if (isNaN(num)) return "";
+
+  const clamped = Math.max(0, Math.min(100, num));
+
+  const redColor = { r: 204, g: 0, b: 0 };
+  const yellowColor = { r: 255, g: 217, b: 102 };
+  const greenColor = { r: 87, g: 187, b: 138 };
+
+  let start;
+  let end;
+  let percent;
+
+  if (clamped <= 50) {
+    start = redColor;
+    end = yellowColor;
+    percent = clamped / 50;
+  } else {
+    start = yellowColor;
+    end = greenColor;
+    percent = (clamped - 50) / 50;
   }
+
+  const r = Math.round(start.r + (end.r - start.r) * percent);
+  const g = Math.round(start.g + (end.g - start.g) * percent);
+  const b = Math.round(start.b + (end.b - start.b) * percent);
+
+  return `
+    background-color: rgb(${r}, ${g}, ${b});
+    color: #000000;
+    border-color: rgba(0, 0, 0, 0.25);
+  `;
+}
+
+function getShowTitle(row) {
+  return getText(row, "TV Show");
+}
 
   function getShowTitle(row) {
     return getText(row, "TV Show");
@@ -2818,13 +2862,15 @@ function getNumber(value) {
     return colors;
   }
 
-  function makeStatBox(label, value, extraClass = "") {
-    return `
-      <div class="tv-card-stat ${extraClass}">
-        <span>${escapeHTML(label)}</span>
-        <strong>${escapeHTML(formatValue(value))}</strong>
-      </div>
-    `;
+  function makeStatBox(label, value, extraClass = "", inlineStyle = "") {
+        const styleAttribute = inlineStyle ? ` style="${inlineStyle}"` : "";
+      
+        return `
+          <div class="tv-card-stat ${extraClass}"${styleAttribute}>
+            <span>${escapeHTML(label)}</span>
+            <strong>${escapeHTML(formatValue(value))}</strong>
+          </div>
+        `;
   }
 
   function getAverageEpisodeRank(episodeRows) {
@@ -2933,6 +2979,14 @@ function getNumber(value) {
     const rankedEpisodes = countRankedEpisodes(episodeRows);
     const averageEpisodeRank = getAverageEpisodeRank(episodeRows);
 
+    const averageEpisodeRankColors = getRankColor(averageEpisodeRank);
+
+    const averageEpisodeRankStyle = `
+      background: ${averageEpisodeRankColors.bg};
+      color: ${averageEpisodeRankColors.text};
+      border-color: ${averageEpisodeRankColors.bg};
+    `;
+
     return `
       <section class="tv-card-panel tv-card-full-width tv-card-show-info-panel">
         <h3>Show Info</h3>
@@ -2945,7 +2999,12 @@ function getNumber(value) {
           ${makeStatBox("Ranked Episodes", rankedEpisodes, "tv-card-ranked-episodes-stat")}
           ${makeStatBox("Watched", getText(showRow, "Watched / Unwatched"), "tv-card-watched-stat")}
           ${makeStatBox("Tags", formatTagsForInfo(getText(showRow, "Tags")), "tv-card-tags-stat")}
-          ${makeStatBox("Average Episode Rank", averageEpisodeRank, "tv-card-average-episode-rank-stat")}
+          ${makeStatBox(
+              "Average Episode Rank",
+              averageEpisodeRank,
+              "tv-card-average-episode-rank-stat tv-card-coloured-stat",
+              averageEpisodeRankStyle
+            )}
         </div>
       </section>
     `;
@@ -3197,11 +3256,10 @@ function renderEpisodeGridAsSeasonColumns(episodeRows) {
             </p>
           </div>
 
-          <div class="tv-card-title-stats">
-            <div class="tv-card-score-box">
-              <span>Rating</span>
-              <strong>${escapeHTML(formatValue(rating))}</strong>
-            </div>
+          <div class="tv-card-score-box tv-card-rating-score-box" style="${getMovieRatingStyle(rating)}">
+            <span>Rating</span>
+            <strong>${escapeHTML(formatValue(rating))}</strong>
+          </div>
           
             <div class="tv-card-score-box">
               <span>Rank</span>
