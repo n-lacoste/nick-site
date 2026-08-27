@@ -6790,3 +6790,22 @@ tr:hover td:nth-child(3) {
   padding-right: 4px !important;
 }
 
+.home-tier-nr-summary[hidden] {
+  display: none !important;
+}
+
+/* Music pill, brighter so it does not look like an error state */
+.home-hero-button-music {
+  border-color: #ff7ab6 !important;
+  color: #ffb3d6 !important;
+  background: #21131b !important;
+}
+
+.home-hero-button-music:hover {
+  border-color: #ff4fa3 !important;
+  color: #ffffff !important;
+  background: #3a1830 !important;
+  box-shadow: 0 0 0 1px rgba(255, 79, 163, 0.45);
+}
+
+
