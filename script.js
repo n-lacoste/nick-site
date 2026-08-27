@@ -3250,51 +3250,55 @@ function renderEpisodeGridControls() {
 
   return `
     <div class="tv-card-episode-grid-toolbar">
-      <div class="tv-card-episode-grid-toolbar-group">
-        <span>Grid View</span>
+      <div class="tv-card-episode-grid-toolbar-left">
+        <div class="tv-card-episode-grid-toolbar-group">
+          <span>Grid View</span>
 
-        <button
-          id="tvCardEpisodeGridBlocks"
-          class="tv-card-grid-toggle ${blocksActive ? "active" : ""}"
-          type="button"
-        >
-          Season Blocks
-        </button>
+          <button
+            id="tvCardEpisodeGridBlocks"
+            class="tv-card-grid-toggle ${blocksActive ? "active" : ""}"
+            type="button"
+          >
+            Season Blocks
+          </button>
 
-        <button
-          id="tvCardEpisodeGridColumns"
-          class="tv-card-grid-toggle ${columnsActive ? "active" : ""}"
-          type="button"
-        >
-          Season Columns
-        </button>
-      </div>
-
-      <div class="tv-card-episode-grid-toolbar-group">
-        <span>Detail</span>
-
-        <button
-          id="tvCardEpisodeGridDensityToggle"
-          class="tv-card-grid-toggle tv-card-density-toggle tv-card-density-${tvCardEpisodeGridDensity}"
-          type="button"
-          aria-pressed="${tvCardEpisodeGridDensity === "compact" ? "true" : "false"}"
-        >
-          ${tvCardEpisodeGridDensity === "compact" ? "Compact" : "Default"}
-        </button>
+          <button
+            id="tvCardEpisodeGridColumns"
+            class="tv-card-grid-toggle ${columnsActive ? "active" : ""}"
+            type="button"
+          >
+            Season Columns
+          </button>
+        </div>
       </div>
 
       ${tvCardEpisodeGridLayout === "columns" ? `
-        <div class="tv-card-episode-grid-toolbar-group">
-          <span>Width</span>
+        <div class="tv-card-episode-grid-toolbar-right">
+          <div class="tv-card-episode-grid-toolbar-group">
+            <span>Detail</span>
 
-          <button
-            id="tvCardEpisodeGridWidthToggle"
-            class="tv-card-grid-toggle tv-card-width-toggle tv-card-width-${tvCardEpisodeColumnWidthMode}"
-            type="button"
-            aria-pressed="${columnStretchActive ? "true" : "false"}"
-          >
-            ${columnStretchActive ? "Stretch" : "Default"}
-          </button>
+            <button
+              id="tvCardEpisodeGridDensityToggle"
+              class="tv-card-grid-toggle tv-card-density-toggle tv-card-density-${tvCardEpisodeGridDensity}"
+              type="button"
+              aria-pressed="${tvCardEpisodeGridDensity === "compact" ? "true" : "false"}"
+            >
+              ${tvCardEpisodeGridDensity === "compact" ? "Compact" : "Default"}
+            </button>
+          </div>
+
+          <div class="tv-card-episode-grid-toolbar-group">
+            <span>Width</span>
+
+            <button
+              id="tvCardEpisodeGridWidthToggle"
+              class="tv-card-grid-toggle tv-card-width-toggle tv-card-width-${tvCardEpisodeColumnWidthMode}"
+              type="button"
+              aria-pressed="${columnStretchActive ? "true" : "false"}"
+            >
+              ${columnStretchActive ? "Stretch" : "Default"}
+            </button>
+          </div>
         </div>
       ` : ""}
     </div>
@@ -3512,12 +3516,12 @@ function renderEpisodeGridAsSeasonColumns(episodeRows) {
 
       <div class="tv-card-episode-matrix-wrap">
         <table class="tv-card-episode-matrix tv-card-episode-matrix-${tvCardEpisodeGridDensity} tv-card-episode-matrix-column-${tvCardEpisodeColumnWidthMode}">
-            <colgroup>
-              <col class="tv-card-episode-number-col">
-              ${sortedSeasons.map(() => {
-                return `<col class="tv-card-season-col">`;
-              }).join("")}
-            </colgroup>
+          <colgroup>
+            <col class="tv-card-episode-number-col">
+            ${sortedSeasons.map(() => {
+              return `<col class="tv-card-season-col">`;
+            }).join("")}
+          </colgroup>
           <thead>
                 <tr>
                   <th class="tv-card-episode-count-header">#</th>
