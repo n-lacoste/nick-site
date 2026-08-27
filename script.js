@@ -5856,7 +5856,7 @@ window.loadHomeTop10Summaries = async function loadHomeTop10Summaries() {
         const mins = getText(row, "Mins.");
         const rating = getText(row, "My Rating");
       
-        const minsText = mins !== "" ? `${mins} Mins.` : "";
+        const minsText = mins !== "" ? `${mins} Mins` : "";
         const ratingText = rating !== "" ? rating : "";      
     
         return [year, minsText, ratingText]
