@@ -2944,6 +2944,7 @@ function getShowTitle(row) {
     });
 
     const maxCount = Math.max(...Object.values(counts), 1);
+    const totalRankedEpisodes = countRankedEpisodes(episodeRows);
 
     return `
       <section class="tv-card-panel">
@@ -2970,6 +2971,14 @@ function getShowTitle(row) {
               </div>
             `;
           }).join("")}
+                </div>
+
+        <div class="tv-card-rank-chart-footer">
+          <div></div>
+          <div class="tv-card-rank-chart-axis-label">Count of Episodes</div>
+          <div class="tv-card-rank-chart-total">
+            ${escapeHTML(totalRankedEpisodes)}
+          </div>
         </div>
       </section>
     `;
