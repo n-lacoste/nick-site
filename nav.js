@@ -3,7 +3,7 @@
   const headerTarget = document.getElementById("site-header");
 
   if (!headerTarget) return;
-
+/* navigation setup */
   headerTarget.innerHTML = `
     <header>
       <h1>
