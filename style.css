@@ -5708,3 +5708,104 @@ tr:hover td:nth-child(3) {
   color: #ffd966 !important;
   border-color: #ffd966 !important;
 }
+
+/* TV Show Card, search row with tier scale */
+.tv-card-search-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  width: 100%;
+  margin-bottom: 18px;
+}
+
+.tv-card-search-left {
+  position: relative;
+  flex: 1 1 520px;
+  min-width: 260px;
+  max-width: 560px;
+}
+
+#tv-show-card-select {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.tv-card-tier-scale {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+  flex: 0 0 auto;
+  padding: 6px 8px;
+  border: 1px solid #333;
+  border-radius: 999px;
+  background: #151515;
+}
+
+.tv-tier-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  color: #000000;
+  font-size: 11px;
+  font-weight: 850;
+  line-height: 1;
+  border: 1px solid rgba(0, 0, 0, 0.22);
+}
+
+.tv-tier-s {
+  background: #57bb8a;
+}
+
+.tv-tier-a1 {
+  background: #8fd17a;
+}
+
+.tv-tier-a2 {
+  background: #c8e87a;
+}
+
+.tv-tier-b1 {
+  background: #d9f2c7;
+}
+
+.tv-tier-b2 {
+  background: #ffd966;
+}
+
+.tv-tier-c1 {
+  background: #f6b26b;
+}
+
+.tv-tier-c2 {
+  background: #e69138;
+}
+
+.tv-tier-d {
+  background: #cc0000;
+  color: #ffffff;
+}
+
+@media (max-width: 750px) {
+  .tv-card-search-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .tv-card-search-left {
+    max-width: none;
+    width: 100%;
+  }
+
+  .tv-card-tier-scale {
+    justify-content: center;
+    flex-wrap: wrap;
+    border-radius: 14px;
+  }
+}
+
