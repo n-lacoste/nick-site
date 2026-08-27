@@ -4682,7 +4682,7 @@ tr:hover td:nth-child(3) {
 
 .home-tier-table td:nth-child(1) {
   font-size: 18px;
-  font-weight: 800;
+  font-weight: 500;
   line-height: 1.2;
 }
 
@@ -6292,7 +6292,6 @@ tr:hover td:nth-child(3) {
 
   border: 1px solid #333 !important;
   border-radius: 8px !important;
-  background-color: #181818 !important;
   color: #f5f5f5 !important;
 
   font-size: 13px !important;
