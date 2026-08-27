@@ -5724,7 +5724,7 @@ window.loadHomeTop10Summaries = async function loadHomeTop10Summaries() {
       rankColumns: ["Ranking"],
       scoreColumns: [],
     
-      metaColumns: ["Year", "Genres"],
+      metaColumns: ["Artist", "Year"],
     
       sortColumns: ["Ranking"],
       sortDirection: "asc",
@@ -5742,8 +5742,6 @@ window.loadHomeTop10Summaries = async function loadHomeTop10Summaries() {
           titleColumns: ["Artist"],
           rankColumns: ["Rk", "Artist Rank", "Rank"],
           scoreColumns: ["Artist Score", "Score"],
-        
-          metaColumns: ["Tier"],
         
           sortColumns: ["Rk", "Artist Rank", "Rank"],
           sortDirection: "asc",
@@ -5763,7 +5761,7 @@ window.loadHomeTop10Summaries = async function loadHomeTop10Summaries() {
           rankColumns: ["Rank"],
           scoreColumns: [],
         
-          metaColumns: ["Artist-Group", "Tier"],
+          metaColumns: ["Artist-Group"],
         
           sortColumns: ["Rank"],
           sortDirection: "asc",
