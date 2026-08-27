@@ -5671,9 +5671,9 @@ window.loadHomeTierSummary = async function loadHomeTierSummary() {
     
     if (nrSummary) {
       nrSummary.innerHTML = `
-        <span>Ranked Count = ${totalCount}</span>
+        <span>Ranked Count = ${formatWholeNumber(totalCount)}</span>
         <span>Average = ${averageText}</span>
-        <span>Not Ranked (NR) = ${nrCount}</span>
+        <span>Not Ranked (NR) = ${formatWholeNumber(nrCount)}</span>
       `;
     }
 
