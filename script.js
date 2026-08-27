@@ -5918,6 +5918,29 @@ window.loadHomeTop10Summaries = async function loadHomeTop10Summaries() {
     return String(row[column] ?? "").trim();
   }
 
+  function shrinkTop10Titles(list) {
+  const titles = list.querySelectorAll(".home-top10-item-title");
+
+  titles.forEach(title => {
+    title.style.fontSize = "";
+    title.style.lineHeight = "";
+
+    const sizes = [13.5, 12.75, 12, 11.25, 10.75];
+
+    for (const size of sizes) {
+      title.style.fontSize = `${size}px`;
+      title.style.lineHeight = "1.15";
+
+      const computed = window.getComputedStyle(title);
+      const lineHeight = parseFloat(computed.lineHeight);
+
+      if (title.scrollHeight <= lineHeight * 1.35) {
+        break;
+      }
+    }
+  });
+}
+  
   function getBestMeta(row, metaColumns) {
     const values = metaColumns
       .map(column => getText(row, column))
@@ -6135,6 +6158,8 @@ function formatTVShowTop10Meta(row) {
           </li>
         `;
       }).join("");
+
+  shrinkTop10Titles(list);
             
     } catch (error) {
       console.error(`Could not load ${config.label}:`, error);
