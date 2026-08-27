@@ -6034,6 +6034,14 @@ window.loadHomeTierSummary = async function loadHomeTierSummary() {
         return isNaN(number) ? null : number;
   }
 
+  function formatWholeNumber(value) {
+      const number = Number(value);
+    
+      if (isNaN(number)) return value;
+    
+      return number.toLocaleString("en-CA");
+}
+
   function isValidTop10SortValue(value, config) {
         if (value === null) return false;
         if (value === undefined) return false;
