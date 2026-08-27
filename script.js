@@ -3992,7 +3992,7 @@ showStartScreen();
     
     if (changeGameEndButton) {
       changeGameEndButton.addEventListener("click", function () {
-        changeGameMode();
+        showStartScreen();
       });
     }
     
