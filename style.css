@@ -4630,3 +4630,78 @@ tr:hover td:nth-child(3) {
   line-height: 1.15;
   text-align: center;
 }
+
+/* Top 10 ranking badges, clearer rounded-square version */
+.home-top10-row {
+  grid-template-columns: 38px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  padding: 9px 0;
+}
+
+.home-top10-number {
+  width: 32px;
+  height: 28px;
+  border: 1px solid rgba(87, 187, 138, 0.85);
+  border-radius: 8px;
+  background: rgba(87, 187, 138, 0.12);
+  color: #78e0ad;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.home-top10-item-title {
+  font-size: 13.25px;
+  font-weight: 700;
+  line-height: 1.22;
+}
+
+.home-top10-item-meta {
+  font-size: 11.25px;
+  line-height: 1.25;
+}
+
+/* Tier Distribution balanced font sizing */
+.home-tier-table th,
+.home-tier-table td {
+  font-size: 18px;
+  line-height: 1.25;
+}
+
+.home-tier-table td:nth-child(1) {
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.home-tier-table td:nth-child(2) {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.home-tier-table td:nth-child(3) {
+  font-size: 18px;
+}
+
+.home-tier-table td:nth-child(4),
+.home-tier-example {
+  font-size: 18px;
+  line-height: 1.25;
+  text-align: center;
+}
+
+.home-tier-table td:nth-child(5) {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.home-tier-bar-label {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.home-tier-nr-summary {
+  font-size: 18px;
+}
