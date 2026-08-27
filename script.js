@@ -6077,14 +6077,18 @@ window.loadHomeTierSummary = async function loadHomeTierSummary() {
     `;
   }
 
-  function showLoading(label) {
-    table.innerHTML = `
-      <tbody>
-        <tr>
-          <td class="rankings-loading-cell">Loading ${escapeHTML(label)} tier summary...</td>
-        </tr>
-      </tbody>
-    `;
+  function showLoading() {
+        if (nrSummary) {
+          nrSummary.hidden = true;
+        }
+      
+        table.innerHTML = `
+          <tbody>
+            <tr>
+              <td class="rankings-loading-cell">Loading tier summary...</td>
+            </tr>
+          </tbody>
+        `;
   }
 
   function showError(label) {
@@ -6208,13 +6212,15 @@ window.loadHomeTierSummary = async function loadHomeTierSummary() {
           .toFixed(1)
           .replace(/\.0$/, "");
     
-    if (nrSummary) {
+   if (nrSummary) {
       nrSummary.innerHTML = `
         <span>Ranked Count = ${formatWholeNumber(totalCount)}</span>
         <span>Average = ${averageText}</span>
         <span>Not Ranked (NR) = ${formatWholeNumber(nrCount)}</span>
       `;
-    }
+    
+      nrSummary.hidden = false;
+  }
 
       if (summaryRows.length === 0) {
         table.innerHTML = `
