@@ -3057,7 +3057,7 @@ function renderEpisodeRankPieChart(episodeRows) {
                   style="background:${colors.bg};"
                 ></span>
 
-                <span class="tv-card-rank-pie-rank">Rank ${escapeHTML(rank)}</span>
+                <span class="tv-card-rank-pie-rank">${escapeHTML(rank)}</span>
                 <strong>${escapeHTML(count)}</strong>
                 <span class="tv-card-rank-pie-percent">
                   ${escapeHTML(percent.toFixed(1).replace(/\\.0$/, ""))}%
