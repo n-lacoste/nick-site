@@ -5450,29 +5450,31 @@ window.loadHomeTierSummary = async function loadHomeTierSummary() {
   ];
 
   const configs = {
-    albums: {
-      label: "Albums",
-      url: window.ALBUMS_CSV_URL,
-      tierColumns: ["Tier", "Album Tier"],
-      titleColumns: ["Album", "Album Title", "Project", "Project Name", "Name"],
-      scoreColumns: ["My Rating", "Rating", "Score"]
-    },
-    movies: {
-      label: "Movies",
-      url: window.MOVIES_CSV_URL,
-      tierColumns: ["Tier"],
-      titleColumns: ["Movie Title", "Name", "Title"],
-      scoreColumns: ["My Rating", "Rating", "Score"]
-    },
-    tvshows: {
-      label: "TV Shows",
-      url: window.TVSHOWS_CSV_URL,
-      tierColumns: ["Tier", "TV SHOW TIER", "TV Show Tier"],
-      titleColumns: ["TV Show", "Tv Show", "Name", "Title"],
-      scoreColumns: ["My Rating", "Rating", "Score"]
-    }
-  };
-
+      albums: {
+        label: "Albums",
+        url: window.ALBUMS_CSV_URL,
+        tierColumns: ["Level", "Tier", "Album Tier"],
+        titleColumns: ["Project TitleArtist", "Album", "Album Title", "Project", "Project Name", "Name"],
+        yearColumns: ["Year"],
+        scoreColumns: ["xRank%", "My Rating", "Rating", "Score"]
+      },
+      movies: {
+        label: "Movies",
+        url: window.MOVIES_CSV_URL,
+        tierColumns: ["Tier"],
+        titleColumns: ["Movie Title", "Name", "Title"],
+        yearColumns: ["Year"],
+        scoreColumns: ["My Rating", "Rating", "Score"]
+      },
+      tvshows: {
+        label: "TV Shows",
+        url: window.TVSHOWS_CSV_URL,
+        tierColumns: ["Tier", "TV SHOW TIER", "TV Show Tier"],
+        titleColumns: ["TV Show", "Tv Show", "Name", "Title"],
+        yearColumns: ["Years", "Year"],
+        scoreColumns: ["My Rating", "Rating", "Score"]
+      }
+};
   function escapeHTML(value) {
     return String(value ?? "")
       .replaceAll("&", "&amp;")
@@ -5487,12 +5489,18 @@ window.loadHomeTierSummary = async function loadHomeTierSummary() {
   }
 
   function getNumericScore(row, scoreColumn) {
-    if (!scoreColumn) return null;
-
-    const value = String(row[scoreColumn] ?? "").replace(/,/g, "").trim();
-    const number = Number(value);
-
-    return isNaN(number) ? null : number;
+        if (!scoreColumn) return null;
+      
+        const value = String(row[scoreColumn] ?? "")
+          .replace(/,/g, "")
+          .replace(/%/g, "")
+          .trim();
+      
+        if (value === "") return null;
+      
+        const number = Number(value);
+      
+        return isNaN(number) ? null : number;
   }
 
   function isValidTop10SortValue(value, config) {
@@ -5575,6 +5583,7 @@ window.loadHomeTierSummary = async function loadHomeTierSummary() {
 
       const tierColumn = getFirstExistingColumn(headers, config.tierColumns);
       const titleColumn = getFirstExistingColumn(headers, config.titleColumns);
+      const yearColumn = getFirstExistingColumn(headers, config.yearColumns || []);
       const scoreColumn = getFirstExistingColumn(headers, config.scoreColumns);
 
       if (!tierColumn) {
@@ -5612,9 +5621,14 @@ window.loadHomeTierSummary = async function loadHomeTierSummary() {
 
         group.count++;
 
-        if (title !== "") {
+       if (title !== "") {
+          const yearText = yearColumn
+            ? String(row[yearColumn] ?? "").trim()
+            : "";
+        
           group.examples.push({
             title,
+            year: yearText,
             score
           });
         }
@@ -5625,25 +5639,39 @@ window.loadHomeTierSummary = async function loadHomeTierSummary() {
       });
 
       const nrCount = Array.from(groups.values())
-        .filter(row => String(row.tier ?? "").trim().toUpperCase() === "NR")
-        .reduce((sum, row) => sum + row.count, 0);
-      
-      if (nrSummary) {
-        nrSummary.textContent = `Not Ranked (NR) = ${nrCount}`;
-      }
-      
-      const summaryRows = Array.from(groups.values())
-        .filter(row => String(row.tier ?? "").trim().toUpperCase() !== "NR")
-        .sort((a, b) => {
-          const tierCompare = getTierSortIndex(a.tier) - getTierSortIndex(b.tier);
-      
-          if (tierCompare !== 0) return tierCompare;
-      
-          return a.tier.localeCompare(b.tier);
-        });
+  .filter(row => String(row.tier ?? "").trim().toUpperCase() === "NR")
+  .reduce((sum, row) => sum + row.count, 0);
 
-      const maxCount = Math.max(...summaryRows.map(row => row.count), 1);
-      const totalCount = summaryRows.reduce((sum, row) => sum + row.count, 0);
+    const summaryRows = Array.from(groups.values())
+      .filter(row => String(row.tier ?? "").trim().toUpperCase() !== "NR")
+      .sort((a, b) => {
+        const tierCompare = getTierSortIndex(a.tier) - getTierSortIndex(b.tier);
+    
+        if (tierCompare !== 0) return tierCompare;
+    
+        return a.tier.localeCompare(b.tier);
+      });
+    
+    const maxCount = Math.max(...summaryRows.map(row => row.count), 1);
+    const totalCount = summaryRows.reduce((sum, row) => sum + row.count, 0);
+    
+    const visibleScores = summaryRows
+      .flatMap(row => row.scores)
+      .filter(score => score !== null && !isNaN(score));
+    
+    const averageScore = visibleScores.length
+      ? visibleScores.reduce((sum, score) => sum + score, 0) / visibleScores.length
+      : null;
+    
+    const averageText = averageScore === null
+      ? "—"
+      : averageScore
+          .toFixed(1)
+          .replace(/\.0$/, "");
+    
+    if (nrSummary) {
+      nrSummary.textContent = `Ranked Count = ${totalCount}   Average = ${averageText}   Not Ranked (NR) = ${nrCount}`;
+    }
 
       if (summaryRows.length === 0) {
         table.innerHTML = `
@@ -5687,7 +5715,9 @@ window.loadHomeTierSummary = async function loadHomeTierSummary() {
             return b.score - a.score;
           })[0];
 
-        const exampleText = bestExample ? bestExample.title : "—";
+       const exampleText = bestExample
+        ? `${bestExample.title}${bestExample.year ? ` (${bestExample.year})` : ""}`
+        : "—";
 
         const scoreRange = row.scores.length
           ? `${Math.min(...row.scores)}–${Math.max(...row.scores)}`
