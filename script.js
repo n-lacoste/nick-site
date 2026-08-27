@@ -3241,67 +3241,65 @@ function setupTVCardEpisodeDetailClicks() {
 function renderEpisodeGridControls() {
   const blocksActive = tvCardEpisodeGridLayout === "blocks";
   const columnsActive = tvCardEpisodeGridLayout === "columns";
-  const densityToggleButton = document.getElementById("tvCardEpisodeGridDensityToggle");
   const columnStretchActive = tvCardEpisodeColumnWidthMode === "stretch";
 
   return `
-        <div class="tv-card-episode-grid-toolbar">
-          <div class="tv-card-episode-grid-toolbar-group">
-            <span>Grid View</span>
-      
-            <button
-              id="tvCardEpisodeGridBlocks"
-              class="tv-card-grid-toggle ${blocksActive ? "active" : ""}"
-              type="button"
-            >
-              Season Blocks
-            </button>
-      
-            <button
-              id="tvCardEpisodeGridColumns"
-              class="tv-card-grid-toggle ${columnsActive ? "active" : ""}"
-              type="button"
-            >
-              Season Columns
-            </button>
-          </div>
-      
-          <div class="tv-card-episode-grid-toolbar-group">
-            <span>Detail</span>
-      
-            <button
-              id="tvCardEpisodeGridDensityToggle"
-              class="tv-card-grid-toggle tv-card-density-toggle tv-card-density-${tvCardEpisodeGridDensity}"
-              type="button"
-              aria-pressed="${tvCardEpisodeGridDensity === "compact" ? "true" : "false"}"
-            >
-              ${tvCardEpisodeGridDensity === "compact" ? "Compact" : "Default"}
-            </button>
-          </div>
-      
-          ${tvCardEpisodeGridLayout === "columns" ? `
-            <div class="tv-card-episode-grid-toolbar-group">
-              <span>Width</span>
-      
-              <button
-                id="tvCardEpisodeGridWidthToggle"
-                class="tv-card-grid-toggle tv-card-width-toggle tv-card-width-${tvCardEpisodeColumnWidthMode}"
-                type="button"
-                aria-pressed="${columnStretchActive ? "true" : "false"}"
-              >
-                ${columnStretchActive ? "Stretch" : "Default"}
-              </button>
-            </div>
-          ` : ""}
+    <div class="tv-card-episode-grid-toolbar">
+      <div class="tv-card-episode-grid-toolbar-group">
+        <span>Grid View</span>
+
+        <button
+          id="tvCardEpisodeGridBlocks"
+          class="tv-card-grid-toggle ${blocksActive ? "active" : ""}"
+          type="button"
+        >
+          Season Blocks
+        </button>
+
+        <button
+          id="tvCardEpisodeGridColumns"
+          class="tv-card-grid-toggle ${columnsActive ? "active" : ""}"
+          type="button"
+        >
+          Season Columns
+        </button>
+      </div>
+
+      <div class="tv-card-episode-grid-toolbar-group">
+        <span>Detail</span>
+
+        <button
+          id="tvCardEpisodeGridDensityToggle"
+          class="tv-card-grid-toggle tv-card-density-toggle tv-card-density-${tvCardEpisodeGridDensity}"
+          type="button"
+          aria-pressed="${tvCardEpisodeGridDensity === "compact" ? "true" : "false"}"
+        >
+          ${tvCardEpisodeGridDensity === "compact" ? "Compact" : "Default"}
+        </button>
+      </div>
+
+      ${tvCardEpisodeGridLayout === "columns" ? `
+        <div class="tv-card-episode-grid-toolbar-group">
+          <span>Width</span>
+
+          <button
+            id="tvCardEpisodeGridWidthToggle"
+            class="tv-card-grid-toggle tv-card-width-toggle tv-card-width-${tvCardEpisodeColumnWidthMode}"
+            type="button"
+            aria-pressed="${columnStretchActive ? "true" : "false"}"
+          >
+            ${columnStretchActive ? "Stretch" : "Default"}
+          </button>
         </div>
-      `;
+      ` : ""}
+    </div>
+  `;
 }
 
 function setupTVCardEpisodeGridControls(showRow, episodeRows) {
   const blocksButton = document.getElementById("tvCardEpisodeGridBlocks");
   const columnsButton = document.getElementById("tvCardEpisodeGridColumns");
-  const defaultButton = document.getElementById("tvCardEpisodeGridDefault");
-  const compactButton = document.getElementById("tvCardEpisodeGridCompact");
+  const densityToggleButton = document.getElementById("tvCardEpisodeGridDensityToggle");
   const widthToggleButton = document.getElementById("tvCardEpisodeGridWidthToggle");
 
   if (blocksButton) {
@@ -3319,25 +3317,24 @@ function setupTVCardEpisodeGridControls(showRow, episodeRows) {
   }
 
   if (densityToggleButton) {
-      densityToggleButton.addEventListener("click", function () {
-        tvCardEpisodeGridDensity = tvCardEpisodeGridDensity === "compact"
-          ? "default"
-          : "compact";
-    
-        renderTVShowCard(showRow, episodeRows);
-      });
-    }
+    densityToggleButton.addEventListener("click", function () {
+      tvCardEpisodeGridDensity = tvCardEpisodeGridDensity === "compact"
+        ? "default"
+        : "compact";
+
+      renderTVShowCard(showRow, episodeRows);
+    });
+  }
 
   if (widthToggleButton) {
-        widthToggleButton.addEventListener("click", function () {
-          tvCardEpisodeColumnWidthMode = tvCardEpisodeColumnWidthMode === "stretch"
-            ? "default"
-            : "stretch";
-      
-          renderTVShowCard(showRow, episodeRows);
-        });
-      }
-  
+    widthToggleButton.addEventListener("click", function () {
+      tvCardEpisodeColumnWidthMode = tvCardEpisodeColumnWidthMode === "stretch"
+        ? "default"
+        : "stretch";
+
+      renderTVShowCard(showRow, episodeRows);
+    });
+  }
 }
 
 function getEpisodeSortNumber(row) {
