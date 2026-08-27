@@ -6670,3 +6670,51 @@ tr:hover td:nth-child(3) {
   margin-right: var(--tv-card-page-gutter) !important;
   box-sizing: border-box !important;
 }
+
+.tv-card-rank-chart-total {
+  justify-self: end;
+  text-align: right;
+  color: #f5f5f5;
+  font-size: 11.5px;
+  font-weight: 800;
+  white-space: nowrap;
+  border-top: none !important;
+  padding-top: 0 !important;
+  min-width: 0 !important;
+}
+
+.tv-card-rank-chart-total span {
+  display: inline-block;
+  border-top: 1px solid #444;
+  padding: 5px 2px 0;
+  min-width: 28px;
+  text-align: center;
+}
+
+/* TV Show Card, align tier scale with right edge of main card */
+.tv-card-search-row {
+  display: grid !important;
+  grid-template-columns: 280px minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 18px !important;
+
+  width: calc(100vw - 40px) !important;
+  max-width: calc(100vw - 40px) !important;
+  box-sizing: border-box !important;
+
+  margin: 28px 20px 18px 20px !important;
+}
+
+.tv-card-search-left {
+  grid-column: 1 !important;
+  width: 280px !important;
+  min-width: 280px !important;
+  max-width: 280px !important;
+}
+
+.tv-card-tier-scale {
+  grid-column: 3 !important;
+  justify-self: end !important;
+  align-self: center !important;
+  margin-left: auto !important;
+}
