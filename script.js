@@ -5707,22 +5707,34 @@ window.loadHomeTop10Summaries = async function loadHomeTop10Summaries() {
   const configs = {
     albums: {
       listId: "home-top10-albums",
+      label: "albums",
       url: window.ALBUMS_CSV_URL,
       titleColumns: ["Album", "Album Title", "Project", "Project Name", "Name", "Title"],
       rankColumns: ["Rk", "Rank", "Album Rank"],
-      scoreColumns: ["My Rating", "Rating", "Score"],
+      scoreColumns: ["My Rating", "Rating", "Score", "Album Score"],
       metaColumns: ["Artist", "Album Artist", "Tier"]
+    },
+    artists: {
+      listId: "home-top10-artists",
+      label: "artists",
+      url: window.ARTISTS_CSV_URL,
+      titleColumns: ["Artist"],
+      rankColumns: ["Rk", "Artist Rank", "Rank"],
+      scoreColumns: ["Artist Score", "Score"],
+      metaColumns: ["Tier", "Ranked Songs"]
     },
     songs: {
       listId: "home-top10-songs",
-      url: window.SONGS_CSV_URL,
-      titleColumns: ["Song", "Song Name", "Song Title", "Track", "Track Name", "Name", "Title"],
+      label: "songs",
+      url: window.FAV_SONGS_CSV_URL || window.SONGS_CSV_URL,
+      titleColumns: ["Song Title", "Song", "Track", "Track Name", "Name", "Title"],
       rankColumns: ["Rk", "Rank", "Song Rank"],
-      scoreColumns: ["My Rating", "Rating", "Score"],
-      metaColumns: ["Artist", "Artists", "Tier"]
+      scoreColumns: ["My Rating", "Rating", "Score", "Song Score"],
+      metaColumns: ["Artist", "Artists", "Album", "Tier"]
     },
     movies: {
       listId: "home-top10-movies",
+      label: "movies",
       url: window.MOVIES_CSV_URL,
       titleColumns: ["Movie Title", "Name", "Title"],
       rankColumns: ["Rk", "Rank"],
@@ -5731,6 +5743,7 @@ window.loadHomeTop10Summaries = async function loadHomeTop10Summaries() {
     },
     tvshows: {
       listId: "home-top10-tvshows",
+      label: "TV shows",
       url: window.TVSHOWS_CSV_URL,
       titleColumns: ["TV Show", "Tv Show", "Name", "Title"],
       rankColumns: ["Rk", "Rank"],
@@ -5755,7 +5768,10 @@ window.loadHomeTop10Summaries = async function loadHomeTop10Summaries() {
   function getNumber(row, column) {
     if (!column) return null;
 
-    const text = String(row[column] ?? "").replace(/,/g, "").trim();
+    const text = String(row[column] ?? "")
+      .replace(/[#,\s]/g, "")
+      .trim();
+
     const number = Number(text);
 
     return isNaN(number) ? null : number;
@@ -5772,8 +5788,6 @@ window.loadHomeTop10Summaries = async function loadHomeTop10Summaries() {
       .map(column => getText(row, column))
       .filter(value => value !== "");
 
-    if (values.length === 0) return "";
-
     return values.slice(0, 2).join(" • ");
   }
 
@@ -5783,25 +5797,8 @@ window.loadHomeTop10Summaries = async function loadHomeTop10Summaries() {
     });
   }
 
-  function renderTop10List(list, items) {
-    if (items.length === 0) {
-      list.innerHTML = `<li class="home-top10-empty">No ranked items found.</li>`;
-      return;
-    }
-
-    list.innerHTML = items.map(item => {
-      const rankText = item.rank !== null ? `#${item.rank}` : "";
-      const scoreText = item.score !== null ? `${item.score}` : "";
-      const metaParts = [rankText, scoreText, item.meta].filter(Boolean);
-      const metaText = metaParts.join(" • ");
-
-      return `
-        <li>
-          <span class="home-top10-item-title">${escapeHTML(item.title)}</span>
-          ${metaText ? `<span class="home-top10-item-meta">${escapeHTML(metaText)}</span>` : ""}
-        </li>
-      `;
-    }).join("");
+  function showCardMessage(list, message) {
+    list.innerHTML = `<li class="home-top10-empty">${escapeHTML(message)}</li>`;
   }
 
   async function loadTop10(config) {
@@ -5809,7 +5806,12 @@ window.loadHomeTop10Summaries = async function loadHomeTop10Summaries() {
 
     if (!list) return;
 
-    list.innerHTML = `<li class="home-top10-loading">Loading...</li>`;
+    list.innerHTML = `<li class="home-top10-loading">Loading ${escapeHTML(config.label)}...</li>`;
+
+    if (!config.url) {
+      showCardMessage(list, `No CSV URL found for ${config.label}.`);
+      return;
+    }
 
     try {
       const text = await getCSVText(config.url);
@@ -5827,14 +5829,14 @@ window.loadHomeTop10Summaries = async function loadHomeTop10Summaries() {
       const scoreColumn = getFirstExistingColumn(headers, config.scoreColumns);
 
       if (!titleColumn) {
-        list.innerHTML = `<li class="home-top10-empty">No title column found.</li>`;
+        console.warn(`No title column found for ${config.label}. Headers found:`, headers);
+        showCardMessage(list, `No title column found for ${config.label}.`);
         return;
       }
 
       const rankedRows = rows
         .map(row => {
           return {
-            row,
             title: getText(row, titleColumn),
             rank: getNumber(row, rankColumn),
             score: getNumber(row, scoreColumn),
@@ -5859,113 +5861,31 @@ window.loadHomeTop10Summaries = async function loadHomeTop10Summaries() {
         })
         .slice(0, 10);
 
-      renderTop10List(list, rankedRows);
-    } catch (error) {
-      console.error(error);
-      list.innerHTML = `<li class="home-top10-empty">Could not load data.</li>`;
-    }
-  }
-
-  async function loadTop10ArtistsFromSongs() {
-    const list = document.getElementById("home-top10-artists");
-
-    if (!list) return;
-
-    list.innerHTML = `<li class="home-top10-loading">Loading...</li>`;
-
-    try {
-      const text = await getCSVText(window.SONGS_CSV_URL);
-
-      const parsed = Papa.parse(text.trim(), {
-        header: true,
-        skipEmptyLines: true
-      });
-
-      const headers = parsed.meta.fields || [];
-      const rows = (parsed.data || []).filter(row => rowHasContent(row, headers));
-
-      const artistColumn = getFirstExistingColumn(headers, ["Artist", "Artists", "Artist 1"]);
-      const rankColumn = getFirstExistingColumn(headers, ["Artist Rank", "Artist Rk", "Rk", "Rank"]);
-      const scoreColumn = getFirstExistingColumn(headers, ["My Rating", "Rating", "Score"]);
-
-      if (!artistColumn) {
-        list.innerHTML = `<li class="home-top10-empty">No artist column found.</li>`;
+      if (rankedRows.length === 0) {
+        showCardMessage(list, `No ranked ${config.label} found.`);
         return;
       }
 
-      const artistMap = new Map();
+      list.innerHTML = rankedRows.map(item => {
+        const rankText = item.rank !== null ? `#${item.rank}` : "";
+        const scoreText = item.score !== null ? `${item.score}` : "";
+        const metaText = [rankText, scoreText, item.meta].filter(Boolean).join(" • ");
 
-      rows.forEach(row => {
-        const artistText = getText(row, artistColumn);
-
-        if (artistText === "") return;
-
-        const artists = artistText
-          .split(/[;,]/)
-          .map(artist => artist.trim())
-          .filter(Boolean);
-
-        artists.forEach(artist => {
-          if (!artistMap.has(artist)) {
-            artistMap.set(artist, {
-              title: artist,
-              bestRank: null,
-              bestScore: null,
-              count: 0
-            });
-          }
-
-          const item = artistMap.get(artist);
-          const rank = getNumber(row, rankColumn);
-          const score = getNumber(row, scoreColumn);
-
-          item.count++;
-
-          if (rank !== null && (item.bestRank === null || rank < item.bestRank)) {
-            item.bestRank = rank;
-          }
-
-          if (score !== null && (item.bestScore === null || score > item.bestScore)) {
-            item.bestScore = score;
-          }
-        });
-      });
-
-      const artists = Array.from(artistMap.values())
-        .filter(item => item.bestRank !== null || item.bestScore !== null)
-        .sort((a, b) => {
-          if (a.bestRank !== null && b.bestRank !== null) {
-            return a.bestRank - b.bestRank;
-          }
-
-          if (a.bestRank !== null && b.bestRank === null) return -1;
-          if (a.bestRank === null && b.bestRank !== null) return 1;
-
-          if (a.bestScore !== null && b.bestScore !== null) {
-            return b.bestScore - a.bestScore;
-          }
-
-          return b.count - a.count;
-        })
-        .slice(0, 10)
-        .map(item => {
-          return {
-            title: item.title,
-            rank: item.bestRank,
-            score: item.bestScore,
-            meta: `${item.count} song${item.count === 1 ? "" : "s"}`
-          };
-        });
-
-      renderTop10List(list, artists);
+        return `
+          <li>
+            <span class="home-top10-item-title">${escapeHTML(item.title)}</span>
+            ${metaText ? `<span class="home-top10-item-meta">${escapeHTML(metaText)}</span>` : ""}
+          </li>
+        `;
+      }).join("");
     } catch (error) {
-      console.error(error);
-      list.innerHTML = `<li class="home-top10-empty">Could not load artists.</li>`;
+      console.error(`Could not load ${config.label}:`, error);
+      showCardMessage(list, `Could not load ${config.label}.`);
     }
   }
 
   loadTop10(configs.albums);
-  loadTop10ArtistsFromSongs();
+  loadTop10(configs.artists);
   loadTop10(configs.songs);
   loadTop10(configs.movies);
   loadTop10(configs.tvshows);
