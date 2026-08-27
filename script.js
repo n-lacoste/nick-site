@@ -5715,24 +5715,23 @@ window.loadHomeTierSummary = async function loadHomeTierSummary() {
 window.loadHomeTop10Summaries = async function loadHomeTop10Summaries() {
   const configs = {
    albums: {
-      listId: "home-top10-albums",
-      label: "albums",
-      url: window.ALBUMS_CSV_URL,
-    
-      titleColumns: ["Album", "Album Title", "Project", "Project Name", "Name", "Title"],
-    
-      rankColumns: ["Ranking"],
-      scoreColumns: [],
-    
-      metaColumns: ["Artist", "Year"],
-    
-      sortColumns: ["Ranking"],
-      sortDirection: "asc",
-      sortType: "text",
-    
-      showRank: false,
-      showScore: false
-    },
+          listId: "home-top10-albums",
+          label: "albums",
+          url: window.ALBUMS_CSV_URL,
+        
+          titleColumns: ["Album"],
+          rankColumns: ["Ranking"],
+          scoreColumns: [],
+        
+          metaColumns: ["Artist", "Year"],
+        
+          sortColumns: ["Ranking"],
+          sortDirection: "asc",
+          sortType: "number",
+        
+          showRank: false,
+          showScore: false
+        },
    
    artists: {
           listId: "home-top10-artists",
