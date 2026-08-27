@@ -4879,3 +4879,34 @@ tr:hover td:nth-child(3) {
   text-align: left;
   margin-left: 0;
 }
+
+/* Homepage top button hover colours */
+.home-hero-button-music:hover {
+  border-color: #b56b6b !important;
+  box-shadow: 0 0 0 1px rgba(181, 107, 107, 0.45);
+}
+
+.home-hero-button-movies:hover {
+  border-color: #a78bfa !important;
+  box-shadow: 0 0 0 1px rgba(167, 139, 250, 0.45);
+}
+
+.home-hero-button-tv:hover {
+  border-color: #60a5fa !important;
+  box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.45);
+}
+
+.home-hero-button-esports:hover {
+  border-color: #c47a3c !important;
+  box-shadow: 0 0 0 1px rgba(196, 122, 60, 0.45);
+}
+
+.home-hero-button-geo:hover {
+  border-color: #57bb8a !important;
+  box-shadow: 0 0 0 1px rgba(87, 187, 138, 0.45);
+}
+
+.home-hero-button-professional:hover {
+  border-color: #d946ef !important;
+  box-shadow: 0 0 0 1px rgba(217, 70, 239, 0.45);
+}
