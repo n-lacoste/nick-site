@@ -5430,6 +5430,7 @@ console.log("Flags game listeners loaded.");
 window.loadHomeTierSummary = async function loadHomeTierSummary() {
   const table = document.getElementById("home-tier-table");
   const select = document.getElementById("home-tier-dataset");
+  const nrSummary = document.getElementById("home-tier-nr-summary");
 
   if (!table || !select) return;
 
@@ -5445,8 +5446,7 @@ window.loadHomeTierSummary = async function loadHomeTierSummary() {
     "C1",
     "C2",
     "C3",
-    "D",
-    "NR"
+    "D"
   ];
 
   const configs = {
@@ -5609,12 +5609,21 @@ window.loadHomeTierSummary = async function loadHomeTierSummary() {
         }
       });
 
+      const nrCount = Array.from(groups.values())
+        .filter(row => String(row.tier ?? "").trim().toUpperCase() === "NR")
+        .reduce((sum, row) => sum + row.count, 0);
+      
+      if (nrSummary) {
+        nrSummary.textContent = `Not Ranked (NR) = ${nrCount}`;
+      }
+      
       const summaryRows = Array.from(groups.values())
+        .filter(row => String(row.tier ?? "").trim().toUpperCase() !== "NR")
         .sort((a, b) => {
           const tierCompare = getTierSortIndex(a.tier) - getTierSortIndex(b.tier);
-
+      
           if (tierCompare !== 0) return tierCompare;
-
+      
           return a.tier.localeCompare(b.tier);
         });
 
