@@ -2977,7 +2977,7 @@ function getShowTitle(row) {
           <div></div>
           <div class="tv-card-rank-chart-axis-label">Count of Episodes</div>
           <div class="tv-card-rank-chart-total">
-            ${escapeHTML(totalRankedEpisodes)}
+            <span>${escapeHTML(totalRankedEpisodes)}</span>
           </div>
         </div>
       </section>
