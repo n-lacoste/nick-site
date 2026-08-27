@@ -3649,6 +3649,7 @@ function renderEpisodeGridAsSeasonColumns(episodeRows) {
         
           if (status) {
             status.hidden = true;
+            status.textContent = "";
           }
   }
 
