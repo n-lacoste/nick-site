@@ -4854,3 +4854,28 @@ tr:hover td:nth-child(3) {
   color: #e6e6e6;
   letter-spacing: 0.01em;
 }
+
+.home-tier-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: left;
+}
+
+.home-tier-header h3 {
+  margin: 0;
+  text-align: left;
+}
+
+.home-tier-select {
+  margin-left: auto;
+}
+
+.home-top10-header {
+  text-align: left;
+}
+
+.home-top10-header h3 {
+  text-align: left;
+  margin-left: 0;
+}
