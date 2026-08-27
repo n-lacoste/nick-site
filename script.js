@@ -5825,15 +5825,17 @@ window.loadHomeTop10Summaries = async function loadHomeTop10Summaries() {
   }
 
   function getNumber(row, column) {
-    if (!column) return null;
-
-    const text = String(row[column] ?? "")
-      .replace(/[#,\s]/g, "")
-      .trim();
-
-    const number = Number(text);
-
-    return isNaN(number) ? null : number;
+        if (!column) return null;
+      
+        const text = String(row[column] ?? "")
+          .replace(/[#,\s]/g, "")
+          .trim();
+      
+        if (text === "") return null;
+      
+        const number = Number(text);
+      
+        return isNaN(number) ? null : number;
   }
 
   function getText(row, column) {
