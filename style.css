@@ -5272,28 +5272,6 @@ tr:hover td:nth-child(3) {
   font-weight: 700;
 }
 
-#tvCardEpisodeGridDefault {
-  border-color: #d6d6d6 !important;
-  color: #d6d6d6 !important;
-}
-
-#tvCardEpisodeGridDefault.active,
-#tvCardEpisodeGridDefault:hover {
-  background: #d6d6d6 !important;
-  color: #000000 !important;
-}
-
-#tvCardEpisodeGridCompact {
-  border-color: #ffd966 !important;
-  color: #ffd966 !important;
-}
-
-#tvCardEpisodeGridCompact.active,
-#tvCardEpisodeGridCompact:hover {
-  background: #ffd966 !important;
-  color: #000000 !important;
-}
-
 .tv-card-episode-matrix-compact .tv-card-episode-matrix-cell {
   min-height: 30px !important;
   padding: 3px 5px !important;
@@ -5704,4 +5682,29 @@ tr:hover td:nth-child(3) {
 .tv-card-rank-pie-percent {
   text-align: right !important;
   color: #bdbdbd !important;
+}
+
+/* TV Show Card, single Default / Compact toggle */
+.tv-card-density-toggle {
+  min-width: 86px;
+  border-color: #ffd966 !important;
+  color: #ffd966 !important;
+  background: #181818 !important;
+}
+
+.tv-card-density-toggle:hover {
+  background: #ffd966 !important;
+  color: #000000 !important;
+}
+
+.tv-card-density-toggle.tv-card-density-compact {
+  background: #ffd966 !important;
+  color: #000000 !important;
+  border-color: #ffd966 !important;
+}
+
+.tv-card-density-toggle.tv-card-density-default {
+  background: #181818 !important;
+  color: #ffd966 !important;
+  border-color: #ffd966 !important;
 }
