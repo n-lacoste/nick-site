@@ -2696,6 +2696,14 @@ window.loadTVShowCard = async function loadTVShowCard(tvShowsPath, episodesPath)
 
   if (!selectInput || !datalist || !output) return;
 
+  selectInput.disabled = true;
+    selectInput.placeholder = "Loading TV shows...";
+    
+    if (status) {
+      status.hidden = false;
+      status.textContent = "Loading TV show card data...";
+    }
+
   async function fetchCSVTextForTVCard(filePath) {
     return await getCSVText(filePath);
   }
@@ -3241,6 +3249,15 @@ function renderEpisodeGridAsSeasonColumns(episodeRows) {
 
     tvShowRows = parseCSVRows(showsText);
     episodeRows = parseCSVRows(episodesText);
+
+    selectInput.disabled = false;
+    selectInput.placeholder = "Search for a TV show...";
+    
+    if (status) {
+      status.hidden = false;
+      status.textContent = "Select a TV show to generate a card.";
+    }
+        
   } catch (error) {
     console.error("TV show card failed to load:", error);
 
