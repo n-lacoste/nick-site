@@ -3009,26 +3009,46 @@ function renderEpisodeRankPieChart(episodeRows) {
     return `
       <section class="tv-card-panel tv-card-rank-pie-panel">
         <h3>Episode Rank Share</h3>
-        <p class="movie-compare-placeholder">No ranked episodes found for this show.</p>
+        <p class="movie-compare-placeholder">No episodes ranked yet for this show.</p>
       </section>
     `;
   }
 
   let currentPercent = 0;
 
-  const gradientParts = Object.keys(counts)
+  const sliceData = Object.keys(counts)
     .reverse()
     .filter(rank => counts[rank] > 0)
     .map(rank => {
       const count = counts[rank];
       const startPercent = currentPercent;
       const endPercent = currentPercent + (count / total) * 100;
+      const middlePercent = (startPercent + endPercent) / 2;
+      const percent = (count / total) * 100;
       const colors = getRankColor(rank);
 
       currentPercent = endPercent;
 
-      return `${colors.bg} ${startPercent}% ${endPercent}%`;
+      const angle = (middlePercent / 100) * Math.PI * 2 - Math.PI / 2;
+      const labelRadius = percent < 4 ? 46 : 36;
+      const x = 50 + Math.cos(angle) * labelRadius;
+      const y = 50 + Math.sin(angle) * labelRadius;
+
+      return {
+        rank,
+        count,
+        percent,
+        colors,
+        startPercent,
+        endPercent,
+        x,
+        y
+      };
     });
+
+  const gradientParts = sliceData.map(slice => {
+    return `${slice.colors.bg} ${slice.startPercent}% ${slice.endPercent}%`;
+  });
 
   const pieStyle = `background: conic-gradient(${gradientParts.join(", ")});`;
 
@@ -3036,35 +3056,29 @@ function renderEpisodeRankPieChart(episodeRows) {
     <section class="tv-card-panel tv-card-rank-pie-panel">
       <h3>Episode Rank Share</h3>
 
-      <div class="tv-card-rank-pie-wrap">
-        <div class="tv-card-rank-pie" style="${pieStyle}">
+      <div class="tv-card-rank-pie-wrap tv-card-rank-pie-wrap-no-legend">
+        <div class="tv-card-rank-pie tv-card-rank-pie-labelled" style="${pieStyle}">
+          ${sliceData.map(slice => {
+            return `
+              <div 
+                class="tv-card-rank-pie-label"
+                style="
+                  left:${slice.x}%;
+                  top:${slice.y}%;
+                  color:${slice.colors.text};
+                "
+                title="Rank ${escapeHTML(slice.rank)}: ${escapeHTML(slice.count)} episodes, ${escapeHTML(slice.percent.toFixed(1).replace(/\\.0$/, ""))}%"
+              >
+                <strong>${escapeHTML(slice.count)}</strong>
+                <span>${escapeHTML(slice.percent.toFixed(1).replace(/\\.0$/, ""))}%</span>
+              </div>
+            `;
+          }).join("")}
+
           <div class="tv-card-rank-pie-centre">
             <strong>${escapeHTML(total)}</strong>
             <span>Ranked</span>
           </div>
-        </div>
-
-        <div class="tv-card-rank-pie-legend">
-          ${Object.keys(counts).reverse().map(rank => {
-            const count = counts[rank];
-            const colors = getRankColor(rank);
-            const percent = total === 0 ? 0 : (count / total) * 100;
-
-            return `
-              <div class="tv-card-rank-pie-legend-row">
-                <span 
-                  class="tv-card-rank-pie-swatch"
-                  style="background:${colors.bg};"
-                ></span>
-
-                <span class="tv-card-rank-pie-rank">${escapeHTML(rank)}</span>
-                <strong>${escapeHTML(count)}</strong>
-                <span class="tv-card-rank-pie-percent">
-                  ${escapeHTML(percent.toFixed(1).replace(/\\.0$/, ""))}%
-                </span>
-              </div>
-            `;
-          }).join("")}
         </div>
       </div>
     </section>
