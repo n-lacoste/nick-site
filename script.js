@@ -3086,25 +3086,6 @@ function renderEpisodeRankPieChart(episodeRows) {
             <span>Ranked</span>
           </div>
         </div>
-
-        ${smallSlices.length > 0 ? `
-          <div class="tv-card-rank-pie-small-slices">
-            ${smallSlices.map(slice => {
-              const percentText = slice.percent.toFixed(1).replace(/\\.0$/, "");
-
-              return `
-                <div class="tv-card-rank-pie-small-slice">
-                  <span 
-                    class="tv-card-rank-pie-small-swatch"
-                    style="background:${slice.colors.bg};"
-                  ></span>
-                  <strong>${escapeHTML(slice.rank)}</strong>
-                  <span>${escapeHTML(slice.count)} / ${escapeHTML(percentText)}%</span>
-                </div>
-              `;
-            }).join("")}
-          </div>
-        ` : ""}
       </div>
     </section>
   `;
