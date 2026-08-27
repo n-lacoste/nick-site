@@ -3107,30 +3107,55 @@ function renderEpisodeRankPieChart(episodeRows) {
   }
 
   let tvCardEpisodeGridLayout = "blocks";
+  let tvCardEpisodeGridDensity = "default";
 
 function renderEpisodeGridControls() {
   const blocksActive = tvCardEpisodeGridLayout === "blocks";
   const columnsActive = tvCardEpisodeGridLayout === "columns";
+  const defaultActive = tvCardEpisodeGridDensity === "default";
+  const compactActive = tvCardEpisodeGridDensity === "compact";
 
   return `
     <div class="tv-card-episode-grid-toolbar">
-      <span>Grid View</span>
+      <div class="tv-card-episode-grid-toolbar-group">
+        <span>Grid View</span>
 
-      <button
-        id="tvCardEpisodeGridBlocks"
-        class="tv-card-grid-toggle ${blocksActive ? "active" : ""}"
-        type="button"
-      >
-        Season Blocks
-      </button>
+        <button
+          id="tvCardEpisodeGridBlocks"
+          class="tv-card-grid-toggle ${blocksActive ? "active" : ""}"
+          type="button"
+        >
+          Season Blocks
+        </button>
 
-      <button
-        id="tvCardEpisodeGridColumns"
-        class="tv-card-grid-toggle ${columnsActive ? "active" : ""}"
-        type="button"
-      >
-        Season Columns
-      </button>
+        <button
+          id="tvCardEpisodeGridColumns"
+          class="tv-card-grid-toggle ${columnsActive ? "active" : ""}"
+          type="button"
+        >
+          Season Columns
+        </button>
+      </div>
+
+      <div class="tv-card-episode-grid-toolbar-group">
+        <span>Detail</span>
+
+        <button
+          id="tvCardEpisodeGridDefault"
+          class="tv-card-grid-toggle ${defaultActive ? "active" : ""}"
+          type="button"
+        >
+          Default
+        </button>
+
+        <button
+          id="tvCardEpisodeGridCompact"
+          class="tv-card-grid-toggle ${compactActive ? "active" : ""}"
+          type="button"
+        >
+          Compact
+        </button>
+      </div>
     </div>
   `;
 }
@@ -3138,6 +3163,8 @@ function renderEpisodeGridControls() {
 function setupTVCardEpisodeGridControls(showRow, episodeRows) {
   const blocksButton = document.getElementById("tvCardEpisodeGridBlocks");
   const columnsButton = document.getElementById("tvCardEpisodeGridColumns");
+  const defaultButton = document.getElementById("tvCardEpisodeGridDefault");
+  const compactButton = document.getElementById("tvCardEpisodeGridCompact");
 
   if (blocksButton) {
     blocksButton.addEventListener("click", function () {
@@ -3149,6 +3176,20 @@ function setupTVCardEpisodeGridControls(showRow, episodeRows) {
   if (columnsButton) {
     columnsButton.addEventListener("click", function () {
       tvCardEpisodeGridLayout = "columns";
+      renderTVShowCard(showRow, episodeRows);
+    });
+  }
+
+  if (defaultButton) {
+    defaultButton.addEventListener("click", function () {
+      tvCardEpisodeGridDensity = "default";
+      renderTVShowCard(showRow, episodeRows);
+    });
+  }
+
+  if (compactButton) {
+    compactButton.addEventListener("click", function () {
+      tvCardEpisodeGridDensity = "compact";
       renderTVShowCard(showRow, episodeRows);
     });
   }
@@ -3264,7 +3305,7 @@ function renderEpisodeGridAsSeasonColumns(episodeRows) {
       ${renderEpisodeGridControls()}
 
       <div class="tv-card-episode-matrix-wrap">
-        <table class="tv-card-episode-matrix">
+        <table class="tv-card-episode-matrix tv-card-episode-matrix-${tvCardEpisodeGridDensity}">
           <thead>
             <tr>
               <th class="tv-card-episode-count-header">#</th>
@@ -3306,7 +3347,9 @@ function renderEpisodeGridAsSeasonColumns(episodeRows) {
                           title="S${escapeHTML(season)}E${escapeHTML(seasonEpisodeNumber)}: ${escapeHTML(episodeTitle)}"
                         >
                           <span class="tv-card-matrix-rank">${escapeHTML(formatValue(rank))}</span>
-                          <span class="tv-card-matrix-title">${escapeHTML(episodeTitle)}</span>
+                          ${tvCardEpisodeGridDensity === "default"
+                            ? `<span class="tv-card-matrix-title">${escapeHTML(episodeTitle)}</span>`
+                            : ""}
                         </div>
                       </td>
                     `;
