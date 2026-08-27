@@ -6522,3 +6522,156 @@ tr:hover td:nth-child(3) {
   font-weight: 900;
   line-height: 1;
 }
+
+/* TV Show Rankings, count row details button */
+.rankings-count-details-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  width: 100%;
+  margin: 10px 0 12px;
+}
+
+.rankings-count-details-row #row-count {
+  margin: 0;
+}
+
+.rankings-details-button {
+  flex: 0 0 auto;
+  height: 34px;
+  padding: 0 14px;
+  border: 1px solid #57bb8a;
+  border-radius: 999px;
+  background: #181818;
+  color: #57bb8a;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.rankings-details-button:hover {
+  background: #57bb8a;
+  color: #000000;
+}
+
+/* Details modal */
+.rankings-details-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.68);
+}
+
+.rankings-details-modal[hidden] {
+  display: none !important;
+}
+
+.rankings-details-modal-box {
+  position: relative;
+  width: min(760px, 100%);
+  max-height: min(82vh, 760px);
+  overflow-y: auto;
+  border: 1px solid #444;
+  border-radius: 18px;
+  background: #111;
+  color: #f5f5f5;
+  padding: 22px;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
+}
+
+.rankings-details-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 34px;
+  height: 34px;
+  border: 1px solid #444;
+  border-radius: 50%;
+  background: #181818;
+  color: #f5f5f5;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.rankings-details-close:hover {
+  border-color: #ffd966;
+  color: #ffd966;
+}
+
+.rankings-details-modal-box h3 {
+  margin: 0 42px 18px 0;
+  font-size: 24px;
+  line-height: 1.15;
+}
+
+.rankings-details-section {
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid #333;
+  border-radius: 14px;
+  background: #181818;
+}
+
+.rankings-details-section h4 {
+  margin: 0 0 10px;
+  color: #ffd966;
+  font-size: 14px;
+}
+
+.rankings-details-section p {
+  margin: 0;
+  color: #e6e6e6;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.rankings-details-tier-scale {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.rankings-details-weights-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.rankings-details-weights-grid div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid #333;
+  border-radius: 10px;
+  background: #111;
+}
+
+.rankings-details-weights-grid span {
+  color: #d6d6d6;
+  font-size: 12px;
+}
+
+.rankings-details-weights-grid strong {
+  color: #f5f5f5;
+  font-size: 13px;
+}
+
+@media (max-width: 700px) {
+  .rankings-count-details-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .rankings-details-weights-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
