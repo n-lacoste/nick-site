@@ -6458,40 +6458,6 @@ tr:hover td:nth-child(3) {
   font-size: 9px !important;
 }
 
-.tv-card-rank-pie-small-slices {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 6px 10px;
-  margin-top: 12px;
-}
-
-.tv-card-rank-pie-small-slice {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  color: #d6d6d6;
-  font-size: 10.5px;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.tv-card-rank-pie-small-swatch {
-  width: 9px;
-  height: 9px;
-  border-radius: 2px;
-}
-
-.tv-card-rank-pie-small-slice strong {
-  color: #f5f5f5;
-  font-size: 11px;
-  font-weight: 900;
-}
-
-.tv-card-rank-pie-small-slice span {
-  color: #bdbdbd;
-}
-
 /* TV Show Card, episode detail rank box */
 .tv-card-episode-detail-rank {
   overflow: hidden;
