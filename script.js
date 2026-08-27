@@ -3313,6 +3313,55 @@ function getEpisodeSortNumber(row) {
   return getNumber(row["Season Epi #"]) ?? getNumber(row["Episode Number"]) ?? 0;
 }
 
+function getSeasonEpisodeStats(rows) {
+          const episodeCount = rows.length;
+        
+          const ranks = rows
+            .map(row => getNumber(row["Rank"]))
+            .filter(value => value !== null);
+        
+          const averageRank = ranks.length
+            ? ranks.reduce((sum, value) => sum + value, 0) / ranks.length
+            : null;
+        
+          const averageRankText = averageRank === null
+            ? "—"
+            : averageRank
+                .toFixed(2)
+                .replace(/\.00$/, "")
+                .replace(/(\.\d)0$/, "$1");
+        
+          const averageColors = averageRank === null
+            ? { bg: "#1f1f1f", text: "#aaa" }
+            : getRankColor(averageRank);
+        
+          return {
+            episodeCount,
+            averageRankText,
+            averageColors
+          };
+        }
+        
+        function renderSeasonEpisodeStats(rows, extraClass = "") {
+          const stats = getSeasonEpisodeStats(rows);
+        
+          return `
+            <div class="tv-card-season-stats ${extraClass}">
+              <div class="tv-card-season-stat tv-card-season-count-stat">
+                <span>Episodes</span>
+                <strong>${escapeHTML(stats.episodeCount)}</strong>
+              </div>
+        
+              <div class="tv-card-season-stat tv-card-season-average-stat">
+                <span>Avg. Rank</span>
+                <strong style="background:${stats.averageColors.bg}; color:${stats.averageColors.text};">
+                  ${escapeHTML(stats.averageRankText)}
+                </strong>
+              </div>
+            </div>
+          `;
+} 
+
 function getEpisodesGroupedBySeason(episodeRows) {
   const seasons = {};
 
@@ -3377,8 +3426,11 @@ function renderEpisodeGridAsSeasonBlocks(episodeRows) {
           return `
             <div class="tv-card-season-block">
               <h4>S${escapeHTML(season)}</h4>
-
+            
+              ${renderSeasonEpisodeStats(rows, "tv-card-season-stats-blocks")}
+            
               <div class="tv-card-season-episodes">
+              
                 ${rows.map(row => {
                   const rank = getText(row, "Rank");
                   const colors = getRankColor(rank);
@@ -3426,15 +3478,26 @@ function renderEpisodeGridAsSeasonColumns(episodeRows) {
       <div class="tv-card-episode-matrix-wrap">
         <table class="tv-card-episode-matrix tv-card-episode-matrix-${tvCardEpisodeGridDensity}">
           <thead>
-            <tr>
-              <th class="tv-card-episode-count-header">#</th>
-              ${sortedSeasons.map(season => {
-                return `<th>S${escapeHTML(season)}</th>`;
-              }).join("")}
-            </tr>
-          </thead>
-
-          <tbody>
+                <tr>
+                  <th class="tv-card-episode-count-header">#</th>
+                  ${sortedSeasons.map(season => {
+                    return `<th>S${escapeHTML(season)}</th>`;
+                  }).join("")}
+                </tr>
+              
+                <tr class="tv-card-episode-season-stats-row">
+                  <th class="tv-card-episode-count-header tv-card-season-stats-corner"></th>
+                  ${sortedSeasons.map(season => {
+                    return `
+                      <th class="tv-card-episode-season-stats-cell">
+                        ${renderSeasonEpisodeStats(seasons[season], "tv-card-season-stats-columns")}
+                      </th>
+                    `;
+                  }).join("")}
+                </tr>
+              </thead>
+              
+              <tbody>
             ${Array.from({ length: maxEpisodeCount }, (_, index) => {
               const episodeNumber = index + 1;
 
