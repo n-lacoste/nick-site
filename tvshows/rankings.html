@@ -264,31 +264,65 @@
     }
   }
 
+  function setupWatchRankingsDetailsModal() {
+    const button = document.getElementById("watch-rankings-details-button");
+    const modal = document.getElementById("watch-rankings-details-modal");
+    const closeButton = document.getElementById("watch-rankings-details-close");
+
+    if (!button || !modal || !closeButton) return;
+
+    if (button.dataset.detailsReady === "true") return;
+    button.dataset.detailsReady = "true";
+
+    function openModal() {
+      modal.hidden = false;
+    }
+
+    function closeModal() {
+      modal.hidden = true;
+    }
+
+    button.addEventListener("click", openModal);
+    closeButton.addEventListener("click", closeModal);
+
+    modal.addEventListener("click", function (event) {
+      if (event.target === modal) {
+        closeModal();
+      }
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && !modal.hidden) {
+        closeModal();
+      }
+    });
+  }
+
   const tvShowsDisplayColumns = [
-      "Tier",
-      "Rk",
-      "TV Show",
-      "Times Seen",
-      "Seasons",
-      "Episodes",
-      "Years",
-      "My Rating",
-      "Me vs. IMDB",
-      "Updated",
-      "Plot",
-      "Main Character(s)",
-      "Side Characters",
-      "Emotion",
-      "Dialogue (Writing)",
-      "Purpose Met",
-      "Cast",
-      "Music & Sound",
-      "Rewatch Value",
-      "Tags",
-      "Season Episode Counts",
-      "Episode Average",
-      "Notes (Review)"
-    ];
+    "Tier",
+    "Rk",
+    "TV Show",
+    "Times Seen",
+    "Seasons",
+    "Episodes",
+    "Years",
+    "My Rating",
+    "Me vs. IMDB",
+    "Updated",
+    "Plot",
+    "Main Character(s)",
+    "Side Characters",
+    "Emotion",
+    "Dialogue (Writing)",
+    "Purpose Met",
+    "Cast",
+    "Music & Sound",
+    "Rewatch Value",
+    "Tags",
+    "Season Episode Counts",
+    "Episode Average",
+    "Notes (Review)"
+  ];
 
   const tvShowsFilters = [
     {
@@ -329,6 +363,8 @@
 
   window.NICK_SITE_INIT = function () {
     try {
+      setupWatchRankingsDetailsModal();
+
       if (typeof Papa === "undefined") {
         throw new Error("PapaParse did not load.");
       }
