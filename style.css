@@ -4959,8 +4959,9 @@ tr:hover td:nth-child(3) {
   border-bottom: none !important;
 }
 
-/* Episodes table, restore horizontal scrolling */
-.episodes-table-wrap {
+/* Episodes table, force true horizontal overflow */
+.episodes-page .table-wrap {
+  display: block;
   width: 100%;
   max-width: 100%;
   overflow-x: auto !important;
@@ -4968,7 +4969,8 @@ tr:hover td:nth-child(3) {
   -webkit-overflow-scrolling: touch;
 }
 
-.episodes-table-wrap .rankings-table {
-  width: max-content;
-  min-width: max-content;
+.episodes-page .rankings-table {
+  width: max-content !important;
+  min-width: 100%;
+  table-layout: auto !important;
 }
