@@ -2862,13 +2862,13 @@ function getShowTitle(row) {
     return colors;
   }
 
-  function makeStatBox(label, value, extraClass = "", inlineStyle = "") {
-        const styleAttribute = inlineStyle ? ` style="${inlineStyle}"` : "";
+ function makeStatBox(label, value, extraClass = "", valueStyle = "") {
+        const valueStyleAttribute = valueStyle ? ` style="${valueStyle}"` : "";
       
         return `
-          <div class="tv-card-stat ${extraClass}"${styleAttribute}>
+          <div class="tv-card-stat ${extraClass}">
             <span>${escapeHTML(label)}</span>
-            <strong>${escapeHTML(formatValue(value))}</strong>
+            <strong${valueStyleAttribute}>${escapeHTML(formatValue(value))}</strong>
           </div>
         `;
   }
