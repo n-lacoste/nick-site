@@ -1958,6 +1958,8 @@ async function loadMovieWatchHistory(filePath) {
     return Object.values(row).some(value => String(value ?? "").trim() !== "");
   });
 
+  updateRankingsLastUpdatedText(rows);
+  
   const table = document.getElementById("watch-history-table");
   const searchBox = document.getElementById("history-search");
   const rowCount = document.getElementById("history-row-count");
