@@ -3256,9 +3256,9 @@ function renderEpisodeGridAsSeasonColumns(episodeRows) {
             </p>
           </div>
 
-          <div class="tv-card-score-box tv-card-rating-score-box" style="${getMovieRatingStyle(rating)}">
+          <div class="tv-card-score-box tv-card-rating-score-box">
             <span>Rating</span>
-            <strong>${escapeHTML(formatValue(rating))}</strong>
+            <strong style="${getMovieRatingStyle(rating)}">${escapeHTML(formatValue(rating))}</strong>
           </div>
           
             <div class="tv-card-score-box">
