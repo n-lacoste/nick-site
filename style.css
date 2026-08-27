@@ -5307,3 +5307,237 @@ tr:hover td:nth-child(3) {
 .tv-card-episode-matrix-compact .tv-card-matrix-title {
   display: none !important;
 }
+
+/* TV Show Card, clickable episode detail overlay */
+.tv-card-episode-detail-trigger {
+  cursor: pointer !important;
+  border: 0 !important;
+  font: inherit !important;
+}
+
+.tv-card-episode-detail-trigger:hover {
+  filter: brightness(1.12);
+  transform: translateY(-1px);
+}
+
+.tv-card-episode-detail-trigger:focus-visible {
+  outline: 2px solid #ffffff !important;
+  outline-offset: 2px !important;
+}
+
+.tv-card-episode-detail-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.68);
+}
+
+.tv-card-episode-detail-overlay[hidden] {
+  display: none !important;
+}
+
+.tv-card-episode-detail-box {
+  position: relative;
+  width: min(720px, 100%);
+  max-height: min(78vh, 720px);
+  overflow-y: auto;
+  border: 1px solid #444;
+  border-radius: 18px;
+  background: #111;
+  color: #f5f5f5;
+  padding: 22px;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
+}
+
+.tv-card-episode-detail-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 34px;
+  height: 34px;
+  border: 1px solid #444;
+  border-radius: 50%;
+  background: #181818;
+  color: #f5f5f5;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.tv-card-episode-detail-close:hover {
+  border-color: #ffd966;
+  color: #ffd966;
+}
+
+.tv-card-episode-detail-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 82px;
+  gap: 14px;
+  align-items: start;
+  padding-right: 36px;
+}
+
+.tv-card-episode-detail-header p {
+  margin: 0 0 5px;
+  color: #bdbdbd;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.tv-card-episode-detail-header h3 {
+  margin: 0;
+  color: #f5f5f5;
+  font-size: 24px;
+  line-height: 1.15;
+}
+
+.tv-card-episode-detail-rank {
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid #333;
+  text-align: center;
+}
+
+.tv-card-episode-detail-rank span {
+  display: block;
+  padding: 5px 6px;
+  background: rgba(0, 0, 0, 0.28);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tv-card-episode-detail-rank strong {
+  display: block;
+  padding: 9px 6px;
+  color: inherit;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.tv-card-episode-detail-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 16px 0 18px;
+}
+
+.tv-card-episode-detail-meta span {
+  padding: 7px 10px;
+  border: 1px solid #333;
+  border-radius: 999px;
+  background: #181818;
+  color: #d6d6d6;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.tv-card-episode-detail-section {
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid #333;
+  border-radius: 14px;
+  background: #181818;
+}
+
+.tv-card-episode-detail-section h4 {
+  margin: 0 0 8px;
+  color: #ffd966;
+  font-size: 13px;
+  line-height: 1.1;
+}
+
+.tv-card-episode-detail-section p {
+  margin: 0;
+  color: #e6e6e6;
+  font-size: 14px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 600px) {
+  .tv-card-episode-detail-box {
+    padding: 18px;
+  }
+
+  .tv-card-episode-detail-header {
+    grid-template-columns: 1fr;
+    padding-right: 34px;
+  }
+
+  .tv-card-episode-detail-rank {
+    width: 82px;
+  }
+}
+
+/* TV Show Card, centre episode grid cells */
+.tv-card-episode-cell,
+.tv-card-episode-matrix-cell {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+}
+
+.tv-card-episode-cell span,
+.tv-card-matrix-rank,
+.tv-card-matrix-title {
+  display: block !important;
+  text-align: center !important;
+  width: 100% !important;
+}
+
+.tv-card-episode-matrix-cell {
+  flex-direction: column !important;
+  gap: 4px !important;
+}
+
+.tv-card-episode-matrix th,
+.tv-card-episode-matrix td {
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
+.tv-card-episode-matrix-cell button,
+.tv-card-episode-detail-trigger {
+  text-align: center !important;
+}
+
+.tv-card-episode-matrix-compact .tv-card-episode-matrix-cell {
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.tv-card-episode-matrix-compact .tv-card-matrix-rank {
+  text-align: center !important;
+}
+
+/* TV Show Card, prevent episode grid row hover background */
+.tv-card-episode-matrix tr:hover,
+.tv-card-episode-matrix tr:hover th,
+.tv-card-episode-matrix tr:hover td {
+  background: transparent !important;
+}
+
+.tv-card-episode-matrix td:hover,
+.tv-card-episode-matrix th:hover {
+  background: transparent !important;
+}
+
+.tv-card-episode-matrix-cell:hover,
+.tv-card-episode-cell:hover {
+  filter: brightness(1.12);
+}
+
+.tv-show-card table tr:hover,
+.tv-show-card table tr:hover td,
+.tv-show-card table tr:hover th {
+  background-color: transparent !important;
+}
