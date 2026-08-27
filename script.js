@@ -5724,8 +5724,18 @@ window.loadHomeTierSummary = async function loadHomeTierSummary() {
         : "—";
 
         const scoreRange = row.scores.length
-          ? `${Math.min(...row.scores)}–${Math.max(...row.scores)}`
-          : "—";
+            ? (() => {
+                const minScore = Math.round(Math.min(...row.scores));
+                const maxScore = Math.round(Math.max(...row.scores));
+          
+                const isSTier = String(row.tier ?? "").trim().toUpperCase() === "S";
+          
+                const displayMin = isSTier ? Math.min(minScore, 99) : minScore;
+                const displayMax = isSTier ? Math.min(maxScore, 99) : maxScore;
+          
+                return `${displayMin} – ${displayMax}`;
+              })()
+            : "—";
 
         html += `
           <tr>
