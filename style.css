@@ -5250,3 +5250,60 @@ tr:hover td:nth-child(3) {
   border-color: #60a5fa !important;
 }
 
+/* TV Show Card, episode grid compact/default toggle */
+.tv-card-episode-grid-toolbar {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 12px !important;
+  flex-wrap: wrap !important;
+}
+
+.tv-card-episode-grid-toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tv-card-episode-grid-toolbar-group span {
+  color: #bdbdbd;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+#tvCardEpisodeGridDefault {
+  border-color: #d6d6d6 !important;
+  color: #d6d6d6 !important;
+}
+
+#tvCardEpisodeGridDefault.active,
+#tvCardEpisodeGridDefault:hover {
+  background: #d6d6d6 !important;
+  color: #000000 !important;
+}
+
+#tvCardEpisodeGridCompact {
+  border-color: #ffd966 !important;
+  color: #ffd966 !important;
+}
+
+#tvCardEpisodeGridCompact.active,
+#tvCardEpisodeGridCompact:hover {
+  background: #ffd966 !important;
+  color: #000000 !important;
+}
+
+.tv-card-episode-matrix-compact .tv-card-episode-matrix-cell {
+  min-height: 30px !important;
+  padding: 3px 5px !important;
+}
+
+.tv-card-episode-matrix-compact .tv-card-matrix-rank {
+  font-size: 12px !important;
+  line-height: 1 !important;
+}
+
+.tv-card-episode-matrix-compact .tv-card-matrix-title {
+  display: none !important;
+}
