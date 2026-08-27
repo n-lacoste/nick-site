@@ -4841,3 +4841,14 @@ tr:hover td:nth-child(3) {
   margin-right: 8px;
   animation: rankings-loading-pulse 1s infinite ease-in-out;
 }
+
+.home-tier-nr-summary {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 42px;
+  flex-wrap: wrap;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 800;
+}
