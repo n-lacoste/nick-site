@@ -4413,13 +4413,13 @@ tr:hover td:nth-child(3) {
   font-style: italic;
 }
 
-@media (max-width: 1350px) {
+@media (max-width: 1250px) {
   .home-top10-grid-five {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 850px) {
   .home-top10-grid-five {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -4430,3 +4430,4 @@ tr:hover td:nth-child(3) {
     grid-template-columns: 1fr;
   }
 }
+
