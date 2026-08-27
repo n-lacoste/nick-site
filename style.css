@@ -6156,3 +6156,7 @@ tr:hover td:nth-child(3) {
   }
 }
 
+#tv-show-card-status[hidden] {
+  display: none !important;
+}
+
