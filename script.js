@@ -3458,9 +3458,10 @@ function renderEpisodeGridAsSeasonBlocks(episodeRows) {
             <div class="tv-card-season-block">
               <h4>S${escapeHTML(season)}</h4>
             
-              ${renderSeasonEpisodeStats(rows, "tv-card-season-stats-blocks")}
+              <div class="tv-card-season-block-row">
+                ${renderSeasonEpisodeStats(rows, "tv-card-season-stats-blocks")}
             
-              <div class="tv-card-season-episodes">
+                <div class="tv-card-season-episodes">
               
                 ${rows.map(row => {
                   const rank = getText(row, "Rank");
@@ -3483,6 +3484,7 @@ function renderEpisodeGridAsSeasonBlocks(episodeRows) {
                   `;
                   
                 }).join("")}
+                </div>
               </div>
             </div>
           `;
