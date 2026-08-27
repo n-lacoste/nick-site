@@ -19,16 +19,31 @@
 
     <div class="tv-card-controls">
 
-      <input
-          id="tv-show-card-select"
-          class="search-box tv-card-search"
-          placeholder="Select a TV show..."
-          autocomplete="off"
-        >
-        
-        <datalist id="tv-show-card-options"></datalist>
-        
-      <div id="tv-show-card-suggestions" class="tv-card-suggestions" hidden></div>
+            <div class="tv-card-search-row">
+        <div class="tv-card-search-left">
+          <input
+            id="tv-show-card-select"
+            class="search-box tv-card-search"
+            placeholder="Select a TV show..."
+            autocomplete="off"
+          >
+      
+          <datalist id="tv-show-card-options"></datalist>
+      
+          <div id="tv-show-card-suggestions" class="tv-card-suggestions" hidden></div>
+        </div>
+      
+        <div class="tv-card-tier-scale" aria-label="Tier scale">
+          <span class="tv-tier-pill tv-tier-s">S</span>
+          <span class="tv-tier-pill tv-tier-a1">A1</span>
+          <span class="tv-tier-pill tv-tier-a2">A2</span>
+          <span class="tv-tier-pill tv-tier-b1">B1</span>
+          <span class="tv-tier-pill tv-tier-b2">B2</span>
+          <span class="tv-tier-pill tv-tier-c1">C1</span>
+          <span class="tv-tier-pill tv-tier-c2">C2</span>
+          <span class="tv-tier-pill tv-tier-d">D</span>
+        </div>
+      </div>
     </div>
 
     <p id="tv-show-card-status" class="last-updated">Select a TV show to generate a card.</p>
