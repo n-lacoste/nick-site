@@ -5809,3 +5809,67 @@ tr:hover td:nth-child(3) {
   }
 }
 
+/* TV Show Card, Season Columns width toggle */
+:root {
+  --tv-card-season-column-width: 185px;
+  --tv-card-episode-number-column-width: 48px;
+}
+
+.tv-card-episode-matrix-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Default = fixed season column width */
+.tv-card-episode-matrix-column-default {
+  width: max-content !important;
+  min-width: 100% !important;
+  table-layout: fixed !important;
+}
+
+.tv-card-episode-matrix-column-default .tv-card-episode-number-col {
+  width: var(--tv-card-episode-number-column-width) !important;
+}
+
+.tv-card-episode-matrix-column-default .tv-card-season-col {
+  width: var(--tv-card-season-column-width) !important;
+}
+
+/* Stretch = divide available area evenly across seasons */
+.tv-card-episode-matrix-column-stretch {
+  width: 100% !important;
+  min-width: 100% !important;
+  table-layout: fixed !important;
+}
+
+.tv-card-episode-matrix-column-stretch .tv-card-episode-number-col {
+  width: var(--tv-card-episode-number-column-width) !important;
+}
+
+.tv-card-episode-matrix-column-stretch .tv-card-season-col {
+  width: auto !important;
+}
+
+.tv-card-width-toggle {
+  min-width: 82px;
+  border-color: #a78bfa !important;
+  color: #a78bfa !important;
+  background: #181818 !important;
+}
+
+.tv-card-width-toggle:hover {
+  background: #a78bfa !important;
+  color: #000000 !important;
+}
+
+.tv-card-width-toggle.tv-card-width-stretch {
+  background: #a78bfa !important;
+  border-color: #a78bfa !important;
+  color: #000000 !important;
+}
+
+.tv-card-width-toggle.tv-card-width-default {
+  background: #181818 !important;
+  border-color: #a78bfa !important;
+  color: #a78bfa !important;
+}
