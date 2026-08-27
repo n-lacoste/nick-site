@@ -5799,7 +5799,9 @@ window.loadHomeTop10Summaries = async function loadHomeTop10Summaries() {
         
           titleColumns: ["Artist"],
           rankColumns: ["Rk", "Artist Rank", "Rank"],
-          scoreColumns: ["Artist Score", "Score"],
+          scoreColumns: [],
+        
+          metaColumns: [],
         
           sortColumns: ["Rk", "Artist Rank", "Rank"],
           sortDirection: "asc",
@@ -5807,7 +5809,7 @@ window.loadHomeTop10Summaries = async function loadHomeTop10Summaries() {
         
           showRank: false,
           showScore: false,
-          useArtistSongCount: true
+          useArtistAlbumCount: true
         },
     
     songs: {
@@ -5985,48 +5987,51 @@ function formatTVShowTop10Meta(row) {
     });
   }
 
-  async function getArtistSongCounts() {
-  const counts = new Map();
-
-  if (!window.ARTIST_SONGS_CSV_URL) {
-    return counts;
-  }
-
-  try {
-    const text = await getCSVText(window.ARTIST_SONGS_CSV_URL);
-
-    const parsed = Papa.parse(text.trim(), {
-      header: true,
-      skipEmptyLines: true
-    });
-
-    const headers = parsed.meta.fields || [];
-    const rows = parsed.data || [];
-
-    const artistColumn = getFirstExistingColumn(headers, ["Artist"]);
-    const songColumn = getFirstExistingColumn(headers, ["Song Title", "Song", "Title"]);
-
-    if (!artistColumn || !songColumn) {
-      return counts;
-    }
-
-    rows.forEach(row => {
-      const artist = getText(row, artistColumn);
-      const songTitle = getText(row, songColumn);
-
-      if (artist === "" || songTitle === "") return;
-
-      counts.set(artist, (counts.get(artist) || 0) + 1);
-    });
-
-    return counts;
-  } catch (error) {
-    console.error("Could not load artist song counts:", error);
-    return counts;
-  }
+ async function getArtistAlbumCounts() {
+      const counts = new Map();
+    
+      if (!window.ALBUMS_CSV_URL) {
+        return counts;
+      }
+    
+      try {
+        const text = await getCSVText(window.ALBUMS_CSV_URL);
+    
+        const parsed = Papa.parse(text.trim(), {
+          header: true,
+          skipEmptyLines: true
+        });
+    
+        const headers = parsed.meta.fields || [];
+        const rows = parsed.data || [];
+    
+        const artistColumn = getFirstExistingColumn(headers, ["Artist"]);
+        const albumColumn = getFirstExistingColumn(headers, ["Album", "Album Title", "Project TitleArtist", "Project"]);
+        const rankingColumn = getFirstExistingColumn(headers, ["Ranking"]);
+    
+        if (!artistColumn || !albumColumn || !rankingColumn) {
+          return counts;
+        }
+    
+        rows.forEach(row => {
+          const artist = getText(row, artistColumn);
+          const album = getText(row, albumColumn);
+          const ranking = getNumber(row, rankingColumn);
+    
+          if (artist === "" || album === "") return;
+          if (ranking === null || isNaN(ranking) || ranking <= 0) return;
+    
+          counts.set(artist, (counts.get(artist) || 0) + 1);
+        });
+    
+        return counts;
+      } catch (error) {
+        console.error("Could not load artist album counts:", error);
+        return counts;
+      }
 }
 
-  const artistSongCounts = await getArtistSongCounts();
+const artistAlbumCounts = await getArtistAlbumCounts();
   
   function showCardMessage(list, message) {
     list.innerHTML = `<li class="home-top10-empty">${escapeHTML(message)}</li>`;
@@ -6087,10 +6092,10 @@ function formatTVShowTop10Meta(row) {
               meta = formatTVShowTop10Meta(row);
             }
           
-            if (config.useArtistSongCount) {
-              const count = artistSongCounts.get(title) || 0;
-              const countText = `${count} ranked song${count === 1 ? "" : "s"}`;
-          
+            if (config.useArtistAlbumCount) {
+              const count = artistAlbumCounts.get(title) || 0;
+              const countText = `${count} ranked album${count === 1 ? "" : "s"}`;
+            
               meta = [meta, countText].filter(Boolean).join(" • ");
             }
           
