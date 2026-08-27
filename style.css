@@ -4974,3 +4974,60 @@ tr:hover td:nth-child(3) {
   min-width: 100%;
   table-layout: auto !important;
 }
+
+/* TV Show Card, cleaner Show Info spacing */
+.tv-card-show-info-panel {
+  padding: 12px 14px 14px !important;
+}
+
+.tv-card-show-info-panel h3 {
+  margin: 0 0 10px !important;
+  font-size: 16px !important;
+  line-height: 1.1 !important;
+}
+
+.tv-card-info-grid-compact {
+  display: grid !important;
+  grid-template-columns:
+    140px
+    160px
+    115px
+    125px
+    160px
+    140px
+    minmax(220px, 320px)
+    170px !important;
+  gap: 8px !important;
+  align-items: stretch !important;
+  justify-content: center !important;
+}
+
+.tv-card-info-grid-compact .tv-card-stat {
+  min-height: 64px !important;
+  padding: 9px 10px !important;
+  box-sizing: border-box !important;
+}
+
+.tv-card-info-grid-compact .tv-card-stat span {
+  font-size: 11px !important;
+  line-height: 1.1 !important;
+  margin-bottom: 7px !important;
+}
+
+.tv-card-info-grid-compact .tv-card-stat strong {
+  font-size: 15px !important;
+  line-height: 1.12 !important;
+}
+
+.tv-card-info-grid-compact .tv-card-tags-stat strong {
+  font-size: 11.5px !important;
+  line-height: 1.12 !important;
+}
+
+.tv-card-info-grid-compact .tv-card-average-episode-rank-stat strong,
+.tv-card-info-grid-compact .tv-card-ranked-episodes-stat strong,
+.tv-card-info-grid-compact .tv-card-episodes-stat strong,
+.tv-card-info-grid-compact .tv-card-seasons-stat strong {
+  font-size: 17px !important;
+}
+
