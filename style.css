@@ -6284,3 +6284,50 @@ tr:hover td:nth-child(3) {
   line-height: 1.05 !important;
 }
 
+/* Homepage Tier Distribution dropdown, clean dark styling */
+.home-tier-select {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+
+  width: 120px !important;
+  min-width: 120px !important;
+  max-width: 120px !important;
+  height: 36px !important;
+
+  padding: 0 32px 0 12px !important;
+  box-sizing: border-box !important;
+
+  border: 1px solid #333 !important;
+  border-radius: 8px !important;
+  background-color: #181818 !important;
+  color: #f5f5f5 !important;
+
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  line-height: 36px !important;
+
+  outline: none !important;
+  box-shadow: none !important;
+  cursor: pointer !important;
+
+  background-image:
+    linear-gradient(45deg, transparent 50%, #f5f5f5 50%),
+    linear-gradient(135deg, #f5f5f5 50%, transparent 50%);
+  background-position:
+    calc(100% - 17px) 15px,
+    calc(100% - 11px) 15px;
+  background-size:
+    6px 6px,
+    6px 6px;
+  background-repeat: no-repeat;
+}
+
+.home-tier-select:hover {
+  border-color: #57bb8a !important;
+}
+
+.home-tier-select:focus {
+  border-color: #57bb8a !important;
+  box-shadow: 0 0 0 1px rgba(87, 187, 138, 0.35) !important;
+}
