@@ -6100,18 +6100,19 @@ window.loadHomeTierSummary = async function loadHomeTierSummary() {
   }
 
   function showLoading() {
-        if (nrSummary) {
-          nrSummary.hidden = true;
-        }
-      
-        table.innerHTML = `
-          <tbody>
-            <tr>
-              <td class="rankings-loading-cell">Loading tier summary...</td>
-            </tr>
-          </tbody>
-        `;
-  }
+      if (nrSummary) {
+        nrSummary.hidden = true;
+        nrSummary.innerHTML = "";
+      }
+    
+      table.innerHTML = `
+        <tbody>
+          <tr>
+            <td class="rankings-loading-cell">Loading tier summary...</td>
+          </tr>
+        </tbody>
+      `;
+    }
 
   function showError(label) {
     table.innerHTML = `
