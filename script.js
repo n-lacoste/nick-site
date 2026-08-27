@@ -6008,7 +6008,12 @@ function formatTVShowTop10Meta(row) {
           })
         
         .filter(item => item.title !== "")
-        .filter(item => item.rank !== null || item.score !== null)
+        .filter(item => {
+          return (
+            item.sortValue !== null &&
+            item.sortValue !== ""
+          );
+        })
         .sort((a, b) => {
               if (a.sortValue === null && b.sortValue === null) {
                 return a.title.localeCompare(b.title);
