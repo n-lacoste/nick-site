@@ -3693,6 +3693,9 @@ function renderEpisodeGridAsSeasonColumns(episodeRows) {
     .filter(title => title !== "")
     .sort((a, b) => a.localeCompare(b));
 
+  let tvShowSuggestionMatches = [];
+  let tvShowSuggestionIndex = -1;
+
   datalist.innerHTML = showOptions
     .map(title => `<option value="${escapeHTML(title)}"></option>`)
     .join("");
@@ -3727,18 +3730,33 @@ function renderTVShowSuggestions() {
 
   const matches = getFilteredTVShowOptions(selectInput.value);
 
+  tvShowSuggestionMatches = matches;
+
+  if (tvShowSuggestionIndex >= matches.length) {
+    tvShowSuggestionIndex = -1;
+  }
+
   if (matches.length === 0) {
-    hideTVShowSuggestions();
+    suggestionsBox.innerHTML = `
+      <div class="tv-card-suggestion-empty">
+        No matching TV shows found.
+      </div>
+    `;
+
+    suggestionsBox.hidden = false;
     return;
   }
 
   suggestionsBox.innerHTML = matches
-    .map(title => {
+    .map((title, index) => {
+      const activeClass = index === tvShowSuggestionIndex ? "active" : "";
+
       return `
         <button
-          class="tv-card-suggestion-option"
+          class="tv-card-suggestion-option ${activeClass}"
           type="button"
           data-tv-show-title="${escapeHTML(title)}"
+          data-tv-show-suggestion-index="${index}"
         >
           ${escapeHTML(title)}
         </button>
@@ -3748,23 +3766,41 @@ function renderTVShowSuggestions() {
 
   suggestionsBox.hidden = false;
 
- suggestionsBox.querySelectorAll(".tv-card-suggestion-option").forEach(button => {
-  button.addEventListener("mousedown", function (event) {
-    event.preventDefault();
+  suggestionsBox.querySelectorAll(".tv-card-suggestion-option").forEach(button => {
+    button.addEventListener("mousedown", function (event) {
+      event.preventDefault();
 
-    const title = button.dataset.tvShowTitle || "";
-    chooseTVShowSuggestion(title);
+      const title = button.dataset.tvShowTitle || "";
+      chooseTVShowSuggestion(title);
+    });
+
+    button.addEventListener("click", function (event) {
+      event.preventDefault();
+
+      const title = button.dataset.tvShowTitle || "";
+      chooseTVShowSuggestion(title);
+    });
   });
-
-  button.addEventListener("click", function (event) {
-    event.preventDefault();
-
-    const title = button.dataset.tvShowTitle || "";
-    chooseTVShowSuggestion(title);
-  });
-});
 }
 
+function updateTVShowSuggestionHighlight() {
+  if (!suggestionsBox) return;
+
+  const buttons = suggestionsBox.querySelectorAll(".tv-card-suggestion-option");
+
+  buttons.forEach((button, index) => {
+    button.classList.toggle("active", index === tvShowSuggestionIndex);
+  });
+
+  const activeButton = buttons[tvShowSuggestionIndex];
+
+  if (activeButton) {
+    activeButton.scrollIntoView({
+      block: "nearest"
+    });
+  }
+}
+  
   function findShowByInput(value) {
     const searchValue = normalize(value);
 
@@ -3799,7 +3835,7 @@ function renderTVShowSuggestions() {
     renderTVShowCard(showRow, showEpisodes);
   }
 
-  selectInput.addEventListener("focus", renderTVShowSuggestions);
+selectInput.addEventListener("focus", renderTVShowSuggestions);
 
 selectInput.addEventListener("change", function () {
   updateCardFromInput();
@@ -3807,12 +3843,72 @@ selectInput.addEventListener("change", function () {
 });
 
 selectInput.addEventListener("input", function () {
+  tvShowSuggestionIndex = -1;
   renderTVShowSuggestions();
 
   const showRow = findShowByInput(selectInput.value);
 
   if (showRow) {
     updateCardFromInput();
+  }
+});
+
+selectInput.addEventListener("keydown", function (event) {
+  if (event.key === "ArrowDown") {
+    event.preventDefault();
+
+    renderTVShowSuggestions();
+
+    if (tvShowSuggestionMatches.length === 0) return;
+
+    tvShowSuggestionIndex = tvShowSuggestionIndex === -1
+      ? 0
+      : (tvShowSuggestionIndex + 1) % tvShowSuggestionMatches.length;
+
+    updateTVShowSuggestionHighlight();
+    return;
+  }
+
+  if (event.key === "ArrowUp") {
+    event.preventDefault();
+
+    renderTVShowSuggestions();
+
+    if (tvShowSuggestionMatches.length === 0) return;
+
+    tvShowSuggestionIndex = tvShowSuggestionIndex === -1
+      ? tvShowSuggestionMatches.length - 1
+      : (tvShowSuggestionIndex - 1 + tvShowSuggestionMatches.length) % tvShowSuggestionMatches.length;
+
+    updateTVShowSuggestionHighlight();
+    return;
+  }
+
+  if (event.key === "Enter") {
+    event.preventDefault();
+
+    if (
+      tvShowSuggestionIndex >= 0 &&
+      tvShowSuggestionIndex < tvShowSuggestionMatches.length
+    ) {
+      chooseTVShowSuggestion(tvShowSuggestionMatches[tvShowSuggestionIndex]);
+      return;
+    }
+
+    const showRow = findShowByInput(selectInput.value);
+
+    if (!showRow) return;
+
+    selectInput.value = getShowTitle(showRow);
+    hideTVShowSuggestions();
+    updateCardFromInput();
+    return;
+  }
+
+  if (event.key === "Escape") {
+    event.preventDefault();
+    tvShowSuggestionIndex = -1;
+    hideTVShowSuggestions();
   }
 });
 
