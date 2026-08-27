@@ -3240,40 +3240,43 @@ function renderEpisodeGridAsSeasonColumns(episodeRows) {
   
   // TV Show Card
   function renderTVShowCard(showRow, episodeRows) {
-    const showTitle = getShowTitle(showRow);
-    const rating = getText(showRow, "My Rating");
-    const rank = getText(showRow, "Rk");
-    const tier = getText(showRow, "Tier");
-    const tierStyle = getTierStyle(tier);
-
-    output.innerHTML = `
-      <div class="tv-show-card">
-        <div class="tv-card-title-row">
-          <div>
-            <h3>${escapeHTML(showTitle)}</h3>
-            <p>
-              ${escapeHTML(formatYearRange(showRow))}
-            </p>
-          </div>
-
-          <div class="tv-card-score-box tv-card-rating-score-box">
-            <span>Rating</span>
-            <strong style="${getMovieRatingStyle(rating)}">${escapeHTML(formatValue(rating))}</strong>
-          </div>
-          
-            <div class="tv-card-score-box">
-              <span>Rank</span>
-              <strong>${escapeHTML(formatRankWithHash(rank))}</strong>
-            </div>
-          
-            <div class="tv-card-score-box">
-              <span>Tier</span>
-              <strong style="background:${tierStyle.bg}; color:${tierStyle.text};">
-                ${escapeHTML(formatValue(tier))}
-              </strong>
-            </div>
-          </div>
-        </div>
+          const showTitle = getShowTitle(showRow);
+          const rating = getText(showRow, "My Rating");
+          const rank = getText(showRow, "Rk");
+          const tier = getText(showRow, "Tier");
+          const tierStyle = getTierStyle(tier);
+        
+          output.innerHTML = `
+            <div class="tv-show-card">
+              <div class="tv-card-title-row">
+                <div>
+                  <h3>${escapeHTML(showTitle)}</h3>
+                  <p>
+                    ${escapeHTML(formatYearRange(showRow))}
+                  </p>
+                </div>
+        
+                <div class="tv-card-title-stats">
+                  <div class="tv-card-score-box tv-card-rating-score-box">
+                    <span>Rating</span>
+                    <strong style="${getMovieRatingStyle(rating)}">${escapeHTML(formatValue(rating))}</strong>
+                  </div>
+        
+                  <div class="tv-card-score-box">
+                    <span>Rank</span>
+                    <strong>${escapeHTML(formatRankWithHash(rank))}</strong>
+                  </div>
+        
+                  <div class="tv-card-score-box">
+                    <span>Tier</span>
+                    <strong style="background:${tierStyle.bg}; color:${tierStyle.text};">
+                      ${escapeHTML(formatValue(tier))}
+                    </strong>
+                  </div>
+                </div>
+              </div>
+        
+              <div class="tv-card-main-grid">
 
         <div class="tv-card-main-grid">
           ${renderShowInfo(showRow, episodeRows)}
