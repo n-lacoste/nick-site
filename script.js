@@ -5495,6 +5495,21 @@ window.loadHomeTierSummary = async function loadHomeTierSummary() {
     return isNaN(number) ? null : number;
   }
 
+  function isValidTop10SortValue(value, config) {
+        if (value === null) return false;
+        if (value === undefined) return false;
+        if (value === "") return false;
+      
+        if (config.sortType === "number") {
+          if (typeof value !== "number") return false;
+          if (isNaN(value)) return false;
+      
+          return value > 0;
+        }
+      
+        return String(value).trim() !== "";
+  }
+        
   function getTierSortIndex(tier) {
     const index = tierOrder.indexOf(tier);
 
@@ -5858,7 +5873,7 @@ window.loadHomeTop10Summaries = async function loadHomeTop10Summaries() {
         const rating = getText(row, "My Rating");
       
         const minsText = mins !== "" ? `${mins} Mins` : "";
-        const ratingText = rating !== "" ? rating : "";      
+        const ratingText = rating !== "" ? `Score: ${rating}` : "";
     
         return [year, minsText, ratingText]
           .filter(Boolean)
@@ -6007,12 +6022,8 @@ function formatTVShowTop10Meta(row) {
           })
         
         .filter(item => item.title !== "")
-        .filter(item => {
-          return (
-            item.sortValue !== null &&
-            item.sortValue !== ""
-          );
-        })
+        .filter(item => isValidTop10SortValue(item.sortValue, config))
+        
         .sort((a, b) => {
               if (a.sortValue === null && b.sortValue === null) {
                 return a.title.localeCompare(b.title);
