@@ -4519,3 +4519,36 @@ tr:hover td:nth-child(3) {
 .home-top10-title-centered {
   text-align: center;
 }
+
+/* Tier Distribution table visual adjustments */
+.home-tier-table th:nth-child(2),
+.home-tier-table td:nth-child(2) {
+  width: 130px;
+  min-width: 130px;
+  text-align: center;
+}
+
+.home-tier-table th:nth-child(1),
+.home-tier-table td:nth-child(1) {
+  width: 110px;
+  min-width: 110px;
+  text-align: center;
+}
+
+.home-tier-table td:nth-child(1) {
+  font-size: 26px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.home-tier-table th:nth-child(4),
+.home-tier-table td:nth-child(4) {
+  text-align: center;
+}
+
+.home-tier-table td:nth-child(4),
+.home-tier-example {
+  font-size: 12px;
+  line-height: 1.25;
+  text-align: center;
+}
