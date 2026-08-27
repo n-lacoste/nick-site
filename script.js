@@ -5883,6 +5883,21 @@ window.loadHomeTop10Summaries = async function loadHomeTop10Summaries() {
         return isNaN(number) ? null : number;
   }
 
+  function isValidTop10SortValue(value, config) {
+        if (value === null) return false;
+        if (value === undefined) return false;
+        if (value === "") return false;
+      
+        if (config.sortType === "number") {
+          if (typeof value !== "number") return false;
+          if (isNaN(value)) return false;
+      
+          return value > 0;
+        }
+      
+        return String(value).trim() !== "";
+  }
+  
   function getText(row, column) {
     if (!column) return "";
 
