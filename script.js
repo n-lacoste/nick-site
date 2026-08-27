@@ -6040,28 +6040,33 @@ function formatTVShowTop10Meta(row) {
         return;
       }
 
-      list.innerHTML = rankedRows.map(item => {
+      list.innerHTML = rankedRows.map((item, index) => {
         const rankText = config.showRank === false
-            ? ""
-            : item.rank !== null
-              ? `#${item.rank}`
-              : "";
-          
-          const scoreText = config.showScore === false
-            ? ""
-            : item.score !== null
-              ? `${item.score}`
-              : "";
-          
-          const metaText = [rankText, scoreText, item.meta].filter(Boolean).join(" • ");
-
+          ? ""
+          : item.rank !== null
+            ? `#${item.rank}`
+            : "";
+      
+        const scoreText = config.showScore === false
+          ? ""
+          : item.score !== null
+            ? `${item.score}`
+            : "";
+      
+        const metaText = [rankText, scoreText, item.meta].filter(Boolean).join(" • ");
+      
         return `
-          <li>
-            <span class="home-top10-item-title">${escapeHTML(item.title)}</span>
-            ${metaText ? `<span class="home-top10-item-meta">${escapeHTML(metaText)}</span>` : ""}
+          <li class="home-top10-row">
+            <span class="home-top10-number">${index + 1}</span>
+      
+            <span class="home-top10-main">
+              <span class="home-top10-item-title">${escapeHTML(item.title)}</span>
+              ${metaText ? `<span class="home-top10-item-meta">${escapeHTML(metaText)}</span>` : ""}
+            </span>
           </li>
         `;
       }).join("");
+            
     } catch (error) {
       console.error(`Could not load ${config.label}:`, error);
       showCardMessage(list, `Could not load ${config.label}.`);
