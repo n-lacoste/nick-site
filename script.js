@@ -3258,7 +3258,7 @@ function renderEpisodeGridAsSeasonColumns(episodeRows) {
           output.innerHTML = `
             <div class="tv-show-card">
               <div class="tv-card-title-row">
-                <div>
+                <div class="tv-card-title-main">
                   <h3>${escapeHTML(showTitle)}</h3>
                   <p>
                     ${escapeHTML(formatYearRange(showRow))}
@@ -3286,26 +3286,24 @@ function renderEpisodeGridAsSeasonColumns(episodeRows) {
               </div>
         
               <div class="tv-card-main-grid">
-
-        <div class="tv-card-main-grid">
-          ${renderShowInfo(showRow, episodeRows)}
+                ${renderShowInfo(showRow, episodeRows)}
         
-          <div class="tv-card-side-by-side-panels">
-            ${renderRankCountChart(episodeRows)}
-            ${renderCategoricalRanks(showRow)}
-          </div>
+                <div class="tv-card-side-by-side-panels">
+                  ${renderRankCountChart(episodeRows)}
+                  ${renderCategoricalRanks(showRow)}
+                </div>
         
-          ${renderNotes(showRow)}
-          ${renderEpisodeGrid(episodeRows)}
-        </div>
-      </div>
-    `;
-
-    setupTVCardEpisodeGridControls(showRow, episodeRows);
-    
-    if (status) {
-      status.hidden = true;
-    }
+                ${renderNotes(showRow)}
+                ${renderEpisodeGrid(episodeRows)}
+              </div>
+            </div>
+          `;
+        
+          setupTVCardEpisodeGridControls(showRow, episodeRows);
+        
+          if (status) {
+            status.hidden = true;
+          }
   }
 
   let tvShowRows = [];
