@@ -3347,7 +3347,33 @@ function setupTVCardEpisodeGridControls(showRow, episodeRows) {
 }
 
 function getEpisodeSortNumber(row) {
-  return getNumber(row["Season Epi #"]) ?? getNumber(row["Episode Number"]) ?? 0;
+  const value =
+    getText(row, "Season Epi #") ||
+    getText(row, "Episode Number") ||
+    "";
+
+  const text = String(value).trim().toUpperCase();
+
+  if (text === "") return Number.POSITIVE_INFINITY;
+
+  const match = text.match(/^(\d+)\s*([A-Z])?$/);
+
+  if (match) {
+    const numberPart = Number(match[1]);
+    const letterPart = match[2] || "";
+
+    const letterValue = letterPart
+      ? (letterPart.charCodeAt(0) - 64) / 100
+      : 0;
+
+    return numberPart + letterValue;
+  }
+
+  const fallbackNumber = getNumber(value);
+
+  return fallbackNumber === null
+    ? Number.POSITIVE_INFINITY
+    : fallbackNumber;
 }
 
 function getSeasonEpisodeStats(rows) {
