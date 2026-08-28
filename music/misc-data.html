@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Misc. Music | Nick Site</title>
+  <link rel="stylesheet" href="/nick-site/style.css">
+</head>
+
+<body>
+  <div id="site-header"></div>
+  <script src="/nick-site/nav-loader.js"></script>
+
+  <main>
+    <div class="page-topline">
+      <div>
+        <h2>Further Analysis Tools: Music</h2>
+        <p>Miscellaneous music tools, charts, rankings, and archive tables built from the music spreadsheets.</p>
+      </div>
+
+      <p id="last-updated" class="last-updated">Last updated: —</p>
+    </div>
+
+    <section class="music-data-tool">
+      <div class="music-data-tool-header">
+        <div>
+          <h3>Albums by Year</h3>
+          <p>Search a year to see every ranked album from that year.</p>
+        </div>
+
+        <div class="music-data-control-row">
+          <label>
+            Year
+            <input id="music-data-year-input" class="filter-text-input" type="number" value="2000">
+          </label>
+
+          <button id="music-data-year-button" class="filter-button" type="button">
+            Search Year
+          </button>
+        </div>
+      </div>
+
+      <div id="music-data-year-summary" class="music-data-summary"></div>
+
+      <div class="music-data-table-wrap">
+        <table id="music-data-year-table" class="music-data-table"></table>
+      </div>
+    </section>
+
+    <section class="music-data-tool">
+      <div class="music-data-tool-header">
+        <div>
+          <h3>Best Album Years</h3>
+          <p>Rank years by album quality using tier counts and a points system.</p>
+        </div>
+
+        <div class="music-data-control-row">
+          <label>
+            Minimum Albums
+            <input id="music-data-min-count-input" class="filter-text-input" type="number" value="10">
+          </label>
+
+          <button id="music-data-min-count-button" class="filter-button" type="button">
+            Apply
+          </button>
+        </div>
+      </div>
+
+      <div id="music-data-best-years-summary" class="music-data-summary"></div>
+
+      <div class="music-data-table-wrap">
+        <table id="music-data-best-years-table" class="music-data-table"></table>
+      </div>
+    </section>
+
+    <section class="music-data-tool">
+      <div class="music-data-tool-header">
+        <div>
+          <h3>Albums by Year Archive</h3>
+          <p>Full year-by-year archive with no minimum album count.</p>
+        </div>
+      </div>
+
+      <div id="music-data-archive-summary" class="music-data-summary"></div>
+
+      <div class="music-data-table-wrap">
+        <table id="music-data-archive-table" class="music-data-table"></table>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+  <script>
+    window.NICK_SITE_INIT = function () {
+      try {
+        if (typeof Papa === "undefined") {
+          throw new Error("PapaParse did not load.");
+        }
+
+        if (typeof loadMusicDataPage !== "function") {
+          throw new Error("loadMusicDataPage is not defined. script.js did not load correctly or has a syntax error.");
+        }
+
+        loadMusicDataPage();
+      } catch (error) {
+        console.error(error);
+      }
+    };
+  </script>
+
+  <script src="/nick-site/script-loader.js"></script>
+</body>
+</html>
