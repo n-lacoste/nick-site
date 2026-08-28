@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Songs | Nick Site</title>
+  <link rel="stylesheet" href="/nick-site/style.css">
+</head>
+
+<body>
+  <div id="site-header"></div>
+  <script src="/nick-site/nav-loader.js"></script>
+
+  <main>
+    <div class="page-topline">
+      <div>
+        <h2>Songs</h2>
+        <p>Song rankings with artist, tier, album, year, and ranking information.</p>
+      </div>
+
+      <p id="last-updated" class="last-updated">Last updated: —</p>
+    </div>
+
+    <div class="movie-controls-row">
+      <details id="rankings-columns-dropdown" class="filter-dropdown">
+        <summary>Display Columns</summary>
+
+        <label class="filter-option select-all-option">
+          <input type="checkbox" id="rankings-columns-select-all">
+          Select All
+        </label>
+
+        <div id="rankings-columns" class="filter-options"></div>
+      </details>
+
+      <div class="table-controls">
+        <label for="rankings-sort-column">Sort by:</label>
+        <select id="rankings-sort-column" class="sort-select"></select>
+        <button id="rankings-sort-direction" class="sort-button" type="button">A–Z</button>
+      </div>
+
+      <div class="show-control">
+        <label for="rankings-show-count">Show:</label>
+        <select id="rankings-show-count" class="sort-select">
+          <option value="25" selected>25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+          <option value="250">250</option>
+          <option value="all">All</option>
+        </select>
+      </div>
+
+      <button id="download-csv" class="download-button" type="button" aria-label="Download CSV">
+        <svg class="download-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"></path>
+        </svg>
+      </button>
+
+      <div class="rankings-search-wrap">
+        <input
+          id="rankings-search"
+          class="search-box rankings-search-input"
+          type="text"
+          placeholder="Search songs..."
+        >
+
+        <button
+          id="rankings-search-clear"
+          class="rankings-search-clear-button"
+          type="button"
+          aria-label="Clear search"
+          title="Clear search"
+        >
+          ×
+        </button>
+
+        <button id="rankings-search-button" class="rankings-search-button" type="button">
+          Search
+        </button>
+      </div>
+    </div>
+
+    <div id="column-summary" class="column-summary" hidden>
+      <div>
+        <strong>Displayed:</strong>
+        <span id="visible-columns-summary"></span>
+      </div>
+
+      <div>
+        <strong>Not visible:</strong>
+        <span id="hidden-columns-summary"></span>
+      </div>
+    </div>
+
+    <details id="songs-filters-panel" class="filters-panel">
+      <summary class="filters-panel-summary">
+        <span class="filters-summary-inner">
+          <span>Filters</span>
+          <span id="filters-active-indicator" class="filters-indicator">No filters</span>
+        </span>
+      </summary>
+
+      <div class="filters-panel-actions">
+        <button id="apply-movies-filters" class="filter-button" type="button">
+          Apply filters
+        </button>
+
+        <button id="clear-movies-filters" class="filter-button" type="button">
+          Clear all filters
+        </button>
+      </div>
+
+      <div class="advanced-filters-grid">
+        <details class="filter-dropdown">
+          <summary>Year Range</summary>
+
+          <div class="filter-options advanced-filter-options">
+            <div class="range-inputs">
+              <input id="year-start-filter" class="filter-text-input" type="number" placeholder="Start">
+              <input id="year-end-filter" class="filter-text-input" type="number" placeholder="End">
+            </div>
+          </div>
+        </details>
+
+        <details class="filter-dropdown">
+          <summary>Decade</summary>
+
+          <label class="filter-option select-all-option">
+            <input type="checkbox" id="song-decade-select-all" checked>
+            Select All
+          </label>
+
+          <div id="song-decade-filter" class="filter-options"></div>
+        </details>
+
+        <details class="filter-dropdown">
+          <summary>Tier</summary>
+
+          <label class="filter-option select-all-option">
+            <input type="checkbox" id="song-tier-select-all" checked>
+            Select All
+          </label>
+
+          <div id="song-tier-filter" class="filter-options"></div>
+        </details>
+
+        <details class="filter-dropdown">
+          <summary>Artist</summary>
+
+          <label class="filter-option select-all-option">
+            <input type="checkbox" id="song-artist-select-all" checked>
+            Select All
+          </label>
+
+          <div id="song-artist-filter" class="filter-options"></div>
+        </details>
+
+        <details class="filter-dropdown">
+          <summary>Album</summary>
+
+          <label class="filter-option select-all-option">
+            <input type="checkbox" id="song-album-select-all" checked>
+            Select All
+          </label>
+
+          <div id="song-album-filter" class="filter-options"></div>
+        </details>
+      </div>
+
+      <div id="filters-applied-summary" class="filters-applied-summary" hidden>
+        <strong>Filters Applied:</strong>
+        <span id="filters-applied-summary-text">None</span>
+      </div>
+    </details>
+
+    <div id="songs-error" style="display:none; color:#ffb4b4; background:#3a1111; border:1px solid #8a3333; padding:12px; border-radius:8px; margin:12px 0;"></div>
+
+    <div id="row-count" class="row-count"></div>
+
+    <div class="table-wrap">
+      <table id="rankings-table" class="rankings-table">
+        <tbody>
+          <tr>
+            <td class="rankings-loading-cell">Loading song rankings...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <div id="cell-modal" class="cell-modal" hidden>
+    <div class="cell-modal-content">
+      <button id="cell-modal-close" class="cell-modal-close" type="button">×</button>
+      <h3 id="cell-modal-title"></h3>
+      <div id="cell-modal-text"></div>
+    </div>
+  </div>
+
+  <script>
+    function showSongsError(error) {
+      console.error(error);
+
+      const errorBox = document.getElementById("songs-error");
+
+      if (errorBox) {
+        errorBox.style.display = "block";
+        errorBox.textContent = "Table failed to load: " + error.message;
+      }
+
+      const table = document.getElementById("rankings-table");
+
+      if (table) {
+        table.innerHTML = `
+          <tbody>
+            <tr>
+              <td>
+                Could not load song rankings. Check the console for details.
+              </td>
+            </tr>
+          </tbody>
+        `;
+      }
+    }
+
+    window.addEventListener("error", event => {
+      showSongsError(event.error || new Error(event.message));
+    });
+
+    window.addEventListener("unhandledrejection", event => {
+      showSongsError(event.reason || new Error("Unhandled promise rejection"));
+    });
+
+    const songDisplayColumns = [
+      "Tier",
+      "Ranking",
+      "Song",
+      "Song Name",
+      "Song Title",
+      "Artist-Group",
+      "Artist",
+      "Album",
+      "Year",
+      "Decade",
+      "Updated"
+    ];
+
+    const songFilters = [
+      {
+        column: "Decade",
+        targetId: "song-decade-filter",
+        selectAllId: "song-decade-select-all",
+        mode: "or",
+        options: ["1950s", "1960s", "1970s", "1980s", "1990s", "2000s", "2010s", "2020s"]
+      },
+      {
+        column: "Tier",
+        targetId: "song-tier-filter",
+        selectAllId: "song-tier-select-all",
+        mode: "or",
+        options: ["(S)", "S", "A1", "A2", "A3", "B1", "B2", "B3", "C1", "C2", "C3", "D", "NR"]
+      },
+      {
+        column: "Artist-Group",
+        targetId: "song-artist-filter",
+        selectAllId: "song-artist-select-all",
+        mode: "or"
+      },
+      {
+        column: "Album",
+        targetId: "song-album-filter",
+        selectAllId: "song-album-select-all",
+        mode: "or"
+      }
+    ];
+
+    window.NICK_SITE_INIT = function () {
+      try {
+        if (typeof Papa === "undefined") {
+          throw new Error("PapaParse did not load.");
+        }
+
+        if (typeof loadCSV !== "function") {
+          throw new Error("loadCSV is not defined. script.js did not load correctly or has a syntax error.");
+        }
+
+        loadCSV(
+          window.SONGS_CSV_URL,
+          "rankings-table",
+          "rankings-search",
+          songDisplayColumns,
+          "rankings-columns",
+          "rankings-sort-column",
+          "rankings-sort-direction",
+          songFilters,
+          "rankings-show-count",
+          null
+        ).catch(showSongsError);
+      } catch (error) {
+        showSongsError(error);
+      }
+    };
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="/nick-site/script-loader.js"></script>
+</body>
+</html>
