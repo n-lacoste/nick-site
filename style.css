@@ -7320,3 +7320,36 @@ tr:hover td:nth-child(3) {
   }
 }
 
+.album-sub-tier-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  height: 28px;
+  padding: 0 7px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.album-sub-tier-a {
+  background: #d4edbc;
+  color: #11734b;
+}
+
+.album-sub-tier-b {
+  background: #ffe5a0;
+  color: #473821;
+}
+
+.album-sub-tier-c {
+  background: #ffcfc9;
+  color: #b10202;
+}
+
+.tv-tier-nr {
+  background: #ffcfc9;
+  color: #b10202;
+}
+
