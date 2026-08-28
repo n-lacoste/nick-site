@@ -450,14 +450,17 @@
     /* Hidden YouTube players */
 
     .birthday-youtube-wrap,
-    .hidden-youtube-layer {
-      position: fixed;
-      width: 1px;
-      height: 1px;
-      left: -9999px;
-      top: -9999px;
-      overflow: hidden;
-    }
+.hidden-youtube-layer {
+  position: fixed;
+  right: 8px;
+  bottom: 8px;
+  width: 160px;
+  height: 90px;
+  opacity: 0.01;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
 
     /* Confetti */
 
@@ -807,30 +810,30 @@
 
       if (youtubeWrap && youtubeFrame) {
         youtubeWrap.hidden = false;
-        youtubeFrame.src = "https://www.youtube.com/embed/AgFeZr5ptV8?start=39&autoplay=1";
+        youtubeFrame.src = "https://www.youtube.com/embed/AgFeZr5ptV8?start=39&autoplay=1&playsinline=1";
       }
     }
 
-    function makeHiddenYouTubeFrame(src, title) {
+   function makeHiddenYouTubeFrame(src, title) {
       const frame = document.createElement("iframe");
-
-      frame.width = "560";
-      frame.height = "315";
+    
+      frame.width = "160";
+      frame.height = "90";
       frame.src = src;
       frame.title = title;
       frame.frameBorder = "0";
-      frame.allow = "autoplay; encrypted-media";
+      frame.allow = "autoplay; encrypted-media; fullscreen; picture-in-picture";
       frame.allowFullscreen = true;
       frame.className = "hidden-youtube-layer";
-
+    
       document.body.appendChild(frame);
-
+    
       return frame;
     }
 
     function addExtraLoudSongLayer() {
       makeHiddenYouTubeFrame(
-        "https://www.youtube.com/embed/AgFeZr5ptV8?start=39&autoplay=1",
+        "https://www.youtube.com/embed/AgFeZr5ptV8?start=39&autoplay=1&playsinline=1",
         "Definitely paused music"
       );
     }
