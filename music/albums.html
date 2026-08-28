@@ -1,1 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Albums | Nick Site</title>
+  <link rel="stylesheet" href="/nick-site/style.css">
+</head>
 
+<body>
+  <div id="site-header"></div>
+  <script src="/nick-site/nav-loader.js"></script>
+
+  <main>
+    <div class="page-topline">
+      <div>
+        <h2>Albums</h2>
+        <p>Album rankings with artist, year, tier, genre, and rating information.</p>
+      </div>
+
+      <p id="last-updated" class="last-updated">Last updated: —</p>
+    </div>
+
+    <div class="movie-controls-row">
+      <details id="rankings-columns-dropdown" class="filter-dropdown">
+        <summary>Columns</summary>
+
+        <div class="filter-actions">
+          <button id="rankings-columns-select-all" class="filter-button" type="button">
+            Select All
+          </button>
+        </div>
+
+        <div id="rankings-columns" class="filter-options"></div>
+      </details>
+
+      <details class="filters-panel">
+        <summary class="filters-panel-summary">
+          Filters
+          <span id="filters-indicator" class="filters-indicator">None</span>
+        </summary>
+
+        <div class="advanced-filters-grid">
+          <details class="filter-dropdown">
+            <summary>Tier</summary>
+
+            <div class="filter-actions">
+              <button id="album-tier-select-all" class="filter-button" type="button">
+                Select All
+              </button>
+            </div>
+
+            <div id="album-tier-filter" class="filter-options"></div>
+          </details>
+
+          <details class="filter-dropdown">
+            <summary>Artist</summary>
+
+            <div class="filter-actions">
+              <button id="album-artist-select-all" class="filter-button" type="button">
+                Select All
+              </button>
+            </div>
+
+            <div id="album-artist-filter" class="filter-options"></div>
+          </details>
+
+          <details class="filter-dropdown">
+            <summary>Year</summary>
+
+            <div class="filter-actions">
+              <button id="album-year-select-all" class="filter-button" type="button">
+                Select All
+              </button>
+            </div>
+
+            <div id="album-year-filter" class="filter-options"></div>
+          </details>
+
+          <details class="filter-dropdown">
+            <summary>Genres</summary>
+
+            <div class="filter-actions">
+              <button id="album-genre-select-all" class="filter-button" type="button">
+                Select All
+              </button>
+            </div>
+
+            <div id="album-genre-filter" class="filter-options"></div>
+          </details>
+        </div>
+      </details>
+
+      <div class="table-controls">
+        <label class="show-control">
+          Show
+          <select id="rankings-show-count" class="sort-select">
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+            <option value="250">250</option>
+            <option value="all">All</option>
+          </select>
+        </label>
+
+        <label class="show-control">
+          Sort
+          <select id="rankings-sort-column" class="sort-select"></select>
+        </label>
+
+        <button id="rankings-sort-direction" class="sort-button" type="button">
+          Asc
+        </button>
+
+        <button id="download-csv" class="download-button" type="button">
+          Download CSV
+        </button>
+      </div>
+
+      <div class="rankings-search-wrap">
+        <input
+          id="rankings-search"
+          class="search-box rankings-search-input"
+          type="text"
+          placeholder="Search albums..."
+        >
+
+        <button
+          id="rankings-search-clear"
+          class="rankings-search-clear-button"
+          type="button"
+          aria-label="Clear search"
+          title="Clear search"
+        >
+          ×
+        </button>
+
+        <button id="rankings-search-button" class="rankings-search-button" type="button">
+          Search
+        </button>
+      </div>
+    </div>
+
+    <div id="column-summary" class="column-summary" hidden>
+      <p id="visible-columns-summary"></p>
+      <p id="hidden-columns-summary"></p>
+    </div>
+
+    <div id="album-rating-status" class="movies-row-count"></div>
+    <div id="row-count" class="movies-row-count"></div>
+
+    <div class="table-wrap">
+      <table id="rankings-table" class="rankings-table">
+        <tbody>
+          <tr>
+            <td class="rankings-loading-cell">Loading album rankings...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+  <script>
+    function showAlbumRankingsError(error) {
+      console.error(error);
+
+      const table = document.getElementById("rankings-table");
+
+      if (table) {
+        table.innerHTML = `
+          <tbody>
+            <tr>
+              <td>
+                Could not load album rankings. Check the console for details.
+              </td>
+            </tr>
+          </tbody>
+        `;
+      }
+    }
+
+    const albumDisplayColumns = [
+      "Tier",
+      "Ranking",
+      "Sub-Rank",
+      "Album",
+      "Artist",
+      "Year",
+      "xRank%",
+      "Genres",
+      "SORT",
+      "Updated"
+    ];
+
+    const albumFilters = [
+      {
+        column: "Tier",
+        targetId: "album-tier-filter",
+        selectAllId: "album-tier-select-all",
+        mode: "or",
+        options: ["(S)", "S", "A1", "A2", "A3", "B1", "B2", "B3", "C1", "C2", "C3", "D", "NR"]
+      },
+      {
+        column: "Artist",
+        targetId: "album-artist-filter",
+        selectAllId: "album-artist-select-all",
+        mode: "or"
+      },
+      {
+        column: "Year",
+        targetId: "album-year-filter",
+        selectAllId: "album-year-select-all",
+        mode: "or"
+      },
+      {
+        column: "Genres",
+        targetId: "album-genre-filter",
+        selectAllId: "album-genre-select-all",
+        mode: "contains"
+      }
+    ];
+
+    window.NICK_SITE_INIT = function () {
+      try {
+        if (typeof Papa === "undefined") {
+          throw new Error("PapaParse did not load.");
+        }
+
+        if (typeof loadCSV !== "function") {
+          throw new Error("loadCSV is not defined. script.js did not load correctly or has a syntax error.");
+        }
+
+        loadCSV(
+          window.ALBUMS_CSV_URL,
+          "rankings-table",
+          "rankings-search",
+          albumDisplayColumns,
+          "rankings-columns",
+          "rankings-sort-column",
+          "rankings-sort-direction",
+          albumFilters,
+          "rankings-show-count",
+          "album-rating-status"
+        ).catch(showAlbumRankingsError);
+      } catch (error) {
+        showAlbumRankingsError(error);
+      }
+    };
+  </script>
+
+  <script src="/nick-site/script-loader.js"></script>
+</body>
+</html>
