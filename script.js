@@ -416,6 +416,11 @@ async function loadCSV(
   let sortColumn = visibleHeaders.includes("Rk") ? "Rk" : visibleHeaders[0] || null;
   let sortDirection = "asc";
   let rowLimit = 25;
+  
+  if (filePath === window.ALBUMS_CSV_URL && visibleHeaders.includes("xRank%")) {
+    sortColumn = "xRank%";
+    sortDirection = "desc";
+  }
 
   const expandableColumns = [
       "Notes (Review)",
@@ -1080,8 +1085,8 @@ function getVisibleEpisodeRankAverage(rowsToShow) {
         return 0;
       }
 
-      const numA = Number(valueA.replace(/,/g, ""));
-      const numB = Number(valueB.replace(/,/g, ""));
+      const numA = Number(valueA.replace(/,/g, "").replace(/%/g, ""));
+      const numB = Number(valueB.replace(/,/g, "").replace(/%/g, ""));
 
       if (!isNaN(numA) && !isNaN(numB)) {
         return sortDirection === "asc" ? numA - numB : numB - numA;
