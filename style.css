@@ -6146,6 +6146,7 @@ tr:hover td:nth-child(3) {
   max-height: 44px !important;
   box-sizing: border-box !important;
   margin: 0 !important;
+  padding: 4px 4px 4px 18px !important;
 }
 
 .tv-card-tier-scale {
@@ -6884,7 +6885,7 @@ tr:hover td:nth-child(3) {
 /* TV Show Card, fixed 250px gap between search and tier scale */
 .tv-card-search-row {
   display: grid !important;
-  grid-template-columns: 280px 250px auto !important;
+  grid-template-columns: 280px 463px auto !important;
   align-items: center !important;
   gap: 0 !important;
 
