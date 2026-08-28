@@ -3388,11 +3388,8 @@ function getSeasonEpisodeStats(rows) {
             : null;
         
           const averageRankText = averageRank === null
-            ? "—"
-            : averageRank
-                .toFixed(2)
-                .replace(/\.00$/, "")
-                .replace(/(\.\d)0$/, "$1");
+              ? "—"
+              : averageRank.toFixed(2);
         
           const averageColors = averageRank === null
             ? { bg: "#1f1f1f", text: "#aaa" }
