@@ -5242,7 +5242,7 @@ tr:hover td:nth-child(3) {
 }
 
 .tv-card-episode-matrix-compact .tv-card-matrix-rank {
-  font-size: 12px !important;
+  font-size: 16px !important;
   line-height: 1 !important;
 }
 
@@ -5513,7 +5513,7 @@ tr:hover td:nth-child(3) {
 
 .tv-card-season-stat strong {
   display: flex;
-  min-height: 26px;
+  min-height: 34px;
   align-items: center;
   justify-content: center;
   padding: 4px 5px;
