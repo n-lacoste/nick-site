@@ -327,6 +327,36 @@ function getOrderedMovieHeaders(headers) {
   return orderedHeaders;
 }
 
+function getDecadeFromRow(row) {
+  const releaseDateValue =
+    row["Release Date"] ||
+    row["Released"] ||
+    row["Year"] ||
+    "";
+
+  const text = String(releaseDateValue ?? "").trim();
+
+  if (text === "") return "";
+
+  let year = null;
+
+  const directYear = Number(text);
+
+  if (!isNaN(directYear) && directYear > 0) {
+    year = directYear;
+  } else {
+    const timestamp = parseMovieDate(text);
+
+    if (timestamp !== null) {
+      year = new Date(timestamp).getFullYear();
+    }
+  }
+
+  if (year === null || isNaN(year)) return "";
+
+  return `${Math.floor(year / 10) * 10}s`;
+}
+
 async function loadCSV(
   filePath,
   tableId,
