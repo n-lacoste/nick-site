@@ -7986,3 +7986,117 @@ tr:hover td:nth-child(3) {
   line-height: 1;
   transform: translateY(-1px);
 }
+
+/* =========================================================
+   Music Data page
+   ========================================================= */
+
+.music-data-tool {
+  margin-top: 22px;
+  padding: 18px;
+  border: 1px solid #333;
+  border-radius: 14px;
+  background: #111;
+}
+
+.music-data-tool-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 14px;
+}
+
+.music-data-tool-header h3 {
+  margin: 0 0 6px;
+  color: #f5f5f5;
+  font-size: 24px;
+}
+
+.music-data-tool-header p {
+  margin: 0;
+  color: #bdbdbd;
+  font-size: 14px;
+}
+
+.music-data-control-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.music-data-control-row label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: #f5f5f5;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.music-data-control-row .filter-text-input {
+  width: 110px !important;
+  height: 38px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.music-data-summary {
+  margin: 8px 0 12px;
+  color: #ccc;
+  font-size: 14px;
+}
+
+.music-data-table-wrap {
+  width: 100%;
+  max-height: 520px;
+  overflow: auto;
+  border: 1px solid #333;
+  border-radius: 10px;
+}
+
+.music-data-table {
+  width: max-content;
+  min-width: 100%;
+  border-collapse: collapse;
+  background: #1a1a1a;
+}
+
+.music-data-table th,
+.music-data-table td {
+  padding: 9px 10px;
+  border-bottom: 1px solid #333;
+  text-align: center;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.music-data-table th {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: #222;
+  color: #f5f5f5;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.music-data-title-cell {
+  min-width: 260px;
+  max-width: 360px;
+  text-align: left !important;
+  white-space: normal !important;
+  font-weight: 800;
+}
+
+@media (max-width: 850px) {
+  .music-data-tool-header {
+    flex-direction: column;
+  }
+
+  .music-data-control-row {
+    width: 100%;
+  }
+}
