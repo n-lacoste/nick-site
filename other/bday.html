@@ -426,28 +426,28 @@
       line-height: 1;
     }
 
-    .fake-pause-modal-images {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      max-width: 360px;
-      margin: 0 auto 16px;
-    }
+   .fake-pause-modal-images {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 360px;
+  margin: 0 auto 16px;
+}
 
-    .fake-pause-modal-images img {
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      object-fit: contain;
-      border: 4px solid #ffffff;
-      border-radius: 18px;
-      background: #fff0f7;
-      box-shadow: 0 8px 22px rgba(255, 79, 163, 0.22);
-    }
+.fake-pause-modal-images img {
+  display: block;
+  width: min(320px, 80vw);
+  max-height: 320px;
+  object-fit: contain;
+  border: 4px solid #ffffff;
+  border-radius: 18px;
+  background: #fff0f7;
+  box-shadow: 0 8px 22px rgba(255, 79, 163, 0.22);
+}
 
-    .fake-pause-modal-images .fake-pause-gif {
-      object-fit: cover;
-    }
-
+.fake-pause-modal-images .fake-pause-gif {
+  object-fit: contain;
+}
     .fake-pause-modal-text {
       margin: 0 0 16px !important;
       color: #111 !important;
@@ -478,6 +478,23 @@
     .actually-pause-button:active {
       transform: scale(0.98);
     }
+    .modal-button-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.fun-button {
+  background: #ffd966;
+  border-color: #ffd966;
+  color: #111;
+}
+
+.fun-button:hover {
+  background: #ffcf33;
+}
 
     /* Hidden YouTube players */
 
@@ -731,10 +748,15 @@
 
         <p class="birthday-signoff">Love, Nick</p>
 
-        <button id="fakePauseMusicButton" class="fake-pause-music-button" type="button">
-          Pause Music
-        </button>
+        <div class="modal-button-row">
+  <button id="actuallyPauseButton" class="actually-pause-button" type="button">
+    Pause Music
+  </button>
 
+  <button id="funButton" class="actually-pause-button fun-button" type="button">
+    Click me for fun
+  </button>
+</div>
         <div id="fakePauseModal" class="fake-pause-modal" hidden>
           <div class="fake-pause-modal-backdrop"></div>
 
@@ -781,6 +803,7 @@
     const fakePauseMusicButton = document.getElementById("fakePauseMusicButton");
     const fakePauseModal = document.getElementById("fakePauseModal");
     const actuallyPauseButton = document.getElementById("actuallyPauseButton");
+    const funButton = document.getElementById("funButton");
 
     let opened = false;
     let fakePauseClicks = 0;
@@ -948,27 +971,22 @@
     }
 
     if (actuallyPauseButton) {
-      actuallyPauseButton.addEventListener("click", function () {
-        const currentButtonText = actuallyPauseButton.textContent.trim();
+  actuallyPauseButton.addEventListener("click", function () {
+    actuallyPauseClicks++;
 
-        if (currentButtonText === "Click me for fun") {
-          playFunButtonSound();
-          return;
-        }
+    addExtraLoudSongLayer();
 
-        actuallyPauseClicks++;
-
-        addExtraLoudSongLayer();
-
-        if (actuallyPauseClicks === 1) {
-          actuallyPauseButton.textContent = "No like actually pause";
-        } else if (actuallyPauseClicks === 2) {
-          actuallyPauseButton.textContent = "This seems worse";
-        } else if (actuallyPauseClicks >= 3) {
-          actuallyPauseButton.textContent = "Click me for fun";
-        }
-      });
+    if (actuallyPauseClicks >= 1) {
+      actuallyPauseButton.textContent = "I said pause";
     }
+  });
+}
+
+    if (funButton) {
+  funButton.addEventListener("click", function () {
+    playFunButtonSound();
+  });
+}
 
     if (presentButton) {
       presentButton.addEventListener("click", openPresent);
