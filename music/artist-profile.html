@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Artist Profile | Nick Site</title>
+  <link rel="stylesheet" href="/nick-site/style.css">
+</head>
+
+<body>
+  <div id="site-header"></div>
+  <script src="/nick-site/nav-loader.js"></script>
+
+  <main>
+    <div class="page-topline">
+      <div>
+        <h2>Artist Profile</h2>
+        <p>Artist dashboard with ranked albums, song-by-song ranks, summary stats, and future tracklist comparisons.</p>
+      </div>
+
+      <p id="last-updated" class="last-updated">Last updated: —</p>
+    </div>
+
+    <div class="artist-profile-page-frame">
+      <div class="artist-profile-search-row">
+        <div class="artist-profile-search-left">
+          <input
+            id="artist-profile-select"
+            class="search-box artist-profile-search"
+            placeholder="Search for an artist..."
+            autocomplete="off"
+          >
+
+          <datalist id="artist-profile-options"></datalist>
+
+          <div id="artist-profile-suggestions" class="tv-card-suggestions" hidden></div>
+        </div>
+      </div>
+
+      <p id="artist-profile-status" class="last-updated">
+        Select an artist to generate a profile.
+      </p>
+
+      <section id="artist-profile-output" class="artist-profile-output"></section>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+  <script>
+    window.NICK_SITE_INIT = function () {
+      try {
+        if (typeof Papa === "undefined") {
+          throw new Error("PapaParse did not load.");
+        }
+
+        if (typeof loadArtistProfile !== "function") {
+          throw new Error("loadArtistProfile is not defined. script.js did not load correctly or has a syntax error.");
+        }
+
+        loadArtistProfile();
+      } catch (error) {
+        console.error(error);
+
+        const output = document.getElementById("artist-profile-output");
+
+        if (output) {
+          output.innerHTML = `
+            <div class="movie-compare-placeholder">
+              Could not load artist profile. Check the console for details.
+            </div>
+          `;
+        }
+      }
+    };
+  </script>
+
+  <script src="/nick-site/script-loader.js"></script>
+</body>
+</html>
