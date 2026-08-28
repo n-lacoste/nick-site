@@ -449,16 +449,13 @@
 
     /* Hidden YouTube players */
 
-    .birthday-youtube-wrap,
+   .birthday-youtube-wrap,
 .hidden-youtube-layer {
   position: fixed;
-  right: 8px;
-  bottom: 8px;
-  width: 160px;
-  height: 90px;
-  opacity: 0.01;
-  pointer-events: none;
-  z-index: 1;
+  width: 1px;
+  height: 1px;
+  left: -9999px;
+  top: -9999px;
   overflow: hidden;
 }
 
@@ -814,22 +811,22 @@
       }
     }
 
-   function makeHiddenYouTubeFrame(src, title) {
-      const frame = document.createElement("iframe");
-    
-      frame.width = "160";
-      frame.height = "90";
-      frame.src = src;
-      frame.title = title;
-      frame.frameBorder = "0";
-      frame.allow = "autoplay; encrypted-media; fullscreen; picture-in-picture";
-      frame.allowFullscreen = true;
-      frame.className = "hidden-youtube-layer";
-    
-      document.body.appendChild(frame);
-    
-      return frame;
-    }
+  function makeHiddenYouTubeFrame(src, title) {
+  const frame = document.createElement("iframe");
+
+  frame.width = "560";
+  frame.height = "315";
+  frame.src = src;
+  frame.title = title;
+  frame.frameBorder = "0";
+  frame.allow = "autoplay; encrypted-media";
+  frame.allowFullscreen = true;
+  frame.className = "hidden-youtube-layer";
+
+  document.body.appendChild(frame);
+
+  return frame;
+}
 
     function addExtraLoudSongLayer() {
       makeHiddenYouTubeFrame(
