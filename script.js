@@ -7288,4 +7288,819 @@ const artistAlbumCounts = await getArtistAlbumCounts();
   loadTop10(configs.tvshows);
 };
 
+async function loadArtistProfile() {
+  const selectInput = document.getElementById("artist-profile-select");
+  const datalist = document.getElementById("artist-profile-options");
+  const suggestionsBox = document.getElementById("artist-profile-suggestions");
+  const status = document.getElementById("artist-profile-status");
+  const output = document.getElementById("artist-profile-output");
 
+  if (!selectInput || !datalist || !output) return;
+
+  let albumRows = [];
+  let artistSongRows = [];
+  let artistOptions = [];
+  let currentArtist = "";
+  let artistSongGridLayout = "blocks";
+
+  function escapeHTML(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function normalize(value) {
+    return String(value ?? "")
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, " ");
+  }
+
+  function getText(row, column) {
+    return String(row[column] ?? "").trim();
+  }
+
+  function getFirstText(row, columns) {
+    for (const column of columns) {
+      const value = getText(row, column);
+
+      if (value !== "") return value;
+    }
+
+    return "";
+  }
+
+  function getNumber(row, column) {
+    const text = getText(row, column)
+      .replace(/,/g, "")
+      .replace(/%/g, "");
+
+    if (text === "") return null;
+
+    const number = Number(text);
+
+    return isNaN(number) ? null : number;
+  }
+
+  function getFirstNumber(row, columns) {
+    for (const column of columns) {
+      const value = getNumber(row, column);
+
+      if (value !== null) return value;
+    }
+
+    return null;
+  }
+
+  function getAlbumTitle(row) {
+    return getFirstText(row, [
+      "Album",
+      "Album Title",
+      "Project",
+      "Project Name",
+      "Project TitleArtist"
+    ]);
+  }
+
+  function getAlbumArtist(row) {
+    return getFirstText(row, [
+      "Artist",
+      "Artist-Group",
+      "Artist Group"
+    ]);
+  }
+
+  function getSongTitle(row) {
+    return getFirstText(row, [
+      "Song",
+      "Song Name",
+      "Song Title",
+      "Track",
+      "Track Name",
+      "Title",
+      "Name"
+    ]);
+  }
+
+  function getSongArtist(row) {
+    return getFirstText(row, [
+      "Artist",
+      "Artist-Group",
+      "Artist Group"
+    ]);
+  }
+
+  function getSongAlbum(row) {
+    return getFirstText(row, [
+      "Album",
+      "Album Title",
+      "Project",
+      "Project Name",
+      "Project TitleArtist"
+    ]);
+  }
+
+  function getSongRank(row) {
+    return getFirstNumber(row, [
+      "Rank",
+      "Ranking",
+      "Artist Rank",
+      "Artist Song Rank",
+      "Song Rank",
+      "Rk"
+    ]);
+  }
+
+  function getAlbumRank(row) {
+    return getFirstNumber(row, [
+      "Ranking",
+      "Rank",
+      "Rk"
+    ]);
+  }
+
+  function getXRank(row) {
+    return getFirstNumber(row, [
+      "xRank%",
+      "xRank",
+      "Score"
+    ]);
+  }
+
+  function getTierStyle(value) {
+    if (typeof getTierStyleFromValue === "function") {
+      return getTierStyleFromValue(value);
+    }
+
+    if (typeof getTierColor === "function") {
+      const colors = getTierColor(value);
+
+      if (colors.bg && colors.text) {
+        return `
+          background:${colors.bg};
+          color:${colors.text};
+          font-weight:bold;
+        `;
+      }
+    }
+
+    return "";
+  }
+
+  function getSubTierStyle(value) {
+    if (typeof getSubTierStyleFromValue === "function") {
+      return getSubTierStyleFromValue(value);
+    }
+
+    return "";
+  }
+
+  function formatNumber(value) {
+    if (value === null || isNaN(value)) return "—";
+
+    return value
+      .toFixed(2)
+      .replace(/\.00$/, "")
+      .replace(/(\.\d)0$/, "$1");
+  }
+
+  function getAverage(values) {
+    const usableValues = values.filter(value => value !== null && !isNaN(value));
+
+    if (usableValues.length === 0) return null;
+
+    return usableValues.reduce((sum, value) => sum + value, 0) / usableValues.length;
+  }
+
+  function getArtistAlbums(artist) {
+    const target = normalize(artist);
+
+    return albumRows
+      .filter(row => {
+        return normalize(getAlbumArtist(row)) === target;
+      })
+      .sort((a, b) => {
+        const rankA = getAlbumRank(a) ?? Number.POSITIVE_INFINITY;
+        const rankB = getAlbumRank(b) ?? Number.POSITIVE_INFINITY;
+
+        return rankA - rankB;
+      });
+  }
+
+  function getArtistSongs(artist) {
+    const target = normalize(artist);
+
+    return artistSongRows
+      .filter(row => {
+        const artistText = normalize(getSongArtist(row));
+
+        if (artistText === target) return true;
+
+        return artistText
+          .split(/[;,|]/)
+          .map(value => normalize(value))
+          .includes(target);
+      })
+      .filter(row => getSongTitle(row) !== "")
+      .sort((a, b) => {
+        const rankA = getSongRank(a) ?? Number.POSITIVE_INFINITY;
+        const rankB = getSongRank(b) ?? Number.POSITIVE_INFINITY;
+
+        return rankA - rankB;
+      });
+  }
+
+  function getFilteredArtistOptions(value) {
+    const searchValue = normalize(value);
+
+    if (searchValue === "") {
+      return artistOptions.slice(0, 20);
+    }
+
+    const startsWithMatches = artistOptions.filter(name => {
+      return normalize(name).startsWith(searchValue);
+    });
+
+    const containsMatches = artistOptions.filter(name => {
+      const normalizedName = normalize(name);
+
+      return !normalizedName.startsWith(searchValue) && normalizedName.includes(searchValue);
+    });
+
+    return [...startsWithMatches, ...containsMatches].slice(0, 20);
+  }
+
+  function hideArtistSuggestions() {
+    if (!suggestionsBox) return;
+
+    suggestionsBox.hidden = true;
+    suggestionsBox.innerHTML = "";
+  }
+
+  function chooseArtistSuggestion(artist) {
+    selectInput.value = artist;
+    hideArtistSuggestions();
+    renderArtistProfile(artist);
+  }
+
+  function renderArtistSuggestions() {
+    if (!suggestionsBox) return;
+
+    const matches = getFilteredArtistOptions(selectInput.value);
+
+    if (matches.length === 0) {
+      suggestionsBox.innerHTML = `
+        <div class="tv-card-suggestion-empty">
+          No matching artists found.
+        </div>
+      `;
+
+      suggestionsBox.hidden = false;
+      return;
+    }
+
+    suggestionsBox.innerHTML = matches
+      .map(artist => {
+        return `
+          <button
+            class="tv-card-suggestion-option"
+            type="button"
+            data-artist-name="${escapeHTML(artist)}"
+          >
+            ${escapeHTML(artist)}
+          </button>
+        `;
+      })
+      .join("");
+
+    suggestionsBox.hidden = false;
+
+    suggestionsBox.querySelectorAll(".tv-card-suggestion-option").forEach(button => {
+      button.addEventListener("mousedown", function (event) {
+        event.preventDefault();
+        chooseArtistSuggestion(button.dataset.artistName || "");
+      });
+
+      button.addEventListener("click", function (event) {
+        event.preventDefault();
+        chooseArtistSuggestion(button.dataset.artistName || "");
+      });
+    });
+  }
+
+  function findArtistByInput(value) {
+    const searchValue = normalize(value);
+
+    if (searchValue === "") return "";
+
+    const exactMatch = artistOptions.find(artist => normalize(artist) === searchValue);
+
+    if (exactMatch) return exactMatch;
+
+    const startsWithMatch = artistOptions.find(artist => {
+      return normalize(artist).startsWith(searchValue);
+    });
+
+    if (startsWithMatch) return startsWithMatch;
+
+    return artistOptions.find(artist => {
+      return normalize(artist).includes(searchValue);
+    }) || "";
+  }
+
+  function renderSummaryStats(artist, albums, songs) {
+    const albumRanks = albums.map(getAlbumRank);
+    const songRanks = songs.map(getSongRank);
+    const xRanks = albums.map(getXRank);
+
+    const averageAlbumRank = getAverage(albumRanks);
+    const averageSongRank = getAverage(songRanks);
+    const averageXRank = getAverage(xRanks);
+
+    const bestAlbum = albums[0] ? getAlbumTitle(albums[0]) : "—";
+    const bestSong = songs[0] ? getSongTitle(songs[0]) : "—";
+
+    const years = albums
+      .map(row => getNumber(row, "Year"))
+      .filter(value => value !== null);
+
+    const yearRange = years.length
+      ? `${Math.min(...years)} – ${Math.max(...years)}`
+      : "—";
+
+    return `
+      <section class="artist-profile-panel artist-profile-summary-panel">
+        <h3>Summary Stats</h3>
+
+        <div class="artist-profile-stats-grid">
+          <div class="artist-profile-stat">
+            <span>Artist</span>
+            <strong>${escapeHTML(artist)}</strong>
+          </div>
+
+          <div class="artist-profile-stat">
+            <span>Ranked Albums</span>
+            <strong>${escapeHTML(albums.length)}</strong>
+          </div>
+
+          <div class="artist-profile-stat">
+            <span>Ranked Songs</span>
+            <strong>${escapeHTML(songs.length)}</strong>
+          </div>
+
+          <div class="artist-profile-stat">
+            <span>Years</span>
+            <strong>${escapeHTML(yearRange)}</strong>
+          </div>
+
+          <div class="artist-profile-stat">
+            <span>Best Album</span>
+            <strong>${escapeHTML(bestAlbum)}</strong>
+          </div>
+
+          <div class="artist-profile-stat">
+            <span>Best Song</span>
+            <strong>${escapeHTML(bestSong)}</strong>
+          </div>
+
+          <div class="artist-profile-stat">
+            <span>Average Album Rank</span>
+            <strong>${escapeHTML(formatNumber(averageAlbumRank))}</strong>
+          </div>
+
+          <div class="artist-profile-stat">
+            <span>Average Song Rank</span>
+            <strong>${escapeHTML(formatNumber(averageSongRank))}</strong>
+          </div>
+
+          <div class="artist-profile-stat">
+            <span>Average xRank%</span>
+            <strong>${escapeHTML(formatNumber(averageXRank))}</strong>
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  function renderAlbumsTable(albums) {
+    if (albums.length === 0) {
+      return `
+        <section class="artist-profile-panel">
+          <h3>Albums</h3>
+          <p class="movie-compare-placeholder">No ranked albums found for this artist.</p>
+        </section>
+      `;
+    }
+
+    return `
+      <section class="artist-profile-panel">
+        <h3>Albums</h3>
+
+        <div class="artist-profile-table-wrap">
+          <table class="artist-profile-albums-table">
+            <thead>
+              <tr>
+                <th>Tier</th>
+                <th>Sub-Tier</th>
+                <th>Album</th>
+                <th>Year</th>
+                <th>Ranking</th>
+                <th>xRank%</th>
+                <th>Tracks</th>
+                <th>S</th>
+                <th>L</th>
+                <th>Updated</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              ${albums.map(row => {
+                const tier = getText(row, "Tier");
+                const subTier = getText(row, "Sub-Tier");
+
+                return `
+                  <tr>
+                    <td style="${getTierStyle(tier)}">${escapeHTML(tier)}</td>
+                    <td style="${getSubTierStyle(subTier)}">${escapeHTML(subTier)}</td>
+                    <td>${escapeHTML(getAlbumTitle(row))}</td>
+                    <td>${escapeHTML(getText(row, "Year"))}</td>
+                    <td>${escapeHTML(getText(row, "Ranking"))}</td>
+                    <td>${escapeHTML(getText(row, "xRank%"))}</td>
+                    <td>${escapeHTML(getText(row, "Tracks"))}</td>
+                    <td>${escapeHTML(getText(row, "S"))}</td>
+                    <td>${escapeHTML(getText(row, "L"))}</td>
+                    <td>${escapeHTML(getText(row, "Updated"))}</td>
+                  </tr>
+                `;
+              }).join("")}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    `;
+  }
+
+  function groupSongsByAlbum(songs) {
+    const groups = new Map();
+
+    songs.forEach(row => {
+      const album = getSongAlbum(row) || "Songs";
+
+      if (!groups.has(album)) {
+        groups.set(album, []);
+      }
+
+      groups.get(album).push(row);
+    });
+
+    groups.forEach(rows => {
+      rows.sort((a, b) => {
+        const rankA = getSongRank(a) ?? Number.POSITIVE_INFINITY;
+        const rankB = getSongRank(b) ?? Number.POSITIVE_INFINITY;
+
+        return rankA - rankB;
+      });
+    });
+
+    return groups;
+  }
+
+  function renderSongRankBlocks(songs) {
+    const groups = groupSongsByAlbum(songs);
+
+    return `
+      <div class="artist-song-blocks">
+        ${Array.from(groups.entries()).map(([album, rows]) => {
+          return `
+            <div class="artist-song-block">
+              <h4>${escapeHTML(album)}</h4>
+
+              <div class="artist-song-cells">
+                ${rows.map(row => {
+                  const rank = getSongRank(row);
+                  const title = getSongTitle(row);
+
+                  return `
+                    <div class="artist-song-cell" title="${escapeHTML(title)}">
+                      <strong>${escapeHTML(rank === null ? "—" : rank)}</strong>
+                      <span>${escapeHTML(title)}</span>
+                    </div>
+                  `;
+                }).join("")}
+              </div>
+            </div>
+          `;
+        }).join("")}
+      </div>
+    `;
+  }
+
+  function renderSongRankColumns(songs) {
+    const groups = groupSongsByAlbum(songs);
+    const groupEntries = Array.from(groups.entries());
+    const maxRows = Math.max(...groupEntries.map(([, rows]) => rows.length), 0);
+
+    return `
+      <div class="artist-song-matrix-wrap">
+        <table class="artist-song-matrix">
+          <thead>
+            <tr>
+              <th>#</th>
+              ${groupEntries.map(([album]) => {
+                return `<th>${escapeHTML(album)}</th>`;
+              }).join("")}
+            </tr>
+          </thead>
+
+          <tbody>
+            ${Array.from({ length: maxRows }).map((_, index) => {
+              return `
+                <tr>
+                  <th>${escapeHTML(index + 1)}</th>
+                  ${groupEntries.map(([, rows]) => {
+                    const row = rows[index];
+
+                    if (!row) {
+                      return `<td></td>`;
+                    }
+
+                    const rank = getSongRank(row);
+                    const title = getSongTitle(row);
+
+                    return `
+                      <td>
+                        <div class="artist-song-matrix-cell">
+                          <strong>${escapeHTML(rank === null ? "—" : rank)}</strong>
+                          <span>${escapeHTML(title)}</span>
+                        </div>
+                      </td>
+                    `;
+                  }).join("")}
+                </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  function renderSongRankGrid(artist, songs) {
+    if (songs.length === 0) {
+      return `
+        <section class="artist-profile-panel">
+          <h3>Song-by-Song Ranks</h3>
+          <p class="movie-compare-placeholder">No ranked songs found for this artist yet.</p>
+        </section>
+      `;
+    }
+
+    return `
+      <section class="artist-profile-panel artist-song-rank-panel">
+        <div class="artist-profile-panel-header">
+          <h3>Song-by-Song Ranks</h3>
+
+          <div class="artist-profile-toggle-row">
+            <button
+              id="artistSongGridBlocks"
+              class="tv-card-grid-toggle ${artistSongGridLayout === "blocks" ? "active" : ""}"
+              type="button"
+            >
+              Blocks
+            </button>
+
+            <button
+              id="artistSongGridColumns"
+              class="tv-card-grid-toggle ${artistSongGridLayout === "columns" ? "active" : ""}"
+              type="button"
+            >
+              Columns
+            </button>
+          </div>
+        </div>
+
+        ${artistSongGridLayout === "blocks"
+          ? renderSongRankBlocks(songs)
+          : renderSongRankColumns(songs)}
+      </section>
+    `;
+  }
+
+  function renderTracklistPlaceholder(albums) {
+    return `
+      <section class="artist-profile-panel artist-tracklist-placeholder-panel">
+        <h3>Expandable Tracklists</h3>
+
+        <p class="movie-compare-placeholder">
+          Tracklist data is not connected yet. This section is ready for album-by-album expandable tracklists with song scores shown side-by-side.
+        </p>
+
+        <div class="artist-tracklist-placeholder-grid">
+          ${albums.slice(0, 8).map(row => {
+            return `
+              <button class="artist-tracklist-placeholder-button" type="button" disabled>
+                ${escapeHTML(getAlbumTitle(row))}
+                <span>Tracklist coming soon</span>
+              </button>
+            `;
+          }).join("")}
+        </div>
+      </section>
+    `;
+  }
+
+  function setupArtistProfileButtons() {
+    const blocksButton = document.getElementById("artistSongGridBlocks");
+    const columnsButton = document.getElementById("artistSongGridColumns");
+
+    if (blocksButton) {
+      blocksButton.addEventListener("click", function () {
+        artistSongGridLayout = "blocks";
+        renderArtistProfile(currentArtist);
+      });
+    }
+
+    if (columnsButton) {
+      columnsButton.addEventListener("click", function () {
+        artistSongGridLayout = "columns";
+        renderArtistProfile(currentArtist);
+      });
+    }
+  }
+
+  function renderArtistProfile(artist) {
+    currentArtist = artist;
+
+    const albums = getArtistAlbums(artist);
+    const songs = getArtistSongs(artist);
+
+    if (artist === "") {
+      output.innerHTML = "";
+
+      if (status) {
+        status.hidden = false;
+        status.textContent = "Select an artist to generate a profile.";
+      }
+
+      return;
+    }
+
+    output.innerHTML = `
+      <div class="artist-profile-card">
+        <div class="artist-profile-title-row">
+          <div>
+            <h3>${escapeHTML(artist)}</h3>
+            <p>${escapeHTML(albums.length)} ranked albums, ${escapeHTML(songs.length)} ranked songs</p>
+          </div>
+        </div>
+
+        <div class="artist-profile-main-grid">
+          ${renderSummaryStats(artist, albums, songs)}
+          ${renderAlbumsTable(albums)}
+          ${renderSongRankGrid(artist, songs)}
+          ${renderTracklistPlaceholder(albums)}
+        </div>
+      </div>
+    `;
+
+    setupArtistProfileButtons();
+
+    if (status) {
+      status.hidden = true;
+      status.textContent = "";
+    }
+  }
+
+  async function loadData() {
+    selectInput.disabled = true;
+    selectInput.placeholder = "Loading artists...";
+
+    if (status) {
+      status.hidden = false;
+      status.textContent = "Loading artist profile data...";
+    }
+
+    const albumText = await getCSVText(window.ALBUMS_CSV_URL);
+    const albumParsed = Papa.parse(albumText.trim(), {
+      header: true,
+      skipEmptyLines: true
+    });
+
+    albumRows = (albumParsed.data || []).filter(row => {
+      return getAlbumTitle(row) !== "";
+    });
+
+    try {
+      const artistSongsText = await getCSVText(window.ARTIST_SONGS_CSV_URL);
+      const artistSongsParsed = Papa.parse(artistSongsText.trim(), {
+        header: true,
+        skipEmptyLines: true
+      });
+
+      artistSongRows = artistSongsParsed.data || [];
+    } catch (error) {
+      console.warn("Could not load artist song rankings yet:", error);
+      artistSongRows = [];
+    }
+
+    const artistSet = new Set();
+
+    albumRows.forEach(row => {
+      const artist = getAlbumArtist(row);
+
+      if (artist !== "") {
+        artistSet.add(artist);
+      }
+    });
+
+    artistSongRows.forEach(row => {
+      const artist = getSongArtist(row);
+
+      if (artist !== "") {
+        artistSet.add(artist);
+      }
+    });
+
+    artistOptions = Array.from(artistSet).sort((a, b) => {
+      return a.localeCompare(b);
+    });
+
+    datalist.innerHTML = artistOptions
+      .map(artist => `<option value="${escapeHTML(artist)}"></option>`)
+      .join("");
+
+    if (typeof updateRankingsLastUpdatedText === "function") {
+      updateRankingsLastUpdatedText([...albumRows, ...artistSongRows]);
+    }
+
+    selectInput.disabled = false;
+    selectInput.placeholder = "Search for an artist...";
+
+    if (status) {
+      status.hidden = false;
+      status.textContent = "Select an artist to generate a profile.";
+    }
+  }
+
+  selectInput.addEventListener("focus", renderArtistSuggestions);
+
+  selectInput.addEventListener("input", function () {
+    renderArtistSuggestions();
+
+    const artist = findArtistByInput(selectInput.value);
+
+    if (artist) {
+      renderArtistProfile(artist);
+    }
+  });
+
+  selectInput.addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+
+      const artist = findArtistByInput(selectInput.value);
+
+      if (artist) {
+        selectInput.value = artist;
+        hideArtistSuggestions();
+        renderArtistProfile(artist);
+      }
+    }
+
+    if (event.key === "Escape") {
+      event.preventDefault();
+      hideArtistSuggestions();
+    }
+  });
+
+  document.addEventListener("click", function (event) {
+    if (!suggestionsBox) return;
+
+    if (
+      event.target === selectInput ||
+      suggestionsBox.contains(event.target)
+    ) {
+      return;
+    }
+
+    hideArtistSuggestions();
+  });
+
+  loadData().catch(error => {
+    console.error(error);
+
+    output.innerHTML = `
+      <div class="movie-compare-placeholder">
+        Could not load artist profile data. Check the console for details.
+      </div>
+    `;
+
+    if (status) {
+      status.hidden = false;
+      status.textContent = "Artist profile failed to load.";
+    }
+  });
+}
