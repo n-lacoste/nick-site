@@ -577,19 +577,35 @@
           Pause Music
         </button>
 
-        <div id="fakePauseReveal" class="fake-pause-reveal" hidden>
-          <img
-            class="fake-pause-bugs"
-            src="https://media.tenor.com/5N9derc9UcgAAAAe/no-bugs-bunny.png"
-            alt="No Bugs Bunny"
-          >
+        <div id="fakePauseModal" class="fake-pause-modal" hidden>
+  <div class="fake-pause-modal-backdrop"></div>
 
-          <img
-            class="fake-pause-gif"
-            src="https://i.imgur.com/gl6R3Uq.gif"
-            alt="Birthday reaction gif"
-          >
-        </div>
+  <div class="fake-pause-modal-card" role="dialog" aria-modal="true" aria-labelledby="fakePauseTitle">
+    <h3 id="fakePauseTitle">No.</h3>
+
+    <div class="fake-pause-modal-images">
+      <img
+        class="fake-pause-bugs"
+        src="https://media.tenor.com/5N9derc9UcgAAAAe/no-bugs-bunny.png"
+        alt="No Bugs Bunny"
+      >
+
+      <img
+        class="fake-pause-gif"
+        src="https://i.imgur.com/gl6R3Uq.gif"
+        alt="Birthday reaction gif"
+      >
+    </div>
+
+    <p class="fake-pause-modal-text">
+      The music has been paused.
+    </p>
+
+    <button id="actuallyPauseButton" class="actually-pause-button" type="button">
+      Actually Pause
+    </button>
+  </div>
+</div>
       </div>
     </div>
   </main>
