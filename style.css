@@ -8367,3 +8367,27 @@ tr:hover td:nth-child(3) {
   font-size: 26px !important;
   font-weight: 900;
 }
+
+.birthday-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin: 18px auto 22px;
+  max-width: 520px;
+}
+
+.birthday-photo-grid img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border: 4px solid #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(255, 79, 163, 0.22);
+}
+
+@media (max-width: 650px) {
+  .birthday-photo-grid {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 360px;
+  }
+}
