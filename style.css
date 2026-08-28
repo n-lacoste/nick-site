@@ -8291,3 +8291,11 @@ tr:hover td:nth-child(3) {
   }
 }
 
+.birthday-youtube-wrap {
+  position: fixed;
+  width: 1px;
+  height: 1px;
+  left: -9999px;
+  top: -9999px;
+  overflow: hidden;
+}
