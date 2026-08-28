@@ -8495,3 +8495,568 @@ async function loadMiscMusicData() {
 
   renderAll(rows);
 }
+
+async function loadFavouriteSongsPage() {
+  const table = document.getElementById("fav-songs-table");
+  const chartWrap = document.getElementById("fav-songs-chart-wrap");
+  const chartTooltip = document.getElementById("fav-songs-chart-tooltip");
+  const chartSummary = document.getElementById("fav-songs-chart-summary");
+  const rowCount = document.getElementById("fav-songs-row-count");
+  const searchInput = document.getElementById("fav-songs-search");
+  const searchButton = document.getElementById("fav-songs-search-button");
+  const clearButton = document.getElementById("fav-songs-search-clear");
+  const showCountSelect = document.getElementById("fav-songs-show-count");
+
+  if (!table || !chartWrap) return;
+
+  const fixedColumns = [
+    "Rank",
+    "Tier",
+    "Sub-Tier",
+    "Song Title",
+    "Artist-Group",
+    "First consider",
+    "First Consider",
+    "250",
+    "SONG ID",
+    "Song Rating",
+    "Full",
+    "Artist Song's Rk",
+    "Artist Song Rk",
+    "Sparkline",
+    "Updated"
+  ];
+
+  const displayColumns = [
+    "Rank",
+    "Tier",
+    "Sub-Tier",
+    "Song Title",
+    "Artist-Group",
+    "First consider",
+    "SONG ID",
+    "Song Rating",
+    "Artist Song's Rk"
+  ];
+
+  let rows = [];
+  let currentRows = [];
+  let historyColumns = [];
+  let rowLimit = 25;
+  let hmValue = 999;
+
+  function escapeHTML(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function getText(row, column) {
+    return String(row[column] ?? "").trim();
+  }
+
+  function getFirstText(row, columns) {
+    for (const column of columns) {
+      const value = getText(row, column);
+
+      if (value !== "") return value;
+    }
+
+    return "";
+  }
+
+  function getSongTitle(row) {
+    return getFirstText(row, [
+      "Song Title",
+      "Song Name",
+      "Song",
+      "Track",
+      "Track Name",
+      "Title"
+    ]);
+  }
+
+  function getSongArtist(row) {
+    return getFirstText(row, [
+      "Artist-Group",
+      "Artist",
+      "Artist Group"
+    ]);
+  }
+
+  function getNumberValue(value) {
+    const text = String(value ?? "")
+      .replace(/,/g, "")
+      .replace(/%/g, "")
+      .trim();
+
+    if (text === "") return null;
+
+    const number = Number(text);
+
+    return isNaN(number) ? null : number;
+  }
+
+  function getRankValue(value) {
+    const text = String(value ?? "").trim().toUpperCase();
+
+    if (text === "") return null;
+
+    if (text === "HM") return hmValue;
+
+    return getNumberValue(text);
+  }
+
+  function isHistoryColumn(header) {
+    if (fixedColumns.includes(header)) return false;
+
+    const text = String(header ?? "").trim();
+
+    if (text === "") return false;
+
+    if (/^\d{4}$/.test(text)) return true;
+    if (/^\d{4}\s*\(/.test(text)) return true;
+    if (/^(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)\s+\d{4}/i.test(text)) return true;
+    if (/^(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)\s+\d{1,2},?\s+\d{4}/i.test(text)) return true;
+
+    return false;
+  }
+
+  function getTierStyle(value) {
+    if (typeof getTierStyleFromValue === "function") {
+      return getTierStyleFromValue(value);
+    }
+
+    return "";
+  }
+
+  function getSubTierStyle(value) {
+    if (typeof getSubTierStyleFromValue === "function") {
+      return getSubTierStyleFromValue(value);
+    }
+
+    return "";
+  }
+
+  function rowMatchesSearch(row) {
+    if (!searchInput) return true;
+
+    const searchTerm = searchInput.value.trim().toLowerCase();
+
+    if (searchTerm === "") return true;
+
+    const searchableText = [
+      getSongTitle(row),
+      getSongArtist(row),
+      getText(row, "Tier"),
+      getText(row, "Sub-Tier"),
+      getText(row, "SONG ID"),
+      getText(row, "Full")
+    ]
+      .join(" ")
+      .toLowerCase();
+
+    return searchableText.includes(searchTerm);
+  }
+
+  function getVisibleRows() {
+    currentRows = rows.filter(rowMatchesSearch);
+
+    currentRows.sort((a, b) => {
+      const rankA = getNumberValue(getText(a, "Rank")) ?? Number.POSITIVE_INFINITY;
+      const rankB = getNumberValue(getText(b, "Rank")) ?? Number.POSITIVE_INFINITY;
+
+      return rankA - rankB;
+    });
+
+    return rowLimit === "all"
+      ? currentRows
+      : currentRows.slice(0, rowLimit);
+  }
+
+  function updateClearButton() {
+    if (!clearButton || !searchInput) return;
+
+    clearButton.hidden = searchInput.value.trim() === "";
+  }
+
+  function renderTable() {
+    const rowsToShow = getVisibleRows();
+
+    if (rowCount) {
+      rowCount.textContent = `Showing ${rowsToShow.length} of ${currentRows.length} matches.`;
+    }
+
+    let html = `
+      <thead>
+        <tr>
+          ${displayColumns.map(column => {
+            return `<th>${escapeHTML(column)}</th>`;
+          }).join("")}
+        </tr>
+      </thead>
+      <tbody>
+    `;
+
+    rowsToShow.forEach(row => {
+      html += "<tr>";
+
+      displayColumns.forEach(column => {
+        const value = getText(row, column);
+
+        let style = "";
+
+        if (column === "Tier") {
+          style = getTierStyle(value);
+        }
+
+        if (column === "Sub-Tier") {
+          style = getSubTierStyle(value);
+        }
+
+        html += `<td style="${style}">${escapeHTML(value)}</td>`;
+      });
+
+      html += "</tr>";
+    });
+
+    html += "</tbody>";
+    table.innerHTML = html;
+  }
+
+  function getLinePoints(row, chartWidth, chartHeight, padding) {
+    const usableWidth = chartWidth - padding.left - padding.right;
+    const usableHeight = chartHeight - padding.top - padding.bottom;
+
+    return historyColumns
+      .map((column, index) => {
+        const rank = getRankValue(row[column]);
+
+        if (rank === null) return null;
+
+        const x = padding.left + (historyColumns.length === 1
+          ? usableWidth / 2
+          : (index / (historyColumns.length - 1)) * usableWidth);
+
+        const normalized = (rank - 1) / Math.max(hmValue - 1, 1);
+        const y = padding.top + normalized * usableHeight;
+
+        return {
+          x,
+          y,
+          rank,
+          column
+        };
+      })
+      .filter(point => point !== null);
+  }
+
+  function renderChart() {
+    const visibleRows = getVisibleRows();
+
+    const chartWidth = Math.max(chartWrap.clientWidth || 1200, 900);
+    const chartHeight = 620;
+
+    const padding = {
+      top: 28,
+      right: 28,
+      bottom: 88,
+      left: 58
+    };
+
+    if (historyColumns.length === 0) {
+      chartWrap.innerHTML = `
+        <div class="movie-compare-placeholder">
+          No historical ranking columns were found.
+        </div>
+      `;
+      return;
+    }
+
+    if (visibleRows.length === 0) {
+      chartWrap.innerHTML = `
+        <div class="movie-compare-placeholder">
+          No songs match the current search.
+        </div>
+      `;
+      return;
+    }
+
+    const yTicks = [
+      1,
+      10,
+      25,
+      50,
+      100,
+      150,
+      200,
+      hmValue
+    ].filter((value, index, array) => {
+      return value <= hmValue && array.indexOf(value) === index;
+    });
+
+    const xLabelEvery = Math.max(1, Math.ceil(historyColumns.length / 8));
+
+    let svg = `
+      <svg
+        class="fav-songs-chart-svg"
+        viewBox="0 0 ${chartWidth} ${chartHeight}"
+        role="img"
+        aria-label="Favourite songs historical ranking movement"
+      >
+        <rect x="0" y="0" width="${chartWidth}" height="${chartHeight}" class="fav-songs-chart-bg"></rect>
+    `;
+
+    yTicks.forEach(tick => {
+      const normalized = (tick - 1) / Math.max(hmValue - 1, 1);
+      const y = padding.top + normalized * (chartHeight - padding.top - padding.bottom);
+      const label = tick === hmValue ? "HM" : tick;
+
+      svg += `
+        <line
+          x1="${padding.left}"
+          x2="${chartWidth - padding.right}"
+          y1="${y}"
+          y2="${y}"
+          class="fav-songs-chart-gridline"
+        ></line>
+
+        <text
+          x="${padding.left - 12}"
+          y="${y + 4}"
+          class="fav-songs-chart-y-label"
+          text-anchor="end"
+        >${escapeHTML(label)}</text>
+      `;
+    });
+
+    historyColumns.forEach((column, index) => {
+      if (index % xLabelEvery !== 0 && index !== historyColumns.length - 1) return;
+
+      const usableWidth = chartWidth - padding.left - padding.right;
+      const x = padding.left + (historyColumns.length === 1
+        ? usableWidth / 2
+        : (index / (historyColumns.length - 1)) * usableWidth);
+
+      svg += `
+        <text
+          x="${x}"
+          y="${chartHeight - 28}"
+          class="fav-songs-chart-x-label"
+          text-anchor="end"
+          transform="rotate(-35 ${x} ${chartHeight - 28})"
+        >${escapeHTML(column)}</text>
+      `;
+    });
+
+    visibleRows.forEach((row, rowIndex) => {
+      const points = getLinePoints(row, chartWidth, chartHeight, padding);
+
+      if (points.length === 0) return;
+
+      const pathData = points
+        .map((point, index) => {
+          return `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`;
+        })
+        .join(" ");
+
+      const title = getSongTitle(row);
+      const artist = getSongArtist(row);
+      const rank = getText(row, "Rank");
+
+      svg += `
+        <path
+          class="fav-songs-chart-line"
+          d="${pathData}"
+          data-song-title="${escapeHTML(title)}"
+          data-song-artist="${escapeHTML(artist)}"
+          data-song-rank="${escapeHTML(rank)}"
+        ></path>
+      `;
+
+      points.forEach(point => {
+        const displayRank = point.rank === hmValue ? "HM" : point.rank;
+
+        svg += `
+          <circle
+            class="fav-songs-chart-point"
+            cx="${point.x}"
+            cy="${point.y}"
+            r="3"
+            data-song-title="${escapeHTML(title)}"
+            data-song-artist="${escapeHTML(artist)}"
+            data-song-rank="${escapeHTML(rank)}"
+            data-history-column="${escapeHTML(point.column)}"
+            data-history-rank="${escapeHTML(displayRank)}"
+          ></circle>
+        `;
+      });
+    });
+
+    svg += "</svg>";
+
+    chartWrap.innerHTML = svg;
+
+    if (chartSummary) {
+      chartSummary.textContent = `${visibleRows.length} songs, ${historyColumns.length} ranking snapshots.`;
+    }
+
+    setupChartHover();
+  }
+
+  function setupChartHover() {
+    const svg = chartWrap.querySelector(".fav-songs-chart-svg");
+
+    if (!svg || !chartTooltip) return;
+
+    function showTooltip(event, target) {
+      const songTitle = target.dataset.songTitle || "";
+      const songArtist = target.dataset.songArtist || "";
+      const songRank = target.dataset.songRank || "";
+      const historyColumn = target.dataset.historyColumn || "";
+      const historyRank = target.dataset.historyRank || "";
+
+      chartTooltip.innerHTML = `
+        <strong>${escapeHTML(songTitle)}</strong>
+        <span>${escapeHTML(songArtist)}</span>
+        ${historyColumn ? `<span>${escapeHTML(historyColumn)}: ${escapeHTML(historyRank)}</span>` : ""}
+        ${songRank ? `<span>Current rank: #${escapeHTML(songRank)}</span>` : ""}
+      `;
+
+      chartTooltip.hidden = false;
+
+      const chartRect = chartWrap.getBoundingClientRect();
+
+      chartTooltip.style.left = `${event.clientX - chartRect.left + 14}px`;
+      chartTooltip.style.top = `${event.clientY - chartRect.top + 14}px`;
+
+      svg.querySelectorAll(".fav-songs-chart-line, .fav-songs-chart-point").forEach(element => {
+        element.classList.add("is-dimmed");
+      });
+
+      const title = target.dataset.songTitle || "";
+
+      svg.querySelectorAll(`[data-song-title="${CSS.escape(title)}"]`).forEach(element => {
+        element.classList.remove("is-dimmed");
+        element.classList.add("is-highlighted");
+      });
+    }
+
+    function hideTooltip() {
+      chartTooltip.hidden = true;
+
+      svg.querySelectorAll(".fav-songs-chart-line, .fav-songs-chart-point").forEach(element => {
+        element.classList.remove("is-dimmed");
+        element.classList.remove("is-highlighted");
+      });
+    }
+
+    svg.querySelectorAll(".fav-songs-chart-line, .fav-songs-chart-point").forEach(element => {
+      element.addEventListener("mousemove", function (event) {
+        showTooltip(event, element);
+      });
+
+      element.addEventListener("mouseleave", hideTooltip);
+    });
+  }
+
+  function renderAll() {
+    renderTable();
+    renderChart();
+    updateClearButton();
+  }
+
+  function runSearch() {
+    renderAll();
+  }
+
+  const text = await getCSVText(window.FAV_SONGS_CSV_URL);
+
+  const parsed = Papa.parse(text.trim(), {
+    header: true,
+    skipEmptyLines: true
+  });
+
+  const headers = parsed.meta.fields || [];
+
+  historyColumns = headers.filter(isHistoryColumn);
+
+  rows = (parsed.data || []).filter(row => {
+    return getSongTitle(row) !== "";
+  });
+
+  const allHistoryNumbers = [];
+
+  rows.forEach(row => {
+    historyColumns.forEach(column => {
+      const value = String(row[column] ?? "").trim().toUpperCase();
+
+      if (value !== "" && value !== "HM") {
+        const number = getNumberValue(value);
+
+        if (number !== null) {
+          allHistoryNumbers.push(number);
+        }
+      }
+    });
+  });
+
+  hmValue = allHistoryNumbers.length
+    ? Math.max(...allHistoryNumbers) + 1
+    : rows.length + 1;
+
+  if (typeof updateRankingsLastUpdatedText === "function") {
+    updateRankingsLastUpdatedText(rows);
+  }
+
+  if (showCountSelect) {
+    showCountSelect.addEventListener("change", function () {
+      rowLimit = showCountSelect.value === "all"
+        ? "all"
+        : Number(showCountSelect.value) || 25;
+
+      renderAll();
+    });
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        runSearch();
+      }
+
+      if (event.key === "Escape") {
+        event.preventDefault();
+        searchInput.value = "";
+        runSearch();
+      }
+    });
+
+    searchInput.addEventListener("input", updateClearButton);
+  }
+
+  if (searchButton) {
+    searchButton.addEventListener("click", runSearch);
+  }
+
+  if (clearButton) {
+    clearButton.addEventListener("click", function () {
+      if (searchInput) {
+        searchInput.value = "";
+        searchInput.focus();
+      }
+
+      runSearch();
+    });
+  }
+
+  renderAll();
+
+  window.addEventListener("resize", function () {
+    renderChart();
+  });
+}
