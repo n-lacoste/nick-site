@@ -348,10 +348,25 @@
       font-weight: 900;
     }
 
-    /* Fake pause gag */
+    /* Button gag */
 
-    .fake-pause-music-button {
+    .card-button-stack {
+      display: grid;
+      gap: 14px;
+      justify-items: center;
       margin-top: 18px;
+    }
+
+    .card-pause-row,
+    .card-fun-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .gag-button {
       padding: 12px 18px;
       border: 2px solid #ff4fa3;
       border-radius: 999px;
@@ -366,135 +381,61 @@
         background 0.15s ease;
     }
 
-    .fake-pause-music-button:hover {
+    .gag-button:hover {
       transform: scale(1.04);
       background: #ff2f93;
     }
 
-    .fake-pause-music-button:active {
+    .gag-button:active {
       transform: scale(0.98);
     }
 
-    .fake-pause-modal {
-      position: fixed;
-      inset: 0;
-      z-index: 10000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 18px;
-    }
-
-    .fake-pause-modal[hidden] {
-      display: none;
-    }
-
-    .fake-pause-modal-backdrop {
-      position: absolute;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.72);
-      backdrop-filter: blur(3px);
-    }
-
-    .fake-pause-modal-card {
-      position: relative;
-      z-index: 2;
-      width: min(520px, 92vw);
-      padding: 24px 22px 22px;
-      border: 3px solid #ff4fa3;
-      border-radius: 24px;
-      background: #fff7df;
+    .fun-button {
+      background: #ffd966;
+      border-color: #ffd966;
       color: #111;
-      text-align: center;
-      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.6);
-      transform: scale(0.88);
-      opacity: 0;
-      transition:
-        opacity 0.25s ease,
-        transform 0.25s ease;
     }
 
-    .fake-pause-modal.show .fake-pause-modal-card {
-      opacity: 1;
-      transform: scale(1);
+    .fun-button:hover {
+      background: #ffcf33;
     }
 
-    .fake-pause-modal-card h3 {
-      margin: 0 0 14px;
-      color: #ff4fa3;
-      font-size: 42px;
-      line-height: 1;
+    .instant-button {
+      background: #57bb8a;
+      border-color: #57bb8a;
+      color: #111;
     }
 
-   .fake-pause-modal-images {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  max-width: 360px;
-  margin: 0 auto 16px;
-}
-
-.fake-pause-modal-images img {
-  display: block;
-  width: min(320px, 80vw);
-  max-height: 320px;
-  object-fit: contain;
-  border: 4px solid #ffffff;
-  border-radius: 18px;
-  background: #fff0f7;
-  box-shadow: 0 8px 22px rgba(255, 79, 163, 0.22);
-}
-
-.fake-pause-modal-images .fake-pause-gif {
-  object-fit: contain;
-}
-    .fake-pause-modal-text {
-      margin: 0 0 16px !important;
-      color: #111 !important;
-      font-size: 18px !important;
-      font-weight: 800;
+    .instant-button:hover {
+      background: #43a978;
     }
 
-    .actually-pause-button {
-      padding: 12px 20px;
-      border: 2px solid #ff4fa3;
-      border-radius: 999px;
-      background: #ff4fa3;
-      color: #ffffff;
-      font-size: 16px;
-      font-weight: 900;
-      cursor: pointer;
-      box-shadow: 0 8px 18px rgba(255, 79, 163, 0.28);
-      transition:
-        transform 0.15s ease,
-        background 0.15s ease;
+    /* Floating pause GIFs */
+
+    .floating-pause-gif {
+      position: fixed;
+      z-index: 9998;
+      width: 180px;
+      max-width: 38vw;
+      border: 4px solid #ffffff;
+      border-radius: 18px;
+      background: #fff0f7;
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.38);
+      pointer-events: none;
+      animation: floating-gif-pop 0.35s ease forwards;
     }
 
-    .actually-pause-button:hover {
-      background: #ff2f93;
-      transform: scale(1.04);
+    @keyframes floating-gif-pop {
+      0% {
+        opacity: 0;
+        transform: scale(0.5) rotate(-8deg);
+      }
+
+      100% {
+        opacity: 1;
+        transform: scale(1) rotate(var(--gif-rotation));
+      }
     }
-
-    .actually-pause-button:active {
-      transform: scale(0.98);
-    }
-    .modal-button-row {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.fun-button {
-  background: #ffd966;
-  border-color: #ffd966;
-  color: #111;
-}
-
-.fun-button:hover {
-  background: #ffcf33;
-}
 
     /* Hidden YouTube players */
 
@@ -573,33 +514,6 @@
       }
     }
 
-    .modal-button-row {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.fun-button {
-  background: #ffd966;
-  border-color: #ffd966;
-  color: #111;
-}
-
-.fun-button:hover {
-  background: #ffcf33;
-}
-
-.instant-button {
-  background: #57bb8a;
-  border-color: #57bb8a;
-  color: #111;
-}
-
-.instant-button:hover {
-  background: #43a978;
-}
     /* Mobile */
 
     @media (max-width: 650px) {
@@ -699,13 +613,8 @@
         font-size: 15px;
       }
 
-      .fake-pause-modal-images {
-        max-width: 250px;
-        grid-template-columns: 1fr;
-      }
-
-      .fake-pause-modal-card h3 {
-        font-size: 34px;
+      .floating-pause-gif {
+        width: 125px;
       }
     }
   </style>
@@ -775,42 +684,24 @@
 
         <p class="birthday-signoff">Love, Nick</p>
 
-        <div class="modal-button-row">
-  <div class="modal-button-row">
-  <button id="actuallyPauseButton" class="actually-pause-button" type="button">
-    Pause Music
-  </button>
+        <div class="card-button-stack">
+          <div class="card-pause-row">
+            <button id="fakePauseMusicButton" class="gag-button" type="button">
+              Pause Music
+            </button>
+          </div>
 
-  <button id="funButton" class="actually-pause-button fun-button" type="button">
-    Click me for fun
-  </button>
+          <div class="card-fun-row">
+            <button id="funButton" class="gag-button fun-button" type="button">
+              Click me for fun
+            </button>
 
-  <button id="faaahButton" class="actually-pause-button instant-button" type="button">
-    No Click me
-  </button>
+            <button id="faaahButton" class="gag-button instant-button" type="button">
+              No Click me
+            </button>
 
-  <button id="shockedButton" class="actually-pause-button instant-button" type="button">
-    No me
-  </button>
-</div>
-        <div id="fakePauseModal" class="fake-pause-modal" hidden>
-          <div class="fake-pause-modal-backdrop"></div>
-
-          <div class="fake-pause-modal-card" role="dialog" aria-modal="true" aria-labelledby="fakePauseTitle">
-            <div class="fake-pause-modal-images">
-              <img
-                class="fake-pause-gif"
-                src="https://i.imgur.com/gl6R3Uq.gif"
-                alt="Birthday reaction gif"
-              >
-            </div>
-
-            <p class="fake-pause-modal-text">
-              Click the button below to pause music.
-            </p>
-
-            <button id="actuallyPauseButton" class="actually-pause-button" type="button">
-              Actually Pause
+            <button id="shockedButton" class="gag-button instant-button" type="button">
+              No me
             </button>
           </div>
         </div>
@@ -837,15 +728,12 @@
     const birthdayCard = document.getElementById("birthdayCard");
     const birthdayPhotoBurst = document.getElementById("birthdayPhotoBurst");
     const fakePauseMusicButton = document.getElementById("fakePauseMusicButton");
-    const fakePauseModal = document.getElementById("fakePauseModal");
-    const actuallyPauseButton = document.getElementById("actuallyPauseButton");
     const funButton = document.getElementById("funButton");
     const faaahButton = document.getElementById("faaahButton");
     const shockedButton = document.getElementById("shockedButton");
 
     let opened = false;
     let fakePauseClicks = 0;
-    let actuallyPauseClicks = 0;
 
     function playConfettiSound() {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -947,27 +835,53 @@
         funSoundFrame.remove();
       }, 12000);
     }
-    function playInstantSound(soundUrl) {
-      const sound = new Audio(soundUrl);
-    
-      sound.volume = 1;
-      sound.currentTime = 0;
-    
-      sound.play().catch(error => {
-        console.warn("Instant sound could not play.", error);
-      });
-    }
-    if (faaahButton) {
-  faaahButton.addEventListener("click", function () {
-    playInstantSound("https://www.myinstants.com/media/sounds/faaah.mp3");
-  });
-}
 
-if (shockedButton) {
-  shockedButton.addEventListener("click", function () {
-    playInstantSound("https://www.myinstants.com/media/sounds/shocked-sound-effect.mp3");
-  });
-}
+    function playFaaahSound() {
+      const faaahFrame = makeHiddenYouTubeFrame(
+        "https://www.youtube.com/embed/VP6eZu3SAak?autoplay=1&playsinline=1",
+        "No Click me sound"
+      );
+
+      setTimeout(() => {
+        faaahFrame.remove();
+      }, 12000);
+    }
+
+    function playShockedSound() {
+      const shockedFrame = makeHiddenYouTubeFrame(
+        "https://www.youtube.com/embed/1syHOKOHVY4?autoplay=1&playsinline=1",
+        "No me sound"
+      );
+
+      setTimeout(() => {
+        shockedFrame.remove();
+      }, 12000);
+    }
+
+    function spawnPauseGif() {
+      const gif = document.createElement("img");
+
+      gif.className = "floating-pause-gif";
+      gif.src = "https://i.imgur.com/gl6R3Uq.gif";
+      gif.alt = "Birthday reaction gif";
+
+      const gifWidth = window.innerWidth <= 650 ? 125 : 180;
+      const safePadding = 20;
+
+      const maxLeft = Math.max(window.innerWidth - gifWidth - safePadding, safePadding);
+      const maxTop = Math.max(window.innerHeight - gifWidth - safePadding, safePadding);
+
+      const left = safePadding + Math.random() * (maxLeft - safePadding);
+      const top = safePadding + Math.random() * (maxTop - safePadding);
+      const rotation = `${Math.round(-12 + Math.random() * 24)}deg`;
+
+      gif.style.left = `${left}px`;
+      gif.style.top = `${top}px`;
+      gif.style.setProperty("--gif-rotation", rotation);
+
+      document.body.appendChild(gif);
+    }
+
     function openPresent() {
       if (opened) return;
 
@@ -999,52 +913,42 @@ if (shockedButton) {
       startBirthdaySong();
     }
 
-    function openFakePauseModal() {
-      if (!fakePauseModal) return;
-
-      fakePauseModal.hidden = false;
-
-      requestAnimationFrame(() => {
-        fakePauseModal.classList.add("show");
-      });
-    }
-
     if (fakePauseMusicButton) {
       fakePauseMusicButton.addEventListener("click", function () {
         fakePauseClicks++;
 
-        openFakePauseModal();
         addExtraLoudSongLayer();
+        spawnPauseGif();
 
         if (fakePauseClicks === 1) {
-          fakePauseMusicButton.textContent = "Pause Music";
-        } else if (fakePauseClicks === 2) {
           fakePauseMusicButton.textContent = "I said pause";
-        } else if (fakePauseClicks === 3) {
+        } else if (fakePauseClicks === 2) {
           fakePauseMusicButton.textContent = "Stop it";
-        } else {
+        } else if (fakePauseClicks === 3) {
           fakePauseMusicButton.textContent = "No really";
+        } else {
+          fakePauseMusicButton.textContent = "Pause Music";
         }
       });
     }
 
-    if (actuallyPauseButton) {
-  actuallyPauseButton.addEventListener("click", function () {
-    actuallyPauseClicks++;
-
-    addExtraLoudSongLayer();
-
-    if (actuallyPauseClicks >= 1) {
-      actuallyPauseButton.textContent = "I said pause";
-    }
-  });
-}
-
     if (funButton) {
-  funButton.addEventListener("click", function () {
-    playFunButtonSound();
-  });
-}
+      funButton.addEventListener("click", function () {
+        playFunButtonSound();
+      });
+    }
+
+    if (faaahButton) {
+      faaahButton.addEventListener("click", function () {
+        playFaaahSound();
+      });
+    }
+
+    if (shockedButton) {
+      shockedButton.addEventListener("click", function () {
+        playShockedSound();
+      });
+    }
 
     if (presentButton) {
       presentButton.addEventListener("click", openPresent);
