@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Listening History | Nick Site</title>
+  <link rel="stylesheet" href="/nick-site/style.css">
+</head>
+
+<body>
+  <div id="site-header"></div>
+  <script src="/nick-site/nav-loader.js"></script>
+
+  <main>
+    <div class="page-topline">
+      <div>
+        <h2>Listening History</h2>
+        <p>A timeline view of ranked albums, with date added, last update, tier, ranking, artist, year, and album information.</p>
+      </div>
+
+      <p id="last-updated" class="last-updated-text">Last updated: —</p>
+    </div>
+
+    <div class="movie-controls-row">
+      <button id="listening-sort-column" class="filter-button" type="button">
+        Sort by: Last Update
+      </button>
+
+      <button id="listening-sort-direction" class="filter-button" type="button">
+        Sort: Latest
+      </button>
+
+      <div class="show-control">
+        <label for="listening-show-count">Show:</label>
+        <select id="listening-show-count" class="sort-select">
+          <option value="25" selected>25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+          <option value="250">250</option>
+          <option value="all">All</option>
+        </select>
+      </div>
+
+      <div class="rankings-search-wrap listening-history-search-wrap">
+        <input
+          type="text"
+          id="listening-search"
+          placeholder="Search listening history..."
+          class="search-box rankings-search-input"
+        >
+
+        <button
+          id="listening-search-clear"
+          class="rankings-search-clear-button"
+          type="button"
+          aria-label="Clear search"
+          title="Clear search"
+        >
+          ×
+        </button>
+
+        <button id="listening-search-button" class="rankings-search-button" type="button">
+          Search
+        </button>
+      </div>
+    </div>
+
+    <p id="listening-row-count" class="last-updated"></p>
+
+    <div class="table-wrap">
+      <table id="listening-history-table"></table>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+  <script>
+    window.NICK_SITE_INIT = function () {
+      try {
+        if (typeof Papa === "undefined") {
+          throw new Error("PapaParse did not load.");
+        }
+
+        if (typeof loadListeningHistory !== "function") {
+          throw new Error("loadListeningHistory is not defined. script.js did not load correctly or has a syntax error.");
+        }
+
+        loadListeningHistory(window.ALBUMS_CSV_URL);
+      } catch (error) {
+        console.error(error);
+
+        const table = document.getElementById("listening-history-table");
+
+        if (table) {
+          table.innerHTML = `
+            <tbody>
+              <tr>
+                <td>Could not load listening history. Check the console for details.</td>
+              </tr>
+            </tbody>
+          `;
+        }
+      }
+    };
+  </script>
+
+  <script src="/nick-site/script-loader.js"></script>
+</body>
+</html>
