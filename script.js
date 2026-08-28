@@ -87,26 +87,6 @@ function getTierColor(value) {
   return { bg: "", text: "" };
 }
 
-let cellStyle = "";
-
-if (column === "Tier") {
-  cellStyle += getTierCellStyle(value);
-}
-
-if (column === "Sub-Tier") {
-  cellStyle += getSubTierStyle(value);
-}
-
-function getCSVFallbackUrl(filePath) {
-  if (filePath === window.MOVIES_CSV_URL) return window.MOVIES_LOCAL_CSV_URL;
-  if (filePath === window.TVSHOWS_CSV_URL) return window.TVSHOWS_LOCAL_CSV_URL;
-  if (filePath === window.EPISODES_CSV_URL) return window.EPISODES_LOCAL_CSV_URL;
-  if (filePath === window.ALBUMS_CSV_URL) return window.ALBUMS_LOCAL_CSV_URL;
-  if (filePath === window.SONGS_CSV_URL) return window.SONGS_LOCAL_CSV_URL;
-
-  return null;
-}
-
 async function fetchCSVTextWithRetry(filePath, attempts = 3) {
   let lastError = null;
 
@@ -145,27 +125,42 @@ async function fetchCSVTextWithRetry(filePath, attempts = 3) {
 }
 
 async function getCSVText(filePath) {
-  const primaryPath = filePath;
-  const fallbackPath = getCSVFallbackUrl(primaryPath);
-
-  try {
-    return await fetchCSVTextWithRetry(primaryPath, 3);
-  } catch (primaryError) {
-    console.warn("Primary CSV failed.", primaryError);
-
-    if (fallbackPath && fallbackPath !== primaryPath) {
-      console.warn("Trying local fallback CSV:", fallbackPath);
-      return await fetchCSVTextWithRetry(fallbackPath, 1);
-    }
-
-    throw primaryError;
-  }
+  return await fetchCSVTextWithRetry(filePath, 3);
 }
 
 function getTierStyleFromValue(value, fallback = "") {
   const colors = getTierColor(value);
 
   if (colors.bg === "" || colors.text === "") return fallback;
+
+  return `
+    background-color: ${colors.bg};
+    color: ${colors.text};
+    font-weight: bold;
+  `;
+}
+
+function getSubTierStyleFromValue(value, fallback = "") {
+  const text = String(value ?? "").trim().toUpperCase();
+
+  const subTierColors = {
+    "A": {
+      bg: "#d4edbc",
+      text: "#11734b"
+    },
+    "B": {
+      bg: "#ffe5a0",
+      text: "#473821"
+    },
+    "C": {
+      bg: "#ffcfc9",
+      text: "#b10202"
+    }
+  };
+
+  const colors = subTierColors[text];
+
+  if (!colors) return fallback;
 
   return `
     background-color: ${colors.bg};
@@ -428,7 +423,17 @@ async function loadCSV(
     "Release Date": "240px",
     "Season Epi #": "75px",
     "Rank": "60px",
-    "Notes": "400px"
+    "Notes": "400px",
+
+    /* Albums Table only */
+      "Ranking": "75px",
+      "Sub-Tier": "75px",
+      "Album": "260px",
+      "Artist": "220px",
+      "Year": "80px",
+      "xRank%": "90px",
+      "Genres": "260px",
+      "SORT": "90px",
   };
 
   const cellFontSizes = {
@@ -758,25 +763,29 @@ async function loadCSV(
     return getFactorStyleFromValue(normalizeFactorValue(value));
   }
 
-  function getConditionalStyle(header, value) {
-    if (header === "Tier" || header === "TV SHOW TIER") {
-      return getTierStyleFromValue(value);
-    }
-
-    if (header === "Rank" || header === "Sarah :)" || header === "Nick <3") {
-      return getFactorStyleFromValue(value);
-    }
-
-    if (header === "My Rating") {
-      return getRatingColor(value);
-    }
-
-    if (factorColumns.includes(header)) {
-      return getFactorStyle(header, value);
-    }
-
-    return "";
-  }
+ function getConditionalStyle(header, value) {
+          if (header === "Tier" || header === "TV SHOW TIER") {
+            return getTierStyleFromValue(value);
+          }
+        
+          if (header === "Sub-Tier") {
+            return getSubTierStyleFromValue(value);
+          }
+        
+          if (header === "Rank" || header === "Sarah :)" || header === "Nick <3") {
+            return getFactorStyleFromValue(value);
+          }
+        
+          if (header === "My Rating") {
+            return getRatingColor(value);
+          }
+        
+          if (factorColumns.includes(header)) {
+            return getFactorStyle(header, value);
+          }
+        
+          return "";
+}
 
   function getFilterValues(value) {
     return String(value ?? "")
