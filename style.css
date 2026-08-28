@@ -7405,3 +7405,100 @@ tr:hover td:nth-child(3) {
   display: none !important;
 }
 
+/* Rankings search, keep input, X, and Search button on one line */
+.rankings-search-wrap {
+  display: grid !important;
+  grid-template-columns: minmax(220px, 1fr) 34px auto !important;
+  align-items: center !important;
+  gap: 8px !important;
+
+  flex: 1 1 720px !important;
+  min-width: 520px !important;
+  max-width: 760px !important;
+
+  margin-left: auto !important;
+  position: static !important;
+  overflow: visible !important;
+  box-sizing: border-box !important;
+}
+
+.rankings-search-input {
+  grid-column: 1 !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  height: 44px !important;
+  margin: 0 !important;
+  padding: 0 12px !important;
+  box-sizing: border-box !important;
+}
+
+.rankings-search-clear-button {
+  grid-column: 2 !important;
+  position: static !important;
+  top: auto !important;
+  right: auto !important;
+  transform: none !important;
+
+  width: 34px !important;
+  height: 34px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  border: 1px solid #444 !important;
+  border-radius: 50% !important;
+  background: #181818 !important;
+  color: #f5f5f5 !important;
+
+  font-size: 18px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+}
+
+.rankings-search-button {
+  grid-column: 3 !important;
+  position: static !important;
+  top: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+  transform: none !important;
+
+  height: 36px !important;
+  margin: 0 !important;
+  padding: 0 14px !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  border: 1px solid #444 !important;
+  border-radius: 8px !important;
+  background: #181818 !important;
+  color: #f5f5f5 !important;
+
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
+.rankings-search-clear-button[hidden] {
+  display: none !important;
+}
+
+@media (max-width: 850px) {
+  .rankings-search-wrap {
+    grid-template-columns: minmax(0, 1fr) 34px auto !important;
+    flex-basis: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+  }
+}
+
