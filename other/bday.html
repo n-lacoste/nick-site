@@ -147,13 +147,13 @@
 .birthday-photo-burst figure {
   position: absolute;
   left: 50%;
-  top: -150px;
-  width: 118px;
+  top: -175px;
+  width: 165px;
   margin: 0;
-  padding: 7px 7px 9px;
-  border-radius: 14px;
+  padding: 9px 9px 11px;
+  border-radius: 18px;
   background: #ffffff;
-  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.34);
+  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.38);
   opacity: 0;
   transform: translate(-50%, 90px) scale(0.25) rotate(0deg);
   transition:
@@ -166,13 +166,13 @@
   width: 100%;
   aspect-ratio: 1 / 1;
   object-fit: cover;
-  border-radius: 11px;
+  border-radius: 14px;
 }
 
 .birthday-photo-burst figcaption {
-  margin-top: 6px;
+  margin-top: 8px;
   color: #ff4fa3;
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 900;
   line-height: 1.1;
   text-align: center;
@@ -183,22 +183,22 @@
 }
 
 .birthday-photo-burst.show figure:nth-child(1) {
-  transform: translate(-285px, -85px) scale(1) rotate(-14deg);
+  transform: translate(-365px, -95px) scale(1) rotate(-14deg);
   transition-delay: 0.05s;
 }
 
 .birthday-photo-burst.show figure:nth-child(2) {
-  transform: translate(-125px, -140px) scale(1) rotate(8deg);
+  transform: translate(-175px, -160px) scale(1) rotate(8deg);
   transition-delay: 0.14s;
 }
 
 .birthday-photo-burst.show figure:nth-child(3) {
-  transform: translate(40px, -138px) scale(1) rotate(-6deg);
+  transform: translate(35px, -158px) scale(1) rotate(-6deg);
   transition-delay: 0.23s;
 }
 
 .birthday-photo-burst.show figure:nth-child(4) {
-  transform: translate(190px, -82px) scale(1) rotate(13deg);
+  transform: translate(230px, -92px) scale(1) rotate(13deg);
   transition-delay: 0.32s;
 }
     
@@ -222,7 +222,7 @@
 }
 
 .birthday-card.show {
-  margin-top: 170px;
+  margin-top: 230px;
   opacity: 1;
   transform: translateY(0) scale(1);
 }
@@ -535,37 +535,36 @@
   }
 
   .birthday-photo-burst figure {
-      width: 92px;
-      top: -125px;
-      padding: 6px 6px 8px;
-    }
+  width: 118px;
+  top: -140px;
+  padding: 7px 7px 9px;
+}
 
-  .birthday-photo-burst figcaption {
-    font-size: 10px;
-  }
+.birthday-photo-burst figcaption {
+  font-size: 12px;
+}
 
-  .birthday-photo-burst.show figure:nth-child(1) {
-    transform: translate(-150px, -105px) scale(1) rotate(-12deg);
-  }
-  
-  .birthday-photo-burst.show figure:nth-child(2) {
-    transform: translate(-55px, -152px) scale(1) rotate(8deg);
-  }
-  
-  .birthday-photo-burst.show figure:nth-child(3) {
-    transform: translate(40px, -150px) scale(1) rotate(-7deg);
-  }
-  
-  .birthday-photo-burst.show figure:nth-child(4) {
-    transform: translate(115px, -102px) scale(1) rotate(12deg);
-  }
+.birthday-photo-burst.show figure:nth-child(1) {
+  transform: translate(-170px, -105px) scale(1) rotate(-12deg);
+}
 
+.birthday-photo-burst.show figure:nth-child(2) {
+  transform: translate(-70px, -160px) scale(1) rotate(8deg);
+}
+
+.birthday-photo-burst.show figure:nth-child(3) {
+  transform: translate(42px, -158px) scale(1) rotate(-7deg);
+}
+
+.birthday-photo-burst.show figure:nth-child(4) {
+  transform: translate(125px, -102px) scale(1) rotate(12deg);
+}
+
+.birthday-card.show {
+  margin-top: 165px;
+}
   .birthday-card {
     padding: 24px 18px;
-  }
-
-  .birthday-card.show {
-    margin-top: 125px;
   }
 
   .birthday-gift-list {
@@ -678,7 +677,7 @@
     </div>
 
     <p class="fake-pause-modal-text">
-      The music has been paused.
+      Click the button below to pause music.
     </p>
 
     <button id="actuallyPauseButton" class="actually-pause-button" type="button">
@@ -799,6 +798,30 @@
 
       document.body.appendChild(loudFrame);
     }
+    
+    function playFunButtonSound() {
+      const funSoundFrame = document.createElement("iframe");
+    
+      funSoundFrame.width = "560";
+      funSoundFrame.height = "315";
+      funSoundFrame.src = "https://www.youtube.com/embed/D2_r4q2imnQ?autoplay=1&playsinline=1";
+      funSoundFrame.title = "Fun button sound";
+      funSoundFrame.frameBorder = "0";
+      funSoundFrame.allow = "autoplay; encrypted-media";
+      funSoundFrame.allowFullscreen = true;
+    
+      funSoundFrame.style.position = "fixed";
+      funSoundFrame.style.width = "1px";
+      funSoundFrame.style.height = "1px";
+      funSoundFrame.style.left = "-9999px";
+      funSoundFrame.style.top = "-9999px";
+    
+      document.body.appendChild(funSoundFrame);
+    
+      setTimeout(() => {
+        funSoundFrame.remove();
+      }, 12000);
+    }
 
     function openPresent() {
       if (opened) return;
@@ -856,18 +879,23 @@ if (fakePauseMusicButton) {
 
 if (actuallyPauseButton) {
   actuallyPauseButton.addEventListener("click", function () {
+    const currentButtonText = actuallyPauseButton.textContent.trim();
+
+    if (currentButtonText === "Click me for fun") {
+      playFunButtonSound();
+      return;
+    }
+
     fakePauseClicks++;
 
     addExtraLoudSongLayer();
 
     if (fakePauseClicks === 1) {
-      actuallyPauseButton.textContent = "Actually Pause";
+      actuallyPauseButton.textContent = "No like actually pause";
     } else if (fakePauseClicks === 2) {
-      actuallyPauseButton.textContent = "No like actually actually pause";
-    } else if (fakePauseClicks === 3) {
       actuallyPauseButton.textContent = "This seems worse";
-    } else {
-      actuallyPauseButton.textContent = "It is basically paused now";
+    } else if (fakePauseClicks >= 3) {
+      actuallyPauseButton.textContent = "Click me for fun";
     }
   });
 }
