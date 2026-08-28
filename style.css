@@ -7353,3 +7353,55 @@ tr:hover td:nth-child(3) {
   color: #b10202;
 }
 
+/* Rankings search bar, keep clear button from overlapping input */
+.rankings-search-wrap {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  position: static !important;
+  overflow: visible !important;
+}
+
+.rankings-search-input {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  padding-right: 12px !important;
+}
+
+.rankings-search-clear-button {
+  position: static !important;
+  top: auto !important;
+  right: auto !important;
+  transform: none !important;
+
+  flex: 0 0 34px !important;
+  width: 34px !important;
+  height: 34px !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  border: 1px solid #444 !important;
+  border-radius: 50% !important;
+  background: #181818 !important;
+  color: #f5f5f5 !important;
+
+  font-size: 18px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+}
+
+.rankings-search-clear-button:hover {
+  border-color: #ffd966 !important;
+  color: #ffd966 !important;
+}
+
+.rankings-search-clear-button[hidden] {
+  display: none !important;
+}
+
