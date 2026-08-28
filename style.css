@@ -6864,7 +6864,7 @@ tr:hover td:nth-child(3) {
   margin-left: var(--tv-card-edge-gutter) !important;
 }
 
-/* TV Show Card, make search row and card share same left/right edge */
+/* TV Show Card, align search box border with card border */
 :root {
   --tv-card-page-gutter: 40px;
 }
@@ -6880,3 +6880,31 @@ tr:hover td:nth-child(3) {
   margin-left: var(--tv-card-page-gutter) !important;
   margin-right: var(--tv-card-page-gutter) !important;
 }
+
+/* TV Show Card, fixed 250px gap between search and tier scale */
+.tv-card-search-row {
+  display: grid !important;
+  grid-template-columns: 280px 250px auto !important;
+  align-items: center !important;
+  gap: 0 !important;
+
+  width: auto !important;
+  max-width: none !important;
+  box-sizing: border-box !important;
+
+  margin: 28px 40px 18px 40px !important;
+}
+
+.tv-card-search-left {
+  grid-column: 1 !important;
+  width: 280px !important;
+  min-width: 280px !important;
+  max-width: 280px !important;
+}
+
+.tv-card-tier-scale {
+  grid-column: 3 !important;
+  justify-self: start !important;
+  margin-left: 0 !important;
+}
+
