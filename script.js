@@ -2888,6 +2888,70 @@ function getShowTitle(row) {
     return episodeRows.filter(row => getNumber(row["Rank"]) !== null).length;
   }
 
+  function getMaxNumberFromColumns(rows, columns) {
+  const values = rows
+    .flatMap(row => {
+      return columns.map(column => getNumber(row[column]));
+    })
+    .filter(value => value !== null && !isNaN(value));
+
+  if (values.length === 0) return null;
+
+  return Math.max(...values);
+}
+
+function formatEpisodeCountWithBracket(primaryValue, bracketValue) {
+  if (primaryValue === null && bracketValue === null) return "—";
+  if (primaryValue === null) return `— (${bracketValue})`;
+  if (bracketValue === null) return String(primaryValue);
+
+  if (primaryValue !== bracketValue) {
+    return `${primaryValue} (${bracketValue})`;
+  }
+
+  return String(primaryValue);
+}
+
+function getEpisodeCountDisplay(showRow, episodeRows) {
+  const rankedEpisodeMax = getMaxNumberFromColumns(episodeRows, [
+    "Episode #",
+    "Episode Number",
+    "Season Epi #"
+  ]);
+
+  const episodeCountMax = getMaxNumberFromColumns(episodeRows, [
+    "Episode Count",
+    "Episodes"
+  ]);
+
+  const fallbackEpisodes = getNumber(getText(showRow, "Episodes"));
+
+  const primaryValue = rankedEpisodeMax ?? fallbackEpisodes;
+  const bracketValue = episodeCountMax;
+
+  return formatEpisodeCountWithBracket(primaryValue, bracketValue);
+}
+
+function getRankedEpisodeCountDisplay(showRow, episodeRows) {
+  const rankedEpisodeMax = getMaxNumberFromColumns(episodeRows, [
+    "Episode #",
+    "Ranked Episode #",
+    "Ranked Episode Number"
+  ]);
+
+  const rankedEpisodeCountMax = getMaxNumberFromColumns(episodeRows, [
+    "Ranked Episode Count",
+    "Ranked Episodes"
+  ]);
+
+  const fallbackRankedEpisodes = countRankedEpisodes(episodeRows);
+
+  const primaryValue = rankedEpisodeMax ?? fallbackRankedEpisodes;
+  const bracketValue = rankedEpisodeCountMax;
+
+  return formatEpisodeCountWithBracket(primaryValue, bracketValue);
+}
+
   function renderCategoricalRanks(showRow) {
     const factors = [
       "Plot",
@@ -3092,7 +3156,8 @@ function renderEpisodeRankPieChart(episodeRows) {
 }
   
   function renderShowInfo(showRow, episodeRows) {
-    const rankedEpisodes = countRankedEpisodes(episodeRows);
+    const episodeCountDisplay = getEpisodeCountDisplay(showRow, episodeRows);
+    const rankedEpisodesDisplay = getRankedEpisodeCountDisplay(showRow, episodeRows);
     const averageEpisodeRank = getAverageEpisodeRank(episodeRows);
 
     const averageEpisodeRankColors = getRankColor(averageEpisodeRank);
@@ -3111,8 +3176,8 @@ function renderEpisodeRankPieChart(episodeRows) {
           ${makeStatBox("Times Seen", getText(showRow, "Times Seen"), "tv-card-times-seen-stat")}
           ${makeStatBox("Years", getText(showRow, "Years"), "tv-card-years-stat")}
           ${makeStatBox("Seasons", getText(showRow, "Seasons"), "tv-card-seasons-stat")}
-          ${makeStatBox("Episodes", getText(showRow, "Episodes"), "tv-card-episodes-stat")}
-          ${makeStatBox("Ranked Episodes", rankedEpisodes, "tv-card-ranked-episodes-stat")}
+          ${makeStatBox("Episodes", episodeCountDisplay, "tv-card-episodes-stat")}
+          ${makeStatBox("Ranked Episodes", rankedEpisodesDisplay, "tv-card-ranked-episodes-stat")}
           ${makeStatBox("Watched", getText(showRow, "Watched / Unwatched"), "tv-card-watched-stat")}
           ${makeStatBox("Tags", formatTagsForInfo(getText(showRow, "Tags")), "tv-card-tags-stat")}
           ${makeStatBox(
