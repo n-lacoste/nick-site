@@ -128,6 +128,73 @@
       transform: rotate(28deg);
     }
 
+    .birthday-photo-burst {
+      position: relative;
+      width: min(720px, 100%);
+      height: 0;
+      margin: 0 auto;
+      pointer-events: none;
+      z-index: 6;
+    }
+
+    .birthday-photo-burst figure {
+      position: absolute;
+      left: 50%;
+      top: -140px;
+      width: 135px;
+      margin: 0;
+      padding: 8px 8px 10px;
+      border-radius: 16px;
+      background: #ffffff;
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.34);
+      opacity: 0;
+      transform: translate(-50%, 90px) scale(0.25) rotate(0deg);
+      transition:
+        opacity 0.45s ease,
+        transform 0.8s cubic-bezier(.17,.67,.24,1.28);
+    }
+
+    .birthday-photo-burst img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      border-radius: 12px;
+    }
+
+    .birthday-photo-burst figcaption {
+      margin-top: 7px;
+      color: #ff4fa3;
+      font-size: 13px;
+      font-weight: 900;
+      line-height: 1.1;
+      text-align: center;
+    }
+
+    .birthday-photo-burst.show figure {
+      opacity: 1;
+    }
+
+    .birthday-photo-burst.show figure:nth-child(1) {
+      transform: translate(-315px, -155px) scale(1) rotate(-14deg);
+      transition-delay: 0.05s;
+    }
+
+    .birthday-photo-burst.show figure:nth-child(2) {
+      transform: translate(-165px, -215px) scale(1) rotate(8deg);
+      transition-delay: 0.14s;
+    }
+
+    .birthday-photo-burst.show figure:nth-child(3) {
+      transform: translate(30px, -210px) scale(1) rotate(-6deg);
+      transition-delay: 0.23s;
+    }
+
+    .birthday-photo-burst.show figure:nth-child(4) {
+      transform: translate(190px, -150px) scale(1) rotate(13deg);
+      transition-delay: 0.32s;
+    }
+
     .birthday-card {
       margin: 34px auto 0;
       max-width: 520px;
@@ -139,10 +206,11 @@
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
       transform: translateY(20px) scale(0.96);
       opacity: 0;
-      transition: opacity 0.5s ease, transform 0.5s ease;
+      transition: opacity 0.5s ease, transform 0.5s ease, margin-top 0.5s ease;
     }
 
     .birthday-card.show {
+      margin-top: 210px;
       opacity: 1;
       transform: translateY(0) scale(1);
     }
@@ -158,6 +226,136 @@
       margin: 0;
       font-size: 24px;
       color: #111;
+    }
+
+    .birthday-gift-list {
+      margin: 20px auto 22px;
+      max-width: 430px;
+      padding: 18px 20px;
+      border: 2px dashed #ff7ab6;
+      border-radius: 18px;
+      background: #fff0f7;
+      text-align: left;
+    }
+
+    .birthday-gift-intro {
+      margin: 0 0 14px !important;
+      color: #111 !important;
+      font-size: 18px !important;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .birthday-gift-intro span {
+      display: block;
+      margin-top: 4px;
+      color: #ff4fa3;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .birthday-gift-list ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .birthday-gift-list li {
+      position: relative;
+      margin: 9px 0;
+      padding: 9px 12px 9px 38px;
+      border-radius: 12px;
+      background: #ffffff;
+      color: #111;
+      font-size: 17px;
+      line-height: 1.25;
+      box-shadow: 0 2px 8px rgba(255, 79, 163, 0.12);
+    }
+
+    .birthday-gift-list li::before {
+      content: "🎁";
+      position: absolute;
+      left: 11px;
+      top: 8px;
+      font-size: 17px;
+    }
+
+    .birthday-love-note {
+      max-width: 460px;
+      margin: 18px auto 8px !important;
+      color: #111 !important;
+      font-size: 20px !important;
+      line-height: 1.35;
+      font-weight: 700;
+    }
+
+    .birthday-signoff {
+      margin: 10px 0 0 !important;
+      color: #ff4fa3 !important;
+      font-size: 26px !important;
+      font-weight: 900;
+    }
+
+    .fake-pause-music-button {
+      margin-top: 18px;
+      padding: 12px 18px;
+      border: 2px solid #ff4fa3;
+      border-radius: 999px;
+      background: #ff4fa3;
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(255, 79, 163, 0.28);
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+
+    .fake-pause-music-button:hover {
+      transform: scale(1.04);
+      background: #ff2f93;
+    }
+
+    .fake-pause-music-button:active {
+      transform: scale(0.98);
+    }
+
+    .fake-pause-reveal {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      max-width: 430px;
+      margin: 18px auto 0;
+      opacity: 0;
+      transform: translateY(16px) scale(0.94);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+
+    .fake-pause-reveal.show {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .fake-pause-reveal img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: contain;
+      border: 4px solid #ffffff;
+      border-radius: 18px;
+      background: #fff0f7;
+      box-shadow: 0 8px 22px rgba(255, 79, 163, 0.22);
+    }
+
+    .fake-pause-gif {
+      object-fit: cover !important;
+    }
+
+    .birthday-youtube-wrap {
+      position: fixed;
+      width: 1px;
+      height: 1px;
+      left: -9999px;
+      top: -9999px;
+      overflow: hidden;
     }
 
     .confetti-piece {
@@ -179,6 +377,40 @@
       100% {
         transform: translateY(110vh) rotate(720deg);
         opacity: 0.9;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .birthday-photo-burst figure {
+        width: 105px;
+        top: -110px;
+      }
+
+      .birthday-photo-burst.show figure:nth-child(1) {
+        transform: translate(-155px, -145px) scale(1) rotate(-12deg);
+      }
+
+      .birthday-photo-burst.show figure:nth-child(2) {
+        transform: translate(-65px, -210px) scale(1) rotate(8deg);
+      }
+
+      .birthday-photo-burst.show figure:nth-child(3) {
+        transform: translate(35px, -205px) scale(1) rotate(-7deg);
+      }
+
+      .birthday-photo-burst.show figure:nth-child(4) {
+        transform: translate(110px, -140px) scale(1) rotate(12deg);
+      }
+
+      .birthday-card.show {
+        margin-top: 185px;
+      }
+    }
+
+    @media (max-width: 550px) {
+      .fake-pause-reveal {
+        grid-template-columns: 1fr;
+        max-width: 260px;
       }
     }
   </style>
@@ -205,75 +437,95 @@
       </button>
 
       <div id="birthdayPhotoBurst" class="birthday-photo-burst" hidden>
-  <figure>
-    <img src="/nick-site/assets/IMG_5153.png" alt="Stay swaggy">
-    <figcaption>stay swaggy</figcaption>
-  </figure>
+        <figure>
+          <img src="/nick-site/assets/IMG_5153.png" alt="Stay swaggy">
+          <figcaption>stay swaggy</figcaption>
+        </figure>
 
-  <figure>
-    <img src="/nick-site/assets/IMG_5163.png" alt="Stay chill">
-    <figcaption>stay chill</figcaption>
-  </figure>
+        <figure>
+          <img src="/nick-site/assets/IMG_5163.png" alt="Stay chill">
+          <figcaption>stay chill</figcaption>
+        </figure>
 
-  <figure>
-    <img src="/nick-site/assets/IMG_5258.png" alt="Why so serious? It yo bday">
-    <figcaption>why so serious?<br>it yo bday</figcaption>
-  </figure>
+        <figure>
+          <img src="/nick-site/assets/IMG_5258.png" alt="Why so serious? It yo bday">
+          <figcaption>why so serious?<br>it yo bday</figcaption>
+        </figure>
 
-  <figure>
-    <img src="/nick-site/assets/IMG_5295.png" alt="Stay cute xD">
-    <figcaption>stay cute xD</figcaption>
-  </figure>
-</div>
-      
-  <div id="birthdayCard" class="birthday-card" hidden>
-  <h2>Happy 22nd Birthday Sarah!</h2>
+        <figure>
+          <img src="/nick-site/assets/IMG_5295.png" alt="Stay cute xD">
+          <figcaption>stay cute xD</figcaption>
+        </figure>
+      </div>
 
-  <div class="birthday-gift-list">
-    <p class="birthday-gift-intro">
-      Enjoy the following gifts
-      <span>(+ infinite hugs)</span>
-    </p>
+      <div id="birthdayCard" class="birthday-card" hidden>
+        <h2>Happy 22nd Birthday Sarah!</h2>
 
-    <ul>
-      <li>6 months of YouTube Premium</li>
-      <li><em>How to Train Your Dragon 3</em> on DVD</li>
-      <li>A Snoopy placemat</li>
-      <li>A shower stand for shampoos, etc.</li>
-      <li><em>Heated Rivalry book</em></li>
-      <li>Two fun meals at The Keg and Mandarin</li>
-    </ul>
-  </div>
+        <div class="birthday-gift-list">
+          <p class="birthday-gift-intro">
+            Enjoy the following gifts
+            <span>(+ infinite hugs)</span>
+          </p>
 
-  <p class="birthday-love-note">
-    I love you so much!!! Thanks for being you :)
-  </p>
+          <ul>
+            <li>6 months of YouTube Premium</li>
+            <li><em>How to Train Your Dragon 3</em> on DVD</li>
+            <li>A Snoopy placemat</li>
+            <li>A shower stand for shampoos, etc.</li>
+            <li><em>Heated Rivalry</em> book</li>
+            <li>Two fun meals at The Keg and Mandarin</li>
+          </ul>
+        </div>
 
-  <p class="birthday-signoff">Love, Nick</p>
-</div>
+        <p class="birthday-love-note">
+          I love you so much!!! Thanks for being you :)
+        </p>
+
+        <p class="birthday-signoff">Love, Nick</p>
+
+        <button id="fakePauseMusicButton" class="fake-pause-music-button" type="button">
+          Pause Music
+        </button>
+
+        <div id="fakePauseReveal" class="fake-pause-reveal" hidden>
+          <img
+            class="fake-pause-bugs"
+            src="https://media.tenor.com/5N9derc9UcgAAAAe/no-bugs-bunny.png"
+            alt="No Bugs Bunny"
+          >
+
+          <img
+            class="fake-pause-gif"
+            src="https://i.imgur.com/gl6R3Uq.gif"
+            alt="Birthday reaction gif"
+          >
+        </div>
+      </div>
     </div>
   </main>
 
   <div id="birthdayYouTubeWrap" class="birthday-youtube-wrap" hidden>
-  <iframe
-    id="birthdayYouTube"
-    width="560"
-    height="315"
-    src=""
-    title="Birthday song"
-    frameborder="0"
-    allow="autoplay; encrypted-media"
-    allowfullscreen>
-  </iframe>
-</div>
+    <iframe
+      id="birthdayYouTube"
+      width="560"
+      height="315"
+      src=""
+      title="Birthday song"
+      frameborder="0"
+      allow="autoplay; encrypted-media"
+      allowfullscreen>
+    </iframe>
+  </div>
 
   <script>
     const presentButton = document.getElementById("birthdayPresent");
     const birthdayCard = document.getElementById("birthdayCard");
-    const birthdaySong = document.getElementById("birthdaySong");
     const birthdayPhotoBurst = document.getElementById("birthdayPhotoBurst");
+    const fakePauseMusicButton = document.getElementById("fakePauseMusicButton");
+    const fakePauseReveal = document.getElementById("fakePauseReveal");
 
     let opened = false;
+    let fakePauseClicks = 0;
 
     function playConfettiSound() {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -281,7 +533,6 @@
       if (!AudioContext) return;
 
       const audioContext = new AudioContext();
-
       const notes = [523.25, 659.25, 783.99];
 
       notes.forEach((frequency, index) => {
@@ -332,6 +583,36 @@
       }
     }
 
+    function startBirthdaySong() {
+      const youtubeWrap = document.getElementById("birthdayYouTubeWrap");
+      const youtubeFrame = document.getElementById("birthdayYouTube");
+
+      if (youtubeWrap && youtubeFrame) {
+        youtubeWrap.hidden = false;
+        youtubeFrame.src = "https://www.youtube.com/embed/AgFeZr5ptV8?start=39&autoplay=1";
+      }
+    }
+
+    function addExtraLoudSongLayer() {
+      const loudFrame = document.createElement("iframe");
+
+      loudFrame.width = "560";
+      loudFrame.height = "315";
+      loudFrame.src = "https://www.youtube.com/embed/AgFeZr5ptV8?start=39&autoplay=1";
+      loudFrame.title = "Definitely paused music";
+      loudFrame.frameBorder = "0";
+      loudFrame.allow = "autoplay; encrypted-media";
+      loudFrame.allowFullscreen = true;
+
+      loudFrame.style.position = "fixed";
+      loudFrame.style.width = "1px";
+      loudFrame.style.height = "1px";
+      loudFrame.style.left = "-9999px";
+      loudFrame.style.top = "-9999px";
+
+      document.body.appendChild(loudFrame);
+    }
+
     function openPresent() {
       if (opened) return;
 
@@ -342,25 +623,45 @@
 
       if (birthdayPhotoBurst) {
         birthdayPhotoBurst.hidden = false;
-      
+
         requestAnimationFrame(() => {
           birthdayPhotoBurst.classList.add("show");
         });
       }
+
       birthdayCard.hidden = false;
 
       requestAnimationFrame(() => {
         birthdayCard.classList.add("show");
       });
 
-     const youtubeWrap = document.getElementById("birthdayYouTubeWrap");
-    const youtubeFrame = document.getElementById("birthdayYouTube");
-    
-    if (youtubeWrap && youtubeFrame) {
-      youtubeWrap.hidden = false;
-    
-      youtubeFrame.src = "https://www.youtube.com/embed/AgFeZr5ptV8?start=39&autoplay=1";
+      startBirthdaySong();
     }
+
+    if (fakePauseMusicButton) {
+      fakePauseMusicButton.addEventListener("click", function () {
+        fakePauseClicks++;
+
+        if (fakePauseReveal) {
+          fakePauseReveal.hidden = false;
+
+          requestAnimationFrame(() => {
+            fakePauseReveal.classList.add("show");
+          });
+        }
+
+        addExtraLoudSongLayer();
+
+        if (fakePauseClicks === 1) {
+          fakePauseMusicButton.textContent = "Pause Music";
+        } else if (fakePauseClicks === 2) {
+          fakePauseMusicButton.textContent = "I said pause";
+        } else if (fakePauseClicks === 3) {
+          fakePauseMusicButton.textContent = "Why is it louder?";
+        } else {
+          fakePauseMusicButton.textContent = "Okay now it is definitely paused";
+        }
+      });
     }
 
     presentButton.addEventListener("click", openPresent);
