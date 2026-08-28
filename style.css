@@ -7991,7 +7991,7 @@ tr:hover td:nth-child(3) {
    Music Data page
    ========================================================= */
 
-.music-data-tool {
+.misc-music-data-tool {
   margin-top: 22px;
   padding: 18px;
   border: 1px solid #333;
@@ -7999,7 +7999,7 @@ tr:hover td:nth-child(3) {
   background: #111;
 }
 
-.music-data-tool-header {
+.misc-music-data-tool-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -8007,26 +8007,26 @@ tr:hover td:nth-child(3) {
   margin-bottom: 14px;
 }
 
-.music-data-tool-header h3 {
+.misc-music-data-tool-header h3 {
   margin: 0 0 6px;
   color: #f5f5f5;
   font-size: 24px;
 }
 
-.music-data-tool-header p {
+.misc-music-data-tool-header p {
   margin: 0;
   color: #bdbdbd;
   font-size: 14px;
 }
 
-.music-data-control-row {
+.misc-music-data-control-row {
   display: flex;
   align-items: flex-end;
   gap: 10px;
   flex-wrap: wrap;
 }
 
-.music-data-control-row label {
+.misc-music-data-control-row label {
   display: flex;
   flex-direction: column;
   gap: 5px;
@@ -8035,7 +8035,7 @@ tr:hover td:nth-child(3) {
   font-weight: 800;
 }
 
-.music-data-control-row .filter-text-input {
+.misc-music-data-control-row .filter-text-input {
   width: 110px !important;
   height: 38px;
   text-align: center;
@@ -8043,13 +8043,13 @@ tr:hover td:nth-child(3) {
   font-weight: 800;
 }
 
-.music-data-summary {
+.misc-music-data-summary {
   margin: 8px 0 12px;
   color: #ccc;
   font-size: 14px;
 }
 
-.music-data-table-wrap {
+.misc-music-data-table-wrap {
   width: 100%;
   max-height: 520px;
   overflow: auto;
@@ -8057,15 +8057,15 @@ tr:hover td:nth-child(3) {
   border-radius: 10px;
 }
 
-.music-data-table {
+.misc-music-data-table {
   width: max-content;
   min-width: 100%;
   border-collapse: collapse;
   background: #1a1a1a;
 }
 
-.music-data-table th,
-.music-data-table td {
+.misc-music-data-table th,
+.misc-music-data-table td {
   padding: 9px 10px;
   border-bottom: 1px solid #333;
   text-align: center;
@@ -8073,7 +8073,7 @@ tr:hover td:nth-child(3) {
   white-space: nowrap;
 }
 
-.music-data-table th {
+.misc-music-data-table th {
   position: sticky;
   top: 0;
   z-index: 5;
@@ -8083,7 +8083,7 @@ tr:hover td:nth-child(3) {
   font-weight: 900;
 }
 
-.music-data-title-cell {
+.misc-music-data-title-cell {
   min-width: 260px;
   max-width: 360px;
   text-align: left !important;
@@ -8092,11 +8092,11 @@ tr:hover td:nth-child(3) {
 }
 
 @media (max-width: 850px) {
-  .music-data-tool-header {
+  .misc-music-data-tool-header {
     flex-direction: column;
   }
 
-  .music-data-control-row {
+  .misc-music-data-control-row {
     width: 100%;
   }
 }
