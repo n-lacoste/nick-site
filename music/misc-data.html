@@ -97,11 +97,11 @@
           throw new Error("PapaParse did not load.");
         }
 
-        if (typeof loadMusicDataPage !== "function") {
-          throw new Error("loadMusicDataPage is not defined. script.js did not load correctly or has a syntax error.");
+        if (typeof loadMiscMusicData !== "function") {
+        throw new Error("loadMiscMusicData is not defined. script.js did not load correctly or has a syntax error.");
         }
-
-        loadMusicDataPage();
+        
+        loadMiscMusicData();
       } catch (error) {
         console.error(error);
       }
