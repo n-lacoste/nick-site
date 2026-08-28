@@ -8121,3 +8121,377 @@ async function loadArtistProfile() {
     }
   });
 }
+
+async function loadMusicDataPage() {
+  const yearInput = document.getElementById("music-data-year-input");
+  const yearButton = document.getElementById("music-data-year-button");
+  const yearSummary = document.getElementById("music-data-year-summary");
+  const yearTable = document.getElementById("music-data-year-table");
+
+  const minCountInput = document.getElementById("music-data-min-count-input");
+  const minCountButton = document.getElementById("music-data-min-count-button");
+  const bestYearsSummary = document.getElementById("music-data-best-years-summary");
+  const bestYearsTable = document.getElementById("music-data-best-years-table");
+
+  const archiveSummary = document.getElementById("music-data-archive-summary");
+  const archiveTable = document.getElementById("music-data-archive-table");
+
+  if (!yearTable || !bestYearsTable || !archiveTable) return;
+
+  const tierOrder = [
+    "(S)",
+    "S",
+    "A1",
+    "A2",
+    "A3",
+    "B1",
+    "B2",
+    "B3",
+    "C1",
+    "C2",
+    "C3",
+    "D"
+  ];
+
+  const tierPointValues = {
+    "(S)": 10,
+    "S": 10,
+    "A1": 9,
+    "A2": 8,
+    "A3": 7,
+    "B1": 6,
+    "B2": 5,
+    "B3": 4,
+    "C1": 3,
+    "C2": 2,
+    "C3": 1,
+    "D": 0
+  };
+
+  function escapeHTML(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function getText(row, column) {
+    return String(row[column] ?? "").trim();
+  }
+
+  function getNumber(row, column) {
+    const text = getText(row, column)
+      .replace(/,/g, "")
+      .replace(/%/g, "");
+
+    if (text === "") return null;
+
+    const number = Number(text);
+
+    return isNaN(number) ? null : number;
+  }
+
+  function getAlbumTitle(row) {
+    return getText(row, "Album") ||
+      getText(row, "Album Title") ||
+      getText(row, "Project TitleArtist");
+  }
+
+  function getAlbumArtist(row) {
+    return getText(row, "Artist") ||
+      getText(row, "Artist-Group");
+  }
+
+  function getAlbumYear(row) {
+    const year = getNumber(row, "Year");
+
+    if (year !== null) return year;
+
+    const releaseDate = getText(row, "Release Date");
+
+    if (releaseDate !== "" && typeof parseMovieDate === "function") {
+      const timestamp = parseMovieDate(releaseDate);
+
+      if (timestamp !== null) {
+        return new Date(timestamp).getFullYear();
+      }
+    }
+
+    return null;
+  }
+
+  function getTier(row) {
+    return getText(row, "Tier") || "NR";
+  }
+
+  function getTierStyle(value) {
+    if (typeof getTierStyleFromValue === "function") {
+      return getTierStyleFromValue(value);
+    }
+
+    return "";
+  }
+
+  function getAlbumSortValue(row) {
+    const ranking = getNumber(row, "Ranking");
+
+    if (ranking !== null) return ranking;
+
+    const xRank = getNumber(row, "xRank%");
+
+    if (xRank !== null) return -xRank;
+
+    return Number.POSITIVE_INFINITY;
+  }
+
+  function formatAverage(value) {
+    if (value === null || isNaN(value)) return "—";
+
+    return value.toFixed(2).replace(/\.00$/, "").replace(/(\.\d)0$/, "$1");
+  }
+
+  function getAverageLevel(avgPoints) {
+    if (avgPoints === null || isNaN(avgPoints)) return "—";
+
+    if (avgPoints >= 9.5) return "(S)";
+    if (avgPoints >= 8.5) return "A1";
+    if (avgPoints >= 7.5) return "A2";
+    if (avgPoints >= 6.5) return "A3";
+    if (avgPoints >= 5.5) return "B1";
+    if (avgPoints >= 4.5) return "B2";
+    if (avgPoints >= 3.5) return "B3";
+    if (avgPoints >= 2.5) return "C1";
+    if (avgPoints >= 1.5) return "C2";
+    if (avgPoints >= 0.5) return "C3";
+
+    return "D";
+  }
+
+  function buildYearStats(rows) {
+    const yearMap = new Map();
+
+    rows.forEach(row => {
+      const year = getAlbumYear(row);
+
+      if (year === null) return;
+
+      if (!yearMap.has(year)) {
+        const counts = {};
+
+        tierOrder.forEach(tier => {
+          counts[tier] = 0;
+        });
+
+        yearMap.set(year, {
+          year,
+          counts,
+          total: 0,
+          points: 0
+        });
+      }
+
+      const tier = getTier(row);
+      const stats = yearMap.get(year);
+
+      if (!stats.counts[tier]) {
+        stats.counts[tier] = 0;
+      }
+
+      stats.counts[tier] += 1;
+      stats.total += 1;
+      stats.points += tierPointValues[tier] ?? 0;
+    });
+
+    return Array.from(yearMap.values()).map(stats => {
+      const average = stats.total > 0
+        ? stats.points / stats.total
+        : null;
+
+      return {
+        ...stats,
+        average,
+        averageLevel: getAverageLevel(average)
+      };
+    });
+  }
+
+  function renderYearAlbumTable(rows, selectedYear) {
+    const yearRows = rows
+      .filter(row => getAlbumYear(row) === selectedYear)
+      .sort((a, b) => getAlbumSortValue(a) - getAlbumSortValue(b));
+
+    if (yearSummary) {
+      yearSummary.textContent = `${selectedYear}: ${yearRows.length} ranked albums.`;
+    }
+
+    if (yearRows.length === 0) {
+      yearTable.innerHTML = `
+        <tbody>
+          <tr>
+            <td>No ranked albums found for ${escapeHTML(selectedYear)}.</td>
+          </tr>
+        </tbody>
+      `;
+      return;
+    }
+
+    let html = `
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Tier</th>
+          <th>Album</th>
+          <th>Artist</th>
+          <th>Ranking</th>
+          <th>xRank%</th>
+          <th>Tracks</th>
+          <th>Updated</th>
+        </tr>
+      </thead>
+      <tbody>
+    `;
+
+    yearRows.forEach((row, index) => {
+      const tier = getTier(row);
+
+      html += `
+        <tr>
+          <td>${escapeHTML(index + 1)}</td>
+          <td style="${getTierStyle(tier)}">${escapeHTML(tier)}</td>
+          <td class="music-data-title-cell">${escapeHTML(getAlbumTitle(row))}</td>
+          <td>${escapeHTML(getAlbumArtist(row))}</td>
+          <td>${escapeHTML(getText(row, "Ranking"))}</td>
+          <td>${escapeHTML(getText(row, "xRank%"))}</td>
+          <td>${escapeHTML(getText(row, "Tracks"))}</td>
+          <td>${escapeHTML(getText(row, "Updated"))}</td>
+        </tr>
+      `;
+    });
+
+    html += "</tbody>";
+    yearTable.innerHTML = html;
+  }
+
+  function renderYearStatsTable(table, statsRows, options = {}) {
+    const minCount = options.minCount ?? 0;
+
+    const visibleStats = statsRows
+      .filter(stats => stats.total >= minCount)
+      .sort((a, b) => {
+        if (b.average !== a.average) return b.average - a.average;
+        if (b.points !== a.points) return b.points - a.points;
+        return b.total - a.total;
+      });
+
+    if (options.summaryElement) {
+      const label = minCount > 0
+        ? `Showing ${visibleStats.length} years with at least ${minCount} ranked albums.`
+        : `Showing all ${visibleStats.length} album years.`;
+
+      options.summaryElement.textContent = label;
+    }
+
+    let html = `
+      <thead>
+        <tr>
+          <th>Year</th>
+          ${tierOrder.map(tier => `<th>${escapeHTML(tier)}</th>`).join("")}
+          <th>Total</th>
+          <th>Points</th>
+          <th>Avg.</th>
+          <th>Avg. Level</th>
+        </tr>
+      </thead>
+      <tbody>
+    `;
+
+    visibleStats.forEach(stats => {
+      const averageLevelStyle = getTierStyle(stats.averageLevel);
+
+      html += `
+        <tr>
+          <td>${escapeHTML(stats.year)}</td>
+          ${tierOrder.map(tier => {
+            const count = stats.counts[tier] || "";
+
+            return `<td>${escapeHTML(count)}</td>`;
+          }).join("")}
+          <td>${escapeHTML(stats.total)}</td>
+          <td>${escapeHTML(stats.points)}</td>
+          <td>${escapeHTML(formatAverage(stats.average))}</td>
+          <td style="${averageLevelStyle}">${escapeHTML(stats.averageLevel)}</td>
+        </tr>
+      `;
+    });
+
+    html += "</tbody>";
+    table.innerHTML = html;
+  }
+
+  function renderAll(rows) {
+    const selectedYear = Number(yearInput ? yearInput.value : "2000");
+    const minCount = Number(minCountInput ? minCountInput.value : "10") || 0;
+    const yearStats = buildYearStats(rows);
+
+    renderYearAlbumTable(rows, selectedYear);
+
+    renderYearStatsTable(bestYearsTable, yearStats, {
+      minCount,
+      summaryElement: bestYearsSummary
+    });
+
+    renderYearStatsTable(archiveTable, yearStats, {
+      minCount: 0,
+      summaryElement: archiveSummary
+    });
+  }
+
+  const text = await getCSVText(window.ALBUMS_CSV_URL);
+
+  const parsed = Papa.parse(text.trim(), {
+    header: true,
+    skipEmptyLines: true
+  });
+
+  const rows = (parsed.data || []).filter(row => {
+    return getAlbumTitle(row) !== "";
+  });
+
+  if (typeof updateRankingsLastUpdatedText === "function") {
+    updateRankingsLastUpdatedText(rows);
+  }
+
+  if (yearButton) {
+    yearButton.addEventListener("click", function () {
+      renderAll(rows);
+    });
+  }
+
+  if (yearInput) {
+    yearInput.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        renderAll(rows);
+      }
+    });
+  }
+
+  if (minCountButton) {
+    minCountButton.addEventListener("click", function () {
+      renderAll(rows);
+    });
+  }
+
+  if (minCountInput) {
+    minCountInput.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        renderAll(rows);
+      }
+    });
+  }
+
+  renderAll(rows);
+}
