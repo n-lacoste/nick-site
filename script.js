@@ -349,11 +349,24 @@ async function loadCSV(
   const sourceHeaders = parsed.meta.fields || [];
   const allHeaders = getOrderedMovieHeaders(sourceHeaders);
   
-  const data = parsed.data.filter(row => {
-    return allHeaders.some(header => {
-      return String(row[header] ?? "").trim() !== "";
+  const isAlbumsTable = filePath === window.ALBUMS_CSV_URL;
+
+  const data = parsed.data
+    .filter(row => {
+      if (isAlbumsTable) {
+        return String(row["Album Title"] ?? "").trim() !== "";
+      }
+  
+      return allHeaders.some(header => {
+        return String(row[header] ?? "").trim() !== "";
+      });
+    })
+    .map(row => {
+      return {
+        ...row,
+        Decade: getDecadeFromRow(row)
+      };
     });
-  });
 
   updateMoviesLastUpdatedText(data);
 
@@ -428,7 +441,7 @@ async function loadCSV(
     /* Albums Table only */
       "Ranking": "75px",
       "Sub-Tier": "75px",
-      "Album": "260px",
+      "Album Title": "260px",
       "Artist": "220px",
       "Year": "80px",
       "xRank%": "90px",
@@ -6138,7 +6151,7 @@ window.loadHomeTierSummary = async function loadHomeTierSummary() {
         label: "Albums",
         url: window.ALBUMS_CSV_URL,
         tierColumns: ["Level", "Tier", "Album Tier"],
-        titleColumns: ["Project TitleArtist", "Album", "Album Title", "Project", "Project Name", "Name"],
+        titleColumns: ["Project TitleArtist", "Album Title", "Album Title", "Project", "Project Name", "Name"],
         yearColumns: ["Year"],
         scoreColumns: ["xRank%", "My Rating", "Rating", "Score"]
       },
@@ -6543,7 +6556,7 @@ window.loadHomeTop10Summaries = async function loadHomeTop10Summaries() {
           label: "albums",
           url: window.ALBUMS_CSV_URL,
         
-          titleColumns: ["Album"],
+          titleColumns: ["Album Title"],
           rankColumns: ["Ranking"],
           scoreColumns: [],
         
@@ -6771,7 +6784,7 @@ function formatTVShowTop10Meta(row) {
         const rows = parsed.data || [];
     
         const artistColumn = getFirstExistingColumn(headers, ["Artist"]);
-        const albumColumn = getFirstExistingColumn(headers, ["Album", "Album Title", "Project TitleArtist", "Project"]);
+        const albumColumn = getFirstExistingColumn(headers, ["Album Title", "Album Title", "Project TitleArtist", "Project"]);
         const rankingColumn = getFirstExistingColumn(headers, ["Ranking"]);
     
         if (!artistColumn || !albumColumn || !rankingColumn) {
