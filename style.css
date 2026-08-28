@@ -6864,4 +6864,19 @@ tr:hover td:nth-child(3) {
   margin-left: var(--tv-card-edge-gutter) !important;
 }
 
+/* TV Show Card, make search row and card share same left/right edge */
+:root {
+  --tv-card-page-gutter: 40px;
+}
 
+.tv-card-search-row {
+  width: auto !important;
+  max-width: none !important;
+  margin-left: var(--tv-card-page-gutter) !important;
+  margin-right: var(--tv-card-page-gutter) !important;
+}
+
+.tv-show-card {
+  margin-left: var(--tv-card-page-gutter) !important;
+  margin-right: var(--tv-card-page-gutter) !important;
+}
