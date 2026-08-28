@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Favourite Songs | Nick Site</title>
+  <link rel="stylesheet" href="/nick-site/style.css">
+</head>
+
+<body>
+  <div id="site-header"></div>
+  <script src="/nick-site/nav-loader.js"></script>
+
+  <main>
+    <div class="page-topline">
+      <div>
+        <h2>Favourite Songs of All-Time</h2>
+        <p>Song rankings, historical movement, tiers, artists, and all-time favourite song data.</p>
+      </div>
+
+      <p id="last-updated" class="last-updated">Last updated: —</p>
+    </div>
+
+    <div class="movie-controls-row">
+      <div class="show-control">
+        <label for="fav-songs-show-count">Show:</label>
+        <select id="fav-songs-show-count" class="sort-select">
+          <option value="25" selected>25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+          <option value="250">250</option>
+          <option value="all">All</option>
+        </select>
+      </div>
+
+      <div class="rankings-search-wrap">
+        <input
+          id="fav-songs-search"
+          class="search-box rankings-search-input"
+          type="text"
+          placeholder="Search favourite songs..."
+        >
+
+        <button
+          id="fav-songs-search-clear"
+          class="rankings-search-clear-button"
+          type="button"
+          aria-label="Clear search"
+          title="Clear search"
+        >
+          ×
+        </button>
+
+        <button id="fav-songs-search-button" class="rankings-search-button" type="button">
+          Search
+        </button>
+      </div>
+    </div>
+
+    <section class="fav-songs-chart-section">
+      <div class="fav-songs-chart-header">
+        <div>
+          <h3>Historical Ranking Movement</h3>
+          <p>Hover over a line or point to identify the song. HM is treated as the lowest visible rank.</p>
+        </div>
+
+        <div id="fav-songs-chart-summary" class="fav-songs-chart-summary">
+          Loading chart...
+        </div>
+      </div>
+
+      <div id="fav-songs-chart-wrap" class="fav-songs-chart-wrap">
+        <div class="rankings-loading-cell">Loading favourite songs chart...</div>
+      </div>
+
+      <div id="fav-songs-chart-tooltip" class="fav-songs-chart-tooltip" hidden></div>
+    </section>
+
+    <p id="fav-songs-row-count" class="row-count"></p>
+
+    <div class="table-wrap fav-songs-table-wrap">
+      <table id="fav-songs-table" class="rankings-table">
+        <tbody>
+          <tr>
+            <td class="rankings-loading-cell">Loading favourite songs...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+  <script>
+    window.NICK_SITE_INIT = function () {
+      try {
+        if (typeof Papa === "undefined") {
+          throw new Error("PapaParse did not load.");
+        }
+
+        if (typeof loadFavouriteSongsPage !== "function") {
+          throw new Error("loadFavouriteSongsPage is not defined. script.js did not load correctly or has a syntax error.");
+        }
+
+        loadFavouriteSongsPage();
+      } catch (error) {
+        console.error(error);
+
+        const table = document.getElementById("fav-songs-table");
+
+        if (table) {
+          table.innerHTML = `
+            <tbody>
+              <tr>
+                <td>Could not load favourite songs. Check the console for details.</td>
+              </tr>
+            </tbody>
+          `;
+        }
+      }
+    };
+  </script>
+
+  <script src="/nick-site/script-loader.js"></script>
+</body>
+</html>
