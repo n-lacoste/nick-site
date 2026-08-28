@@ -87,11 +87,15 @@ function getTierColor(value) {
   return { bg: "", text: "" };
 }
 
-window.MOVIES_LOCAL_CSV_URL = "/nick-site/data/movies.csv";
-window.TVSHOWS_LOCAL_CSV_URL = "/nick-site/data/tvshows.csv";
-window.EPISODES_LOCAL_CSV_URL = "/nick-site/data/episodes.csv";
-window.ALBUMS_LOCAL_CSV_URL = "/nick-site/data/albums.csv";
-window.SONGS_LOCAL_CSV_URL = "/nick-site/data/songs.csv";
+let cellStyle = "";
+
+if (column === "Tier") {
+  cellStyle += getTierCellStyle(value);
+}
+
+if (column === "Sub-Tier") {
+  cellStyle += getSubTierStyle(value);
+}
 
 function getCSVFallbackUrl(filePath) {
   if (filePath === window.MOVIES_CSV_URL) return window.MOVIES_LOCAL_CSV_URL;
@@ -2029,6 +2033,35 @@ async function loadMovieWatchHistory(filePath) {
   function getTierStyle(value) {
     return getTierStyleFromValue(value);
   }
+
+  function getSubTierStyle(value) {
+        const text = String(value ?? "").trim().toUpperCase();
+      
+        const subTierColors = {
+          "A": {
+            bg: "#d4edbc",
+            text: "#11734b"
+          },
+          "B": {
+            bg: "#ffe5a0",
+            text: "#473821"
+          },
+          "C": {
+            bg: "#ffcfc9",
+            text: "#b10202"
+          }
+        };
+      
+        const colors = subTierColors[text];
+      
+        if (!colors) return "";
+      
+        return `
+          background: ${colors.bg};
+          color: ${colors.text};
+          font-weight: 800;
+        `;
+}
 
   function getRatingColor(value) {
     const text = String(value ?? "").replace(/,/g, "").trim();
