@@ -2007,6 +2007,302 @@ if (document.readyState === "loading") {
   setupHeaderMenus();
 }
 
+async function loadListeningHistory(filePath) {
+  const table = document.getElementById("listening-history-table");
+  const searchInput = document.getElementById("listening-search");
+  const searchButton = document.getElementById("listening-search-button");
+  const clearButton = document.getElementById("listening-search-clear");
+  const rowCount = document.getElementById("listening-row-count");
+  const showCountSelect = document.getElementById("listening-show-count");
+  const sortColumnButton = document.getElementById("listening-sort-column");
+  const sortDirectionButton = document.getElementById("listening-sort-direction");
+
+  if (!table) return;
+
+  const text = await getCSVText(filePath);
+
+  const parsed = Papa.parse(text.trim(), {
+    header: true,
+    skipEmptyLines: true
+  });
+
+  const rows = parsed.data.filter(row => {
+    return String(row["Album"] ?? "").trim() !== "";
+  });
+
+  updateRankingsLastUpdatedText(rows);
+
+  let currentRows = [...rows];
+  let sortColumn = "Updated";
+  let sortDirection = "latest";
+  let rowLimit = 25;
+
+  function escapeHTML(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function getText(row, column) {
+    return String(row[column] ?? "").trim();
+  }
+
+  function getNumber(row, column) {
+    const value = getText(row, column)
+      .replace(/,/g, "")
+      .replace(/%/g, "");
+
+    const number = Number(value);
+
+    return isNaN(number) ? null : number;
+  }
+
+  function getDateSortValue(row, column) {
+    const timestamp = parseMovieDate(row[column]);
+
+    return timestamp === null ? 0 : timestamp;
+  }
+
+  function getTierStyle(value) {
+    const colors = getTierColor(value);
+
+    if (!colors.bg || !colors.text) return "";
+
+    return `
+      background:${colors.bg};
+      color:${colors.text};
+      font-weight:bold;
+    `;
+  }
+
+  function getSubTierStyle(value) {
+    if (typeof getSubTierStyleFromValue === "function") {
+      return getSubTierStyleFromValue(value);
+    }
+
+    return "";
+  }
+
+  function rowMatchesSearch(row) {
+    if (!searchInput) return true;
+
+    const searchTerm = searchInput.value.trim().toLowerCase();
+
+    if (searchTerm === "") return true;
+
+    const searchableText = [
+      getText(row, "Album"),
+      getText(row, "Artist"),
+      getText(row, "Year"),
+      getText(row, "Tier"),
+      getText(row, "Sub-Tier"),
+      getText(row, "Collab Artists"),
+      getText(row, "Genres")
+    ]
+      .join(" ")
+      .toLowerCase();
+
+    return searchableText.includes(searchTerm);
+  }
+
+  function getSortValue(row) {
+    if (sortColumn === "Updated" || sortColumn === "Added") {
+      return getDateSortValue(row, sortColumn);
+    }
+
+    if (sortColumn === "Ranking") {
+      return getNumber(row, "Ranking") ?? Number.POSITIVE_INFINITY;
+    }
+
+    return getText(row, sortColumn).toLowerCase();
+  }
+
+  function applySort() {
+    currentRows.sort((a, b) => {
+      const valueA = getSortValue(a);
+      const valueB = getSortValue(b);
+
+      if (typeof valueA === "number" && typeof valueB === "number") {
+        return sortDirection === "latest"
+          ? valueB - valueA
+          : valueA - valueB;
+      }
+
+      return sortDirection === "latest"
+        ? String(valueB).localeCompare(String(valueA))
+        : String(valueA).localeCompare(String(valueB));
+    });
+  }
+
+  function getRowsToShow() {
+    currentRows = rows.filter(rowMatchesSearch);
+    applySort();
+
+    return rowLimit === "all"
+      ? currentRows
+      : currentRows.slice(0, rowLimit);
+  }
+
+  function renderTable() {
+    const rowsToShow = getRowsToShow();
+
+    if (rowCount) {
+      rowCount.textContent = `Showing ${rowsToShow.length} of ${currentRows.length} matches.`;
+    }
+
+    let html = `
+      <thead>
+        <tr>
+          <th>Added</th>
+          <th>Updated</th>
+          <th>Tier</th>
+          <th>Sub-Tier</th>
+          <th>Album</th>
+          <th>Artist</th>
+          <th>Year</th>
+          <th>Ranking</th>
+          <th>xRank%</th>
+          <th>Tracks</th>
+          <th>S</th>
+          <th>L</th>
+        </tr>
+      </thead>
+      <tbody>
+    `;
+
+    rowsToShow.forEach(row => {
+      html += `
+        <tr>
+          <td>${escapeHTML(getText(row, "Added"))}</td>
+          <td>${escapeHTML(getText(row, "Updated"))}</td>
+          <td style="${getTierStyle(getText(row, "Tier"))}">${escapeHTML(getText(row, "Tier"))}</td>
+          <td style="${getSubTierStyle(getText(row, "Sub-Tier"))}">${escapeHTML(getText(row, "Sub-Tier"))}</td>
+          <td>${escapeHTML(getText(row, "Album"))}</td>
+          <td>${escapeHTML(getText(row, "Artist"))}</td>
+          <td>${escapeHTML(getText(row, "Year"))}</td>
+          <td>${escapeHTML(getText(row, "Ranking"))}</td>
+          <td>${escapeHTML(getText(row, "xRank%"))}</td>
+          <td>${escapeHTML(getText(row, "Tracks"))}</td>
+          <td>${escapeHTML(getText(row, "S"))}</td>
+          <td>${escapeHTML(getText(row, "L"))}</td>
+        </tr>
+      `;
+    });
+
+    html += "</tbody>";
+    table.innerHTML = html;
+  }
+
+  function updateClearButton() {
+    if (!clearButton || !searchInput) return;
+
+    clearButton.hidden = searchInput.value.trim() === "";
+  }
+
+  function runSearch() {
+    updateClearButton();
+    renderTable();
+  }
+
+  function updateSortButtons() {
+    if (sortColumnButton) {
+      sortColumnButton.textContent = sortColumn === "Updated"
+        ? "Sort by: Last Update"
+        : sortColumn === "Added"
+          ? "Sort by: Date Added"
+          : "Sort by: Ranking";
+    }
+
+    if (sortDirectionButton) {
+      sortDirectionButton.textContent = sortDirection === "latest"
+        ? "Sort: Latest"
+        : "Sort: Earliest";
+    }
+
+    if (sortColumnButton) {
+      sortColumnButton.classList.toggle("history-updated-button", sortColumn === "Updated");
+      sortColumnButton.classList.toggle("history-added-button", sortColumn === "Added");
+    }
+
+    if (sortDirectionButton) {
+      sortDirectionButton.classList.toggle("history-latest-button", sortDirection === "latest");
+      sortDirectionButton.classList.toggle("history-earliest-button", sortDirection === "earliest");
+    }
+  }
+
+  if (sortColumnButton) {
+    sortColumnButton.addEventListener("click", function () {
+      if (sortColumn === "Updated") {
+        sortColumn = "Added";
+      } else if (sortColumn === "Added") {
+        sortColumn = "Ranking";
+      } else {
+        sortColumn = "Updated";
+      }
+
+      updateSortButtons();
+      renderTable();
+    });
+  }
+
+  if (sortDirectionButton) {
+    sortDirectionButton.addEventListener("click", function () {
+      sortDirection = sortDirection === "latest" ? "earliest" : "latest";
+      updateSortButtons();
+      renderTable();
+    });
+  }
+
+  if (showCountSelect) {
+    showCountSelect.addEventListener("change", function () {
+      rowLimit = showCountSelect.value === "all"
+        ? "all"
+        : Number(showCountSelect.value) || 25;
+
+      renderTable();
+    });
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        runSearch();
+      }
+
+      if (event.key === "Escape") {
+        event.preventDefault();
+        searchInput.value = "";
+        runSearch();
+      }
+    });
+
+    searchInput.addEventListener("input", updateClearButton);
+  }
+
+  if (searchButton) {
+    searchButton.addEventListener("click", runSearch);
+  }
+
+  if (clearButton) {
+    clearButton.addEventListener("click", function () {
+      if (searchInput) {
+        searchInput.value = "";
+        searchInput.focus();
+      }
+
+      runSearch();
+    });
+  }
+
+  updateSortButtons();
+  updateClearButton();
+  renderTable();
+}
+
 async function loadMovieWatchHistory(filePath) {
   const text = await getCSVText(filePath);
 
