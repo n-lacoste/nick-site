@@ -573,6 +573,33 @@
       }
     }
 
+    .modal-button-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.fun-button {
+  background: #ffd966;
+  border-color: #ffd966;
+  color: #111;
+}
+
+.fun-button:hover {
+  background: #ffcf33;
+}
+
+.instant-button {
+  background: #57bb8a;
+  border-color: #57bb8a;
+  color: #111;
+}
+
+.instant-button:hover {
+  background: #43a978;
+}
     /* Mobile */
 
     @media (max-width: 650px) {
@@ -749,12 +776,21 @@
         <p class="birthday-signoff">Love, Nick</p>
 
         <div class="modal-button-row">
+  <div class="modal-button-row">
   <button id="actuallyPauseButton" class="actually-pause-button" type="button">
     Pause Music
   </button>
 
   <button id="funButton" class="actually-pause-button fun-button" type="button">
     Click me for fun
+  </button>
+
+  <button id="faaahButton" class="actually-pause-button instant-button" type="button">
+    No Click me
+  </button>
+
+  <button id="shockedButton" class="actually-pause-button instant-button" type="button">
+    No me
   </button>
 </div>
         <div id="fakePauseModal" class="fake-pause-modal" hidden>
@@ -804,6 +840,8 @@
     const fakePauseModal = document.getElementById("fakePauseModal");
     const actuallyPauseButton = document.getElementById("actuallyPauseButton");
     const funButton = document.getElementById("funButton");
+    const faaahButton = document.getElementById("faaahButton");
+    const shockedButton = document.getElementById("shockedButton");
 
     let opened = false;
     let fakePauseClicks = 0;
@@ -909,7 +947,27 @@
         funSoundFrame.remove();
       }, 12000);
     }
+    function playInstantSound(soundUrl) {
+      const sound = new Audio(soundUrl);
+    
+      sound.volume = 1;
+      sound.currentTime = 0;
+    
+      sound.play().catch(error => {
+        console.warn("Instant sound could not play.", error);
+      });
+    }
+    if (faaahButton) {
+  faaahButton.addEventListener("click", function () {
+    playInstantSound("https://www.myinstants.com/media/sounds/faaah.mp3");
+  });
+}
 
+if (shockedButton) {
+  shockedButton.addEventListener("click", function () {
+    playInstantSound("https://www.myinstants.com/media/sounds/shocked-sound-effect.mp3");
+  });
+}
     function openPresent() {
       if (opened) return;
 
