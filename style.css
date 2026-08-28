@@ -8100,3 +8100,194 @@ tr:hover td:nth-child(3) {
     width: 100%;
   }
 }
+
+/* =========================================================
+   Favourite Songs page
+   ========================================================= */
+
+.fav-songs-chart-section {
+  position: relative;
+  margin: 18px 0 22px;
+  padding: 18px;
+  border: 1px solid #333;
+  border-radius: 14px;
+  background: #111;
+}
+
+.fav-songs-chart-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 14px;
+}
+
+.fav-songs-chart-header h3 {
+  margin: 0 0 6px;
+  color: #f5f5f5;
+  font-size: 24px;
+}
+
+.fav-songs-chart-header p {
+  margin: 0;
+  color: #bdbdbd;
+  font-size: 14px;
+}
+
+.fav-songs-chart-summary {
+  flex: 0 0 auto;
+  color: #ffd966;
+  font-size: 13px;
+  font-weight: 800;
+  text-align: right;
+}
+
+.fav-songs-chart-wrap {
+  position: relative;
+  width: 100%;
+  min-height: 620px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border: 1px solid #333;
+  border-radius: 12px;
+  background: #080808;
+}
+
+.fav-songs-chart-svg {
+  display: block;
+  width: 100%;
+  min-width: 900px;
+  height: 620px;
+}
+
+.fav-songs-chart-bg {
+  fill: #080808;
+}
+
+.fav-songs-chart-gridline {
+  stroke: #2a2a2a;
+  stroke-width: 1;
+}
+
+.fav-songs-chart-y-label,
+.fav-songs-chart-x-label {
+  fill: #bdbdbd;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.fav-songs-chart-line {
+  fill: none;
+  stroke: #57bb8a;
+  stroke-width: 1.3;
+  stroke-opacity: 0.28;
+  cursor: pointer;
+}
+
+.fav-songs-chart-point {
+  fill: #57bb8a;
+  fill-opacity: 0.42;
+  cursor: pointer;
+}
+
+.fav-songs-chart-line.is-dimmed,
+.fav-songs-chart-point.is-dimmed {
+  opacity: 0.08;
+}
+
+.fav-songs-chart-line.is-highlighted {
+  stroke: #ffd966;
+  stroke-width: 3;
+  stroke-opacity: 1;
+  opacity: 1;
+}
+
+.fav-songs-chart-point.is-highlighted {
+  fill: #ffd966;
+  fill-opacity: 1;
+  opacity: 1;
+}
+
+.fav-songs-chart-tooltip {
+  position: absolute;
+  z-index: 50;
+  min-width: 190px;
+  max-width: 280px;
+  padding: 10px 12px;
+  border: 1px solid #444;
+  border-radius: 10px;
+  background: #181818;
+  color: #f5f5f5;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+}
+
+.fav-songs-chart-tooltip strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #ffffff;
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.fav-songs-chart-tooltip span {
+  display: block;
+  margin-top: 3px;
+  color: #d6d6d6;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.fav-songs-table-wrap {
+  min-height: 520px;
+}
+
+#fav-songs-table th,
+#fav-songs-table td {
+  font-size: 13px;
+}
+
+#fav-songs-table th {
+  font-size: 14px;
+  font-weight: 900;
+}
+
+#fav-songs-table th:nth-child(1),
+#fav-songs-table td:nth-child(1) {
+  width: 70px;
+  min-width: 70px;
+}
+
+#fav-songs-table th:nth-child(2),
+#fav-songs-table td:nth-child(2),
+#fav-songs-table th:nth-child(3),
+#fav-songs-table td:nth-child(3) {
+  width: 80px;
+  min-width: 80px;
+  text-align: center;
+}
+
+#fav-songs-table th:nth-child(4),
+#fav-songs-table td:nth-child(4) {
+  width: 320px;
+  min-width: 320px;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+#fav-songs-table th:nth-child(5),
+#fav-songs-table td:nth-child(5) {
+  width: 220px;
+  min-width: 220px;
+}
+
+@media (max-width: 850px) {
+  .fav-songs-chart-header {
+    flex-direction: column;
+  }
+
+  .fav-songs-chart-summary {
+    text-align: left;
+  }
+}
+
