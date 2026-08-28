@@ -6886,6 +6886,7 @@ window.loadHomeTop10Summaries = async function loadHomeTop10Summaries() {
           listId: "home-top10-albums",
           label: "albums",
           url: window.ALBUMS_CSV_URL,
+          link: "/nick-site/music/albums.html",
         
           titleColumns: ["Album Title"],
           rankColumns: ["Ranking"],
@@ -6905,6 +6906,8 @@ window.loadHomeTop10Summaries = async function loadHomeTop10Summaries() {
           listId: "home-top10-artists",
           label: "artists",
           url: window.ARTISTS_CSV_URL,
+          link: "/nick-site/music/artists.html",
+
         
           titleColumns: ["Artist"],
           rankColumns: ["Rk", "Artist Rank", "Rank"],
@@ -6925,6 +6928,7 @@ window.loadHomeTop10Summaries = async function loadHomeTop10Summaries() {
           listId: "home-top10-songs",
           label: "songs",
           url: window.FAV_SONGS_CSV_URL,
+          link: "/nick-site/music/songs.html",
         
           titleColumns: ["Song Title"],
           rankColumns: ["Rank"],
@@ -6944,6 +6948,7 @@ window.loadHomeTop10Summaries = async function loadHomeTop10Summaries() {
           listId: "home-top10-movies",
           label: "movies",
           url: window.MOVIES_CSV_URL,
+          link: "/nick-site/movies/rankings.html",
         
           titleColumns: ["Movie Title", "Name", "Title"],
           rankColumns: [],
@@ -6964,6 +6969,7 @@ window.loadHomeTop10Summaries = async function loadHomeTop10Summaries() {
         listId: "home-top10-tvshows",
         label: "TV shows",
         url: window.TVSHOWS_CSV_URL,
+        link: "/nick-site/tvshows/rankings.html",
       
         titleColumns: ["TV Show", "Tv Show", "Name", "Title"],
         rankColumns: [],
@@ -7271,9 +7277,20 @@ const artistAlbumCounts = await getArtistAlbumCounts();
             </span>
           </li>
         `;
-      }).join("");
+            }).join("");
 
-  shrinkTop10Titles(list);
+      const card = list.closest(".home-top10-card");
+
+      if (card && config.link && !card.querySelector(".home-top10-full-link")) {
+        card.insertAdjacentHTML("beforeend", `
+          <a class="home-top10-full-link" href="${escapeHTML(config.link)}">
+            <span>Full Rankings</span>
+            <span aria-hidden="true">→</span>
+          </a>
+        `);
+      }
+
+      shrinkTop10Titles(list);
             
     } catch (error) {
       console.error(`Could not load ${config.label}:`, error);
