@@ -338,25 +338,64 @@
   transform: scale(0.98);
 }
 
-.fake-pause-reveal {
+.fake-pause-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+
+.fake-pause-modal[hidden] {
+  display: none;
+}
+
+.fake-pause-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(3px);
+}
+
+.fake-pause-modal-card {
+  position: relative;
+  z-index: 2;
+  width: min(520px, 92vw);
+  padding: 24px 22px 22px;
+  border: 3px solid #ff4fa3;
+  border-radius: 24px;
+  background: #fff7df;
+  color: #111;
+  text-align: center;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.6);
+  transform: scale(0.88);
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.fake-pause-modal.show .fake-pause-modal-card {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.fake-pause-modal-card h3 {
+  margin: 0 0 14px;
+  color: #ff4fa3;
+  font-size: 42px;
+  line-height: 1;
+}
+
+.fake-pause-modal-images {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  max-width: 260px;
-  margin: 18px auto 0;
-  opacity: 0;
-  transform: translateY(16px) scale(0.94);
-  transition:
-    opacity 0.35s ease,
-    transform 0.35s ease;
+  gap: 12px;
+  max-width: 360px;
+  margin: 0 auto 16px;
 }
 
-.fake-pause-reveal.show {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-}
-
-.fake-pause-reveal img {
+.fake-pause-modal-images img {
   width: 100%;
   aspect-ratio: 1 / 1;
   object-fit: contain;
@@ -366,9 +405,50 @@
   box-shadow: 0 8px 22px rgba(255, 79, 163, 0.22);
 }
 
-.fake-pause-gif {
-  object-fit: cover !important;
+.fake-pause-modal-images .fake-pause-gif {
+  object-fit: cover;
 }
+
+.fake-pause-modal-text {
+  margin: 0 0 16px !important;
+  color: #111 !important;
+  font-size: 18px !important;
+  font-weight: 800;
+}
+
+.actually-pause-button {
+  padding: 12px 20px;
+  border: 2px solid #ff4fa3;
+  border-radius: 999px;
+  background: #ff4fa3;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(255, 79, 163, 0.28);
+}
+
+.actually-pause-button:hover {
+  background: #ff2f93;
+  transform: scale(1.04);
+}
+
+.actually-pause-button:active {
+  transform: scale(0.98);
+}
+
+@media (max-width: 550px) {
+  .fake-pause-modal-images {
+    max-width: 250px;
+    grid-template-columns: 1fr;
+  }
+
+  .fake-pause-modal-card h3 {
+    font-size: 34px;
+  }
+}
+
+
 
 /* Hidden YouTube player */
 
@@ -628,7 +708,8 @@
     const birthdayCard = document.getElementById("birthdayCard");
     const birthdayPhotoBurst = document.getElementById("birthdayPhotoBurst");
     const fakePauseMusicButton = document.getElementById("fakePauseMusicButton");
-    const fakePauseReveal = document.getElementById("fakePauseReveal");
+    const fakePauseModal = document.getElementById("fakePauseModal");
+    const actuallyPauseButton = document.getElementById("actuallyPauseButton");
 
     let opened = false;
     let fakePauseClicks = 0;
@@ -744,31 +825,52 @@
       startBirthdaySong();
     }
 
-    if (fakePauseMusicButton) {
-      fakePauseMusicButton.addEventListener("click", function () {
-        fakePauseClicks++;
+   function openFakePauseModal() {
+  if (!fakePauseModal) return;
 
-        if (fakePauseReveal) {
-          fakePauseReveal.hidden = false;
+  fakePauseModal.hidden = false;
 
-          requestAnimationFrame(() => {
-            fakePauseReveal.classList.add("show");
-          });
-        }
+  requestAnimationFrame(() => {
+    fakePauseModal.classList.add("show");
+  });
+}
 
-        addExtraLoudSongLayer();
+if (fakePauseMusicButton) {
+  fakePauseMusicButton.addEventListener("click", function () {
+    fakePauseClicks++;
 
-        if (fakePauseClicks === 1) {
-          fakePauseMusicButton.textContent = "Pause Music";
-        } else if (fakePauseClicks === 2) {
-          fakePauseMusicButton.textContent = "I said pause";
-        } else if (fakePauseClicks === 3) {
-          fakePauseMusicButton.textContent = "Why is it louder?";
-        } else {
-          fakePauseMusicButton.textContent = "Okay now it is definitely paused";
-        }
-      });
+    openFakePauseModal();
+    addExtraLoudSongLayer();
+
+    if (fakePauseClicks === 1) {
+      fakePauseMusicButton.textContent = "Pause Music";
+    } else if (fakePauseClicks === 2) {
+      fakePauseMusicButton.textContent = "I said pause";
+    } else if (fakePauseClicks === 3) {
+      fakePauseMusicButton.textContent = "Why is it louder?";
+    } else {
+      fakePauseMusicButton.textContent = "Okay now it is definitely paused";
     }
+  });
+}
+
+if (actuallyPauseButton) {
+  actuallyPauseButton.addEventListener("click", function () {
+    fakePauseClicks++;
+
+    addExtraLoudSongLayer();
+
+    if (fakePauseClicks === 1) {
+      actuallyPauseButton.textContent = "Actually Pause";
+    } else if (fakePauseClicks === 2) {
+      actuallyPauseButton.textContent = "No like actually actually pause";
+    } else if (fakePauseClicks === 3) {
+      actuallyPauseButton.textContent = "This seems worse";
+    } else {
+      actuallyPauseButton.textContent = "It is basically paused now";
+    }
+  });
+}
 
     presentButton.addEventListener("click", openPresent);
   </script>
