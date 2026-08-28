@@ -17,8 +17,15 @@
           <a class="nav-menu-title" href="${base}music/">Music</a>
           <div class="nav-dropdown">
             <a href="${base}music/">Home: Music</a>
+            
             <a href="${base}music/albums/">Top Albums</a>
+            <a href="${base}music/albums-tier-list/">Albums Tier List</a>
+            
             <a href="${base}music/artists/">Top Artists</a>
+            <a href="${base}music/artist-profile/">Artist Profiles</a>
+            
+            <a href="${base}music/listening history/">Listening History</a>
+            
           </div>
         </div>
 
