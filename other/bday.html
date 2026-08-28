@@ -391,24 +391,34 @@
     }
 
     .fun-button {
-      background: #ffd966;
-      border-color: #ffd966;
-      color: #111;
-    }
+  background: #ffd966;
+  border-color: #ffd966;
+  color: #111;
+}
 
-    .fun-button:hover {
-      background: #ffcf33;
-    }
+.fun-button:hover {
+  background: #ffcf33;
+}
 
-    .instant-button {
-      background: #57bb8a;
-      border-color: #57bb8a;
-      color: #111;
-    }
+.faaah-button {
+  background: #57bb8a;
+  border-color: #57bb8a;
+  color: #111;
+}
 
-    .instant-button:hover {
-      background: #43a978;
-    }
+.faaah-button:hover {
+  background: #43a978;
+}
+
+.shocked-button {
+  background: #60a5fa;
+  border-color: #60a5fa;
+  color: #111;
+}
+
+.shocked-button:hover {
+  background: #3b82f6;
+}
 
     /* Floating pause GIFs */
 
@@ -695,12 +705,12 @@
             <button id="funButton" class="gag-button fun-button" type="button">
               Click me for fun
             </button>
-
-            <button id="faaahButton" class="gag-button instant-button" type="button">
+            
+            <button id="faaahButton" class="gag-button faaah-button" type="button">
               No Click me
             </button>
-
-            <button id="shockedButton" class="gag-button instant-button" type="button">
+            
+            <button id="shockedButton" class="gag-button shocked-button" type="button">
               No me
             </button>
           </div>
@@ -838,7 +848,7 @@
 
     function playFaaahSound() {
       const faaahFrame = makeHiddenYouTubeFrame(
-        "https://www.youtube.com/embed/VP6eZu3SAak?autoplay=1&playsinline=1",
+        "https://www.youtube.com/shorts/FTNrCQPxDHs?autoplay=1&playsinline=1",
         "No Click me sound"
       );
 
@@ -849,7 +859,7 @@
 
     function playShockedSound() {
       const shockedFrame = makeHiddenYouTubeFrame(
-        "https://www.youtube.com/embed/1syHOKOHVY4?autoplay=1&playsinline=1",
+        "https://www.youtube.com/shorts/pZ4QXoS8JMA?autoplay=1&playsinline=1",
         "No me sound"
       );
 
