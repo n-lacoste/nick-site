@@ -5775,7 +5775,7 @@ tr:hover td:nth-child(3) {
 
 /* TV Show Card, Season Columns width toggle */
 :root {
-  --tv-card-season-column-width: 185px;
+  --tv-card-season-column-width: 150px;
   --tv-card-episode-number-column-width: 48px;
 }
 
@@ -6906,6 +6906,58 @@ tr:hover td:nth-child(3) {
   grid-column: 3 !important;
   justify-self: start !important;
   margin-left: 0 !important;
+}
+
+/* TV Show Card, skinnier default Season Columns */
+:root {
+  --tv-card-episode-number-column-width: 38px;
+  --tv-card-season-column-width: 145px;
+}
+
+/* Keep # column skinny in every mode */
+.tv-card-episode-matrix .tv-card-episode-number-col {
+  width: var(--tv-card-episode-number-column-width) !important;
+  min-width: var(--tv-card-episode-number-column-width) !important;
+  max-width: var(--tv-card-episode-number-column-width) !important;
+}
+
+.tv-card-episode-matrix th.tv-card-episode-count-header,
+.tv-card-episode-matrix th.tv-card-episode-row-number,
+.tv-card-episode-matrix .tv-card-season-stats-corner {
+  width: var(--tv-card-episode-number-column-width) !important;
+  min-width: var(--tv-card-episode-number-column-width) !important;
+  max-width: var(--tv-card-episode-number-column-width) !important;
+  padding-left: 3px !important;
+  padding-right: 3px !important;
+  font-size: 16px !important;
+  font-weight: 900 !important;
+  text-align: center !important;
+}
+
+/* Default mode = fixed, skinny season columns */
+.tv-card-episode-matrix-column-default {
+  width: max-content !important;
+  min-width: 100% !important;
+  table-layout: fixed !important;
+}
+
+.tv-card-episode-matrix-column-default .tv-card-season-col {
+  width: var(--tv-card-season-column-width) !important;
+  min-width: var(--tv-card-season-column-width) !important;
+  max-width: var(--tv-card-season-column-width) !important;
+}
+
+/* Stretch mode = divide available area evenly */
+.tv-card-episode-matrix-column-stretch {
+  width: 100% !important;
+  min-width: 100% !important;
+  table-layout: fixed !important;
+}
+
+.tv-card-episode-matrix-column-stretch .tv-card-season-col {
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
 }
 
 /* TV Show Card, skinnier default Season Columns */
