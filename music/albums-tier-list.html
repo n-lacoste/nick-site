@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Albums Tier List | Nick Site</title>
+  <link rel="stylesheet" href="/nick-site/style.css">
+</head>
+
+<body>
+  <div id="site-header"></div>
+  <script src="/nick-site/nav-loader.js"></script>
+
+  <main>
+    <div class="page-topline">
+      <div>
+        <h2>Albums Tier List</h2>
+        <p>Albums grouped by tier, using the album rankings sheet.</p>
+      </div>
+
+      <p id="last-updated" class="last-updated">Last updated: —</p>
+    </div>
+
+    <div class="album-tier-list-controls">
+      <div class="rankings-search-wrap album-tier-list-search-wrap">
+        <input
+          id="album-tier-list-search"
+          class="search-box rankings-search-input"
+          type="text"
+          placeholder="Search albums or artists..."
+        >
+
+        <button
+          id="album-tier-list-search-clear"
+          class="rankings-search-clear-button"
+          type="button"
+          aria-label="Clear search"
+          title="Clear search"
+        >
+          ×
+        </button>
+
+        <button id="album-tier-list-search-button" class="rankings-search-button" type="button">
+          Search
+        </button>
+      </div>
+
+      <label class="show-control">
+        Minimum Tier
+        <select id="album-tier-list-min-tier" class="sort-select">
+          <option value="all" selected>All</option>
+          <option value="(S)">(S)</option>
+          <option value="S">S</option>
+          <option value="A1">A1</option>
+          <option value="A2">A2</option>
+          <option value="A3">A3</option>
+          <option value="B1">B1</option>
+          <option value="B2">B2</option>
+          <option value="B3">B3</option>
+          <option value="C1">C1</option>
+          <option value="C2">C2</option>
+          <option value="C3">C3</option>
+          <option value="D">D</option>
+        </select>
+      </label>
+    </div>
+
+    <div id="album-tier-list-summary" class="album-tier-list-summary">
+      Loading album tier list...
+    </div>
+
+    <section id="album-tier-list-output" class="album-tier-list-output">
+      <div class="rankings-loading-cell">Loading album tier list...</div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+  <script>
+    function loadAlbumTierList() {
+      const output = document.getElementById("album-tier-list-output");
+      const summary = document.getElementById("album-tier-list-summary");
+      const searchInput = document.getElementById("album-tier-list-search");
+      const searchButton = document.getElementById("album-tier-list-search-button");
+      const clearButton = document.getElementById("album-tier-list-search-clear");
+      const minTierSelect = document.getElementById("album-tier-list-min-tier");
+
+      if (!output) return;
+
+      const tierOrder = [
+        "(S)",
+        "S",
+        "A1",
+        "A2",
+        "A3",
+        "B1",
+        "B2",
+        "B3",
+        "C1",
+        "C2",
+        "C3",
+        "D",
+        "NR"
+      ];
+
+      const tierColors = {
+        "(S)": { bg: "#efd1ff", text: "#5a3286" },
+        "S": { bg: "#efd1ff", text: "#5a3286" },
+        "A1": { bg: "#888ef5", text: "#473821" },
+        "A2": { bg: "#5bc0dd", text: "#215a6c" },
+        "A3": { bg: "#bfe1f6", text: "#0a53a8" },
+        "B1": { bg: "#d4edbc", text: "#11734b" },
+        "B2": { bg: "#ffe5a0", text: "#473821" },
+        "B3": { bg: "#f0c885", text: "#000000" },
+        "C1": { bg: "#ffc8aa", text: "#753800" },
+        "C2": { bg: "#e38451", text: "#000000" },
+        "C3": { bg: "#e36351", text: "#000000" },
+        "D": { bg: "#ff0000", text: "#000000" },
+        "NR": { bg: "#ffcfc9", text: "#b10202" }
+      };
+
+      let albumRows = [];
+
+      function escapeHTML(value) {
+        return String(value ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function getText(row, column) {
+        return String(row[column] ?? "").trim();
+      }
+
+      function getNumber(row, column) {
+        const text = getText(row, column)
+          .replace(/,/g, "")
+          .replace(/%/g, "");
+
+        const number = Number(text);
+
+        return isNaN(number) ? null : number;
+      }
+
+      function getTierSortIndex(tier) {
+        const index = tierOrder.indexOf(String(tier ?? "").trim());
+
+        return index === -1 ? tierOrder.length + 1 : index;
+      }
+
+      function getAlbumSortValue(row) {
+        const ranking = getNumber(row, "Ranking");
+
+        if (ranking !== null) return ranking;
+
+        const xRank = getNumber(row, "xRank%");
+
+        if (xRank !== null) return -xRank;
+
+        return Number.POSITIVE_INFINITY;
+      }
+
+      function getLastUpdatedText(rows) {
+        if (typeof updateRankingsLastUpdatedText === "function") {
+          updateRankingsLastUpdatedText(rows);
+        }
+      }
+
+      function getVisibleRows() {
+        const searchTerm = searchInput
+          ? searchInput.value.trim().toLowerCase()
+          : "";
+
+        const minTier = minTierSelect
+          ? minTierSelect.value
+          : "all";
+
+        const minTierIndex = minTier === "all"
+          ? tierOrder.length
+          : getTierSortIndex(minTier);
+
+        return albumRows.filter(row => {
+          const album = getText(row, "Album");
+          const artist = getText(row, "Artist");
+          const collabArtists = getText(row, "Collab Artists");
+          const tier = getText(row, "Tier");
+
+          if (album === "") return false;
+
+          if (minTier !== "all" && getTierSortIndex(tier) > minTierIndex) {
+            return false;
+          }
+
+          if (searchTerm === "") return true;
+
+          const searchableText = [
+            album,
+            artist,
+            collabArtists,
+            getText(row, "Year"),
+            getText(row, "Genres")
+          ]
+            .join(" ")
+            .toLowerCase();
+
+          return searchableText.includes(searchTerm);
+        });
+      }
+
+      function renderTierList() {
+        const visibleRows = getVisibleRows();
+
+        const rowsByTier = new Map();
+
+        tierOrder.forEach(tier => {
+          rowsByTier.set(tier, []);
+        });
+
+        visibleRows.forEach(row => {
+          const tier = getText(row, "Tier") || "NR";
+
+          if (!rowsByTier.has(tier)) {
+            rowsByTier.set(tier, []);
+          }
+
+          rowsByTier.get(tier).push(row);
+        });
+
+        rowsByTier.forEach(rows => {
+          rows.sort((a, b) => getAlbumSortValue(a) - getAlbumSortValue(b));
+        });
+
+        const totalVisible = visibleRows.length;
+        const totalAlbums = albumRows.length;
+
+        if (summary) {
+          summary.textContent = `Showing ${totalVisible} of ${totalAlbums} albums.`;
+        }
+
+        if (totalVisible === 0) {
+          output.innerHTML = `
+            <div class="movie-compare-placeholder">
+              No albums match the current search or tier filter.
+            </div>
+          `;
+          return;
+        }
+
+        let html = "";
+
+        tierOrder.forEach(tier => {
+          const rows = rowsByTier.get(tier) || [];
+
+          if (rows.length === 0) return;
+
+          const colours = tierColors[tier] || {
+            bg: "#1f1f1f",
+            text: "#f5f5f5"
+          };
+
+          html += `
+            <section class="album-tier-list-row">
+              <div
+                class="album-tier-list-label"
+                style="background:${colours.bg}; color:${colours.text};"
+              >
+                ${escapeHTML(tier)}
+              </div>
+
+              <div class="album-tier-list-cards">
+                ${rows.map(row => {
+                  const album = getText(row, "Album");
+                  const artist = getText(row, "Artist");
+                  const year = getText(row, "Year");
+                  const ranking = getText(row, "Ranking");
+                  const xRank = getText(row, "xRank%");
+
+                  return `
+                    <article class="album-tier-list-card">
+                      <strong>${escapeHTML(album)}</strong>
+                      <span>${escapeHTML(artist)}</span>
+                      <small>
+                        ${escapeHTML(year)}
+                        ${ranking ? ` • #${escapeHTML(ranking)}` : ""}
+                        ${xRank ? ` • ${escapeHTML(xRank)}` : ""}
+                      </small>
+                    </article>
+                  `;
+                }).join("")}
+              </div>
+
+              <div
+                class="album-tier-list-count"
+                style="background:${colours.bg}; color:${colours.text};"
+              >
+                ${escapeHTML(rows.length)}
+              </div>
+            </section>
+          `;
+        });
+
+        output.innerHTML = html;
+      }
+
+      function updateClearButton() {
+        if (!clearButton || !searchInput) return;
+
+        clearButton.hidden = searchInput.value.trim() === "";
+      }
+
+      function runSearch() {
+        updateClearButton();
+        renderTierList();
+      }
+
+      async function init() {
+        try {
+          if (typeof Papa === "undefined") {
+            throw new Error("PapaParse did not load.");
+          }
+
+          if (!window.ALBUMS_CSV_URL) {
+            throw new Error("window.ALBUMS_CSV_URL is not defined.");
+          }
+
+          const text = typeof getCSVText === "function"
+            ? await getCSVText(window.ALBUMS_CSV_URL)
+            : await fetch(window.ALBUMS_CSV_URL, { cache: "no-store" }).then(response => response.text());
+
+          const parsed = Papa.parse(text.trim(), {
+            header: true,
+            skipEmptyLines: true
+          });
+
+          albumRows = (parsed.data || []).filter(row => {
+            return getText(row, "Album") !== "";
+          });
+
+          getLastUpdatedText(albumRows);
+
+          renderTierList();
+          updateClearButton();
+        } catch (error) {
+          console.error(error);
+
+          output.innerHTML = `
+            <div class="movie-compare-placeholder">
+              Could not load album tier list. Check the console for details.
+            </div>
+          `;
+
+          if (summary) {
+            summary.textContent = "Album tier list failed to load.";
+          }
+        }
+      }
+
+      if (searchInput) {
+        searchInput.addEventListener("keydown", function (event) {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            runSearch();
+          }
+
+          if (event.key === "Escape") {
+            event.preventDefault();
+            searchInput.value = "";
+            runSearch();
+          }
+        });
+
+        searchInput.addEventListener("input", updateClearButton);
+      }
+
+      if (searchButton) {
+        searchButton.addEventListener("click", runSearch);
+      }
+
+      if (clearButton) {
+        clearButton.addEventListener("click", function () {
+          if (searchInput) {
+            searchInput.value = "";
+            searchInput.focus();
+          }
+
+          runSearch();
+        });
+      }
+
+      if (minTierSelect) {
+        minTierSelect.addEventListener("change", renderTierList);
+      }
+
+      init();
+    }
+
+    window.NICK_SITE_INIT = function () {
+      loadAlbumTierList();
+    };
+  </script>
+
+  <script src="/nick-site/script-loader.js"></script>
+</body>
+</html>
