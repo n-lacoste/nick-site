@@ -14,7 +14,7 @@
     <div class="page-topline">
       <div>
         <h2>Albums</h2>
-        <p>Album rankings with artist, year, tier, genre, and rating information.</p>
+        <p>Album rankings with artist, year, tier, genre, track, and ranking information.</p>
       </div>
 
       <p id="last-updated" class="last-updated">Last updated: —</p>
@@ -22,99 +22,38 @@
 
     <div class="movie-controls-row">
       <details id="rankings-columns-dropdown" class="filter-dropdown">
-        <summary>Columns</summary>
+        <summary>Display Columns</summary>
 
-        <div class="filter-actions">
-          <button id="rankings-columns-select-all" class="filter-button" type="button">
-            Select All
-          </button>
-        </div>
+        <label class="filter-option select-all-option">
+          <input type="checkbox" id="rankings-columns-select-all">
+          Select All
+        </label>
 
         <div id="rankings-columns" class="filter-options"></div>
       </details>
 
-      <details class="filters-panel">
-        <summary class="filters-panel-summary">
-          Filters
-          <span id="filters-indicator" class="filters-indicator">None</span>
-        </summary>
-
-        <div class="advanced-filters-grid">
-          <details class="filter-dropdown">
-            <summary>Tier</summary>
-
-            <div class="filter-actions">
-              <button id="album-tier-select-all" class="filter-button" type="button">
-                Select All
-              </button>
-            </div>
-
-            <div id="album-tier-filter" class="filter-options"></div>
-          </details>
-
-          <details class="filter-dropdown">
-            <summary>Artist</summary>
-
-            <div class="filter-actions">
-              <button id="album-artist-select-all" class="filter-button" type="button">
-                Select All
-              </button>
-            </div>
-
-            <div id="album-artist-filter" class="filter-options"></div>
-          </details>
-
-          <details class="filter-dropdown">
-            <summary>Year</summary>
-
-            <div class="filter-actions">
-              <button id="album-year-select-all" class="filter-button" type="button">
-                Select All
-              </button>
-            </div>
-
-            <div id="album-year-filter" class="filter-options"></div>
-          </details>
-
-          <details class="filter-dropdown">
-            <summary>Genres</summary>
-
-            <div class="filter-actions">
-              <button id="album-genre-select-all" class="filter-button" type="button">
-                Select All
-              </button>
-            </div>
-
-            <div id="album-genre-filter" class="filter-options"></div>
-          </details>
-        </div>
-      </details>
-
       <div class="table-controls">
-        <label class="show-control">
-          Show
-          <select id="rankings-show-count" class="sort-select">
-            <option value="25">25</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-            <option value="250">250</option>
-            <option value="all">All</option>
-          </select>
-        </label>
-
-        <label class="show-control">
-          Sort
-          <select id="rankings-sort-column" class="sort-select"></select>
-        </label>
-
-        <button id="rankings-sort-direction" class="sort-button" type="button">
-          Asc
-        </button>
-
-        <button id="download-csv" class="download-button" type="button">
-          Download CSV
-        </button>
+        <label for="rankings-sort-column">Sort by:</label>
+        <select id="rankings-sort-column" class="sort-select"></select>
+        <button id="rankings-sort-direction" class="sort-button" type="button">A–Z</button>
       </div>
+
+      <div class="show-control">
+        <label for="rankings-show-count">Show:</label>
+        <select id="rankings-show-count" class="sort-select">
+          <option value="25" selected>25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+          <option value="250">250</option>
+          <option value="all">All</option>
+        </select>
+      </div>
+
+      <button id="download-csv" class="download-button" type="button" aria-label="Download CSV">
+        <svg class="download-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"></path>
+        </svg>
+      </button>
 
       <div class="rankings-search-wrap">
         <input
@@ -141,12 +80,129 @@
     </div>
 
     <div id="column-summary" class="column-summary" hidden>
-      <p id="visible-columns-summary"></p>
-      <p id="hidden-columns-summary"></p>
+      <div>
+        <strong>Displayed:</strong>
+        <span id="visible-columns-summary"></span>
+      </div>
+
+      <div>
+        <strong>Not visible:</strong>
+        <span id="hidden-columns-summary"></span>
+      </div>
     </div>
 
-    <div id="album-rating-status" class="movies-row-count"></div>
-    <div id="row-count" class="movies-row-count"></div>
+    <details id="albums-filters-panel" class="filters-panel">
+      <summary class="filters-panel-summary">
+        <span class="filters-summary-inner">
+          <span>Filters</span>
+          <span id="filters-active-indicator" class="filters-indicator">No filters</span>
+        </span>
+      </summary>
+
+      <div class="filters-panel-actions">
+        <button id="apply-movies-filters" class="filter-button" type="button">
+          Apply filters
+        </button>
+
+        <button id="clear-movies-filters" class="filter-button" type="button">
+          Clear all filters
+        </button>
+      </div>
+
+      <div class="advanced-filters-grid">
+        <details class="filter-dropdown">
+          <summary>Year Range</summary>
+
+          <div class="filter-options advanced-filter-options">
+            <div class="range-inputs">
+              <input id="year-start-filter" class="filter-text-input" type="number" placeholder="Start">
+              <input id="year-end-filter" class="filter-text-input" type="number" placeholder="End">
+            </div>
+          </div>
+        </details>
+
+        <details class="filter-dropdown">
+          <summary>Tier</summary>
+
+          <label class="filter-option select-all-option">
+            <input type="checkbox" id="album-tier-select-all" checked>
+            Select All
+          </label>
+
+          <div id="album-tier-filter" class="filter-options"></div>
+        </details>
+
+        <details class="filter-dropdown">
+          <summary>Sub-Tier</summary>
+
+          <label class="filter-option select-all-option">
+            <input type="checkbox" id="album-sub-tier-select-all" checked>
+            Select All
+          </label>
+
+          <div id="album-sub-tier-filter" class="filter-options"></div>
+        </details>
+
+        <details class="filter-dropdown">
+          <summary>Decade</summary>
+
+          <label class="filter-option select-all-option">
+            <input type="checkbox" id="album-decade-select-all" checked>
+            Select All
+          </label>
+
+          <div id="album-decade-filter" class="filter-options"></div>
+        </details>
+
+        <details class="filter-dropdown">
+          <summary>Artist</summary>
+
+          <label class="filter-option select-all-option">
+            <input type="checkbox" id="album-artist-select-all" checked>
+            Select All
+          </label>
+
+          <div id="album-artist-filter" class="filter-options"></div>
+        </details>
+
+        <details class="filter-dropdown">
+          <summary>Genres</summary>
+
+          <label class="filter-option select-all-option">
+            <input type="checkbox" id="album-genres-select-all" checked>
+            Select All
+          </label>
+
+          <div id="album-genres-filter" class="filter-options"></div>
+        </details>
+
+        <details class="filter-dropdown">
+          <summary>Collab Artists</summary>
+
+          <label class="filter-option select-all-option">
+            <input type="checkbox" id="album-collab-artists-select-all" checked>
+            Select All
+          </label>
+
+          <div id="album-collab-artists-filter" class="filter-options"></div>
+        </details>
+      </div>
+
+      <div id="filters-applied-summary" class="filters-applied-summary" hidden>
+        <strong>Filters Applied:</strong>
+        <span id="filters-applied-summary-text">None</span>
+      </div>
+    </details>
+
+    <div id="albums-error" style="display:none; color:#ffb4b4; background:#3a1111; border:1px solid #8a3333; padding:12px; border-radius:8px; margin:12px 0;"></div>
+
+    <div class="rankings-count-details-row">
+      <div id="row-count" class="row-count"></div>
+
+      <button id="album-rankings-details-button" class="rankings-details-button" type="button">
+        Details
+      </button>
+    </div>
 
     <div class="table-wrap">
       <table id="rankings-table" class="rankings-table">
@@ -159,11 +215,63 @@
     </div>
   </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <div id="cell-modal" class="cell-modal" hidden>
+    <div class="cell-modal-content">
+      <button id="cell-modal-close" class="cell-modal-close" type="button">×</button>
+      <h3 id="cell-modal-title"></h3>
+      <div id="cell-modal-text"></div>
+    </div>
+  </div>
+
+  <div id="album-rankings-details-modal" class="rankings-details-modal" hidden>
+    <div class="rankings-details-modal-box" role="dialog" aria-modal="true" aria-labelledby="album-rankings-details-title">
+      <button id="album-rankings-details-close" class="rankings-details-close" type="button" aria-label="Close details">
+        ×
+      </button>
+
+      <h3 id="album-rankings-details-title">Album Ranking Details</h3>
+
+      <section class="rankings-details-section">
+        <h4>Tier Scale</h4>
+
+        <div class="rankings-details-tier-scale">
+          <span class="tv-tier-pill tv-tier-s">S</span>
+          <span class="tv-tier-pill tv-tier-a1">A1</span>
+          <span class="tv-tier-pill tv-tier-a2">A2</span>
+          <span class="tv-tier-pill tv-tier-a3">A3</span>
+          <span class="tv-tier-pill tv-tier-b1">B1</span>
+          <span class="tv-tier-pill tv-tier-b2">B2</span>
+          <span class="tv-tier-pill tv-tier-b3">B3</span>
+          <span class="tv-tier-pill tv-tier-c1">C1</span>
+          <span class="tv-tier-pill tv-tier-c2">C2</span>
+          <span class="tv-tier-pill tv-tier-c3">C3</span>
+          <span class="tv-tier-pill tv-tier-d">D</span>
+          <span class="tv-tier-pill tv-tier-nr">NR</span>
+        </div>
+      </section>
+
+      <section class="rankings-details-section">
+        <h4>Sub-Tier Scale</h4>
+
+        <div class="rankings-details-tier-scale">
+          <span class="album-sub-tier-pill album-sub-tier-a">A</span>
+          <span class="album-sub-tier-pill album-sub-tier-b">B</span>
+          <span class="album-sub-tier-pill album-sub-tier-c">C</span>
+        </div>
+      </section>
+    </div>
+  </div>
 
   <script>
     function showAlbumRankingsError(error) {
       console.error(error);
+
+      const errorBox = document.getElementById("albums-error");
+
+      if (errorBox) {
+        errorBox.style.display = "block";
+        errorBox.textContent = "Table failed to load: " + error.message;
+      }
 
       const table = document.getElementById("rankings-table");
 
@@ -178,6 +286,48 @@
           </tbody>
         `;
       }
+    }
+
+    window.addEventListener("error", event => {
+      showAlbumRankingsError(event.error || new Error(event.message));
+    });
+
+    window.addEventListener("unhandledrejection", event => {
+      showAlbumRankingsError(event.reason || new Error("Unhandled promise rejection"));
+    });
+
+    function setupAlbumRankingsDetailsModal() {
+      const button = document.getElementById("album-rankings-details-button");
+      const modal = document.getElementById("album-rankings-details-modal");
+      const closeButton = document.getElementById("album-rankings-details-close");
+
+      if (!button || !modal || !closeButton) return;
+
+      if (button.dataset.detailsReady === "true") return;
+      button.dataset.detailsReady = "true";
+
+      function openModal() {
+        modal.hidden = false;
+      }
+
+      function closeModal() {
+        modal.hidden = true;
+      }
+
+      button.addEventListener("click", openModal);
+      closeButton.addEventListener("click", closeModal);
+
+      modal.addEventListener("click", function (event) {
+        if (event.target === modal) {
+          closeModal();
+        }
+      });
+
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && !modal.hidden) {
+          closeModal();
+        }
+      });
     }
 
     const albumDisplayColumns = [
@@ -205,22 +355,36 @@
         options: ["(S)", "S", "A1", "A2", "A3", "B1", "B2", "B3", "C1", "C2", "C3", "D", "NR"]
       },
       {
+        column: "Sub-Tier",
+        targetId: "album-sub-tier-filter",
+        selectAllId: "album-sub-tier-select-all",
+        mode: "or",
+        options: ["A", "B", "C"]
+      },
+      {
+        column: "Decade",
+        targetId: "album-decade-filter",
+        selectAllId: "album-decade-select-all",
+        mode: "or",
+        options: ["1950s", "1960s", "1970s", "1980s", "1990s", "2000s", "2010s", "2020s"]
+      },
+      {
         column: "Artist",
         targetId: "album-artist-filter",
         selectAllId: "album-artist-select-all",
         mode: "or"
       },
       {
-        column: "Year",
-        targetId: "album-year-filter",
-        selectAllId: "album-year-select-all",
+        column: "Genres",
+        targetId: "album-genres-filter",
+        selectAllId: "album-genres-select-all",
         mode: "or"
       },
       {
-        column: "Genres",
-        targetId: "album-genre-filter",
-        selectAllId: "album-genre-select-all",
-        mode: "contains"
+        column: "Collab Artists",
+        targetId: "album-collab-artists-filter",
+        selectAllId: "album-collab-artists-select-all",
+        mode: "or"
       }
     ];
 
@@ -234,6 +398,8 @@
           throw new Error("loadCSV is not defined. script.js did not load correctly or has a syntax error.");
         }
 
+        setupAlbumRankingsDetailsModal();
+
         loadCSV(
           window.ALBUMS_CSV_URL,
           "rankings-table",
@@ -244,7 +410,7 @@
           "rankings-sort-direction",
           albumFilters,
           "rankings-show-count",
-          "album-rating-status"
+          null
         ).catch(showAlbumRankingsError);
       } catch (error) {
         showAlbumRankingsError(error);
@@ -252,6 +418,7 @@
     };
   </script>
 
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script src="/nick-site/script-loader.js"></script>
 </body>
 </html>
