@@ -6828,6 +6828,40 @@ tr:hover td:nth-child(3) {
   text-overflow: clip;
 }
 
+/* TV Show Card, equal left/right page gutter for search row */
+:root {
+  --tv-card-edge-gutter: 20px;
+}
 
+.tv-card-search-row {
+  display: grid !important;
+  grid-template-columns: 280px minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 18px !important;
+
+  width: calc(100% - (var(--tv-card-edge-gutter) * 2)) !important;
+  max-width: calc(100% - (var(--tv-card-edge-gutter) * 2)) !important;
+  box-sizing: border-box !important;
+
+  margin: 28px var(--tv-card-edge-gutter) 18px var(--tv-card-edge-gutter) !important;
+}
+
+.tv-card-search-left {
+  grid-column: 1 !important;
+  width: 280px !important;
+  min-width: 280px !important;
+  max-width: 280px !important;
+}
+
+.tv-card-tier-scale {
+  grid-column: 3 !important;
+  justify-self: end !important;
+  margin-left: auto !important;
+}
+
+/* Keep the status text aligned with the same left edge */
+#tv-show-card-status {
+  margin-left: var(--tv-card-edge-gutter) !important;
+}
 
 
