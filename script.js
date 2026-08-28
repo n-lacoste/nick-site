@@ -8122,19 +8122,19 @@ async function loadArtistProfile() {
   });
 }
 
-async function loadMusicDataPage() {
-  const yearInput = document.getElementById("music-data-year-input");
-  const yearButton = document.getElementById("music-data-year-button");
-  const yearSummary = document.getElementById("music-data-year-summary");
-  const yearTable = document.getElementById("music-data-year-table");
+async function loadMiscMusicData() {
+  const yearInput = document.getElementById("misc-music-data-year-input");
+  const yearButton = document.getElementById("misc-music-data-year-button");
+  const yearSummary = document.getElementById("misc-music-data-year-summary");
+  const yearTable = document.getElementById("misc-music-data-year-table");
 
-  const minCountInput = document.getElementById("music-data-min-count-input");
-  const minCountButton = document.getElementById("music-data-min-count-button");
-  const bestYearsSummary = document.getElementById("music-data-best-years-summary");
-  const bestYearsTable = document.getElementById("music-data-best-years-table");
+  const minCountInput = document.getElementById("misc-music-data-min-count-input");
+  const minCountButton = document.getElementById("misc-music-data-min-count-button");
+  const bestYearsSummary = document.getElementById("misc-music-data-best-years-summary");
+  const bestYearsTable = document.getElementById("misc-music-data-best-years-table");
 
-  const archiveSummary = document.getElementById("music-data-archive-summary");
-  const archiveTable = document.getElementById("music-data-archive-table");
+  const archiveSummary = document.getElementById("misc-music-data-archive-summary");
+  const archiveTable = document.getElementById("misc-music-data-archive-table");
 
   if (!yearTable || !bestYearsTable || !archiveTable) return;
 
@@ -8360,7 +8360,7 @@ async function loadMusicDataPage() {
         <tr>
           <td>${escapeHTML(index + 1)}</td>
           <td style="${getTierStyle(tier)}">${escapeHTML(tier)}</td>
-          <td class="music-data-title-cell">${escapeHTML(getAlbumTitle(row))}</td>
+          <td class="misc-music-data-title-cell">${escapeHTML(getAlbumTitle(row))}</td>
           <td>${escapeHTML(getAlbumArtist(row))}</td>
           <td>${escapeHTML(getText(row, "Ranking"))}</td>
           <td>${escapeHTML(getText(row, "xRank%"))}</td>
