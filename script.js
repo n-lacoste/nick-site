@@ -582,6 +582,7 @@ async function loadCSV(
       "Sarah :)": "Sarah's<br>Rank",
       "Nick <3": "Nick's<br>Rank",
       "Season Epi #": "Season<br>Epi #",
+      "Ranking": "Rank",
     };
 
     return headerBreaks[header] || escapeHTML(header);
