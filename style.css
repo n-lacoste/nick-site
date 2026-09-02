@@ -8290,3 +8290,30 @@ tr:hover td:nth-child(3) {
     text-align: left;
   }
 }
+
+.album-tier-list-title {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 18px;
+  line-height: 1.12;
+  font-weight: 900;
+}
+
+.album-tier-list-artist {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 13px;
+  line-height: 1.15;
+  color: #d8d8d8;
+  font-weight: 700;
+}
+
+.album-tier-list-meta {
+  display: block;
+  font-size: 12px;
+  line-height: 1.2;
+  color: #bdbdbd;
+  font-weight: 800;
+}
+
+
