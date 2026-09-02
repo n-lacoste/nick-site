@@ -36,7 +36,7 @@
 
   .mkwii-dashboard {
     display: grid;
-    grid-template-columns: 1fr 1fr 180px 1fr 1fr;
+    grid-template-columns: 1fr 1fr 90px 1fr 1fr;
     gap: 16px;
     align-items: stretch;
     margin: 0 0 18px;
@@ -78,18 +78,19 @@
   /* GAME COVER */
 
   .mkwii-cover {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-  .mkwii-cover img {
-    width: 100%;
-    max-width: 180px;
-    height: auto;
-    display: block;
-    border-radius: 10px;
-  }
+    .mkwii-cover img {
+      width: auto;
+      height: 100px;
+      max-width: 100%;
+      object-fit: contain;
+      display: block;
+      border-radius: 6px;
+    }
 
   /* SUMMARY */
 
