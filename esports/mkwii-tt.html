@@ -1,1 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MarioKart Wii Time Trials | Nick Site</title>
+  <link rel="stylesheet" href="/nick-site/style.css">
 
+  <style>
+    .mkwii-page {
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 0 16px 48px;
+    }
+
+    .mkwii-title-card {
+      margin: 18px 0 16px;
+      padding: 16px 18px;
+      border: 2px solid #234f1e;
+      background: #d9ead3;
+      color: #19671d;
+      text-align: center;
+      border-radius: 8px;
+    }
+
+    .mkwii-title-card h1 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1.05;
+      font-style: italic;
+      font-weight: 900;
+    }
+
+    .mkwii-dashboard {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin: 0 0 18px;
+    }
+
+    .mkwii-stat-card {
+      padding: 14px 16px;
+      border: 1px solid #333;
+      border-radius: 10px;
+      background: #070707;
+      color: #f5f5f5;
+      text-align: center;
+    }
+
+    .mkwii-stat-label {
+      margin: 0 0 6px;
+      color: #d8d8d8;
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .mkwii-stat-value {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.1;
+      font-weight: 900;
+    }
+
+    .mkwii-stat-note {
+      margin: 4px 0 0;
+      color: #bdbdbd;
+      font-size: 12px;
+      line-height: 1.25;
+      font-weight: 700;
+    }
+
+    .mkwii-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin: 0 0 16px;
+      flex-wrap: wrap;
+    }
+
+    .mkwii-search {
+      flex: 1 1 340px;
+      min-width: 240px;
+      padding: 12px 14px;
+      border: 1px solid #444;
+      border-radius: 999px;
+      background: #050505;
+      color: #f5f5f5;
+      font-size: 15px;
+    }
+
+    .mkwii-filter {
+      padding: 11px 12px;
+      border: 1px solid #444;
+      border-radius: 999px;
+      background: #050505;
+      color: #f5f5f5;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .mkwii-summary-line {
+      margin: 0 0 14px;
+      color: #d8d8d8;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .mkwii-halves {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .mkwii-half {
+      border: 1px solid #333;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #030303;
+    }
+
+    .mkwii-half-title {
+      margin: 0;
+      padding: 10px 12px;
+      text-align: center;
+      font-size: 22px;
+      line-height: 1.1;
+      font-weight: 900;
+    }
+
+    .mkwii-half-nitro .mkwii-half-title {
+      background: #d9d2e9;
+      color: #674ea7;
+    }
+
+    .mkwii-half-retro .mkwii-half-title {
+      background: #fce5cd;
+      color: #b45f06;
+    }
+
+    .mkwii-cup {
+      border-top: 2px solid #222;
+    }
+
+    .mkwii-cup-title {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+      padding: 8px 10px;
+      background: #111;
+      color: #f5f5f5;
+      text-align: center;
+      font-size: 18px;
+      line-height: 1.1;
+      font-weight: 900;
+    }
+
+    .mkwii-cup-body {
+      display: grid;
+      grid-template-columns: 108px minmax(0, 1fr);
+      align-items: stretch;
+    }
+
+    .mkwii-cup-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 124px;
+      border-right: 1px solid #333;
+      background: #f5f5f5;
+      color: #111;
+      font-size: 58px;
+      line-height: 1;
+    }
+
+    .mkwii-table-wrap {
+      overflow-x: auto;
+    }
+
+    .mkwii-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 650px;
+      background: #000;
+      color: #f5f5f5;
+      font-size: 12px;
+    }
+
+    .mkwii-table th,
+    .mkwii-table td {
+      padding: 6px 7px;
+      border: 1px solid #333;
+      text-align: center;
+      vertical-align: middle;
+      line-height: 1.15;
+    }
+
+    .mkwii-table th {
+      background: #eeeeee;
+      color: #000;
+      font-weight: 900;
+    }
+
+    .mkwii-table td {
+      font-weight: 700;
+    }
+
+    .mkwii-track-cell {
+      text-align: left;
+      font-weight: 900;
+    }
+
+    .mkwii-date-cell {
+      background: #6fa8dc;
+      color: #000;
+    }
+
+    .mkwii-diff-cell {
+      color: #000;
+      font-weight: 900;
+    }
+
+    .mkwii-diff-great {
+      background: #39ff14;
+    }
+
+    .mkwii-diff-good {
+      background: #91e82f;
+    }
+
+    .mkwii-diff-mid {
+      background: #c7e64b;
+    }
+
+    .mkwii-diff-high {
+      background: #ffd966;
+    }
+
+    .mkwii-diff-rough {
+      background: #f6b26b;
+    }
+
+    .mkwii-diff-worst {
+      background: #e06666;
+    }
+
+    .mkwii-empty {
+      padding: 22px;
+      border: 1px solid #333;
+      border-radius: 10px;
+      background: #070707;
+      color: #d8d8d8;
+      text-align: center;
+      font-weight: 800;
+    }
+
+    @media (max-width: 1100px) {
+      .mkwii-dashboard {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .mkwii-halves {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .mkwii-page {
+        padding: 0 10px 40px;
+      }
+
+      .mkwii-dashboard {
+        grid-template-columns: 1fr;
+      }
+
+      .mkwii-title-card h1 {
+        font-size: 28px;
+      }
+
+      .mkwii-cup-body {
+        grid-template-columns: 1fr;
+      }
+
+      .mkwii-cup-logo {
+        min-height: 78px;
+        border-right: 0;
+        border-bottom: 1px solid #333;
+        font-size: 46px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="site-header"></div>
+  <script src="/nick-site/nav-loader.js"></script>
+
+  <main class="mkwii-page">
+    <section class="mkwii-title-card">
+      <h1>MarioKart Wii Nick vs. World Records: Time Trials</h1>
+    </section>
+
+    <section class="mkwii-dashboard">
+      <div class="mkwii-stat-card">
+        <p class="mkwii-stat-label">Average Difference</p>
+        <p id="mkwii-average-diff" class="mkwii-stat-value">—</p>
+        <p class="mkwii-stat-note">Average gap to WR</p>
+      </div>
+
+      <div class="mkwii-stat-card">
+        <p class="mkwii-stat-label">Best Track</p>
+        <p id="mkwii-best-track" class="mkwii-stat-value">—</p>
+        <p id="mkwii-best-track-note" class="mkwii-stat-note">—</p>
+      </div>
+
+      <div class="mkwii-stat-card">
+        <p class="mkwii-stat-label">Worst Track</p>
+        <p id="mkwii-worst-track" class="mkwii-stat-value">—</p>
+        <p id="mkwii-worst-track-note" class="mkwii-stat-note">—</p>
+      </div>
+
+      <div class="mkwii-stat-card">
+        <p class="mkwii-stat-label">Last Best Time Input</p>
+        <p id="mkwii-last-track" class="mkwii-stat-value">—</p>
+        <p id="mkwii-last-track-note" class="mkwii-stat-note">—</p>
+      </div>
+    </section>
+
+    <section class="mkwii-controls">
+      <input
+        id="mkwii-search"
+        class="mkwii-search"
+        type="text"
+        placeholder="Search track, cup, character, or vehicle..."
+      >
+
+      <select id="mkwii-half-filter" class="mkwii-filter">
+        <option value="all">All Cups</option>
+        <option value="Nitro">Nitro Cups</option>
+        <option value="Retro">Retro Cups</option>
+      </select>
+    </section>
+
+    <p id="mkwii-summary-line" class="mkwii-summary-line">Loading MarioKart Wii time trials...</p>
+
+    <section id="mkwii-output" class="mkwii-halves">
+      <div class="mkwii-empty">Loading MarioKart Wii time trials...</div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+  <script>
+    window.MKWII_TT_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmeTR35_PhZG8dySIXLskh-Z2QqGhczSg1kr9HWDsn4PD0bL6pdSl09USGztrnm-iWf25Y5SkFLTDG/pub?gid=1749546806&single=true&output=csv";
+
+    function loadMKWiiTimeTrials() {
+      const output = document.getElementById("mkwii-output");
+      const searchInput = document.getElementById("mkwii-search");
+      const halfFilter = document.getElementById("mkwii-half-filter");
+      const summaryLine = document.getElementById("mkwii-summary-line");
+
+      const averageDiff = document.getElementById("mkwii-average-diff");
+      const bestTrack = document.getElementById("mkwii-best-track");
+      const bestTrackNote = document.getElementById("mkwii-best-track-note");
+      const worstTrack = document.getElementById("mkwii-worst-track");
+      const worstTrackNote = document.getElementById("mkwii-worst-track-note");
+      const lastTrack = document.getElementById("mkwii-last-track");
+      const lastTrackNote = document.getElementById("mkwii-last-track-note");
+
+      if (!output) return;
+
+      let timeTrialRows = [];
+
+      const halfOrder = ["Nitro", "Retro"];
+
+      const cupOrder = {
+        "Nitro": [
+          "Mushroom Cup",
+          "Flower Cup",
+          "Star Cup",
+          "Special Cup"
+        ],
+        "Retro": [
+          "Shell Cup",
+          "Banana Cup",
+          "Leaf Cup",
+          "Lightning Cup"
+        ]
+      };
+
+      const cupIcons = {
+        "Mushroom Cup": "🍄",
+        "Flower Cup": "🌻",
+        "Star Cup": "⭐",
+        "Special Cup": "👑",
+        "Shell Cup": "🐢",
+        "Banana Cup": "🍌",
+        "Leaf Cup": "🍂",
+        "Lightning Cup": "⚡"
+      };
+
+      function escapeHTML(value) {
+        return String(value ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function getText(row, column) {
+        return String(row[column] ?? "").trim();
+      }
+
+      function getHalf(row) {
+        return getText(row, "Half");
+      }
+
+      function getCup(row) {
+        return getText(row, "Cup");
+      }
+
+      function getTrack(row) {
+        return getText(row, "Track");
+      }
+
+      function getCharacter(row) {
+        return getText(row, "Character");
+      }
+
+      function getVehicle(row) {
+        return getText(row, "Vehicle");
+      }
+
+      function getBestTime(row) {
+        return getText(row, "Best Time");
+      }
+
+      function getDateAchieved(row) {
+        return getText(row, "Date Achieved");
+      }
+
+      function getWRTime(row) {
+        return getText(row, "WR Time (AUTO)");
+      }
+
+      function getWRDate(row) {
+        return getText(row, "WR Date (AUTO)");
+      }
+
+      function getDifference(row) {
+        const rawValue = getText(row, "Difference (s)").replaceAll(",", "");
+        const numberValue = Number(rawValue);
+
+        return Number.isFinite(numberValue) ? numberValue : null;
+      }
+
+      function formatDifference(value) {
+        if (value === null) return "—";
+
+        return value.toFixed(3);
+      }
+
+      function getDifferenceClass(value) {
+        if (value === null) return "";
+
+        if (value <= 5) return "mkwii-diff-great";
+        if (value <= 9) return "mkwii-diff-good";
+        if (value <= 12) return "mkwii-diff-mid";
+        if (value <= 15) return "mkwii-diff-high";
+        if (value <= 18) return "mkwii-diff-rough";
+
+        return "mkwii-diff-worst";
+      }
+
+      function parseAchievedDate(row) {
+        const rawDate = getDateAchieved(row);
+
+        if (!rawDate) return null;
+
+        const parsedDate = new Date(rawDate);
+
+        if (Number.isNaN(parsedDate.getTime())) return null;
+
+        return parsedDate;
+      }
+
+      function getVisibleRows() {
+        const searchTerm = searchInput
+          ? searchInput.value.trim().toLowerCase()
+          : "";
+
+        const selectedHalf = halfFilter
+          ? halfFilter.value
+          : "all";
+
+        return timeTrialRows.filter(row => {
+          const half = getHalf(row);
+
+          if (selectedHalf !== "all" && half !== selectedHalf) {
+            return false;
+          }
+
+          if (!searchTerm) return true;
+
+          const searchableText = [
+            getHalf(row),
+            getCup(row),
+            getTrack(row),
+            getCharacter(row),
+            getVehicle(row),
+            getBestTime(row),
+            getDateAchieved(row),
+            getWRTime(row),
+            getWRDate(row),
+            formatDifference(getDifference(row))
+          ]
+            .join(" ")
+            .toLowerCase();
+
+          return searchableText.includes(searchTerm);
+        });
+      }
+
+      function updateDashboard(rows) {
+        const rowsWithDifference = rows
+          .map(row => {
+            return {
+              row,
+              difference: getDifference(row)
+            };
+          })
+          .filter(item => item.difference !== null);
+
+        if (rowsWithDifference.length === 0) {
+          if (averageDiff) averageDiff.textContent = "—";
+          if (bestTrack) bestTrack.textContent = "—";
+          if (bestTrackNote) bestTrackNote.textContent = "No data";
+          if (worstTrack) worstTrack.textContent = "—";
+          if (worstTrackNote) worstTrackNote.textContent = "No data";
+          return;
+        }
+
+        const average = rowsWithDifference.reduce((total, item) => {
+          return total + item.difference;
+        }, 0) / rowsWithDifference.length;
+
+        const best = [...rowsWithDifference].sort((a, b) => a.difference - b.difference)[0];
+        const worst = [...rowsWithDifference].sort((a, b) => b.difference - a.difference)[0];
+
+        if (averageDiff) {
+          averageDiff.textContent = `${average.toFixed(3)}s`;
+        }
+
+        if (bestTrack) {
+          bestTrack.textContent = getTrack(best.row) || "—";
+        }
+
+        if (bestTrackNote) {
+          bestTrackNote.textContent = `${getCup(best.row)} • ${formatDifference(best.difference)}s`;
+        }
+
+        if (worstTrack) {
+          worstTrack.textContent = getTrack(worst.row) || "—";
+        }
+
+        if (worstTrackNote) {
+          worstTrackNote.textContent = `${getCup(worst.row)} • ${formatDifference(worst.difference)}s`;
+        }
+
+        const datedRows = rows
+          .map(row => {
+            return {
+              row,
+              date: parseAchievedDate(row)
+            };
+          })
+          .filter(item => item.date !== null)
+          .sort((a, b) => b.date - a.date);
+
+        if (datedRows.length > 0) {
+          const latest = datedRows[0];
+
+          if (lastTrack) {
+            lastTrack.textContent = getTrack(latest.row) || "—";
+          }
+
+          if (lastTrackNote) {
+            lastTrackNote.textContent = `${getDateAchieved(latest.row)} • ${getBestTime(latest.row)}`;
+          }
+        } else {
+          if (lastTrack) lastTrack.textContent = "—";
+          if (lastTrackNote) lastTrackNote.textContent = "No date data";
+        }
+      }
+
+      function groupRowsByHalfAndCup(rows) {
+        const grouped = new Map();
+
+        rows.forEach(row => {
+          const half = getHalf(row) || "Other";
+          const cup = getCup(row) || "Other Cup";
+
+          if (!grouped.has(half)) {
+            grouped.set(half, new Map());
+          }
+
+          if (!grouped.get(half).has(cup)) {
+            grouped.get(half).set(cup, []);
+          }
+
+          grouped.get(half).get(cup).push(row);
+        });
+
+        return grouped;
+      }
+
+      function getOrderedHalves(grouped) {
+        const knownHalves = halfOrder.filter(half => grouped.has(half));
+        const extraHalves = [...grouped.keys()].filter(half => !halfOrder.includes(half));
+
+        return [...knownHalves, ...extraHalves];
+      }
+
+      function getOrderedCups(half, cupsMap) {
+        const knownCupOrder = cupOrder[half] || [];
+        const knownCups = knownCupOrder.filter(cup => cupsMap.has(cup));
+        const extraCups = [...cupsMap.keys()].filter(cup => !knownCupOrder.includes(cup));
+
+        return [...knownCups, ...extraCups];
+      }
+
+      function renderCup(half, cup, rows) {
+        const icon = cupIcons[cup] || "🏁";
+
+        const tableRows = rows.map(row => {
+          const difference = getDifference(row);
+          const differenceClass = getDifferenceClass(difference);
+
+          return `
+            <tr>
+              <td class="mkwii-track-cell">${escapeHTML(getTrack(row))}</td>
+              <td>${escapeHTML(getCharacter(row))}</td>
+              <td>${escapeHTML(getVehicle(row))}</td>
+              <td>${escapeHTML(getBestTime(row))}</td>
+              <td class="mkwii-date-cell">${escapeHTML(getDateAchieved(row))}</td>
+              <td>${escapeHTML(getWRTime(row))}</td>
+              <td class="mkwii-diff-cell ${differenceClass}">
+                ${escapeHTML(formatDifference(difference))}
+              </td>
+            </tr>
+          `;
+        }).join("");
+
+        return `
+          <section class="mkwii-cup">
+            <h3 class="mkwii-cup-title">
+              <span>${escapeHTML(icon)}</span>
+              <span>${escapeHTML(cup)}</span>
+            </h3>
+
+            <div class="mkwii-cup-body">
+              <div class="mkwii-cup-logo" aria-hidden="true">
+                ${escapeHTML(icon)}
+              </div>
+
+              <div class="mkwii-table-wrap">
+                <table class="mkwii-table">
+                  <thead>
+                    <tr>
+                      <th>Track</th>
+                      <th>Character</th>
+                      <th>Vehicle</th>
+                      <th>Best Time</th>
+                      <th>Date</th>
+                      <th>WR Time</th>
+                      <th>Diff.</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    ${tableRows}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+        `;
+      }
+
+      function renderTimeTrials() {
+        const visibleRows = getVisibleRows();
+        const grouped = groupRowsByHalfAndCup(visibleRows);
+
+        updateDashboard(visibleRows);
+
+        if (summaryLine) {
+          summaryLine.textContent = `Showing ${visibleRows.length} of ${timeTrialRows.length} tracks.`;
+        }
+
+        if (visibleRows.length === 0) {
+          output.innerHTML = `
+            <div class="mkwii-empty">
+              No tracks match the current search or filter.
+            </div>
+          `;
+          return;
+        }
+
+        const halves = getOrderedHalves(grouped);
+
+        output.innerHTML = halves.map(half => {
+          const cupsMap = grouped.get(half);
+          const orderedCups = getOrderedCups(half, cupsMap);
+          const halfClass = half === "Nitro" ? "mkwii-half-nitro" : "mkwii-half-retro";
+
+          return `
+            <section class="mkwii-half ${halfClass}">
+              <h2 class="mkwii-half-title">${escapeHTML(half)} Cups</h2>
+
+              ${orderedCups.map(cup => {
+                return renderCup(half, cup, cupsMap.get(cup));
+              }).join("")}
+            </section>
+          `;
+        }).join("");
+      }
+
+      async function init() {
+        try {
+          if (typeof Papa === "undefined") {
+            throw new Error("PapaParse did not load.");
+          }
+
+          if (!window.MKWII_TT_CSV_URL) {
+            throw new Error("window.MKWII_TT_CSV_URL is not defined.");
+          }
+
+          const text = typeof getCSVText === "function"
+            ? await getCSVText(window.MKWII_TT_CSV_URL)
+            : await fetch(window.MKWII_TT_CSV_URL, { cache: "no-store" }).then(response => response.text());
+
+          const parsed = Papa.parse(text.trim(), {
+            header: true,
+            skipEmptyLines: true
+          });
+
+          timeTrialRows = parsed.data.filter(row => {
+            return getTrack(row) !== "" && getCup(row) !== "";
+          });
+
+          renderTimeTrials();
+        } catch (error) {
+          console.error(error);
+
+          output.innerHTML = `
+            <div class="mkwii-empty">
+              Could not load MarioKart Wii time trials. Check the CSV link and browser console.
+            </div>
+          `;
+
+          if (summaryLine) {
+            summaryLine.textContent = "MarioKart Wii time trials failed to load.";
+          }
+        }
+      }
+
+      if (searchInput) {
+        searchInput.addEventListener("input", renderTimeTrials);
+      }
+
+      if (halfFilter) {
+        halfFilter.addEventListener("change", renderTimeTrials);
+      }
+
+      init();
+    }
+
+    window.NICK_SITE_INIT = function () {
+      loadMKWiiTimeTrials();
+    };
+  </script>
+
+  <script src="/nick-site/script-loader.js"></script>
+</body>
+</html>
