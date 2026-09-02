@@ -8316,4 +8316,127 @@ tr:hover td:nth-child(3) {
   font-weight: 800;
 }
 
+/* Album detail modal */
 
+.album-tier-list-card {
+  cursor: pointer;
+}
+
+.album-tier-list-card:hover {
+  transform: translateY(-2px);
+  border-color: #f5f5f5;
+}
+
+.album-detail-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+
+.album-detail-modal[hidden] {
+  display: none;
+}
+
+.album-detail-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(4px);
+}
+
+.album-detail-modal-card {
+  position: relative;
+  z-index: 2;
+  width: min(760px, 94vw);
+  max-height: 86vh;
+  overflow-y: auto;
+  padding: 28px;
+  border: 1px solid #444;
+  border-radius: 18px;
+  background: #111;
+  color: #f5f5f5;
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.7);
+}
+
+.album-detail-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  border: 1px solid #444;
+  border-radius: 999px;
+  background: #000;
+  color: #f5f5f5;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.album-detail-modal-close:hover {
+  background: #222;
+}
+
+.album-detail-modal-card h3 {
+  margin: 0 44px 6px 0;
+  font-size: clamp(28px, 5vw, 44px);
+  line-height: 1.05;
+}
+
+.album-detail-modal-subtitle {
+  margin: 0 0 6px;
+  color: #d8d8d8;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.album-detail-modal-meta {
+  margin: 0 0 20px;
+  color: #bdbdbd;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.album-detail-modal-data {
+  display: grid;
+  gap: 10px;
+}
+
+.album-detail-modal-data-row {
+  display: grid;
+  grid-template-columns: minmax(130px, 180px) minmax(0, 1fr);
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid #333;
+  text-align: left;
+}
+
+.album-detail-modal-data-label {
+  color: #bdbdbd;
+  font-size: 13px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.album-detail-modal-data-value {
+  color: #f5f5f5;
+  font-size: 14px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 650px) {
+  .album-detail-modal-card {
+    padding: 22px 18px;
+  }
+
+  .album-detail-modal-data-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}
