@@ -186,6 +186,10 @@
         return getText(row, ["Ranking", "Rank", "Rk"]);
       }
 
+      function getReleaseDate(row) {
+        return getText(row, ["Release Date"]);
+      }
+
       function getXRank(row) {
         return getText(row, ["xRank%", "xRank", "XRank%", "%Tile"]);
       }
@@ -292,13 +296,14 @@
           const tier = getAlbumTier(row);
           const ranking = getRanking(row);
           const xRank = getXRank(row);
+          const ReleaseDate = getReleaseDate(row);
         
           albumModalTitle.textContent = album || "Album Details";
         
           if (albumModalSubtitle) {
             albumModalSubtitle.textContent = [
               artist,
-              year
+              ReleaseDate
             ].filter(Boolean).join(" • ");
           }
         
