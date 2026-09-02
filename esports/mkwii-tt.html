@@ -575,7 +575,7 @@
         }
 
         if (bestTrackNote) {
-          bestTrackNote.textContent = `${getCup(best.row)} • ${formatDifference(best.difference)}s`;
+          bestTrackNote.textContent = `${getCup(best.row)} • ${getBestTime(best.row)} • ${formatDifference(best.difference)}s`;
         }
 
         if (worstTrack) {
@@ -583,7 +583,7 @@
         }
 
         if (worstTrackNote) {
-          worstTrackNote.textContent = `${getCup(worst.row)} • ${formatDifference(worst.difference)}s`;
+          worstTrackNote.textContent = `${getCup(worst.row)} • ${getBestTime(best.row)} • ${formatDifference(worst.difference)}s`;
         }
 
         const datedRows = rows
