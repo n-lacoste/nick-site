@@ -26,7 +26,7 @@
           id="album-tier-list-search"
           class="search-box rankings-search-input"
           type="text"
-          placeholder="Search albums or artists..."
+          placeholder="Search albums..."
         >
 
         <button
@@ -59,6 +59,7 @@
           <option value="C2">C2</option>
           <option value="C3">C3</option>
           <option value="D">D</option>
+          <option value="NR">NR</option>
         </select>
       </label>
     </div>
@@ -104,8 +105,8 @@
       const tierColors = {
         "(S)": { bg: "#efd1ff", text: "#5a3286" },
         "S": { bg: "#efd1ff", text: "#5a3286" },
-        "A1": { bg: "#888ef5", text: "#473821" },
-        "A2": { bg: "#5bc0dd", text: "#215a6c" },
+        "A1": { bg: "#888ef5", text: "#111111" },
+        "A2": { bg: "#5bc0dd", text: "#111111" },
         "A3": { bg: "#bfe1f6", text: "#0a53a8" },
         "B1": { bg: "#d4edbc", text: "#11734b" },
         "B2": { bg: "#ffe5a0", text: "#473821" },
@@ -128,39 +129,70 @@
           .replaceAll("'", "&#039;");
       }
 
-      function getText(row, column) {
-        return String(row[column] ?? "").trim();
+      function getText(row, columns) {
+        const columnList = Array.isArray(columns) ? columns : [columns];
+
+        for (const column of columnList) {
+          const value = String(row[column] ?? "").trim();
+
+          if (value !== "") {
+            return value;
+          }
+        }
+
+        return "";
       }
 
-      function getNumber(row, column) {
-        const text = getText(row, column)
-          .replace(/,/g, "")
-          .replace(/%/g, "");
+      function getAlbumTitle(row) {
+        return getText(row, "Project TitleArtist");
+      }
 
-        const number = Number(text);
+      function getAlbumTier(row) {
+        return getText(row, "Tier") || "NR";
+      }
 
-        return isNaN(number) ? null : number;
+      function getRanking(row) {
+        return getText(row, ["Ranking", "Rank", "Rk"]);
+      }
+
+      function getXRank(row) {
+        return getText(row, ["xRank%", "xRank", "XRank%", "%Tile"]);
+      }
+
+      function getNumber(row, columns) {
+        const rawValue = getText(row, columns);
+
+        if (rawValue === "") return null;
+
+        const cleanedValue = rawValue.replaceAll(",", "").replace("%", "");
+        const numberValue = Number(cleanedValue);
+
+        return Number.isFinite(numberValue) ? numberValue : null;
       }
 
       function getTierSortIndex(tier) {
-        const index = tierOrder.indexOf(String(tier ?? "").trim());
+        const index = tierOrder.indexOf(tier);
 
-        return index === -1 ? tierOrder.length + 1 : index;
+        if (index === -1) {
+          return tierOrder.length;
+        }
+
+        return index;
       }
 
       function getAlbumSortValue(row) {
-        const ranking = getNumber(row, "Ranking");
+        const ranking = getNumber(row, ["Ranking", "Rank", "Rk"]);
 
         if (ranking !== null) return ranking;
 
-        const xRank = getNumber(row, "xRank%");
+        const xRank = getNumber(row, ["xRank%", "xRank", "XRank%", "%Tile"]);
 
         if (xRank !== null) return -xRank;
 
         return Number.POSITIVE_INFINITY;
       }
 
-      function getLastUpdatedText(rows) {
+      function updateLastUpdatedText(rows) {
         if (typeof updateRankingsLastUpdatedText === "function") {
           updateRankingsLastUpdatedText(rows);
         }
@@ -180,10 +212,8 @@
           : getTierSortIndex(minTier);
 
         return albumRows.filter(row => {
-          const album = getText(row, "Album");
-          const artist = getText(row, "Artist");
-          const collabArtists = getText(row, "Collab Artists");
-          const tier = getText(row, "Tier");
+          const album = getAlbumTitle(row);
+          const tier = getAlbumTier(row);
 
           if (album === "") return false;
 
@@ -195,10 +225,10 @@
 
           const searchableText = [
             album,
-            artist,
-            collabArtists,
+            tier,
             getText(row, "Year"),
-            getText(row, "Genres")
+            getRanking(row),
+            getXRank(row)
           ]
             .join(" ")
             .toLowerCase();
@@ -209,7 +239,6 @@
 
       function renderTierList() {
         const visibleRows = getVisibleRows();
-
         const rowsByTier = new Map();
 
         tierOrder.forEach(tier => {
@@ -217,7 +246,7 @@
         });
 
         visibleRows.forEach(row => {
-          const tier = getText(row, "Tier") || "NR";
+          const tier = getAlbumTier(row);
 
           if (!rowsByTier.has(tier)) {
             rowsByTier.set(tier, []);
@@ -269,20 +298,17 @@
 
               <div class="album-tier-list-cards">
                 ${rows.map(row => {
-                  const album = getText(row, "Album");
-                  const artist = getText(row, "Artist");
-                  const year = getText(row, "Year");
-                  const ranking = getText(row, "Ranking");
-                  const xRank = getText(row, "xRank%");
+                  const album = getAlbumTitle(row);
+                  const ranking = getRanking(row);
+                  const xRank = getXRank(row);
 
                   return `
                     <article class="album-tier-list-card">
                       <strong>${escapeHTML(album)}</strong>
-                      <span>${escapeHTML(artist)}</span>
                       <small>
-                        ${escapeHTML(year)}
-                        ${ranking ? ` • #${escapeHTML(ranking)}` : ""}
-                        ${xRank ? ` • ${escapeHTML(xRank)}` : ""}
+                        ${ranking ? `#${escapeHTML(ranking)}` : ""}
+                        ${ranking && xRank ? " • " : ""}
+                        ${xRank ? `${escapeHTML(xRank)}` : ""}
                       </small>
                     </article>
                   `;
@@ -332,11 +358,11 @@
             skipEmptyLines: true
           });
 
-          albumRows = (parsed.data || []).filter(row => {
-            return getText(row, "Album") !== "";
+          albumRows = parsed.data.filter(row => {
+            return getAlbumTitle(row) !== "";
           });
 
-          getLastUpdatedText(albumRows);
+          updateLastUpdatedText(albumRows);
 
           renderTierList();
           updateClearButton();
