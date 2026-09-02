@@ -474,15 +474,20 @@ async function loadCSV(
     "Notes": "400px",
 
     /* Albums Table only */
-      "Ranking": "75px",
-      "Sub-Tier": "75px",
-      "Album Title": "260px",
-      "Artist": "220px",
-      "Year": "80px",
-      "xRank%": "90px",
-      "Genres": "260px",
-      "SORT": "90px",
-  };
+    "Ranking": "75px",
+    "Sub-Tier": "75px",
+    "Album Title": "260px",
+    "Artist": "220px",
+    "Year": "80px",
+    "xRank%": "90px",
+    "Genres": "260px",
+    "SORT": "90px",
+    "%Tile": "80px",
+    "S": "30px",
+    "L": "30px",
+    "%Tile": "80px",
+    "xRank%": "90px",
+};
 
   const cellFontSizes = {
     /* All tables */
@@ -507,7 +512,7 @@ async function loadCSV(
     "Release Date": "14px",
     "Season Epi #": "14px",
     "Rank": "18px",
-    "Notes": "11px"
+    "Notes": "11px",
   };
 
   const defaultHeaderFontSize = "18px";
@@ -583,6 +588,7 @@ async function loadCSV(
       "Nick <3": "Nick's<br>Rank",
       "Season Epi #": "Season<br>Epi #",
       "Ranking": "Rank",
+      "xRank%": "Score",
     };
 
     return headerBreaks[header] || escapeHTML(header);
