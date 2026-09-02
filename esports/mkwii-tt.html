@@ -92,15 +92,6 @@
       border-radius: 6px;
     }
 
-  /* SUMMARY */
-
-  .mkwii-summary-line {
-    margin: 0 0 14px;
-    color: #d8d8d8;
-    font-size: 14px;
-    font-weight: 700;
-  }
-
   /* NITRO / RETRO COLUMNS */
 
   .mkwii-halves {
@@ -186,7 +177,7 @@
  .mkwii-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 650px;
+  min-width: 500px;
   table-layout: fixed;
   background: #000;
   color: #f5f5f5;
@@ -393,10 +384,6 @@
 
   </section>
 
-  <p id="mkwii-summary-line" class="mkwii-summary-line">
-    Loading MarioKart Wii time trials...
-  </p>
-
   <section id="mkwii-output" class="mkwii-halves">
     <div class="mkwii-empty">Loading MarioKart Wii time trials...</div>
   </section>
@@ -412,8 +399,7 @@
       const output = document.getElementById("mkwii-output");
       const searchInput = document.getElementById("mkwii-search");
       const halfFilter = document.getElementById("mkwii-half-filter");
-      const summaryLine = document.getElementById("mkwii-summary-line");
-
+      
       const averageDiff = document.getElementById("mkwii-average-diff");
       const bestTrack = document.getElementById("mkwii-best-track");
       const bestTrackNote = document.getElementById("mkwii-best-track-note");
@@ -748,9 +734,6 @@
 
         updateDashboard(visibleRows);
 
-        if (summaryLine) {
-          summaryLine.textContent = `Showing ${visibleRows.length} of ${timeTrialRows.length} tracks.`;
-        }
 
         if (visibleRows.length === 0) {
           output.innerHTML = `
@@ -812,10 +795,6 @@
               Could not load MarioKart Wii time trials. Check the CSV link and browser console.
             </div>
           `;
-
-          if (summaryLine) {
-            summaryLine.textContent = "MarioKart Wii time trials failed to load.";
-          }
         }
       }
 
