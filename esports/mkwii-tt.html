@@ -6,440 +6,365 @@
   <link rel="stylesheet" href="/nick-site/style.css">
 
   <style>
-    .mkwii-page {
-      max-width: 1500px;
-      margin: 0 auto;
-      padding: 0 16px 48px;
-    }
-
-    .mkwii-title-card {
-      margin: 18px 0 16px;
-      padding: 16px 18px;
-      border: 2px solid #234f1e;
-      background: #d9ead3;
-      color: #19671d;
-      text-align: center;
-      border-radius: 8px;
-    }
-
-    .mkwii-title-card h1 {
-      margin: 0;
-      font-size: clamp(28px, 4vw, 44px);
-      line-height: 1.05;
-      font-style: italic;
-      font-weight: 900;
-    }
-
-    .mkwii-dashboard {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 12px;
-      margin: 0 0 18px;
-    }
-
-    .mkwii-stat-card {
-      padding: 14px 16px;
-      border: 1px solid #333;
-      border-radius: 10px;
-      background: #070707;
-      color: #f5f5f5;
-      text-align: center;
-    }
-
-    .mkwii-stat-label {
-      margin: 0 0 6px;
-      color: #d8d8d8;
-      font-size: 13px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
-    .mkwii-stat-value {
-      margin: 0;
-      font-size: 24px;
-      line-height: 1.1;
-      font-weight: 900;
-    }
-
-    .mkwii-stat-note {
-      margin: 4px 0 0;
-      color: #bdbdbd;
-      font-size: 12px;
-      line-height: 1.25;
-      font-weight: 700;
-    }
-
-    .mkwii-controls {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin: 0 0 16px;
-      flex-wrap: wrap;
-    }
-
-    .mkwii-search {
-      flex: 1 1 340px;
-      min-width: 240px;
-      padding: 12px 14px;
-      border: 1px solid #444;
-      border-radius: 999px;
-      background: #050505;
-      color: #f5f5f5;
-      font-size: 15px;
-    }
-
-    .mkwii-filter {
-      padding: 11px 12px;
-      border: 1px solid #444;
-      border-radius: 999px;
-      background: #050505;
-      color: #f5f5f5;
-      font-size: 15px;
-      font-weight: 800;
-    }
-
-    .mkwii-summary-line {
-      margin: 0 0 14px;
-      color: #d8d8d8;
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    .mkwii-halves {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-      align-items: start;
-    }
-
-    .mkwii-half {
-      border: 1px solid #333;
-      border-radius: 12px;
-      overflow: hidden;
-      background: #030303;
-    }
-
-    .mkwii-half-title {
-      margin: 0;
-      padding: 10px 12px;
-      text-align: center;
-      font-size: 22px;
-      line-height: 1.1;
-      font-weight: 900;
-    }
-
-    .mkwii-half-nitro .mkwii-half-title {
-      background: #d9d2e9;
-      color: #674ea7;
-    }
-
-    .mkwii-half-retro .mkwii-half-title {
-      background: #fce5cd;
-      color: #b45f06;
-    }
-
-    .mkwii-cup {
-      border-top: 2px solid #222;
-    }
-
-    .mkwii-cup-title {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      margin: 0;
-      padding: 8px 10px;
-      background: #111;
-      color: #f5f5f5;
-      text-align: center;
-      font-size: 18px;
-      line-height: 1.1;
-      font-weight: 900;
-    }
-
-    .mkwii-cup-body {
-      display: grid;
-      grid-template-columns: 108px minmax(0, 1fr);
-      align-items: stretch;
-    }
-
-    .mkwii-cup-logo {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 124px;
-      border-right: 1px solid #333;
-      background: #f5f5f5;
-      color: #111;
-      font-size: 58px;
-      line-height: 1;
-    }
-
-    .mkwii-table-wrap {
-      overflow-x: auto;
-    }
-
-    .mkwii-table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 650px;
-      background: #000;
-      color: #f5f5f5;
-      font-size: 12px;
-    }
-
-    .mkwii-table th,
-    .mkwii-table td {
-      padding: 6px 7px;
-      border: 1px solid #333;
-      text-align: center;
-      vertical-align: middle;
-      line-height: 1.15;
-    }
-
-    .mkwii-table th {
-      background: #eeeeee;
-      color: #000;
-      font-weight: 900;
-    }
-
-    .mkwii-table td {
-      font-weight: 700;
-    }
-
-    .mkwii-track-cell {
-      text-align: left;
-      font-weight: 900;
-    }
-
-    .mkwii-date-cell {
-      background: #6fa8dc;
-      color: #000;
-    }
-
-    .mkwii-diff-cell {
-      color: #000;
-      font-weight: 900;
-    }
-
-    .mkwii-diff-great {
-      background: #39ff14;
-    }
-
-    .mkwii-diff-good {
-      background: #91e82f;
-    }
-
-    .mkwii-diff-mid {
-      background: #c7e64b;
-    }
-
-    .mkwii-diff-high {
-      background: #ffd966;
-    }
-
-    .mkwii-diff-rough {
-      background: #f6b26b;
-    }
-
-    .mkwii-diff-worst {
-      background: #e06666;
-    }
-
-    .mkwii-empty {
-      padding: 22px;
-      border: 1px solid #333;
-      border-radius: 10px;
-      background: #070707;
-      color: #d8d8d8;
-      text-align: center;
-      font-weight: 800;
-    }
-
-    @media (max-width: 1100px) {
-      .mkwii-dashboard {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .mkwii-halves {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 650px) {
-      .mkwii-page {
-        padding: 0 10px 40px;
-      }
-
-      .mkwii-dashboard {
-        grid-template-columns: 1fr;
-      }
-
-      .mkwii-title-card h1 {
-        font-size: 28px;
-      }
-
-      .mkwii-cup-body {
-        grid-template-columns: 1fr;
-      }
-
-      .mkwii-cup-logo {
-        min-height: 78px;
-        border-right: 0;
-        border-bottom: 1px solid #333;
-        font-size: 46px;
-      }
-    }
-
-    .mkwii-cup-title-icon {
-        width: 32px;
-        height: 32px;
-        object-fit: contain;
-      }
-      
-      .mkwii-cup-logo-image {
-        width: 120px;
-        height: 120px;
-        object-fit: contain;
-      }
-
-    .mkwii-cover-container {
-      display: flex;
-      justify-content: center;
-      margin: 24px 0 36px;
-    }
-    
-    .mkwii-cover {
-      width: 220px;
-      max-width: 100%;
-      height: auto;
-      border-radius: 8px;
-    }
-
-.mkwii-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 220px;
-  gap: 32px;
-  align-items: start;
-}
-
-.mkwii-hero-cover img {
-  width: 100%;
-  height: auto;
-  display: block;
-  border-radius: 8px;
-}
-
-@media (max-width: 700px) {
-  .mkwii-hero {
-    grid-template-columns: 1fr;
+  .mkwii-page {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 0 16px 48px;
   }
 
-  .mkwii-hero-cover {
-    max-width: 220px;
+  /* PAGE TITLE */
+
+  .mkwii-title-card {
+    margin: 18px 0 16px;
+    padding: 16px 18px;
+    border: 2px solid #234f1e;
+    background: #d9ead3;
+    color: #19671d;
+    text-align: center;
+    border-radius: 8px;
   }
-}
 
-    .mkwii-top {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 220px;
-  gap: 24px;
-  align-items: stretch;
-}
-
-.mkwii-top-content {
-  min-width: 0;
-}
-
-.mkwii-cover {
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-}
-
-.mkwii-cover img {
-  width: 100%;
-  max-width: 220px;
-  height: auto;
-  display: block;
-  border-radius: 12px;
-}
-
-@media (max-width: 800px) {
-  .mkwii-top {
-    grid-template-columns: 1fr;
+  .mkwii-title-card h1 {
+    margin: 0;
+    font-size: clamp(28px, 4vw, 44px);
+    line-height: 1.05;
+    font-style: italic;
+    font-weight: 900;
   }
+
+  /* DASHBOARD */
+
+  .mkwii-dashboard {
+    display: grid;
+    grid-template-columns: 1fr 1fr 180px 1fr 1fr;
+    gap: 16px;
+    align-items: stretch;
+    margin: 0 0 18px;
+  }
+
+  .mkwii-stat-card {
+    padding: 14px 16px;
+    border: 1px solid #333;
+    border-radius: 10px;
+    background: #070707;
+    color: #f5f5f5;
+    text-align: center;
+  }
+
+  .mkwii-stat-label {
+    margin: 0 0 6px;
+    color: #d8d8d8;
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .mkwii-stat-value {
+    margin: 0;
+    font-size: 24px;
+    line-height: 1.1;
+    font-weight: 900;
+  }
+
+  .mkwii-stat-note {
+    margin: 4px 0 0;
+    color: #bdbdbd;
+    font-size: 12px;
+    line-height: 1.25;
+    font-weight: 700;
+  }
+
+  /* GAME COVER */
 
   .mkwii-cover {
-    justify-content: flex-start;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .mkwii-cover img {
+    width: 100%;
     max-width: 180px;
+    height: auto;
+    display: block;
+    border-radius: 10px;
   }
-}
-    
-  </style>
+
+  /* SUMMARY */
+
+  .mkwii-summary-line {
+    margin: 0 0 14px;
+    color: #d8d8d8;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  /* NITRO / RETRO COLUMNS */
+
+  .mkwii-halves {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    align-items: start;
+  }
+
+  .mkwii-half {
+    border: 1px solid #333;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #030303;
+  }
+
+  .mkwii-half-title {
+    margin: 0;
+    padding: 10px 12px;
+    text-align: center;
+    font-size: 22px;
+    line-height: 1.1;
+    font-weight: 900;
+  }
+
+  .mkwii-half-nitro .mkwii-half-title {
+    background: #d9d2e9;
+    color: #674ea7;
+  }
+
+  .mkwii-half-retro .mkwii-half-title {
+    background: #fce5cd;
+    color: #b45f06;
+  }
+
+  /* CUPS */
+
+  .mkwii-cup {
+    border-top: 2px solid #222;
+  }
+
+  .mkwii-cup-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 8px 10px;
+    background: #111;
+    color: #f5f5f5;
+    text-align: center;
+    font-size: 18px;
+    line-height: 1.1;
+    font-weight: 900;
+  }
+
+  .mkwii-cup-body {
+    display: grid;
+    grid-template-columns: 130px minmax(0, 1fr);
+    align-items: stretch;
+  }
+
+  .mkwii-cup-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 124px;
+    border-right: 1px solid #333;
+    background: #f5f5f5;
+  }
+
+  .mkwii-cup-logo-image {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+  }
+
+  /* TABLES */
+
+  .mkwii-table-wrap {
+    overflow-x: auto;
+  }
+
+  .mkwii-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 650px;
+    background: #000;
+    color: #f5f5f5;
+    font-size: 12px;
+  }
+
+  .mkwii-table th,
+  .mkwii-table td {
+    padding: 6px 7px;
+    border: 1px solid #333;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 1.15;
+  }
+
+  .mkwii-table th {
+    background: #eeeeee;
+    color: #000;
+    font-weight: 900;
+  }
+
+  .mkwii-table td {
+    font-weight: 700;
+  }
+
+  .mkwii-track-cell {
+    text-align: left;
+    font-weight: 900;
+  }
+
+  .mkwii-date-cell {
+    background: #6fa8dc;
+    color: #000;
+  }
+
+  .mkwii-diff-cell {
+    color: #000;
+    font-weight: 900;
+  }
+
+  .mkwii-diff-great {
+    background: #39ff14;
+  }
+
+  .mkwii-diff-good {
+    background: #91e82f;
+  }
+
+  .mkwii-diff-mid {
+    background: #c7e64b;
+  }
+
+  .mkwii-diff-high {
+    background: #ffd966;
+  }
+
+  .mkwii-diff-rough {
+    background: #f6b26b;
+  }
+
+  .mkwii-diff-worst {
+    background: #e06666;
+  }
+
+  .mkwii-empty {
+    padding: 22px;
+    border: 1px solid #333;
+    border-radius: 10px;
+    background: #070707;
+    color: #d8d8d8;
+    text-align: center;
+    font-weight: 800;
+  }
+
+  /* RESPONSIVE */
+
+  @media (max-width: 1100px) {
+    .mkwii-dashboard {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .mkwii-cover {
+      grid-column: 1 / -1;
+    }
+
+    .mkwii-cover img {
+      max-width: 160px;
+    }
+
+    .mkwii-halves {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 650px) {
+    .mkwii-page {
+      padding: 0 10px 40px;
+    }
+
+    .mkwii-dashboard {
+      grid-template-columns: 1fr;
+    }
+
+    .mkwii-cover {
+      grid-column: auto;
+    }
+
+    .mkwii-cover img {
+      max-width: 150px;
+    }
+
+    .mkwii-title-card h1 {
+      font-size: 28px;
+    }
+
+    .mkwii-cup-body {
+      grid-template-columns: 1fr;
+    }
+
+    .mkwii-cup-logo {
+      min-height: 130px;
+      border-right: 0;
+      border-bottom: 1px solid #333;
+    }
+  }
+</style>
 </head>
 <body>
   <div id="site-header"></div>
   <script src="/nick-site/nav-loader.js"></script>
+   <main class="mkwii-page">
 
-  <main class="mkwii-page">
-    <div class="mkwii-top">
+  <section class="mkwii-title-card">
+    <h1>Mario Kart Wii: Nick vs. World Records</h1>
+  </section>
 
-  <div class="mkwii-top-content">
+  <section class="mkwii-dashboard">
 
-    <section class="mkwii-title-card">
-      <h1>Mario Kart Wii: Nick vs. World Records</h1>
-    </section>
+    <div class="mkwii-stat-card">
+      <p class="mkwii-stat-label">Average Difference</p>
+      <p id="mkwii-average-diff" class="mkwii-stat-value">—</p>
+      <p class="mkwii-stat-note">Average gap to WR</p>
+    </div>
 
-    <section class="mkwii-dashboard">
-      <div class="mkwii-stat-card">
-        <p class="mkwii-stat-label">Average Difference</p>
-        <p id="mkwii-average-diff" class="mkwii-stat-value">—</p>
-        <p class="mkwii-stat-note">Average gap to WR</p>
-      </div>
+    <div class="mkwii-stat-card">
+      <p class="mkwii-stat-label">Last Best Time Input</p>
+      <p id="mkwii-last-track" class="mkwii-stat-value">—</p>
+      <p id="mkwii-last-track-note" class="mkwii-stat-note">—</p>
+    </div>
 
-      <div class="mkwii-stat-card">
-        <p class="mkwii-stat-label">Best Track</p>
-        <p id="mkwii-best-track" class="mkwii-stat-value">—</p>
-        <p id="mkwii-best-track-note" class="mkwii-stat-note">—</p>
-      </div>
+    <div class="mkwii-cover">
+      <img
+        src="/nick-site/assets/MKWii Cup Image/MKWii cover.jpg"
+        alt="Mario Kart Wii"
+      >
+    </div>
 
-      <div class="mkwii-stat-card">
-        <p class="mkwii-stat-label">Worst Track</p>
-        <p id="mkwii-worst-track" class="mkwii-stat-value">—</p>
-        <p id="mkwii-worst-track-note" class="mkwii-stat-note">—</p>
-      </div>
+    <div class="mkwii-stat-card">
+      <p class="mkwii-stat-label">Best Track</p>
+      <p id="mkwii-best-track" class="mkwii-stat-value">—</p>
+      <p id="mkwii-best-track-note" class="mkwii-stat-note">—</p>
+    </div>
 
-      <div class="mkwii-stat-card">
-        <p class="mkwii-stat-label">Last Best Time Input</p>
-        <p id="mkwii-last-track" class="mkwii-stat-value">—</p>
-        <p id="mkwii-last-track-note" class="mkwii-stat-note">—</p>
-      </div>
-    </section>
+    <div class="mkwii-stat-card">
+      <p class="mkwii-stat-label">Worst Track</p>
+      <p id="mkwii-worst-track" class="mkwii-stat-value">—</p>
+      <p id="mkwii-worst-track-note" class="mkwii-stat-note">—</p>
+    </div>
 
-  </div>
+  </section>
 
-  <div class="mkwii-cover">
-    <img
-      src="/nick-site/assets/MKWii Cup Image/MKWii cover.jpg"
-      alt="Mario Kart Wii"
-    >
-  </div>
+  <p id="mkwii-summary-line" class="mkwii-summary-line">
+    Loading MarioKart Wii time trials...
+  </p>
 
-</div>
-    </section>
+  <section id="mkwii-output" class="mkwii-halves">
+    <div class="mkwii-empty">Loading MarioKart Wii time trials...</div>
+  </section>
 
-    <p id="mkwii-summary-line" class="mkwii-summary-line">Loading MarioKart Wii time trials...</p>
-
-    <section id="mkwii-output" class="mkwii-halves">
-      <div class="mkwii-empty">Loading MarioKart Wii time trials...</div>
-    </section>
-  </main>
+</main>
 
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
