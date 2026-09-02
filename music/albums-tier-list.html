@@ -143,10 +143,18 @@
         return "";
       }
 
-      function getAlbumTitle(row) {
-        return getText(row, "Project TitleArtist");
+     function getAlbumTitle(row) {
+      return getText(row, "Album Title");
       }
-
+      
+      function getAlbumArtist(row) {
+        return getText(row, "Artist");
+      }
+      
+      function getAlbumYear(row) {
+        return getText(row, "Year");
+      }
+      
       function getAlbumTier(row) {
         return getText(row, "Tier") || "NR";
       }
@@ -224,16 +232,15 @@
           if (searchTerm === "") return true;
 
           const searchableText = [
-            album,
-            tier,
-            getText(row, "Year"),
-            getRanking(row),
-            getXRank(row)
-          ]
-            .join(" ")
-            .toLowerCase();
-
-          return searchableText.includes(searchTerm);
+              album,
+              getAlbumArtist(row),
+              getAlbumYear(row),
+              tier,
+              getRanking(row),
+              getXRank(row)
+            ]
+              .join(" ")
+              .toLowerCase();
         });
       }
 
@@ -298,20 +305,33 @@
 
               <div class="album-tier-list-cards">
                 ${rows.map(row => {
-                  const album = getAlbumTitle(row);
-                  const ranking = getRanking(row);
-                  const xRank = getXRank(row);
-
-                  return `
-                    <article class="album-tier-list-card">
-                      <strong>${escapeHTML(album)}</strong>
-                      <small>
-                        ${ranking ? `#${escapeHTML(ranking)}` : ""}
-                        ${ranking && xRank ? " • " : ""}
-                        ${xRank ? `${escapeHTML(xRank)}` : ""}
-                      </small>
-                    </article>
-                  `;
+                const album = getAlbumTitle(row);
+                const artist = getAlbumArtist(row);
+                const year = getAlbumYear(row);
+                const ranking = getRanking(row);
+                const xRank = getXRank(row);
+                
+                return `
+                  <article class="album-tier-list-card">
+                    <strong class="album-tier-list-title">
+                      ${escapeHTML(album)}
+                    </strong>
+                
+                    ${artist ? `
+                      <span class="album-tier-list-artist">
+                        ${escapeHTML(artist)}
+                      </span>
+                    ` : ""}
+                
+                    <small class="album-tier-list-meta">
+                      ${year ? `${escapeHTML(year)}` : ""}
+                      ${year && ranking ? " • " : ""}
+                      ${ranking ? `#${escapeHTML(ranking)}` : ""}
+                      ${(year || ranking) && xRank ? " • " : ""}
+                      ${xRank ? `${escapeHTML(xRank)}` : ""}
+                    </small>
+                  </article>
+                `;
                 }).join("")}
               </div>
 
