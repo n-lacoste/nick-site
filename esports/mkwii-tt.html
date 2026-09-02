@@ -304,16 +304,57 @@
         height: 120px;
         object-fit: contain;
       }
+
+    .mkwii-cover-container {
+      display: flex;
+      justify-content: center;
+      margin: 24px 0 36px;
+    }
+    
+    .mkwii-cover {
+      width: 220px;
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+
+.mkwii-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: 32px;
+  align-items: start;
+}
+
+.mkwii-hero-cover img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+}
+
+@media (max-width: 700px) {
+  .mkwii-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .mkwii-hero-cover {
+    max-width: 220px;
+  }
+}
+    
   </style>
 </head>
-
 <body>
   <div id="site-header"></div>
   <script src="/nick-site/nav-loader.js"></script>
 
   <main class="mkwii-page">
+    <div class="mkwii-top">
+
+  <div class="mkwii-top-content">
+
     <section class="mkwii-title-card">
-      <h1>MarioKart Wii Nick vs. World Records: Time Trials</h1>
+      <h1>Mario Kart Wii: Nick vs. World Records</h1>
     </section>
 
     <section class="mkwii-dashboard">
@@ -340,6 +381,18 @@
         <p id="mkwii-last-track" class="mkwii-stat-value">—</p>
         <p id="mkwii-last-track-note" class="mkwii-stat-note">—</p>
       </div>
+    </section>
+
+  </div>
+
+  <div class="mkwii-cover">
+    <img
+      src="assets/MKWii Cup Image/MKWii cover.jpg"
+      alt="Mario Kart Wii"
+    >
+  </div>
+
+</div>
     </section>
 
     <p id="mkwii-summary-line" class="mkwii-summary-line">Loading MarioKart Wii time trials...</p>
