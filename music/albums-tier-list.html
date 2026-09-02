@@ -71,6 +71,22 @@
     <section id="album-tier-list-output" class="album-tier-list-output">
       <div class="rankings-loading-cell">Loading album tier list...</div>
     </section>
+
+    <div id="album-detail-modal" class="album-detail-modal" hidden>
+  <div id="album-detail-modal-backdrop" class="album-detail-modal-backdrop"></div>
+
+  <div class="album-detail-modal-card" role="dialog" aria-modal="true" aria-labelledby="album-detail-modal-title">
+    <button id="album-detail-modal-close" class="album-detail-modal-close" type="button" aria-label="Close album details">
+      ×
+    </button>
+
+    <h3 id="album-detail-modal-title">Album Title</h3>
+    <p id="album-detail-modal-subtitle" class="album-detail-modal-subtitle"></p>
+    <p id="album-detail-modal-meta" class="album-detail-modal-meta"></p>
+
+    <div id="album-detail-modal-data" class="album-detail-modal-data"></div>
+  </div>
+</div>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
@@ -83,6 +99,13 @@
       const searchButton = document.getElementById("album-tier-list-search-button");
       const clearButton = document.getElementById("album-tier-list-search-clear");
       const minTierSelect = document.getElementById("album-tier-list-min-tier");
+      const albumModal = document.getElementById("album-detail-modal");
+      const albumModalBackdrop = document.getElementById("album-detail-modal-backdrop");
+      const albumModalClose = document.getElementById("album-detail-modal-close");
+      const albumModalTitle = document.getElementById("album-detail-modal-title");
+      const albumModalSubtitle = document.getElementById("album-detail-modal-subtitle");
+      const albumModalMeta = document.getElementById("album-detail-modal-meta");
+      const albumModalData = document.getElementById("album-detail-modal-data");
 
       if (!output) return;
 
@@ -244,6 +267,76 @@
         });
       }
 
+      function getAlbumModalRows(row) {
+          return Object.keys(row)
+            .filter(key => {
+              if (!key) return false;
+              if (key.startsWith("__")) return false;
+        
+              return String(row[key] ?? "").trim() !== "";
+            })
+            .map(key => {
+              return {
+                label: key,
+                value: String(row[key] ?? "").trim()
+              };
+            });
+        }
+        
+    function openAlbumModal(row) {
+          if (!albumModal || !albumModalTitle || !albumModalData) return;
+        
+          const album = getAlbumTitle(row);
+          const artist = getAlbumArtist(row);
+          const year = getAlbumYear(row);
+          const tier = getAlbumTier(row);
+          const ranking = getRanking(row);
+          const xRank = getXRank(row);
+        
+          albumModalTitle.textContent = album || "Album Details";
+        
+          if (albumModalSubtitle) {
+            albumModalSubtitle.textContent = [
+              artist,
+              year
+            ].filter(Boolean).join(" • ");
+          }
+        
+          if (albumModalMeta) {
+            albumModalMeta.textContent = [
+              tier ? `Tier: ${tier}` : "",
+              ranking ? `Rank: #${ranking}` : "",
+              xRank ? `xRank: ${xRank}` : ""
+            ].filter(Boolean).join(" • ");
+          }
+        
+          const detailRows = getAlbumModalRows(row);
+        
+          albumModalData.innerHTML = detailRows.map(item => {
+            return `
+              <div class="album-detail-modal-data-row">
+                <div class="album-detail-modal-data-label">
+                  ${escapeHTML(item.label)}
+                </div>
+        
+                <div class="album-detail-modal-data-value">
+                  ${escapeHTML(item.value)}
+                </div>
+              </div>
+            `;
+          }).join("");
+        
+          albumModal.hidden = false;
+          document.body.style.overflow = "hidden";
+        }
+        
+        function closeAlbumModal() {
+          if (!albumModal) return;
+        
+          albumModal.hidden = true;
+          document.body.style.overflow = "";
+        }
+              
       function renderTierList() {
         const visibleRows = getVisibleRows();
         const rowsByTier = new Map();
@@ -305,34 +398,35 @@
 
               <div class="album-tier-list-cards">
                 ${rows.map(row => {
-                const album = getAlbumTitle(row);
-                const artist = getAlbumArtist(row);
-                const year = getAlbumYear(row);
-                const ranking = getRanking(row);
-                const xRank = getXRank(row);
-                
-                return `
-                  <article class="album-tier-list-card">
-                    <strong class="album-tier-list-title">
-                      ${escapeHTML(album)}
-                    </strong>
-                
-                    ${artist ? `
-                      <span class="album-tier-list-artist">
-                        ${escapeHTML(artist)}
-                      </span>
-                    ` : ""}
-                
-                    <small class="album-tier-list-meta">
-                      ${year ? `${escapeHTML(year)}` : ""}
-                      ${year && ranking ? " • " : ""}
-                      ${ranking ? `#${escapeHTML(ranking)}` : ""}
-                      ${(year || ranking) && xRank ? " • " : ""}
-                      ${xRank ? `${escapeHTML(xRank)}` : ""}
-                    </small>
-                  </article>
-                `;
-                }).join("")}
+                    const albumIndex = albumRows.indexOf(row);
+                    const album = getAlbumTitle(row);
+                    const artist = getAlbumArtist(row);
+                    const year = getAlbumYear(row);
+                    const ranking = getRanking(row);
+                    const xRank = getXRank(row);
+                  
+                    return `
+                      <button class="album-tier-list-card" type="button" data-album-index="${escapeHTML(albumIndex)}">
+                        <strong class="album-tier-list-title">
+                          ${escapeHTML(album)}
+                        </strong>
+                  
+                        ${artist ? `
+                          <span class="album-tier-list-artist">
+                            ${escapeHTML(artist)}
+                          </span>
+                        ` : ""}
+                  
+                        <small class="album-tier-list-meta">
+                          ${year ? `${escapeHTML(year)}` : ""}
+                          ${year && ranking ? " • " : ""}
+                          ${ranking ? `#${escapeHTML(ranking)}` : ""}
+                          ${(year || ranking) && xRank ? " • " : ""}
+                          ${xRank ? `${escapeHTML(xRank)}` : ""}
+                        </small>
+                      </button>
+                    `;
+                  }).join("")}
               </div>
 
               <div
@@ -359,6 +453,32 @@
         renderTierList();
       }
 
+      output.addEventListener("click", function (event) {
+          const card = event.target.closest(".album-tier-list-card");
+        
+          if (!card) return;
+        
+          const albumIndex = Number(card.dataset.albumIndex);
+          const row = albumRows[albumIndex];
+        
+          if (!row) return;
+        
+          openAlbumModal(row);
+        });
+        
+        if (albumModalClose) {
+          albumModalClose.addEventListener("click", closeAlbumModal);
+        }
+        
+        if (albumModalBackdrop) {
+          albumModalBackdrop.addEventListener("click", closeAlbumModal);
+        }
+        
+        document.addEventListener("keydown", function (event) {
+          if (event.key === "Escape") {
+            closeAlbumModal();
+          }
+        });
       async function init() {
         try {
           if (typeof Papa === "undefined") {
