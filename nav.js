@@ -24,7 +24,7 @@
             <a href="${base}music/artists.html">Top Artists</a>
             <a href="${base}music/artist-profile.html">Artist Profiles</a>
             
-            <a href="${base}music/listening-history.html/">Listening History</a>
+            <a href="${base}music/listening-history.html">Listening History</a>
             
           </div>
         </div>
