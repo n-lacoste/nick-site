@@ -12,6 +12,8 @@ window.FAV_SONGS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRme
 window.FLAGS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmeTR35_PhZG8dySIXLskh-Z2QqGhczSg1kr9HWDsn4PD0bL6pdSl09USGztrnm-iWf25Y5SkFLTDG/pub?gid=671321735&single=true&output=csv";
 window.FLAGS_LEADERBOARD_URL = "https://script.google.com/macros/s/AKfycbwD7ZNosirs9cBpMvP7nutDo3t0KdV2zRAn8LwBTelT-BFo-ltgmCgs3CychRnwvpT1-g/exec";
 
+window.MKWII_TT_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmeTR35_PhZG8dySIXLskh-Z2QqGhczSg1kr9HWDsn4PD0bL6pdSl09USGztrnm-iWf25Y5SkFLTDG/pub?gid=1749546806&single=true&output=csv";
+
 const factorColors = {
   "10": { bg: "#11734b", text: "#ffffff" },
   "9.5": { bg: "#029458", text: "#ffffff" },
