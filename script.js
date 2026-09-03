@@ -485,8 +485,9 @@ async function loadCSV(
     "Genres": "260px",
     "SORT": "90px",
     "%Tile": "80px",
-    "S": "30px",
-    "L": "30px",
+    "Tracks": "80px",
+    "S": "40px",
+    "L": "40px",
     "%Tile": "80px",
     "xRank%": "90px",
 };
